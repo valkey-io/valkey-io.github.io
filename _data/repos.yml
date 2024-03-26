@@ -1,0 +1,32 @@
+-
+    shortname: odis
+    title: Odis
+    description: PLACEHOLDER
+    url: https://github.com/placeholderkv/placeholderkv
+    special_files:
+      -
+        title: Contributing
+        url: https://github.com/placeholderkv/placeholderkv/blob/main/CONTRIBUTING.md
+      - 
+        title: Developer Guide
+        url: https://github.com/placeholderkv/placeholderkv/blob/main/DEVELOPER_GUIDE.md
+
+-
+    shortname: docs
+    title: Odis documentation
+    description: PLACEHOLDER
+    url: https://github.com/placeholderkv/placeholderkv-doc
+    special_files:
+      -
+        title: Contributing
+        url: https://github.com/placeholderkv/placeholderkv-doc/blob/main/CONTRIBUTING.md
+
+-
+    shortname: website
+    title: Odis website
+    description: The source to this website.
+    url: https://github.com/placeholderkv/placeholderkv-website
+    special_files:
+      -
+        title: Contributing
+        url: https://github.com/placeholderkv/placeholderkv-website/blob/main/CONTRIBUTING.md

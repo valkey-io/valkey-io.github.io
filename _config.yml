@@ -1,0 +1,52 @@
+title: Odis
+description: >-
+  Multi-line PLACEHOLDER
+baseurl: ""
+url: ""
+
+headings:
+  blog: 'Blog'
+  source: 'Source Code'
+  authors: 'Authors'
+
+
+# Build settings
+plugins:
+  - jekyll-feed
+  - jekyll-paginate
+
+defaults:
+-
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      permalink: blog/:categories/:year/:month/:title/
+- 
+    scope:
+      path: ""
+      type: "authors"
+    values:
+      layout: "author"
+      permalink: /:collection/:name/
+
+collections:
+  authors:
+    output: true
+
+paginate: 5
+paginate_path: "/blog/page:num/"
+
+
+
+# Exclude from processing.
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - bower.json
+  - package.json
+  - .idea/
+  - CODE_OF_CONDUCT.md
+  - CONTRIBUTING.md
+  - README.md
