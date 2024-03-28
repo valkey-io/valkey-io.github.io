@@ -12,7 +12,7 @@ title: Trademark Policy
 
 ---
 
-This Policy provides guidelines for use of the “Valkey” name and logo (the “Valkey Trademarks”) to identify the Valkey software. Valkey Foundation strives to be a steward of the Valkey brand for the entire Valkey Community and is the owner of the Valkey Trademarks. As such, the law obligates us to police and protect the trademarks. Therefore, we require use of the Valkey Trademarks to be in accordance with this policy.
+This Policy provides guidelines for use of the “Valkey” name and logo (the “Valkey Trademarks”) to identify the Valkey software. Linux Foundation strives to be a steward of the Valkey brand for the entire Valkey Community and is the owner of the Valkey Trademarks. As such, the law obligates us to police and protect the trademarks. Therefore, we require use of the Valkey Trademarks to be in accordance with this policy.
 
 Our goal is to ensure, on behalf of the Valkey Community, that the Valkey Trademark remain reliable indicators of quality and security while also permitting community members, software distributors and others to discuss Valkey and to accurately describe their products’ affiliation with Valkey or the Valkey
 Community, as well as exercise their rights given Valkey’s open source nature. Note that this policy only applies to use of the Valkey Trademarks.
