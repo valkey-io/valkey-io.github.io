@@ -63,7 +63,7 @@ module Jekyll::ContentModifier
 
   def self.mitigateReverseTabnabbing(page)
     anchor_matcher = /<a\s(?<attrs>[^>]*href=(?<quote>['"])(?<href>(?:https?:)?\/\/.+?)\k<quote>[^>]*)>/im
-    external_matcher = /^(https?:)?\/\/(?!([^\/]+\.)?odis\.io(\/|$))/i
+    external_matcher = /^(https?:)?\/\/(?!([^\/]+\.)?valkey\.io(\/|$))/i
     target_matcher = /(\s|^)target(=|$)/im
     rel_matcher = /(\s|^)rel=(['"])(.+?)\2/im
     rel_cleanup_matcher = /(\s|^)(noopener|noreferrer)/

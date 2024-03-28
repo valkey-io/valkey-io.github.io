@@ -1,6 +1,6 @@
-# Odis.io website
+# Valkey.io website
 
-This repo contains the source for the odis.io website. The temporary staging website can be accessed using https://d18m7x5q574jh8.cloudfront.net.
+This repo contains the source for the valkey.io website. The temporary staging website can be accessed using https://d18m7x5q574jh8.cloudfront.net.
 
 ## Contributing
 

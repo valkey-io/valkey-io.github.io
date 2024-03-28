@@ -1,6 +1,6 @@
 ## Code of Conduct
 
-This code of conduct applies to all spaces provided by the Odis project including in code, documentation, issue trackers, mailing lists, chat channels, wikis, blogs, social media and any other communication channels used by the project.
+This code of conduct applies to all spaces provided by the Valkey project including in code, documentation, issue trackers, mailing lists, chat channels, wikis, blogs, social media and any other communication channels used by the project.
 
 **Our open source communities endeavor to:**
 
@@ -20,4 +20,4 @@ This code of conduct applies to all spaces provided by the Odis project includin
 * Other conduct which could reasonably be considered inappropriate in a professional setting;
 * Advocating for or encouraging any of the above behaviors.
 
-**Enforcement and Reporting Code of Conduct Issues.** Instances of abusive, harassing, or otherwise unacceptable behavior may be reported. [Contact us](mailto:opensource-codeofconduct@odis.com). All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances.
+**Enforcement and Reporting Code of Conduct Issues.** Instances of abusive, harassing, or otherwise unacceptable behavior may be reported. [Contact us](mailto:opensource-codeofconduct@valkey.io). All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances.
