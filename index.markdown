@@ -7,24 +7,24 @@ body_class: homepage
 sectionid: homepage
 
 download_ctas:
-  - odis
+  - valkey
 
 ctas:
     post: ' source on GitHub'
 
-headline: "Odis makes it easy to find whatever you need in all of your data."
+headline: "Valkey makes it easy to find whatever you need in all of your data."
 
-long_description: "Odis is a community-driven, open source SOMETHING ELSE."
+long_description: "Valkey is a community-driven, open source SOMETHING ELSE."
 
-callouts_head: "The Odis project's principles for development"
+callouts_head: "The Valkey project's principles for development"
 callouts_class: list-features
 callouts_id: principles
-callouts_leader: 'When we (the contributors) are successful, Odis will be:'
+callouts_leader: 'When we (the contributors) are successful, Valkey will be:'
 
 
 
 callout_button:
-    title: I want to know more about Odis
+    title: I want to know more about Valkey
     url: /blog
     
 sidebar:
@@ -32,7 +32,7 @@ sidebar:
         title: Founding Documents
         links:
             -
-                title: 'Stepping up for a truly open source Odis'
-                url: https://odis.io
+                title: 'Stepping up for a truly open source Valkey'
+                url: https://valkey.io
 
 ---

@@ -1,32 +1,32 @@
 -
-    shortname: odis
-    title: Odis
+    shortname: valkey
+    title: Valkey
     description: PLACEHOLDER
-    url: https://github.com/placeholderkv/placeholderkv
+    url: https://github.com/valkey-io/valkey
     special_files:
       -
         title: Contributing
-        url: https://github.com/placeholderkv/placeholderkv/blob/main/CONTRIBUTING.md
+        url: https://github.com/valkey-io/valkey/blob/main/CONTRIBUTING.md
       - 
         title: Developer Guide
-        url: https://github.com/placeholderkv/placeholderkv/blob/main/DEVELOPER_GUIDE.md
+        url: https://github.com/valkey-io/valkey/blob/main/DEVELOPER_GUIDE.md
 
 -
     shortname: docs
-    title: Odis documentation
+    title: Valkey documentation
     description: PLACEHOLDER
-    url: https://github.com/placeholderkv/placeholderkv-doc
+    url: https://github.com/valkey-io/valkey-doc
     special_files:
       -
         title: Contributing
-        url: https://github.com/placeholderkv/placeholderkv-doc/blob/main/CONTRIBUTING.md
+        url: https://github.com/valkey-io/valkey-doc/blob/main/CONTRIBUTING.md
 
 -
     shortname: website
-    title: Odis website
+    title: Valkey website
     description: The source to this website.
-    url: https://github.com/placeholderkv/placeholderkv-website
+    url: https://github.com/valkey-io/valkey-website
     special_files:
       -
         title: Contributing
-        url: https://github.com/placeholderkv/placeholderkv-website/blob/main/CONTRIBUTING.md
+        url: https://github.com/valkey-io/valkey-website/blob/main/CONTRIBUTING.md
