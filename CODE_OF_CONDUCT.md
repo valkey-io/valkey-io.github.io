@@ -20,4 +20,4 @@ This code of conduct applies to all spaces provided by the Valkey project includ
 * Other conduct which could reasonably be considered inappropriate in a professional setting;
 * Advocating for or encouraging any of the above behaviors.
 
-**Enforcement and Reporting Code of Conduct Issues:** Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by [contacting us](mailto:valkey-codeofconduct@valkey.io). All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances.
+**Enforcement and Reporting Code of Conduct Issues:** Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by [contacting us](mailto:maintainers@valkey.io). All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances.
