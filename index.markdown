@@ -12,27 +12,16 @@ download_ctas:
 ctas:
     post: ' source on GitHub'
 
-headline: "Valkey makes it easy to find whatever you need in all of your data."
+headline: "Valkey: an open source, in-memory data store"
 
 long_description: "Valkey is a community-driven, open source SOMETHING ELSE."
-
-callouts_head: "The Valkey project's principles for development"
-callouts_class: list-features
-callouts_id: principles
-callouts_leader: 'When we (the contributors) are successful, Valkey will be:'
-
-
-
-callout_button:
-    title: I want to know more about Valkey
-    url: /blog
     
 sidebar:
     -
         title: Founding Documents
         links:
             -
-                title: 'Stepping up for a truly open source Valkey'
-                url: https://valkey.io
+                title: 'Linux Foundation Launches Open Source Valkey Community'
+                url: https://www.linuxfoundation.org/press/linux-foundation-launches-open-source-valkey-community
 
 ---
