@@ -1,0 +1,18 @@
+{% for arguments in include.arguments_array %}
+    {% if arguments.type !=  "block"  and arguments.type !=  "oneof" %}
+        {{ arguments.name }}
+    {% endif %}
+    {% if arguments.optional ==  true %}
+        [
+    {% endif %}
+    {% if arguments.type == "oneof" %}
+        {%  include command/arguments.html arguments_array=arguments.arguments separator="|" %}
+    {% else %}
+        {%  include command/arguments.html arguments_array=arguments.arguments %}
+    {% endif  %}
+    {% if include.separator == "|" and forloop.last == false %} | {% endif %}
+    
+    {% if arguments.optional ==  true %}
+        ]
+    {% endif %}
+{% endfor %}
