@@ -14,7 +14,7 @@ ctas:
 
 headline: "Valkey: an open source, in-memory data store"
 
-long_description: "Valkey is a community-driven, open source SOMETHING ELSE."
+long_description: ""
     
 sidebar:
     -
