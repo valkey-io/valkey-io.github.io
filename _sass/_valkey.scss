@@ -247,7 +247,7 @@ p {
   max-width: var(--max-width);
   background: #fff;
   margin: 0 auto;
-  padding: 4rem;
+  padding: 2rem;
   color: $body-text-color;
   border-bottom: 10px solid $body-heading-color;
   font-weight: 300;
@@ -471,4 +471,12 @@ aside {
       padding: .5rem 1rem;
     }
   }
+}
+
+.command-entry {
+  border-bottom: 1px dotted $line;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }

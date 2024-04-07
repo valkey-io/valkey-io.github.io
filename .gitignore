@@ -4,3 +4,6 @@ _site
 .jekyll-metadata
 vendor
 .DS_Store
+/_data/commands/
+/commands/*/
+/_includes/commands/
