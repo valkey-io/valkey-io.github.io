@@ -5,5 +5,4 @@ _site
 vendor
 .DS_Store
 /_data/commands/
-/commands/*/
 /_includes/commands/
