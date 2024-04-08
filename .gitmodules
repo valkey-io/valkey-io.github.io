@@ -1,0 +1,6 @@
+[submodule "_submodules/valkey"]
+	path = _submodules/valkey
+	url = https://github.com/valkey-io/valkey
+[submodule "_submodules/valkey-doc"]
+	path = _submodules/valkey-doc
+	url = https://github.com/valkey-io/valkey-doc
