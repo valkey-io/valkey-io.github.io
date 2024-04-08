@@ -44,15 +44,15 @@ body {
   align-items: stretch;
   align-content: stretch;
   font-size: 1.8rem;
-  @include serif;
+  @include sans-serif;
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  @include condensed-sans-serif;
-  font-weight: 700;
+  @include sans-serif;
+  font-weight: 400;
 }
 
 h1 {
@@ -103,27 +103,26 @@ p {
 }
 
 .header {
-  color: #215d7a;
+  border-bottom: 1px solid $grey-lt-000;
+  color: $lf-dark-blue;
   padding: 10px 0;
 
   .width-limiter {
     flex-flow: row nowrap;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
   }
 
   .logo {
     display: block;
     height: 6rem;
-    padding-left: 7rem;
-    background: url('../img/valkey.png') 0 center / 6rem auto no-repeat;
-    @include condensed-sans-serif;
-    font-weight: 800;
+    @include sans-serif;
+    font-weight: 400;
     font-size: 6rem;
     line-height: 5.75rem;
     color: inherit;
     text-decoration: none;
-    text-transform: uppercase;
+    letter-spacing: -0.2rem;
   }
 
   nav {
@@ -131,7 +130,7 @@ p {
     flex-flow: row nowrap;
     @include sans-serif;
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 400;
 
     a {
       white-space: nowrap;
@@ -195,8 +194,8 @@ p {
 }
 
 .footer {
-  background: linear-gradient(to bottom, #41799f, #07293a 80%);
-  color: #fff;
+  border-top: 1px solid $grey-dk-100;
+  background-color: $grey-lt-300;
   @include sans-serif;
   font-size: 1.4rem;
 
@@ -212,18 +211,15 @@ p {
     font-weight: 600;
 
     h4 {
-      font-weight: 600;
+      font-weight: 400;
       @include sans-serif;
-      text-transform: uppercase;
       font-size: 1.5rem;
-      letter-spacing: .45rem;
     }
 
     a {
       display: list-item;
       list-style: none;
       white-space: nowrap;
-      color: #fff;
       margin-bottom: 1em;
 
       &:hover {
@@ -237,7 +233,7 @@ p {
   max-width: var(--max-width);
   display: flex;
   flex-flow: column nowrap;
-  padding: 10px 20px;
+  padding: 10px 20px 0 20px;
   align-content: stretch;
   height: 100%;
   margin: 0 auto;
@@ -249,7 +245,7 @@ p {
   margin: 0 auto;
   padding: 2rem;
   color: $body-text-color;
-  border-bottom: 10px solid $body-heading-color;
+  border-bottom: 1px dotted $lf-light-blue;
   font-weight: 300;
   font-size: 4rem;
   @include sans-serif;
