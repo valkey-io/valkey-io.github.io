@@ -24,15 +24,15 @@ $blue-lt-000: #EAF4F9;
 
 $white: #FFFFFF;
 
-$grey-dk-300: #002A3A; // Midnight Sky
-$grey-dk-200: #1B4859;
-$grey-dk-100: #346173;
-$grey-dk-000: #4D8399;
+$grey-dk-300: #222222;
+$grey-dk-200: #444444;
+$grey-dk-100: #666666;
+$grey-dk-000: #888888;
 
-$grey-lt-300: #D9E1E2; // San Francisco Fog
-$grey-lt-000: #F5F7F7;
+$grey-lt-300: #aaaaaa; 
+$grey-lt-000: #dddddd;
 
-$purple-000: #963CBD; // Purple Sage
+$purple-000: #963CBD; 
 $purple-100: #8736AA;
 $purple-200: #692A84;
 $purple-300: #4B1E5F;
@@ -52,7 +52,10 @@ $red-100: #DD4A69;
 $red-200: #AC3952;
 $red-300: #7B293B;
 
-$body-background-color: #d7f1fc;
+
+$lf-dark-blue: #123678;
+$lf-light-blue: #3393FF;  
+$body-background-color: #fff;
 $sidebar-color: $grey-lt-000;
 $code-background-color: $grey-lt-000;
 
@@ -69,7 +72,7 @@ $logo_width: 250px;
 $attention-light: #4fb3e3;
 $attention: #3bf; //formerly $green-medium, open sky
 $attention-dark: #0082b3; //formerly $green-medium-dark, open sky, tent 1
-$core:  #0053b8; //pacific blue
+$core:  #123678; //pacific blue
 
 $warning-light: #ffc460; //golden poppy, tint 2
 $warning: #ffb81c; //golden poppy
