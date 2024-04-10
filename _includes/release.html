@@ -1,0 +1,8 @@
+<strong>Release Date:</strong> {{include.content.date | date: "%a, %b %d, %Y"}}<br/>
+<strong>GitHub Release:</strong> <a href="https://github.com/valkey-io/valkey/releases/tag/{{include.content.tag}}">{{include.content.tag}}</a><br />
+<strong>Docker Tags:</strong>
+<ul>
+    {% for tag in include.content.container.tags %}
+        <li><code>{{ tag }}</code></li>
+    {% endfor %}
+</ul>
