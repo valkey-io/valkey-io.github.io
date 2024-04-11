@@ -29,9 +29,18 @@ defaults:
     values:
       layout: "author"
       permalink: /:collection/:name/
+-
+  scope:
+    path: ""
+    type: "releases"
+  values:
+    layout: "release"
+    permalink: download/:collection/:name
 
 collections:
   authors:
+    output: true
+  releases:
     output: true
 
 paginate: 5
