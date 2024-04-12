@@ -6,8 +6,8 @@ primary_title: Documentation
 
 * [Command Reference](../commands/)
 * Management
-  * [Persistence](/docs/management/persistence.html)
+  * [Persistence](./management/persistence/)
   * Security
-    * [ACL](/docs/management/security/acl.html)
+    * [ACL](./management/security/acl/)
 * Valkey Manual
-  * [Keyspace Notifications](/docs/manual/keyspace-notifications.html)
+  * [Keyspace Notifications](./manual/keyspace-notifications/)
