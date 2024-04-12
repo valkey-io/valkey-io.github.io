@@ -8,7 +8,7 @@ layout: default
 </div>
 <hr>
 <div class="section">
-    {{ page.long_description | markdownify }}
+    {{ content }}
 </div>
 <hr>
 <div class="section" id="{{page.callouts_id}}">
@@ -19,17 +19,30 @@ layout: default
 
 {% capture content_related %}
 <div role="complementary">
+    {{page.ctas.pre}} 
     {% for cta in page.download_ctas %}
-    {% assign repo = site.data.repos | find: "shortname", cta %}
-    <a href="{{ repo.url }}" class="cta" target="_blank">
-        {{page.ctas.pre}} {{ repo.title }} {{page.ctas.post}}
-        {% comment %} {{ site.data.version.latest_version[cta] }} {%endcomment%}
+    <a href="{{ cta.url }}" class="cta">
+        {{ cta.text }}
     </a>
     {% endfor %}
-    {% assign docs = site.data.repos | find: "shortname", "docs" %}
-    {% if docs.url %}
-    <a href="{{ docs.url }}" class="link-readmore" target="_blank">{{ docs.title }}</a>
+    {{page.ctas.post}}
+    {% if page.docs.url %}
+    <a href="{{ page.docs.url }}" class="link-readmore">{{ page.docs.title }}</a>
     {% endif %}
+
+    
+    <div class="featured-repos">
+        <h3>{{page.repos_heading}}</h3>
+        <div class="sidebar-repo">
+        {% for repo in site.data.repos %}
+            {% if repo.featured %}
+                <h4><a href="{{repo.url}}" target="_blank">{{ repo.title }}</a></h4>
+                <p>{{ repo.description }}</p>
+            {% endif %}
+        {% endfor %}
+        </div>
+        <a href="{{ page.github_org }}" class="link-readmore" target="_blank">{{ page.github_org_text }}</a>
+    </div>
 
     <div class="whats-new">
         <h3>What's new?</h3>
@@ -56,5 +69,4 @@ layout: default
 </div>
 
 {% endcapture %}
-
 {% include right_aside.html %}

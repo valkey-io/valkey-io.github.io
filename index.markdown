@@ -7,10 +7,16 @@ body_class: homepage
 sectionid: homepage
 
 download_ctas:
-  - valkey
+  - text: Get Valkey
+    url: "/download/"
 
-ctas:
-    post: ' source on GitHub'
+docs:
+    url: '/docs/'
+    title: "Read the docs"
+
+repos_heading: "Featured repositories"
+github_org: "https://github.com/valkey-io"
+github_org_text: "All repos in the Valkey GitHub organization"
 
 headline: "Valkey: an open source, in-memory data store"
 
@@ -18,10 +24,12 @@ long_description: ""
     
 sidebar:
     -
-        title: Founding Documents
+        title: Founding documents
         links:
             -
                 title: 'Linux Foundation Launches Open Source Valkey Community'
                 url: https://www.linuxfoundation.org/press/linux-foundation-launches-open-source-valkey-community
 
 ---
+
+one two
