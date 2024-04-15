@@ -35,7 +35,9 @@ sidebar:
 Valkey is an open source (BSD) high-performance key/value datastore that supports a variety workloads such as **caching**, **message queues**, and can act as a **primary database**.
 Valkey can run as either a **standalone** daemon or in a **cluster**, with options for **replication** and **high availability**.
 
-In Valkey, data is accessed with keys and you model your information into **data structures**. You can operate on data structures in-place with a expressive collection of commands: no need for extra round trips or client process. Valkey has support for **strings**, **numbers**, **hashes**, **lists**, **sets**, **sorted sets**, **bitmaps**, **hyperloglogs** and more.
+Valkey natively supports a rich collection of datatypes, including **strings**, **numbers**, **hashes**, **lists**, **sets**, **sorted sets**, **bitmaps**, **hyperloglogs** and more.
+You can operate on data structures in-place with a expressive collection of commands.
+Valkey also supports native extensibility with built-in scripting support for **LUA** and supports **module** plugins to create new commands, data types, and more.
 
 You can also use Valkey to structure and distribute messages with the fire-and-forget simplicity of **built-in pub/sub messaging**. Valkey also has **streams**, a log-like structure that allows you to durably process information with multiple producers and across many consumers with a poll-free, zero wait mechanism. 
 
