@@ -32,7 +32,8 @@ sidebar:
 
 ---
 
-Valkey provides your applications with rich yet uncomplicated, high-performance data storage. Valkey is operationally flexible: you can run it as a **standalone** daemon or in a **cluster**, with options for **replication** and **high availability**. It was built from the ground up to operate **in-memory** to **reduce latency** and **increase throughput** for both reads and writes.
+Valkey is an open source (BSD) high-performance key/value datastore that supports a variety workloads such as **caching**, **message queues**, and can act as a **primary database**.
+Valkey can run as either a **standalone** daemon or in a **cluster**, with options for **replication** and **high availability**.
 
 In Valkey, data is accessed with keys and you model your information into **data structures**. You can operate on data structures in-place with a expressive collection of commands: no need for extra round trips or client process. Valkey has support for **strings**, **numbers**, **hashes**, **lists**, **sets**, **sorted sets**, **bitmaps**, **hyperloglogs** and more.
 
