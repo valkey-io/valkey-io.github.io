@@ -39,14 +39,6 @@ Valkey natively supports a rich collection of datatypes, including **strings**, 
 You can operate on data structures in-place with a expressive collection of commands.
 Valkey also supports native extensibility with built-in scripting support for **LUA** and supports **module** plugins to create new commands, data types, and more.
 
-You can also use Valkey to structure and distribute messages with the fire-and-forget simplicity of **built-in pub/sub messaging**. Valkey also has **streams**, a log-like structure that allows you to durably process information with multiple producers and across many consumers with a poll-free, zero wait mechanism. 
-
-You can script Valkey with a **built-in Lua** interpreter to optimize and finely control complex operations. 
-It also has a built-in **module extensibility API** that enables you to create new data types and commands that can exploit the full power of the storage engine and protocol.
-
-Valkey commands operate atomically and you can ensure atomicity across multiple keys and commands with **lock-free transactions**.
-
-You can use Valkey as a **database**, **cache**, **message broker**, and **message queue** as well as a storage engine for **session management**, **leaderboards**, **rate limiters**, and **real-time analytics workloads**.
 
 ---
 
