@@ -34,7 +34,7 @@ sidebar:
 
 Valkey provides your applications with rich yet uncomplicated, high-performance data storage. Valkey is operationally flexible: you can run it as a **standalone** daemon or in a **cluster**, with options for **replication** and **high availability**. It was built from the ground up to operate **in-memory** to **reduce latency** and **increase throughput** for both reads and writes.
 
-In Valkey, data is accessed with keys and you model your information into **data structures**. You can operate on data structures in-place with a expressive collection of commands: no need for extra round trips or client process. Valkey has support for **strings**, **numbers**, **hashes**, **lists**, **sets**, **sorted sets**, **bitmaps**, hyperloglogs** and more.
+In Valkey, data is accessed with keys and you model your information into **data structures**. You can operate on data structures in-place with a expressive collection of commands: no need for extra round trips or client process. Valkey has support for **strings**, **numbers**, **hashes**, **lists**, **sets**, **sorted sets**, **bitmaps**, **hyperloglogs** and more.
 
 You can also use Valkey to structure and distribute messages with the fire-and-forget simplicity of **built-in pub/sub messaging**. Valkey also has **streams**, a log-like structure that allows you to durably process information with multiple producers and across many consumers with a poll-free, zero wait mechanism. 
 
