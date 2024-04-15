@@ -32,25 +32,19 @@ sidebar:
 
 ---
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-Phasellus feugiat convallis purus sed finibus.
-Morbi sit amet volutpat tellus.
+Valkey provides your applications with rich yet uncomplicated, high-performance data storage. Valkey is operationally flexible: you can run it as a **standalone** daemon or in a **cluster**, with options for **replication** and **high availability**. It was built from the ground up to operate **in-memory** to **reduce latency** and **increase throughput** for both reads and writes.
 
-Morbi molestie ullamcorper eros ut sagittis.
-Fusce sed ipsum nec ex convallis maximus ac sodales nulla.
-Lliquam blandit eu libero vel convallis.
-Curabitur convallis feugiat justo ultrices auctor.
-Phasellus placerat efficitur tellus, in tristique lacus consectetur vitae.
+In Valkey, data is accessed with keys and you model your information into **data structures**. You can operate on data structures in-place with a expressive collection of commands: no need for extra round trips or client process. Valkey has support for **strings**, **numbers**, **hashes**, **lists**, **sets**, **sorted sets**, **bitmaps**, hyperloglogs** and more.
 
-Vestibulum tempus risus ac scelerisque pretium.
-Mauris suscipit, ipsum eget pellentesque dapibus, magna enim ultricies tellus, ut blandit nulla nibh vel magna.
-Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
-Sed laoreet ligula eu eros tincidunt placerat.
-Morbi vitae tristique ligula, vel congue felis.
-Sed tempus sed lorem in blandit.
+You can also use Valkey to structure and distribute messages with the fire-and-forget simplicity of **built-in pub/sub messaging**. Valkey also has **streams**, a log-like structure that allows you to durably process information with multiple producers and across many consumers with a poll-free, zero wait mechanism. 
 
-Nulla vel lacus non elit facilisis commodo. Pellentesque venenatis eleifend orci.
-Maecenas ac turpis placerat, congue nisl ac, egestas erat.
-Donec aliquam congue mollis.
-Ahasellus a felis mi.
-Nullam volutpat ante purus, in aliquet arcu vestibulum eu.
+You can script Valkey with a **built-in Lua** interpreter to optimize and finely control complex operations. 
+It also has a built-in **module extensibility API** that enables you to create new data types and commands that can exploit the full power of the storage engine and protocol.
+
+Valkey commands operate atomically and you can ensure atomicity across multiple keys and commands with **lock-free transactions**.
+
+You can use Valkey as a **database**, **cache**, **message broker**, and **message queue** as well as a storage engine for **session management**, **leaderboards**, **rate limiters**, and **real-time analytics workloads**.
+
+---
+
+**Get Started**: Join the vibrant Valkey community and check out the code on [GitHub](https://github.com/valkey-io/valkey).
