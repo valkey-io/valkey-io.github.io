@@ -3,7 +3,7 @@ name: "7.2.5"
 date: 2024-04-15
 tag: "7.2.5"
 artifact_source: https://d307a34p6mmcbn.cloudfront.net/releases/
-artifact_fname: "valkey_server"
+artifact_fname: "valkey"
 container_registry:
     - 
         name: "Docker Hub"
