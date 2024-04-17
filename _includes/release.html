@@ -1,4 +1,4 @@
-<strong>Release Date:</strong> {{include.content.date | date: "%b %d, %Y"}}<br/>
+<strong>Release Date:</strong> {{include.content.date | date: " %b %d, %Y"}}<br/>
 <strong>GitHub Release:</strong> <a href="https://github.com/valkey-io/valkey/releases/tag/{{include.content.tag}}">{{include.content.tag}}</a><br />
 <hr />
 {% for registry in include.content.container_registry %}
@@ -27,7 +27,8 @@
         {% endif %}
     {% endfor %}
 {% endif %}
-<!-- <h2>Binary Artifacts</h2> -->
+<hr />
+<h2>Binary Artifacts</h2>
 {% for artifact in include.content.artifacts %}
     {% for arch in  artifact.arch %}
         {% capture fname %}{{include.content.artifact_source}}{{include.content.artifact_fname}}-{{include.content.tag}}-{{artifact.distro}}-{{arch}}.tar.gz{% endcapture %}
