@@ -1,4 +1,4 @@
-<strong>Release Date:</strong> {{include.content.date | date: " %b %d, %Y"}}<br/>
+<strong>Release Date:</strong> {{include.content.date | date: "%b %d, %Y"}}<br/>
 <strong>GitHub Release:</strong> <a href="https://github.com/valkey-io/valkey/releases/tag/{{include.content.tag}}">{{include.content.tag}}</a><br />
 <hr />
 {% for registry in include.content.container_registry %}
