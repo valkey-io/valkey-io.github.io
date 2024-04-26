@@ -19,8 +19,9 @@ This site is built using Jekyll 4.3.2 with Ruby 3.3.0. Other versions may work, 
 2. Install [Ruby](https://www.ruby-lang.org/en/) and [RVM](https://rvm.io/) (or some other Ruby version switcher, e.g. [chruby](https://github.com/postmodern/chruby))
 3. Install [Jekyll](https://jekyllrb.com/)
 4. Install dependencies: `bundle install`
-5. Build: `bundle exec jekyll serve` for the local server, `bundle exec jekyll build` for one off builds. Either way, the HTML of the site is generated to `/_site`
-6. Point your browser at `http://127.0.0.1:4000/`
+5. Run `git submodule update --init --recursive`
+6. Build: `bundle exec jekyll serve` for the local server, `bundle exec jekyll build` for one off builds. Either way, the HTML of the site is generated to `/_site`
+7. Point your browser at `http://127.0.0.1:4000/`
 
 ## Build with Docker
 
