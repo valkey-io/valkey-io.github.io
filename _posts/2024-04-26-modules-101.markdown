@@ -4,14 +4,12 @@ title:  "Valkey modules 101"
 authors: 
   - dmitrypol
 date: 2024-04-26 01:01:01 -0700
-categories: update
+categories: modules
 ---
 
-## What are Valkey (or Redis) modules?  
+## What are Valkey modules?  
 
-Modules were first announced at RedisConf 2016 and officially introduced with Redis 4.0.  The idea of modules is to keep the core functionality lean and add extra features (such as new commands and data types) as needed.  Over the years there were a number of modules developed for Redis.  Valkey project plans to build on this foundation.  
-
-Modules can be written in C or other languages that have C bindings.  In this article we will go through the process of building simple modules in C and Rust (using the Valkey Module Rust SDK).  This articles expects the audience to be at least somewhat familiar with C, Rust and Redis/Valkey.  
+The idea of modules is to keep the core Valkey functionality lean and add extra features (such as new commands and data types) where needed.  Modules can be written in C or other languages that have C bindings.  In this article we will go through the process of building simple modules in C and Rust (using the Valkey Module Rust SDK).  This articles expects the audience to be at least somewhat familiar with C, Rust and Valkey.  
 
 ## Hello World module in C
 
@@ -53,7 +51,7 @@ Run `make` inside `src/modules` folder.  We will see numerous *.so and *.xo file
 
 ## Hello World module in Rust
 
-If we clone the [valkeymodule-rs](https://github.com/valkey-io/valkeymodule-rs) repo we will find `examples` folder with numerous .rs files.  Valkeymodule-rs is a recent fork of redismiodule-rs and there are still references to Redis in it.  We plan to update this repo and add it to [crates.io](https://crates.io/) but for now we will use it as is.  
+If we clone the [valkeymodule-rs](https://github.com/valkey-io/valkeymodule-rs) repo we will find `examples` folder with numerous .rs files.  The plan is to update the SDK to use variables like `ValkeyResult` and add it to [crates.io](https://crates.io/) but for now we will use it as is.  
 
 Let's create `examples/module2.rs`
 
@@ -75,7 +73,9 @@ redis_module! {
 }
 ```
 
-Rust syntax is a bit different than C but we are creating `module2` with command `hello` that returns `world2`.  Now we need to update `Cargo.toml` in the root folder.  Add this the bottom of the file:
+Rust syntax is a bit different than C but we are creating `module2` with command `hello` that returns `world2` string.  To accomplish that we are using [Rust macros](https://doc.rust-lang.org/book/ch19-06-macros.html) and passing it variables like `name` and `version`.  Some variables like `data_types` and `commands` are arrays and we can pass zero, one or many values.  Since we not using ctx or args we prefix them with `_` (Rust convention) instead of using `VALKEYMODULE_NOT_USED` as we did in C.  
+
+Now we need to update `Cargo.toml` in the root folder.  Add this the bottom of the file:
 
 ```toml
 [[example]]
@@ -83,13 +83,14 @@ name = "module2"
 crate-type = ["cdylib"]
 ```
 
-Run `cargo build --examples --no-default-features` in the root folder.  We will now see numerous files in `target/debug/examples` including `libmodule2.dylib`
+Run `cargo build --examples --no-default-features` in the root folder.  We will now see numerous files in `target/debug/examples` including `libmodule2.dylib` (on macOS).  It will produce *.so files on Linux and *.dll files on Windows.  Read [Rust docs](https://doc.rust-lang.org/reference/linkage.html) to understand more about `crate-type`.
+
 
 ## Run Valkey server with both modules
 
-Go back into valkey repo folder and run make to compile the code.  Then add these lines to the bottom of `valkey.conf` file.
+Go back into valkey repo folder and run make to compile the Valkey code.  Then add these lines to the bottom of `valkey.conf` file.
 
-```bash
+```
 loadmodule path_to_valkey/src/modules/module1.so
 loadmodule path_to_valkeymodule-rs/target/debug/examples/libmodule2.dylib
 ```
@@ -98,11 +99,11 @@ and run `src/valkey-server valkey.conf`.  You will see these messages in the log
 
 ```
 Module 'module1' loaded from path_to_valkey/src/modules/module1.so
-Legacy Redis Module path_to_valkeymodule-rs/target/debug/examples/libmodule2.dylib found
+...
 Module 'module2' loaded from path_to_valkeymodule-rs/target/debug/examples/libmodule2.dylib
 ```
 
-Do not worry about the message with `Legacy Redis Module`.  Valkey supports Redis modules once we update valkeymodule-rs SDK this message will go away.  Then use `src/valkey-cli` to connect.  
+Then use `src/valkey-cli` to connect.  
 
 ```bash
 src/valkey-cli -3
@@ -121,17 +122,12 @@ world1
 world2
 ```
 
-We can now run both modules side by side and if we modify either C or RS file, recompile the code and restart `valkey-server` we will get the new functionality.  Please stay tuned for more articles in the future as we explore the possibilities of Valkey modules and where using C or Rust makes sense.  
+We can now run both modules side by side and if we modify either C or RS file, recompile the code and restart `valkey-server` we will get the new functionality.  Alternatively to specifying modules in .conf file we can use MODULE LOAD and UNLOAD from valkey-cli at runtime.  
+
+Please stay tuned for more articles in the future as we explore the possibilities of Valkey modules and where using C or Rust makes sense.  
 
 ## Usefull links
 
 * [Valkey repo](https://github.com/valkey-io/valkey)
 * [Valkey Rust SDK](https://github.com/valkey-io/valkeymodule-rs)
-* [Extending Redis with Rust](https://www.youtube.com/watch?v=tAvLKsnNJVg)
-* [Writing Redis Modules In Rust, RedisConf 2019](https://www.youtube.com/watch?v=c1E8jxWVfoI)
-* [Rust Redis Modules](https://gsquire.github.io/static/post/rust-redis-modules/)
-* [Redis Modules Getting Started](https://medium.com/@somesh557/redis-modules-getting-started-eace9e1e0465)
-* [Redis modules API](https://redis.io/docs/latest/develop/reference/modules/)
-* [Writing Redis Modules](https://redis.io/blog/writing-redis-modules/)
-* [RedisModulesSDK](https://github.com/RedisLabsModules/RedisModulesSDK)
 * [Rust in VS Code](https://code.visualstudio.com/docs/languages/rust)
