@@ -7,3 +7,4 @@ vendor
 /_data/commands/
 /_includes/commands/
 /_includes/docs/
+tmp/*
