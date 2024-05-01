@@ -1,24 +1,24 @@
 ---
 layout: post
-title:  "Valkey modules 101"
+title:  "Valkey Modules 101"
 authors: 
   - dmitrypol
-date: 2024-04-26 01:01:01 -0700
+date: 2024-05-01 01:01:01 -0700
 categories: modules
 ---
 
 ## What are Valkey modules?  
 
-The idea of modules is to allow adding extra features (such as new commands and data types) to Valkey without making changes to the core code.  
-Modules are a special type of code distribution called a shared library, which can be loaded by other programs at runtime and executed.  
-Modules can be written in C or other languages that have C bindings.  
-In this article we will go through the process of building simple modules in C and Rust (using the Valkey Module Rust SDK).  
-This article expects the audience to be at least somewhat familiar with git, C, Rust and Valkey.  
+The idea of modules is to allow adding extra features (such as new commands and data types) to Valkey without making changes to the core code.
+Modules are a special type of code distribution called a shared library, which can be loaded by other programs at runtime and executed.
+Modules can be written in C or other languages that have C bindings.
+In this article we will go through the process of building simple modules in C and Rust (using the Valkey Module Rust SDK).
+This article expects the audience to be at least somewhat familiar with git, C, Rust and Valkey.
 
 ## Hello World module in C
 
-If we clone the Valkey repo by running `git clone git@github.com:valkey-io/valkey.git` we will find numerous examples in `src/modules`.  
-Let's create a new file `module1.c` in the same folder.  
+If we clone the Valkey repo by running `git clone git@github.com:valkey-io/valkey.git` we will find numerous examples in `src/modules`.
+Let's create a new file `module1.c` in the same folder.
 
 ```c
 #include "../valkeymodule.h"
@@ -40,9 +40,9 @@ int ValkeyModule_OnLoad(ValkeyModuleCtx *ctx, ValkeyModuleString **argv, int arg
 }
 ```
 
-Here we are calling `ValkeyModule_OnLoad` C function (required by Valkey) to initialize `module1` using `ValkeyModule_Init`.  
-Then we use `ValkeyModule_CreateCommand` to create a Valkey command `hello` which uses C function `hello` and returns `world1` string.  
-In future blog posts we will expore these areas at greater depth.  
+Here we are calling `ValkeyModule_OnLoad` C function (required by Valkey) to initialize `module1` using `ValkeyModule_Init`.
+Then we use `ValkeyModule_CreateCommand` to create a Valkey command `hello` which uses C function `hello` and returns `world1` string.
+In future blog posts we will expore these areas at greater depth.
 
 Now we need to update `src/modules/Makefile`
 
@@ -55,18 +55,18 @@ module1.so: module1.xo
 	$(LD) -o $@ $^ $(SHOBJ_LDFLAGS) $(LIBS) -lc
 ```
 
-Run `make module1.so` inside `src/modules` folder.  
-This will compile our module in the `src/modules` folder. 
+Run `make module1.so` inside `src/modules` folder.
+This will compile our module in the `src/modules` folder.
 
 ## Hello World module in Rust
 
-We will create a new Rust package by running `cargo new --lib module2` in bash.  
-Inside the `module2` folder we will have `Cargo.toml` and `src/lib.rs` files.  
-To install the valkey-module SDK run `cargo add valkey-module` inside `module2` folder.  
-Alternativley we can add `valkey-module = "0.1.0` in `Cargo.toml` under `[dependencies]`.  
-Run `cargo build` and it will create or update the `Cargo.lock` file.  
+We will create a new Rust package by running `cargo new --lib module2` in bash.
+Inside the `module2` folder we will have `Cargo.toml` and `src/lib.rs` files.
+To install the valkey-module SDK run `cargo add valkey-module` inside `module2` folder.
+Alternativley we can add `valkey-module = "0.1.0` in `Cargo.toml` under `[dependencies]`.
+Run `cargo build` and it will create or update the `Cargo.lock` file.
 
-Modify `Cargo.toml` to specify the crate-type to be "cdylib", which will tell cargo to build the target as a shared library.  
+Modify `Cargo.toml` to specify the crate-type to be "cdylib", which will tell cargo to build the target as a shared library.
 Read [Rust docs](https://doc.rust-lang.org/reference/linkage.html) to understand more about `crate-type`.
 
 ```
@@ -97,19 +97,19 @@ valkey_module! {
 }
 ```
 
-Rust syntax is a bit different than C but we are creating `module2` with command `hello` that returns `world2` string.  
-We are using the external crate `valkey_module` with [Rust macros](https://doc.rust-lang.org/book/ch19-06-macros.html) and passing it variables like `name` and `version`.  
-Some variables like `data_types` and `commands` are arrays and we can pass zero, one or many values.  
-Since we are not using ctx or args we prefix them with `_` (Rust convention) instead of `VALKEYMODULE_NOT_USED` as we did in C.  
+Rust syntax is a bit different than C but we are creating `module2` with command `hello` that returns `world2` string.
+We are using the external crate `valkey_module` with [Rust macros](https://doc.rust-lang.org/book/ch19-06-macros.html) and passing it variables like `name` and `version`.
+Some variables like `data_types` and `commands` are arrays and we can pass zero, one or many values.
+Since we are not using ctx or args we prefix them with `_` (Rust convention) instead of `VALKEYMODULE_NOT_USED` as we did in C.
 
-Run `cargo build` in the root folder.  
-We will now see `target/debug/libmodule2.dylib` (on macOS).  
-The build will produce *.so files on Linux and *.dll files on Windows.  
+Run `cargo build` in the root folder.
+We will now see `target/debug/libmodule2.dylib` (on macOS).
+The build will produce *.so files on Linux and *.dll files on Windows.
 
 
 ## Run Valkey server with both modules
 
-Go back into the Valkey repo folder and run `make` to compile the Valkey code.  
+Go back into the Valkey repo folder and run `make` to compile the Valkey code.
 Then add these lines to the bottom of the `valkey.conf` file.
 
 ```
@@ -117,8 +117,8 @@ loadmodule UPDATE_PATH_TO_VALKEY/src/modules/module1.so
 loadmodule UPDATE_PATH_TO_MODULE2/target/debug/libmodule2.dylib
 ```
 
-and run `src/valkey-server valkey.conf`.  
-You will see these messages in the log output.  
+and run `src/valkey-server valkey.conf`.
+You will see these messages in the log output.
 
 ```
 Module 'module1' loaded from UPDATE_PATH_TO_VALKEY/src/modules/module1.so
@@ -126,7 +126,7 @@ Module 'module1' loaded from UPDATE_PATH_TO_VALKEY/src/modules/module1.so
 Module 'module2' loaded from UPDATE_PATH_TO_MODULE2/target/debug/libmodule2.dylib
 ```
 
-Then use `src/valkey-cli` to connect.  
+Then use `src/valkey-cli` to connect.
 
 ```bash
 src/valkey-cli -3
@@ -145,11 +145,11 @@ world1
 world2
 ```
 
-We can now run both modules side by side and if we modify either C or RS file, recompile the code and restart `valkey-server` we will get the new functionality.  
+We can now run both modules side by side and if we modify either C or RS file, recompile the code and restart `valkey-server` we will get the new functionality.
 
 As an alternative to specifying modules in `valkey.conf` file, we can use `MODULE LOAD` and `UNLOAD` from `valkey-cli` to update the server.
-First specify `enable-module-command yes` in `valkey.conf` and restart `valkey-server`.  
-This enables us to update our module code, recompile it and reload it at runtime.  
+First specify `enable-module-command yes` in `valkey.conf` and restart `valkey-server`.
+This enables us to update our module code, recompile it and reload it at runtime.
 
 ```
 127.0.0.1:6379> module load UPDATE_PATH_TO_VALKEY/src/modules/module1.so
@@ -166,7 +166,7 @@ OK
 127.0.0.1:6379> 
 ```
 
-Please stay tuned for more articles in the future as we explore the possibilities of Valkey modules and where using C or Rust makes sense.  
+Please stay tuned for more articles in the future as we explore the possibilities of Valkey modules and where using C or Rust makes sense.
 
 ## Usefull links
 
