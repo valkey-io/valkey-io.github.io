@@ -37,7 +37,7 @@ Valkey can run as either a **standalone** daemon or in a **cluster**, with optio
 
 Valkey natively supports a rich collection of datatypes, including **strings**, **numbers**, **hashes**, **lists**, **sets**, **sorted sets**, **bitmaps**, **hyperloglogs** and more.
 You can operate on data structures in-place with a expressive collection of commands.
-Valkey also supports native extensibility with built-in scripting support for **LUA** and supports **module** plugins to create new commands, data types, and more.
+Valkey also supports native extensibility with built-in scripting support for **Lua** and supports **module** plugins to create new commands, data types, and more.
 
 
 ---
