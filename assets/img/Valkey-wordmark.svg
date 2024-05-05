@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 244 70" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+<!-- Hacky solution to color the logo until a dynamic solution is needed/a palette is decided upon -->
+<svg width="100%" height="100%" viewBox="0 0 244 70" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;" fill="#123678">
     <g transform="matrix(2.04879,0,0,1.52816,979.32,-456.758)">
         <g transform="matrix(2.45276,0,0,3.28839,-1112.69,-561.653)">
             <path d="M276.457,272.61L274.177,264.942L275.437,264.942L277.327,271.704L277.465,271.704L279.355,264.942L280.615,264.942L278.341,272.61L276.457,272.61Z" style="fill-rule:nonzero;"/>
