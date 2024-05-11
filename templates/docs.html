@@ -1,0 +1,32 @@
+{% extends "fullwidth.html" %}
+
+{% import "macros/docs.html" as docs %}
+
+{% block main_content %}
+{% set list = [] %}
+{% if section.pages | length == 0 %}
+<strong>No docs pages found.</strong> Did you run <code>./build/init-topics.sh</code>?
+{% endif %}
+{% for page in section.pages %}
+    {% set docs_file_contents = docs::load(slug= page.slug) %}
+    {% set frontmatter = docs::extract_frontmatter(content= docs_file_contents) %}
+    {% set frontmatter_length = frontmatter | length() %}
+
+    {% if frontmatter_length > 0 %}
+        {% set frontmatter_data = load_data(literal= frontmatter, format="yaml") %}
+        {% set description = frontmatter_data.description | escape | safe %}
+        {% set description_no_line_breaks = description | regex_replace(pattern=`[\u0000-\u001F]`, rep=` `) %}
+
+        {% set_global list = list | concat(with= ['{ "title" : "' ~ frontmatter_data.title ~ '", "path" : "' ~ page.path ~ '", "description" : "' ~ description_no_line_breaks ~ '" }']) %}
+    {% endif %}
+   
+
+{% endfor %}
+    {% set joined_list =  list | join(sep=",") %}
+    {% set topic_list = load_data(literal= "[" ~ joined_list ~ "]", format="json") | sort(attribute="title") %} 
+    
+    {% for topic in topic_list %}
+        <a href="{{ topic.path }}">{{ topic.title }}</a> {{ topic.description | safe }} <br />
+    {% endfor %}
+
+{% endblock main_content %}

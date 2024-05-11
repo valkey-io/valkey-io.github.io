@@ -1,0 +1,7 @@
+{% extends "fullwidth.html" %}
+
+{% block main_content %}
+{% set loaded_file = load_data(path= page.extra.include_file) %}
+{{ loaded_file | markdown | safe }}
+
+{% endblock main_content %}

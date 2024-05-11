@@ -1,0 +1,36 @@
+{% extends "fullwidth.html" %}
+
+{% import "macros/command.html" as commands %}
+
+{% block main_content %}
+{% if section.pages | length == 0 %}
+<strong>No command pages found.</strong> Did you run <code>./build/init-commands.sh</code>?
+{% endif %}
+{% set commands_entries = [] %}
+{% for page in section.pages %}
+    {% set command_data = load_data(path= commands::command_json_path(slug= page.slug), required= false) %}
+    {% if command_data %}
+        {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
+        {% set command_data_obj = command_data[command_obj_name] %}
+        {% set command_display = command_obj_name %}
+        {% if command_data_obj.container %}
+            {% set command_display = command_data_obj.container ~ " " ~ command_display %}
+        {% endif %}
+            
+        {% set command_entry = [
+            command_display,
+            page.permalink | safe, 
+            command_data_obj.summary
+            
+        ] %}
+        
+        {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
+
+        {# <div class="command-entry"><code><a href="{{ page.permalink | safe }}">{{ command_display }}</a></code> {{command_data_obj.summary}}</div> #}
+    {% endif %}
+{% endfor %}
+{% for entry in commands_entries | sort(attribute="0") %}
+    <div class="command-entry"><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code> {{entry[2]}}</div>
+
+{% endfor %}
+{% endblock main_content %}
