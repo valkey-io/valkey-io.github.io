@@ -27,6 +27,11 @@
 
 
 {% block main_content %}
+{% if config.extra.review_list is containing(page.path) %}
+<p><strong>This page is under review.</strong> The page is likely incorrect, contains invalid links, and/or needs technical review. 
+    In the future it may change substantially or be removed entirely.</p>
+<hr />
+{% endif %}
 {%- set content_with_fixed_links = docs::fix_links(content= page_contents) -%}
 {{ content_with_fixed_links | markdown | safe }}
 {% endblock main_content %}
