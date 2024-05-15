@@ -30,3 +30,5 @@ do
 EOF
 fi
 done
+
+echo "Topic stub files created."
