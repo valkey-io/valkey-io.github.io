@@ -5,7 +5,7 @@
 {% block main_content %}
 {% set list = [] %}
 {% if section.pages | length == 0 %}
-<strong>No docs pages found.</strong> Did you run <code>./build/init-topics.sh</code>?
+<strong>No docs pages found.</strong> You likely need to build the documentation pages. See "Building the documentation topics" in README.md file.
 {% endif %}
 {% for page in section.pages %}
     {% set docs_file_contents = docs::load(slug= page.slug) %}

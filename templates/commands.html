@@ -4,7 +4,7 @@
 
 {% block main_content %}
 {% if section.pages | length == 0 %}
-<strong>No command pages found.</strong> Did you run <code>./build/init-commands.sh</code>?
+<strong>No command pages found.</strong> You likely need to build the command pages. See "Building the command reference" in README.md file.
 {% endif %}
 {% set commands_entries = [] %}
 {% for page in section.pages %}

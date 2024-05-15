@@ -49,7 +49,7 @@ Let's say that this repo and your local copy of `valkey-io/valkey-doc` and `valk
 From the root directory of this repo run:
 
 ```shell
-./build/init-commands.sh ../valkey-doc/topics ../valkey/src/commands
+./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands
 ```
 
 Then, restart Zola.
