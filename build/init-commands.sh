@@ -34,6 +34,9 @@ do
     if [[ "$command" != "index" ]]; then 
         cat << EOF > "./content/commands/$command.md"
 +++
+# This is a generated stub file.
+# To edit the command description see /commands/$command.md in the 'valkey-doc' repo
+# The command metadata is generated from /src/$command.json in the 'valkey' repo
 +++
 EOF
 fi

@@ -24,6 +24,8 @@ do
     if [[ "$topic" != "index" ]]; then 
         cat << EOF > "./content/docs/topics/$topic.md"
 +++
+# This is a generated stub file.
+# To edit the content see /topic/$topic.md in the 'valkey-doc' repo
 +++
 EOF
 fi

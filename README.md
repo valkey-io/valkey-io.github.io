@@ -23,11 +23,17 @@ Follow these steps to build the site locally:
 
 Open your browser to `http://127.0.0.1:1111/`
 
+Zola will automatically rebuild on changes to the template or any content stored in this repo.
+Changes to external content (command reference, documentation topics) require a restart of the Zola server process (`ctrl-c` then `zola serve` again, a browser refresh may also be needed).
+
+## Building additional content
+
 **By default, the site will build without documentation topics nor command reference.**
 This content is stored within the `valkey-io/valkey-doc` and `valkey-io/valkey` repos respectively.
 
-In the `/build/` directory there are two helper scripts.
-These script create symbolic links to the `valkey-io/valkey-doc` and `valkey-io/valkey` repos as well as create a series of empty stub files that tell Zola to create a file.
+If you want to build the site with this content, you'll need to have a local copy of `valkey-io/valkey-doc` and `valkey-io/valkey` _outside_ of this repo.
+Then follow the instructions to [build the documentation topics](#building-the-documentation-topics) and/or [build the command reference](#building-the-command-reference).
+The instructions show how to use scripts that create symbolic links to the `valkey-io/valkey-doc` and `valkey-io/valkey` repos as well as create a series of empty stub files that tell Zola to create pages.
 
 ### Building the documentation topics
 
