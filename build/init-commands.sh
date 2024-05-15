@@ -1,20 +1,28 @@
 #!/bin/bash
-# Usage: ln -s ../valkey/src/commands/ build-commands-json
-# This file will create stub files for all the commands.
-#for fname in $(find $1 -maxdepth 1  -iname "*.md")
-#do
-#    base=${fname##*/}
-#    command=${base%.*}
-#    cat << EOF > "$2/$command.md"
-#+++
-#+++
-#EOF
-
-#done
-
-#!/bin/bash
 # See README for usage
 # This file will create stub files for all the commands and create the correct symbolic links for the JSON files
+
+# first check to make sure there are arguments
+if [ -z "$1" ]; then
+    echo "You must supply a path to the command docs as the first argument" 
+    exit 1
+fi 
+
+if [ -z "$2" ]; then
+    echo "You must supply a path to the command json as the second argument" 
+    exit 1
+fi
+
+# check for validity of these agruments as paths
+if [ ! -d "$1" ]; then
+    echo "The command doc directory must exist and be a valid path"
+    exit 1
+fi
+
+if [ ! -d "$2" ]; then
+    echo "The command JSON directory must exist and be a valid path"
+    exit 1
+fi
 
 ln -s $1 ./build-command-docs
 ln -s $2 ./build-command-json
@@ -30,3 +38,5 @@ do
 EOF
 fi
 done
+
+echo "Command stub files created."
