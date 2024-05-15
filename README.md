@@ -1,7 +1,7 @@
 # Valkey.io website
 
 This repo contains the source for the valkey.io website (build scripts, template, blog posts, stylesheets, etc.).
-The build integrates content from [`valkey-io/valkey-doc`](https://github.com/valkey-io/valkey-doc) and the commands definitions from [`valkey-io/valkey`](https://github.com/valkey-io/valkey-doc) via [Git submodules](https://github.blog/2016-02-01-working-with-submodules/).
+The build integrates content from [`valkey-io/valkey-doc`](https://github.com/valkey-io/valkey-doc) and the commands definitions from [`valkey-io/valkey`](https://github.com/valkey-io/valkey-doc) (see [Build Locally](#build-locally) below for more details).
 
 ## Contributing
 
