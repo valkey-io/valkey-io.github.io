@@ -37,10 +37,21 @@ The instructions show how to use scripts that create symbolic links to the `valk
 
 ### Building the documentation topics
 
+Documentation 'topics' (i.e. `/docs/topics/keyspace/`, `/docs/topics/encryption/`, `/docs/topics/transactions/`) sources content from `valkey-io/valkey-doc`.
+
+```mermaid
+flowchart TD
+    A[Webpage: /docs/topics/keyspace/ ]
+    A --> B[Template: valkey-io/valkey-website]
+    B --> H[Repo: valkey-io/valkey-doc ] --> I[File: /topics/keyspace.md ] --> Y[Topic content]
+```
+
 Let's say that this repo and your local copy of `valkey-io/valkey-doc` reside in the same directory.
+First, stop the `zola serve` process if you're running it.
 From the root directory of this repo run:
 
 ```shell
+# You should only need to run this once or when you add a new topic.
 ./build/init-topics.sh ../valkey-doc/topics 
 ```
 
@@ -51,10 +62,23 @@ Commit your changes to your local copy of `valkey-io/valkey-doc`.
 
 ### Building the command reference
 
+The command reference (i.e. `/command/set/`, `/command/get/`, `/command/lolwut/`) sources information from `valkey-io/valkey`, and `valkey-io/valkey-doc`.
+`valkey-io/valkey` provides the command metadata (items like computational complexity, version history, arguments, etc) whilst `valkey-io/valkey-doc` provides the actual command description.
+
+```mermaid
+flowchart TD
+    A[Webpage: valkey.io/set/command]
+    A --> B[Template: valkey-io/valkey-website]
+    B --> F[Repo: valkey-io/valkey ] --> G[File: /src/commands/set.json ] --> X[Command Metadata]
+    B --> H[Repo: valkey-io/valkey-doc ] --> I[File: /commands/set.md ] --> Y[Command Description]
+```
+
 Let's say that this repo and your local copy of `valkey-io/valkey-doc` and `valkey-io/valkey` reside in the same directories.
+First, stop the `zola serve` process if you're running it.
 From the root directory of this repo run:
 
 ```shell
+# You should only need to run this once or when you add a new command.
 ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands
 ```
 
