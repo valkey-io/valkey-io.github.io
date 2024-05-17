@@ -2,7 +2,7 @@
 
 {% import "macros/docs.html" as docs %}
 
-{% block head %}
+{%- block head -%}
 {% set docs_file_contents = docs::load(slug= page.slug) %}
 {# detect front matter #}
 {% set frontmatter = docs::extract_frontmatter(content= docs_file_contents) %}
@@ -17,7 +17,7 @@
 {% else %}
     {% set page_contents = docs_file_contents %}
 {% endif %}
-{% endblock head %}
+{%- endblock head -%}
 
 {% block subhead_content %}
 {% if has_frontmatter and frontmatter_title %}

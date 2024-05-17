@@ -1,6 +1,6 @@
-{% extends "right-aside.html" %}
+{%- extends "right-aside.html" -%}
 
-{% block main_content %}
+{%- block main_content -%}
 <div class="section headline">
     <h1>{{ section.extra.headline }}</h1>
 </div>
@@ -8,11 +8,11 @@
 <div class="section">
 {{ section.content | safe }}
 </div>
-{% endblock main_content %}
+{%- endblock main_content -%}
 
 
 
-{% block related_content %}
+{%- block related_content -%}
 <div role="complementary">
     {% if section.extra and section.extra.ctas and section.extra.ctas.pre %}
         {{section.extra.ctas.pre}} 
@@ -72,4 +72,4 @@
     {% endfor %}
 {% endif %}
 
-{% endblock related_content%}
+{%- endblock related_content -%}
