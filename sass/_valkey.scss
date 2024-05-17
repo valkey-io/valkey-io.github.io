@@ -248,6 +248,11 @@ p {
   align-content: stretch;
   height: 100%;
   margin: 0 auto;
+
+  .container.right-aside img {
+    width: 100%;
+    height: auto;
+  }
 }
 
 .page-title {
