@@ -21,6 +21,7 @@
 
 {%- macro fix_links(content) -%}
 {{ content 
+    | regex_replace(pattern=`\]\((?P<fname>.*?).png\)`, rep=`](/docs/topics/$fname.png)`) 
     | regex_replace(pattern=`\]\(\.\./commands/(?P<fname>.*?).md\)`, rep=`](/commands/$fname)`) 
     | regex_replace(pattern=`\]\(\.\./commands/#(?P<hash>.*?)\)`, rep=`](/commands/#$hash)`) 
     | regex_replace(pattern=`\]\((?P<fname>.*?).md\)`, rep=`](/docs/topics/$fname)`) 
