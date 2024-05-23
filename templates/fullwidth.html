@@ -1,0 +1,12 @@
+{% extends "default.html" %}
+
+{% block content %}
+<h1 class="page-title">{% if page and page.title %}{{ page.title }}{% elif section and section.title %}{{ section.title }}{% endif %}</h1>
+
+
+<div class="width-limiter">
+    <main class="container">
+        {% block main_content %}{{ page.content | markdown | safe }}{% endblock main_content %}
+    </main>
+</div>
+{% endblock content %}

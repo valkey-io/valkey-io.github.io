@@ -1,7 +1,7 @@
 # Valkey.io website
 
 This repo contains the source for the valkey.io website (build scripts, template, blog posts, stylesheets, etc.).
-The build integrates content from [`valkey-io/valkey-doc`](https://github.com/valkey-io/valkey-doc) and the commands definitions from [`valkey-io/valkey`](https://github.com/valkey-io/valkey-doc) via [Git submodules](https://github.blog/2016-02-01-working-with-submodules/).
+The build integrates content from [`valkey-io/valkey-doc`](https://github.com/valkey-io/valkey-doc) and the commands definitions from [`valkey-io/valkey`](https://github.com/valkey-io/valkey-doc) (see [Build Locally](#build-locally) below for more details).
 
 ## Contributing
 
@@ -13,21 +13,79 @@ If you discover potential security issues, see the reporting instructions on our
 
 ## Build Locally
 
-This site is built using Jekyll 4.3.2 with Ruby 3.3.0. Other versions may work, but YMMV.
+This site is built with [Zola](https://www.getzola.org/).
 
-1. Go to the root of the repo
-2. Install [Ruby](https://www.ruby-lang.org/en/) and [RVM](https://rvm.io/) (or some other Ruby version switcher, e.g. [chruby](https://github.com/postmodern/chruby))
-3. Install [Jekyll](https://jekyllrb.com/)
-4. Install dependencies: `bundle install`
-5. Run `git submodule update --init --recursive`
-6. Build: `bundle exec jekyll serve` for the local server, `bundle exec jekyll build` for one off builds. Either way, the HTML of the site is generated to `/_site`
-7. Point your browser at `http://127.0.0.1:4000/`
+Follow these steps to build the site locally:
 
-## Build with Docker
+1. [Install Zola](https://www.getzola.org/documentation/getting-started/installation/).
+2. Switch to the directory with your fork of this repo.
+3. Run `zola serve`
 
-1. `docker buildx build -t valkey.io .`
-1. `docker run --volume="$PWD:/srv:Z" --workdir=/srv -p 3000:4000 valkey.io:latest`
-1. Open browser to `http://localhost:3000/`
+Open your browser to `http://127.0.0.1:1111/`
+
+Zola will automatically rebuild on changes to the template or any content stored in this repo.
+Changes to external content (command reference, documentation topics) require a restart of the Zola server process (`ctrl-c` then `zola serve` again, a browser refresh may also be needed).
+
+## Building additional content
+
+**By default, the site will build without documentation topics nor command reference.**
+This content is stored within the `valkey-io/valkey-doc` and `valkey-io/valkey` repos respectively.
+
+If you want to build the site with this content, you'll need to have a local copy of `valkey-io/valkey-doc` and `valkey-io/valkey` _outside_ of this repo.
+Then follow the instructions to [build the documentation topics](#building-the-documentation-topics) and/or [build the command reference](#building-the-command-reference).
+The instructions show how to use scripts that create symbolic links to the `valkey-io/valkey-doc` and `valkey-io/valkey` repos as well as create a series of empty stub files that tell Zola to create pages.
+
+### Building the documentation topics
+
+Documentation 'topics' (i.e. `/docs/topics/keyspace/`, `/docs/topics/encryption/`, `/docs/topics/transactions/`) sources content from `valkey-io/valkey-doc`.
+
+```mermaid
+flowchart TD
+    A[Webpage: /docs/topics/keyspace/ ]
+    A --> B[Template: valkey-io/valkey-website]
+    B --> H[Repo: valkey-io/valkey-doc ] --> I[File: /topics/keyspace.md ] --> Y[Topic content]
+```
+
+Let's say that this repo and your local copy of `valkey-io/valkey-doc` reside in the same directory.
+First, stop the `zola serve` process if you're running it.
+From the root directory of this repo run:
+
+```shell
+# You should only need to run this once or when you add a new topic.
+./build/init-topics.sh ../valkey-doc/topics 
+```
+
+Then, restart Zola.
+Point your browser at `http://127.0.0.1:1111/docs/topics/` and you should see the fully populated list of topics.
+All files created in this process are ignored by git.
+Commit your changes to your local copy of `valkey-io/valkey-doc`.
+
+### Building the command reference
+
+The command reference (i.e. `/command/set/`, `/command/get/`, `/command/lolwut/`) sources information from `valkey-io/valkey`, and `valkey-io/valkey-doc`.
+`valkey-io/valkey` provides the command metadata (items like computational complexity, version history, arguments, etc) whilst `valkey-io/valkey-doc` provides the actual command description.
+
+```mermaid
+flowchart TD
+    A[Webpage: valkey.io/set/command]
+    A --> B[Template: valkey-io/valkey-website]
+    B --> F[Repo: valkey-io/valkey ] --> G[File: /src/commands/set.json ] --> X[Command Metadata]
+    B --> H[Repo: valkey-io/valkey-doc ] --> I[File: /commands/set.md ] --> Y[Command Description]
+```
+
+Let's say that this repo and your local copy of `valkey-io/valkey-doc` and `valkey-io/valkey` reside in the same directories.
+First, stop the `zola serve` process if you're running it.
+From the root directory of this repo run:
+
+```shell
+# You should only need to run this once or when you add a new command.
+./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands
+```
+
+Then, restart Zola.
+Point your browser at `http://127.0.0.1:1111/commands/` and you should see the fully populated list of topics.
+All files created in this process are ignored by git.
+Commit your changes to your local copy of `valkey-io/valkey-doc` for description changes and `valkey-io/valkey` for command JSON changes (if you have any).
 
 ## License
 

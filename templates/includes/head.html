@@ -1,0 +1,52 @@
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="ROBOTS" content="ALL" />
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    {% if page and page.description %}<meta name="description" content="{{ page.description}}" />
+    {% elif section and section.description %}<meta name="description" content="{{ page.description}}" />{% endif %}
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>
+    {%- if command_title -%}
+    Valkey Command &middot; {{ command_title }}
+    {%- elif frontmatter_title -%}
+    Valkey Documentation &middot; {{ frontmatter_title }}
+    {%- elif page.title -%}
+    Valkey &middot; {{ page.title }}
+    {%- elif section.title -%}
+    Valkey &middot; {{ section.title }}
+    {%- else -%}
+    Valkey
+    {%- endif -%}
+    </title>
+
+    <link rel="stylesheet" href="/css/styles.css">
+
+
+    <!-- Google tag (gtag.js)
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6M0FF13NRB"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-6M0FF13NRB');
+    </script> -->
+
+    {% if page and page.extra and page.extra.head_extra %}{{ page.extra.head_extra }}{% endif %}
+</head>

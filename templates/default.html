@@ -1,0 +1,58 @@
+{%- block head -%}{%- endblock -%}<!DOCTYPE html>
+<html lang="{{ page.lang | default(value=config.default_language) }}">
+{% include "includes/head.html" %}
+<body 
+  {%- if page.extra.sectionid -%}id="{{ page.extra.sectionid }}"{%- endif -%}
+  {%- if page.extra.body_class -%}class="{{ page.body_class }}"{%- endif -%}
+  >
+  <div class="header">
+    <div class="width-limiter">
+      <a href="/" class="logo">
+        <img src="/img/Valkey-logo.svg" alt="Valkey Logo" width="60" height="60"/>
+        <span>Valkey</span>
+      </a>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/download/">Download</a>
+        <a role="menuitem" href="/docs/">Documentation</a>
+        <a role="menuitem" href="/commands/">Commands</a>
+        <div class="has-submenu">
+          <span>Community</span>
+            <div class="submenu">
+              <a role="menuitem" href="/blog/">Blog</a>
+              <a role="menuitem" href="https://github.com/orgs/valkey-io/discussions">Forum</a>
+            </div>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      {% block content %}{% endblock %}
+  </div>
+  <div class="footer">
+    <div class="width-limiter">
+        <div class="links">
+          <nav role="navigation" aria-label="Get Involved">
+            <h4>Get Involved</h4>
+            <a role="menuitem" href="/code_of_conduct.html">Code of Conduct</a>
+            <a role="menuitem" href="https://github.com/orgs/valkey-io/discussions">Forum</a>
+            <a role="menuitem" href="https://github.com/valkey-io">GitHub</a>
+          </nav>
+          <nav role="navigation" aria-label="Resources">
+            <h4>Resources</h4>
+            <a role="menuitem" href="/about">About</a>
+          </nav>
+          <nav role="navigation" aria-label="Contact Us">
+            <h4>Contact</h4>
+            <a role="menuitem" href="/connect.html">Connect</a>
+          </nav>
+        </div>
+        <p>&copy; Valkey contributors, 2024. Valkey is a registered trademark of Linux Foundation.</p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+            not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+              Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+    </div>
+  </div>
+</body>
+</html>

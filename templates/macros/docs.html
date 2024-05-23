@@ -1,0 +1,30 @@
+{%- macro load(slug) -%}
+{%- set topic_path = config.extra.doc_topic_path -%}
+{%- set markdown_content = load_data(path= topic_path ~ "/" ~ slug ~ ".md", required= false) -%}
+{%- if markdown_content -%}{{ markdown_content }}{% endif %}
+{% endmacro load_doc %}
+
+{%- macro extract_frontmatter(content) %}
+{%- set markdown_split = content | split(pat="---") -%}
+{%- set markdown_part_count = markdown_split | length() -%}
+{%- if markdown_part_count >= 3 -%}
+{%- set before_frontmatter = markdown_split | nth(n=0) -%}
+{%- set before_frontmatter_length = before_frontmatter | length() -%}
+{%- set frontmatter = markdown_split | nth(n=1) -%}
+{%- if before_frontmatter_length == 0 -%}{{frontmatter}}{%- endif -%}
+{%- endif -%}
+{%- endmacro extract_frontmatter %}
+
+{%- macro extract_markdown(content) %}
+{{ content | split(pat="---") | slice(start=2) | join(sep="---") }}
+{%- endmacro extract_frontmatter %}
+
+{%- macro fix_links(content) -%}
+{{ content 
+    | regex_replace(pattern=`\]\((?P<fname>.*?).png\)`, rep=`](/docs/topics/$fname.png)`) 
+    | regex_replace(pattern=`\]\(\.\./commands/(?P<fname>.*?).md\)`, rep=`](/commands/$fname)`) 
+    | regex_replace(pattern=`\]\(\.\./commands/#(?P<hash>.*?)\)`, rep=`](/commands/#$hash)`) 
+    | regex_replace(pattern=`\]\((?P<fname>.*?).md\)`, rep=`](/docs/topics/$fname)`) 
+    | regex_replace(pattern=`\]\((?P<fname>.*?).md#(?P<hash>.*?)\)`, rep=`](docs/topics/$fname#$hash)`) 
+    }}
+{%- endmacro fix_links -%}

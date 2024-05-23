@@ -1,0 +1,61 @@
+{%- macro arguments_parse(argument_array, separator="") -%}
+    {%- for arguments in argument_array -%}
+        {%- if arguments.optional and arguments.optional ==  true -%}
+            {%- set start = "[" -%}
+            {%- set end = "]" -%}
+        {%- elif arguments.type and arguments.type == "oneof"-%}
+            {%- set start = "〈" -%}
+            {%- set end = "〉" -%}
+        {%- else -%}
+            {%- set start = "" -%}
+            {%- set end = "" -%}
+        {%- endif -%}
+        {%- set token = "" -%}
+        {%- if arguments.type and arguments.type !=  "pure-token" and arguments.token -%}
+            {%- set token = arguments.token -%}
+        {%- endif -%}
+        {%- set name = "" -%}
+        {%- if arguments.type and arguments.type !=  "block"  and arguments.type !=  "oneof" -%}
+            {%- set name = arguments.name -%}
+        {%- endif -%}
+        {%- set next = "" -%}
+        {%- if arguments.type and arguments.type == "oneof" -%}
+            {%- if arguments.arguments -%}
+                {%- set next = self::arguments_parse(argument_array=arguments.arguments, separator="|") -%}
+            {%- endif -%}
+        {%- else -%}
+            {%- if arguments.arguments -%}
+                {%- set next = self::arguments_parse(argument_array=arguments.arguments) -%}
+            {%- endif -%}
+        {%- endif -%}
+        {%- if separator == "|" and loop.last == false -%}
+            {%- set display_separator = " " ~ separator -%}
+        {%- else -%}
+            {%- set display_separator = "" -%}
+        {%- endif -%}
+        {%- set arguments_str = start ~ " " ~ token ~ " " ~ name ~ " " ~ next ~ " " ~ end ~ display_separator %}
+        {{ arguments_str }}
+        {% if arguments.multiple %}
+            [ {{ arguments_str }} ... ]
+        {% endif %}
+    {%- endfor -%}
+{%- endmacro arguments_parse -%}
+
+{%- macro command_obj_name(command_data) -%}
+    {%- for command, command_obj in command_data -%}
+        {% set_global command_obj_name = command %}
+    {%- endfor -%}
+{{ command_obj_name }}
+{%- endmacro command_obj_name -%}
+
+{%- macro command_json_path(slug) -%}
+{{config.extra.command_json_path }}{{ slug }}.json
+{%- endmacro load_command_json -%}
+
+{%- macro fix_links(content) -%}
+{{ content 
+    | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md#(?P<hash>.*?)\)`, rep=`](/docs/topics/$fname#$hash)`) 
+    | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md\)`, rep=`](/docs/topics/$fname)`) 
+    | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+\.\./topics/(?P<fname>.*?).md`, rep=`[$token]: /docs/topics/$fname`)
+    }}
+{%- endmacro fix_links -%}

@@ -1,0 +1,11 @@
+{% extends "right-aside.html" %}
+
+{% block subhead_content%}
+<h1 class="page-title">Download Valkey {{page.title}}</h1>
+{% endblock subhead_content%}
+{% block main_content %}
+{% set release = page.extra %}
+{% set release_date = page.date %}
+
+{% include "includes/release.html" %}
+{% endblock main_content %}

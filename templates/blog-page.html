@@ -1,0 +1,38 @@
+{% extends "right-aside.html" %}
+
+{% block main_content %}
+<h1>{{ page.title }}</h1>
+<div class="meta">
+  {{ page.date | date(format="%Y-%m-%d") }}
+  {% if page.extra and page.extra.authors %}
+    &middot; 
+    {% for author in page.extra.authors %}
+      {% set author_path = "authors/" ~ author ~ ".md" %}
+      {% set author_page = get_page(path=author_path) %}
+      <em>{{ author_page.title }}</em>{% if loop.last != true %},{% endif %}
+    {% endfor %}
+  {% endif %}
+</div>
+
+{{ page.content | safe }}
+<hr />
+{% include "includes/share-buttons.html" %}
+<div class="blog-nav">
+  {% if page.higher and page.higher.title %}
+  <a class="prev" href="{{page.higher.permalink}}">&laquo; {{page.higher.title}}</a>
+  {% endif %}
+  {% if page.lower and page.lower.title %}
+  <a class="next" href="{{page.lower.permalink}}">{{page.lower.title}} &raquo; </a>
+  {% endif %}
+</div>
+
+{% endblock main_content %}
+{% block related_content %}
+{% if page.extra and page.extra.authors %}
+  {% for author in page.extra.authors %}
+    {% set author_path = "authors/" ~ author ~ ".md" %}
+    {% set author_page = get_page(path=author_path) %}
+    {% include "includes/author_panel.html" %}
+  {% endfor %}
+{% endif %}
+{% endblock related_content%}

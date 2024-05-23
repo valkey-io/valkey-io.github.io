@@ -1,8 +1,0 @@
----
-permalink: /404.html
-layout: error
-errormessage: 404
-errorhuman: "Page not found" 
----
-
-Perhaps you mistyped the URL or we've moved something around. Sorry about that.

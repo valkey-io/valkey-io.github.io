@@ -1,0 +1,37 @@
+{% extends "right-aside.html" %}
+
+{% import "macros/docs.html" as docs %}
+
+{%- block head -%}
+{% set docs_file_contents = docs::load(slug= page.slug) %}
+{# detect front matter #}
+{% set frontmatter = docs::extract_frontmatter(content= docs_file_contents) %}
+{% set frontmatter_length = frontmatter | length() %}
+{% if frontmatter_length > 0 %}
+    {% set frontmatter_data = load_data(literal= frontmatter, format="yaml") %}
+    {% set has_frontmatter = true %}
+    {% set page_contents = docs::extract_markdown(content= docs_file_contents) %}
+    {% if frontmatter_data.title %}
+        {% set frontmatter_title = frontmatter_data.title %}
+    {% endif %} 
+{% else %}
+    {% set page_contents = docs_file_contents %}
+{% endif %}
+{%- endblock head -%}
+
+{% block subhead_content %}
+{% if has_frontmatter and frontmatter_title %}
+<h1 class="page-title">{{ frontmatter_title }}</h1>
+{% endif  %}
+{% endblock subhead_content %}
+
+
+{% block main_content %}
+{% if config.extra.review_list is containing(page.path) %}
+<p><strong>This page is under review.</strong> The page is likely incorrect, contains invalid links, and/or needs technical review. 
+    In the future it may change substantially or be removed entirely.</p>
+<hr />
+{% endif %}
+{%- set content_with_fixed_links = docs::fix_links(content= page_contents) -%}
+{{ content_with_fixed_links | markdown | safe }}
+{% endblock main_content %}

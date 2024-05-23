@@ -1,0 +1,16 @@
+base_url = "https://valkey.io"
+
+compile_sass = true
+
+build_search_index = true
+
+[markdown]
+highlight_code = true
+
+[extra]
+command_description_path = "../build-command-docs/"
+command_json_path = "../build-command-json/"
+doc_topic_path = "../build-topics/"
+
+review_list = [
+]

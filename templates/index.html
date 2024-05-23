@@ -1,0 +1,75 @@
+{%- extends "right-aside.html" -%}
+
+{%- block main_content -%}
+<div class="section headline">
+    <h1>{{ section.extra.headline }}</h1>
+</div>
+<hr />
+<div class="section">
+{{ section.content | safe }}
+</div>
+{%- endblock main_content -%}
+
+
+
+{%- block related_content -%}
+<div role="complementary">
+    {% if section.extra and section.extra.ctas and section.extra.ctas.pre %}
+        {{section.extra.ctas.pre}} 
+    {% endif %}
+    {% if section.extra and section.extra.download_ctas %}
+        {% for cta in section.extra.download_ctas %}
+        <a href="{{ cta.url }}" class="cta">
+            {{ cta.text }}
+        </a>
+        {% endfor %}
+    {% endif %}
+    {% if section.extra and section.extra.ctas and section.extra.ctas.post %}
+        {{section.extra.ctas.post}} 
+    {% endif %}
+    {% if section.extra and section.extra.docs %}
+        {% for docs_link in section.extra.docs %}
+        <a href="{{ docs_link.url }}" class="link-readmore">{{ docs_link.title }}</a>
+        {% endfor %}
+    {% endif %}
+    <div class="featured-repos">
+        {% if section.extra and section.extra.repos_heading %}<h3>{{section.extra.repos_heading}}</h3>{% endif %}
+        <div class="sidebar-repo">
+            {% set repos = load_data(path="/_data/repos.yml") %}
+            {% for repo in repos %}
+                {% if repo.featured %}
+                    <h4><a href="{{repo.url}}" target="_blank">{{ repo.title }}</a></h4>
+                    <p>{{ repo.description }}</p>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% if section.extra and section.extra.github_org and section.extra.github_org_text %}
+            <a href="{{ section.extra.github_org }}" class="link-readmore" target="_blank">{{ section.extra.github_org_text }}</a>
+        {% endif %}
+    </div>
+
+    {% set blog_post_section = get_section(path="blog/_index.md") %}
+    {% set blog_posts = blog_post_section.pages | slice(end=2) %}
+    <div class="whats-new">
+        <h3>What's new?</h3>
+        {% for post in blog_posts %}
+            <h4><a href="{{ post.permalink }}">{{ post.title }}</a></h4>
+            <p>{{ post.description }}</p>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% if section.extra and section.extra.sidebar %}
+    {% for sidebar_category in section.extra.sidebar  %}
+        <h3>{{sidebar_category.title}}</h3>
+        <ul class="list-links-small">
+            {% for link in sidebar_category.links %}
+            <li><a href="{{ link.url }}">{{ link.title}}</a></li>
+            {% endfor %}
+        </ul>
+        {% if sidebar_category.more %} <a href="{{ sidebar_category.more.url }}" class="link-readmore">{{sidebar_category.more.title}}</a> {% endif %}
+    {% endfor %}
+{% endif %}
+
+{%- endblock related_content -%}
