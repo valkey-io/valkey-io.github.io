@@ -29,7 +29,7 @@ While Open Source Summit North America was last month, [The New Stack published 
 
 ## Presentation: Digging into Valkey
 
-On the subject of Open Source Summit, the talk I gave along side Madelyn Olsen, ["Digging into Valkey" was posted as a video](https://youtu.be/3G6QgwIl-xs).
+On the subject of Open Source Summit, the talk I gave along side Madelyn Olson, ["Digging into Valkey" was posted as a video](https://youtu.be/3G6QgwIl-xs).
 
 ## Valkey Seattle IRL
 
