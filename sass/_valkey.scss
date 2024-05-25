@@ -25,6 +25,7 @@
 * {
   box-sizing: border-box;
 }
+
 html {
   height: 100%;
   width: 100%;
@@ -108,9 +109,16 @@ p {
   padding: 10px 0;
 
   .width-limiter {
+    display: flex;
+    gap: 2rem;
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: baseline;
+
+    @media all and (max-width: 768px) {
+        flex-flow: column;
+        align-items: center;
+    }
   }
 
   .logo {
@@ -139,19 +147,21 @@ p {
   nav {
     display: flex;
     flex-flow: row nowrap;
+    gap: 2rem;
     @include sans-serif;
     font-size: 1.5rem;
     font-weight: 400;
 
+    @media all and (max-width: 480px) {
+        gap: 1rem;
+        display: grid;
+        text-align: center;
+    }
+
     a {
       white-space: nowrap;
-      padding: 0 1rem;
       color: inherit;
       cursor: pointer;
-
-      &:last-child {
-        padding-right: 0;
-      }
 
       &:hover {
         color: #04202a;
