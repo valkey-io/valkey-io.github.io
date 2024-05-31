@@ -1,5 +1,8 @@
 {%- macro load(slug) -%}
 {%- set topic_path = config.extra.doc_topic_path -%}
+{%- if slug in config.extra.slug_source_exceptions -%}
+    {%- set slug = config.extra.slug_source_exceptions[slug] -%}
+{%- endif -%}
 {%- set markdown_content = load_data(path= topic_path ~ "/" ~ slug ~ ".md", required= false) -%}
 {%- if markdown_content -%}{{ markdown_content }}{% endif %}
 {% endmacro load_doc %}
@@ -21,11 +24,16 @@
 
 {%- macro fix_links(content) -%}
 {{ content 
-        | regex_replace(pattern=`\]\((?P<fname>.*?)\w.png\)`, rep=`](/docs/topics/$fname.png)`) 
-        | regex_replace(pattern=`\]\(\.\./commands/(?P<fname>\w.*?)(.md)?\)`, rep=`](/commands/$fname)`) 
+        | regex_replace(pattern=`\]\(#(?P<hash>.*?\))`, rep=`](--$hash`)
+        | regex_replace(pattern=`\]\((?P<url>httpsd?:\/\/.*?\))`, rep=`](-$url`)
+        | regex_replace(pattern=`\]\(\.\./commands/(?P<fname>\w.*?)(.md)?#(?P<hash>.*?)\)`, rep=`](/commands/$fname#$hash)`) 
+        | regex_replace(pattern=`\]\(\.\./commands/(?P<fname>\w.*?)(.md)?\)`, rep=`](/commands/$fname)`)
         | regex_replace(pattern=`\]\(\.\./commands/#(?P<hash>\w.*?)\)`, rep=`](/commands/#$hash)`) 
         | regex_replace(pattern=`\]\((?P<fname>\w.*?)(.md)?#(?P<hash>.*?)\)`, rep=`](/docs/topics/$fname#$hash)`)
+        | regex_replace(pattern=`\]\((?P<fname>.*?).png\)`, rep=`](/docs/topics/$fname.png)`) 
+        | regex_replace(pattern=`\]\((?P<fname>.*?).gif\)`, rep=`](/docs/topics/$fname.gif)`) 
         | regex_replace(pattern=`\]\((?P<fname>\w.*?)(.md)?\)`, rep=`](/docs/topics/$fname)`) 
-        | regex_replace(pattern=`\]\(\/docs\/topics/http\:`, rep=`](http:`) 
-    }}
+        | regex_replace(pattern=`\]\(\-(?P<url>https?:\/\/.*?\))`, rep=`]($url`)
+        | regex_replace(pattern=`\]\(\--(?P<hash>.*?\))`, rep=`](#$hash`)
+}}
 {%- endmacro fix_links -%}

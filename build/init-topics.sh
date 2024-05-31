@@ -33,7 +33,7 @@ done
 
 echo "Topic stub files created."
 
-for fname in $(find $1 -maxdepth 1  -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg")
+for fname in $(find $1 -maxdepth 1  -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif")
 do
     base=${fname##*/}
     cp ${fname} ./content/docs/topics/${base}

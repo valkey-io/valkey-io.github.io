@@ -33,5 +33,9 @@
 <hr />
 {% endif %}
 {%- set content_with_fixed_links = docs::fix_links(content= page_contents) -%}
-{{ content_with_fixed_links | markdown | safe }}
+{% if config.extra.publish_hold is containing(page.path) %}
+    <p><code>{{ page.path }}</code> may be available after revisions.</p>
+{% else %}
+    {{ content_with_fixed_links | markdown | safe }}
+{% endif %}
 {% endblock main_content %}
