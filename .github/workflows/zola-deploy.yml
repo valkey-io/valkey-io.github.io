@@ -33,7 +33,12 @@ jobs:
           ./build/init-topics.sh ../valkey-doc/topics 
           ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands
 
-      - name: Build and deploy
+#      - name: Build and deploy
+#        uses: shalzz/zola-deploy-action@v0.18.0
+#        env:
+#          PAGES_BRANCH: gh-pages
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build only
         uses: shalzz/zola-deploy-action@v0.18.0
         env:
-          PAGES_BRANCH: gh-pages
+          BUILD_ONLY: true
