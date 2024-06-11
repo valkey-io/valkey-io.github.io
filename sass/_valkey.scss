@@ -263,6 +263,12 @@ p {
     width: 100%;
     height: auto;
   }
+
+  .container.right-aside iframe {
+    @media all and (max-width: 768px) {
+      width: 100%;
+    }
+  }
 }
 
 .page-title {
