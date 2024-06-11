@@ -1,0 +1,44 @@
+name: Zola on GitHub Pages
+
+on:
+  push:
+    branches:
+      - prod_zola
+  
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout prod
+        uses: actions/checkout@v4
+        with:
+          ref: prod_zola
+          path: website
+
+      - name: Checkout valkey-doc
+        uses: actions/checkout@v4
+        with:
+          repository: valkey-io/valkey-doc
+          path: valkey-doc
+
+      - name: Checkout valkey
+        uses: actions/checkout@v4
+        with:
+          repository: valkey-io/valkey
+          path: valkey
+          
+      - name: Init commands and topics
+        run: |
+          cd website
+          ./build/init-topics.sh ../valkey-doc/topics 
+          ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands
+
+#      - name: Build and deploy
+#        uses: shalzz/zola-deploy-action@v0.18.0
+#        env:
+#          PAGES_BRANCH: gh-pages
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build only
+        uses: shalzz/zola-deploy-action@v0.18.0
+        env:
+          BUILD_ONLY: true
