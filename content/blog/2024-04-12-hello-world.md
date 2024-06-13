@@ -5,8 +5,10 @@ aliases = [
     "/blog/update/2024/04/hello-world/"
 ]
 description= "Welcome! For the inaugural blog post on valkey.io, I’d like to recap the story so far, what to look forward to, and then describe how this blog works."
-[extra]
 authors= ["kyledvs"]
+
+[extra]
+
 categories= "update"
 +++
 

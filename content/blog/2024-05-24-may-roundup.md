@@ -5,9 +5,9 @@ aliases= [
     "/blog/modules/2024/05/may-roundup/"
 ]
 description= "It's become clear that people want to talk about Valkey and have been publishing blog posts/articles fervently. Here you'll find a collection of all the post I'm aware of in the last few weeks."
+authors= ["kyledvs"]
 
 [extra]
-authors= ["kyledvs"]
 categories= "update"
 +++
 
