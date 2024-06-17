@@ -4,6 +4,10 @@ compile_sass = true
 
 build_search_index = true
 
+taxonomies = [
+    { name = "Technical Blog Posts", feed = true}
+]
+
 [markdown]
 highlight_code = true
 

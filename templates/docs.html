@@ -1,12 +1,27 @@
-{% extends "fullwidth.html" %}
+{% extends "right-aside.html" %}
 
 {% import "macros/docs.html" as docs %}
 
 {% block main_content %}
+<h1>{{ section.title }}</h1>
+
+
 {% set list = [] %}
 {% if section.pages | length == 0 %}
 <strong>No docs pages found.</strong> You likely need to build the documentation pages. See "Building additional content" in README.md file.
 {% endif %}
+
+{% set docs_file_contents = docs::load(slug= "index") %}
+{% set frontmatter = docs::extract_frontmatter(content= docs_file_contents) %}
+{% set page_contents = docs::extract_markdown(content= docs_file_contents) %}
+{%- set content_with_fixed_links = docs::fix_links(content= page_contents) -%}
+
+
+{{ content_with_fixed_links  | markdown | safe }}
+{% endblock main_content %}
+
+{% block related_content %}
+<h2>Alphabetical Index</h2>
 {% for page in section.pages %}
     {% set docs_file_contents = docs::load(slug= page.slug) %}
     {% set frontmatter = docs::extract_frontmatter(content= docs_file_contents) %}
@@ -26,7 +41,9 @@
     {% set topic_list = load_data(literal= "[" ~ joined_list ~ "]", format="json") | sort(attribute="title") %} 
     
     {% for topic in topic_list %}
-        <a href="{{ topic.path }}">{{ topic.title }}</a> {{ topic.description | safe }} <br />
+        <div class="index-entry">
+            <a href="{{ topic.path }}">{{ topic.title }}</a> {{ topic.description | safe }} <br />
+        </div>
     {% endfor %}
 
-{% endblock main_content %}
+{% endblock related_content %}

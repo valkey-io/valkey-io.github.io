@@ -530,6 +530,16 @@ pre table {
   border-collapse: collapse;
 }
 
+.index-entry {
+  border: 1px solid $line;
+  border-radius: 3px;
+  padding: 0.5em 1em;
+  margin-bottom: 0.5em;
+  a {
+    display: block;
+  }
+}
+
 .command-entry {
   border-bottom: 1px dotted $line;
   margin-top: 0.5rem;

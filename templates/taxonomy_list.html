@@ -1,0 +1,17 @@
+{% extends "right-aside.html" %}
+
+{% block main_content %}
+<h1>{{ taxonomy.name }}</h1>
+<ul>
+    {% for term in terms %}
+        <li><a href="{{ term.path }}">{{ term.name }}</a>
+            <ul>
+                {% for page in term.pages %}
+                    <li><a href="{{ page.path }}">{{ page.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock main_content %}
