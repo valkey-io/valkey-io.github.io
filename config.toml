@@ -4,6 +4,8 @@ compile_sass = true
 
 build_search_index = true
 
+generate_feed = true
+
 [markdown]
 highlight_code = true
 

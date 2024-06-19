@@ -4,9 +4,9 @@
 <h1>{{ page.title }}</h1>
 <div class="meta">
   {{ page.date | date(format="%Y-%m-%d") }}
-  {% if page.extra and page.extra.authors %}
+  {% if page.authors %}
     &middot; 
-    {% for author in page.extra.authors %}
+    {% for author in page.authors %}
       {% set author_path = "authors/" ~ author ~ ".md" %}
       {% set author_page = get_page(path=author_path) %}
       <em>{{ author_page.title }}</em>{% if loop.last != true %},{% endif %}
@@ -28,8 +28,8 @@
 
 {% endblock main_content %}
 {% block related_content %}
-{% if page.extra and page.extra.authors %}
-  {% for author in page.extra.authors %}
+{% if page.authors %}
+  {% for author in page.authors %}
     {% set author_path = "authors/" ~ author ~ ".md" %}
     {% set author_page = get_page(path=author_path) %}
     {% include "includes/author_panel.html" %}
