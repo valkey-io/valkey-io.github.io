@@ -1,0 +1,9 @@
+{% extends "right-aside.html" %}
+
+
+{% block subhead_content %}
+{% if config.extra.taxonomies and config.extra.taxonomies[taxonomy.slug] and config.extra.taxonomies[taxonomy.slug].heading %}
+<h1 class="page-title">{{ config.extra.taxonomies[taxonomy.slug].heading }}</h1>
+{% endif  %}
+{% endblock subhead_content %}
+

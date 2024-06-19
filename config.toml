@@ -5,7 +5,7 @@ compile_sass = true
 build_search_index = true
 
 taxonomies = [
-    { name = "Technical Blog Posts", feed = true}
+    { name = "Tutorials", feed = true}
 ]
 
 [markdown]
@@ -58,3 +58,6 @@ publish_hold = [
     "/docs/topics/protocol/",
     "/docs/topics/rdd/"
 ]
+
+[extra.taxonomies.tutorials]
+heading = "Documentation"

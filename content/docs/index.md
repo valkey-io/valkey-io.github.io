@@ -1,9 +1,9 @@
 +++
-title = "Docs"
+title = "Documentation"
 template = "fullwidth.html"
 page_template = "docs-page.html"
 +++
 
 * [Command Reference](../commands/)
 * [Documentation by Topic](./topics/)
-* [Technical Blog Posts](/technical-blog-posts/)
+* [Tutorials](/tutorials/)
