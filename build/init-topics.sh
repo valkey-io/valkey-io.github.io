@@ -1,6 +1,6 @@
 #!/bin/bash
 # See README for usage
-# This file will create stub files for all the docs/topics.
+# This file will create stub files for all the topics.
 
 # first check to make sure there are arguments
 if [ -z "$1" ]; then
@@ -21,11 +21,12 @@ for fname in $(find $1 -maxdepth 1  -iname "*.md")
 do
     base=${fname##*/}
     topic=${base%.*}
-    if [[ "$topic" != "index" ]]; then 
-        cat << EOF > "./content/docs/topics/$topic.md"
+    if [[ "$topic" != "index" ]]; then
+        cat << EOF > "./content/topics/$topic.md"
 +++
 # This is a generated stub file.
 # To edit the content see /topic/$topic.md in the 'valkey-doc' repo
+aliases = ["/docs/topics/$topic/"]
 +++
 EOF
 fi
@@ -36,6 +37,6 @@ echo "Topic stub files created."
 for fname in $(find $1 -maxdepth 1  -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif")
 do
     base=${fname##*/}
-    cp ${fname} ./content/docs/topics/${base}
+    cp ${fname} ./content/topics/${base}
 done
 echo "Copied images to topics directory."

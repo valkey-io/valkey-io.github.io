@@ -4,11 +4,11 @@ template = "fullwidth.html"
 page_template = "docs-page.html"
 +++
 
-* [Command Reference](../commands/)
-* [All Documentation Topics](./topics/)
+* [Command Reference](/commands/)
+* [All Documentation Topics](/topics/)
 * Management
-  * [Persistence](/docs/topics/persistence/)
+  * [Persistence](/topics/persistence/)
   * Security
-    * [ACL](/docs/topics/acl/)
+    * [ACL](/topics/acl/)
 * Valkey Manual
-  * [Keyspace Notifications](/docs/topics/keyspace/)
+  * [Keyspace Notifications](/topics/keyspace/)

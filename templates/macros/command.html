@@ -53,9 +53,9 @@
 {%- endmacro load_command_json -%}
 
 {%- macro fix_links(content) -%}
-{{ content 
-    | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md#(?P<hash>.*?)\)`, rep=`](/docs/topics/$fname#$hash)`) 
-    | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md\)`, rep=`](/docs/topics/$fname)`) 
-    | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+\.\./topics/(?P<fname>.*?).md`, rep=`[$token]: /docs/topics/$fname`)
+{{ content
+    | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md#(?P<hash>.*?)\)`, rep=`](/topics/$fname#$hash)`)
+    | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md\)`, rep=`](/topics/$fname)`)
+    | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+\.\./topics/(?P<fname>.*?).md`, rep=`[$token]: /topics/$fname`)
     }}
 {%- endmacro fix_links -%}
