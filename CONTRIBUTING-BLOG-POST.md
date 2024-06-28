@@ -7,7 +7,7 @@ The contribution model is lightweight, transparent, and uses well-understood ope
 
 Before you begin, it’s a good idea to setup an environment to write, test, and contribute your blog post.
 First, [fork the website repo](https://github.com/valkey-io/valkey-io.github.io), then clone the website to your local environment.
-The general workflow is to write your post locally in a branch, confirm that it looks the way you want , then contribute your changes as a pull request.
+The general workflow is to write your post locally in a branch, confirm that it looks the way you want, then contribute your changes as a pull request.
 
 The README has instructions on how to get up-and-running with Zola, the software used to build and test the website.
 
@@ -27,7 +27,7 @@ Write your blog post in markdown.
 Generally, you’ll be better off sticking to headings, links, paragraphs and code blocks (there is no prohibition of using other markdown features though).
 A few writing tips:
 
-1. Blog posts should be consumable in one setting.
+1. Blog posts should be consumable in one sitting.
 Aim for 500-1,200 words.
 2. Blog posts should cover a topic entirely.
     1. If you start writing and realize that your post will be super long, consider refining your topic.
