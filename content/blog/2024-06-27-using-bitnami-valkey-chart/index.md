@@ -10,6 +10,8 @@ authors=["rafariossaa"]
 
 Valkey is a high-performance key/value datastore that supports workloads such as caching, and message queues, supporting many data types including strings, numbers, hashes, bitmaps, and more. Valkey can run in standalone or cluster mode for replication and high availability.
 
+[Bitnami][https://bitnami.com/] offers a number of secure, up-to-date, and easy to deploy charts for a number of popular open source applications.
+
 This blog will serve as walk-through on how you can deploy and use the [Bitnami Helm chart for Valkey](https://github.com/bitnami/charts/tree/main/bitnami/valkey).
 
 # Assumptions and prerequisites
@@ -25,9 +27,9 @@ The sections below describe the steps to configure the deployment, get and deplo
 
 ## Getting and deploying the Bitnami package for Valkey Helm chart
 
-You can deploy the free-to-consume community version of the Bitnami-packaged Valkey Helm chart from the Bitnami Application Catalog. Alternatively, if you have access to an enterprise Tanzu Application Catalog instance, it can also be deployed from there.
+You can deploy the the [community](https://github.com/bitnami/charts/blob/main/LICENSE.md) Bitnami-packaged Valkey Helm chart from the open source Bitnami Application Catalog. Alternatively, if you have access to an enterprise Tanzu Application Catalog instance, it can also be deployed from there.
 
-### Deploying the community version of the chart through Bitnami Application Catalog
+### Deploying the open source version of the chart through Bitnami Application Catalog
 
 To deploy the chart in its namespace, run the following commands:
 
@@ -47,9 +49,11 @@ The following steps describe navigating the Tanzu Application Catalog and gettin
 
 ![Tanzu Application Catalog](images/using-bitnami-valkey-chart_2.png)
 
-![Bitnami Package](images/using-bitnami-valkey-chart_3.pn)
+![Bitnami Package Content](images/using-bitnami-valkey-chart_3.png)
 
-After this, the steps for deploying the chart will be the same as the ones described in the following sections to deploy its community version.## Obtaining the external IP address and logging into Valkey
+After this, the steps for deploying the chart will be the same as the ones described in the following sections to deploy its community version.
+
+## Obtaining the external IP address and logging into Valkey
 
 Wait for the deployment to complete and check that all *myvalkey* pods are Running.
 
@@ -111,16 +115,16 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> import redis
 >>> creds_provider = redis.UsernamePasswordCredentialProvider("", "test_pwd")
 >>> user_connection = redis.Redis(host="myvalkey-master.valkey", port=6379, credential_provider=creds_provider)
->>> 
+>>>
 >>> user_connection.ping()
 True
->>> 
+>>>
 >>> user_connection.set('foo_key', 'bar')
 True
->>> 
+>>>
 >>> user_connection.get('foo_key')
 b'bar'
->>> 
+>>>
 >>> user_connection.hset('user-session:123', mapping={
 ...     'name': 'John',
 ...     "surname": 'Smith',
@@ -128,7 +132,7 @@ b'bar'
 ...     "age": 29
 ... })
 4
->>> 
+>>>
 >>> user_connection.hgetall('user-session:123')
 {b'name': b'John', b'surname': b'Smith', b'company': b'Redis', b'age': b'29'}
 ```
@@ -168,9 +172,10 @@ service/mywp-wordpress LoadBalancer 10.100.136.181 192.168.49.50   80:31116/TCP,
 
 Using the external IP, browse to the admin page and log in using the previously set credentials.
 
-You will be able to see the WordPress administrator UI where you install and activate the Redis Object Cache plugin. After enabling it, wait for some metrics to appear
+You will be able to see the WordPress administrator UI where you can search for `Redis Object Cache` plugin, and then install and activate it. After enabling it, wait for some metrics to appear:
 
 ![Redis Object Cache Metrics](images/using-bitnami-valkey-chart_4.png)
+
 This is only a drop in the bucket of what can be done with Valkey. Thereafter you could easily integrate Valkey into your projects.
 
 # Support and resources
