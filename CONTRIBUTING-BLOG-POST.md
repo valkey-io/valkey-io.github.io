@@ -40,7 +40,7 @@ Aim for 500-1,200 words.
 There is a ton of things to say about Valkey without venturing into comparisons with other products and projects.
 6. Have a call-to-action.
 What do you want your readers to do next after they finish your blog post? The call-to-action can be something like asking a users to contribute, try some sample code, or come to an event.
-You can even just invite users to reader related content.
+You can even just invite readers to consume related content.
 7. Speak for yourself.
 Blog posts are attributed to a person, not the project, so feel free to have opinions and write in the first (I) or second (you) grammatical person.
 Unless you have specific authority (and you probably don’t!), avoid speaking for groups of people.
