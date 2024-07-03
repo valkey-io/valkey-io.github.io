@@ -10,9 +10,9 @@ authors=["rafariossaa"]
 
 Valkey is a high-performance key/value datastore that supports workloads such as caching, and message queues, supporting many data types including strings, numbers, hashes, bitmaps, and more. Valkey can run in standalone or cluster mode for replication and high availability.
 
-[Bitnami][https://bitnami.com/] offers a number of secure, up-to-date, and easy to deploy charts for a number of popular open source applications.
+[Bitnami](https://bitnami.com/) offers a number of secure, up-to-date, and easy to deploy charts for a number of popular open source applications.
 
-This blog will serve as walk-through on how you can deploy and use the [Bitnami Helm chart for Valkey](https://github.com/bitnami/charts/tree/main/bitnami/valkey).
+This blog will serve as a walk-through on how you can deploy and use the [Bitnami Helm chart for Valkey](https://github.com/bitnami/charts/tree/main/bitnami/valkey).
 
 # Assumptions and prerequisites
 
@@ -44,7 +44,7 @@ The following steps describe navigating the Tanzu Application Catalog and gettin
 
 1. Navigate to [app-catalog.vmware.com](https://app-catalog.vmware.com) and sign in to your catalog with your VMware account.
 ![Tanzu Library](images/using-bitnami-valkey-chart_1.png)
-3. In the My Applications section, search for the Valkey and request it for your catalog. It is supported by Photon, Ubuntu, RHEL UBI, and Debian Linux distributions. On the next screen, you will find the instructions for deploying the chart on your cluster. Make sure that your cluster is up and running.
+3. In the My Applications section, search for Valkey and request it for your catalog. It is supported by Photon, Ubuntu, RHEL UBI, and Debian Linux distributions. On the next screen, you will find the instructions for deploying the chart on your cluster. Make sure that your cluster is up and running.
 4. Execute **kubectl cluster-info**, then run the commands you will find in the Consume your Helm chart section.
 
 ![Tanzu Application Catalog](images/using-bitnami-valkey-chart_2.png)
@@ -184,4 +184,4 @@ The Bitnami package for Valkey is available in both the community version, throu
 
 To solve the problems you may have with the Bitnami community packages—including deployment support, operational support, and bug fixes—please open an issue in the Bitnami [Helm charts](https://github.com/bitnami/charts) or [containers](https://github.com/bitnami/containers) GitHub repositories. Also, if you want to contribute to the catalog, feel free to send us a [pull request](https://github.com/bitnami/containers/pulls), and the team will check it and guide you in the process for a successful merge.
 
-If you are interested in learning more about the Tanzu Application Catalog in general, check out the [product webpage](https://tanzu.vmware.com/application-catalog) and [contact us](https://tanzu.vmware.com/application-catalog#get-started).
+If you are interested in learning more about the Tanzu Application Catalog in general, check out the [product webpage](https://tanzu.vmware.com/application-catalog).
