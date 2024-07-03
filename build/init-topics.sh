@@ -14,8 +14,16 @@ if [ ! -d "$1" ]; then
     exit 1
 fi
 
+# check for old style /docs/topics
+if [ -e "content/docs/topics" ]; then
+    echo "Documentation topic files have moved. Delete content/docs/topics before proceeding."
+    exit 1
+fi
 
-ln -s $1 ./build-topics 
+# Create symlink to topics, except if it already exists and points to the same directory.
+if [ ! -L build-topics -o "$(readlink build-topics)" != "$1" ]; then
+    ln -s $1 ./build-topics
+fi
 
 for fname in $(find $1 -maxdepth 1  -iname "*.md")
 do
@@ -32,7 +40,7 @@ EOF
 fi
 done
 
-echo "Topic stub files created."
+echo "Topic stub files created at content/topics."
 
 for fname in $(find $1 -maxdepth 1  -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif")
 do
