@@ -1,4 +1,5 @@
 base_url = "https://valkey.io"
+title = "Valkey"
 
 compile_sass = true
 
@@ -19,40 +20,40 @@ command_json_path = "../build-command-json/"
 doc_topic_path = "../build-topics/"
 
 review_list = [
-    "/docs/topics/license/",
-    "/docs/topics/admin/",
-    "/docs/topics/distlock/",
-    "/docs/topics/eval-intro/",
-    "/docs/topics/faq/",
-    "/docs/topics/functions-intro/",
-    "/docs/topics/hashes/",
-    "/docs/topics/internals-eventlib/",
-    "/docs/topics/internals-vm/",
-    "/docs/topics/internals/",
-    "/docs/topics/latency/",
-    "/docs/topics/lua-api/",
-    "/docs/topics/modules-blocking-ops/",
-    "/docs/topics/modules-intro/",
-    "/docs/topics/pipelining/",
-    "/docs/topics/programmability/",
-    "/docs/topics/protocol/",
-    "/docs/topics/pubsub/",
-    "/docs/topics/rdd/",
-    "/docs/topics/replication/",
-    "/docs/topics/security/",
-    "/docs/topics/sentinel-clients/",
-    "/docs/topics/sentinel/",
-    "/docs/topics/transactions/",
-    "/docs/topics/cluster-spec/",
-    "/docs/topics/history/"
+    "/topics/license/",
+    "/topics/admin/",
+    "/topics/distlock/",
+    "/topics/eval-intro/",
+    "/topics/faq/",
+    "/topics/functions-intro/",
+    "/topics/hashes/",
+    "/topics/internals-eventlib/",
+    "/topics/internals-vm/",
+    "/topics/internals/",
+    "/topics/latency/",
+    "/topics/lua-api/",
+    "/topics/modules-blocking-ops/",
+    "/topics/modules-intro/",
+    "/topics/pipelining/",
+    "/topics/programmability/",
+    "/topics/protocol/",
+    "/topics/pubsub/",
+    "/topics/rdd/",
+    "/topics/replication/",
+    "/topics/security/",
+    "/topics/sentinel-clients/",
+    "/topics/sentinel/",
+    "/topics/transactions/",
+    "/topics/cluster-spec/",
+    "/topics/history/"
 ]
 
 publish_hold = [
-    "/docs/topics/protocol/",
-    "/docs/topics/license/",
-    "/docs/topics/internals-eventlib/",
-    "/docs/topics/internals-vm/",
-    "/docs/topics/internals/",
-    "/docs/topics/protocol/",
-    "/docs/topics/rdd/"
+    "/topics/protocol/",
+    "/topics/license/",
+    "/topics/internals-eventlib/",
+    "/topics/internals-vm/",
+    "/topics/internals/",
+    "/topics/protocol/",
+    "/topics/rdd/"
 ]

@@ -5,6 +5,6 @@ build-command-json
 build-topics
 content/commands/*
 !content/commands/_index.md
-content/docs/topics/*
-!content/docs/topics/_index.md
+content/topics/*
+!content/topics/_index.md
 _site

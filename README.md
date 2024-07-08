@@ -39,11 +39,11 @@ The instructions show how to use scripts that create symbolic links to the `valk
 
 ### Building the documentation topics
 
-Documentation 'topics' (i.e. `/docs/topics/keyspace/`, `/docs/topics/encryption/`, `/docs/topics/transactions/`) sources content from `valkey-io/valkey-doc`.
+Documentation 'topics' (i.e. `/topics/keyspace/`, `/topics/encryption/`, `/topics/transactions/`) sources content from `valkey-io/valkey-doc`.
 
 ```mermaid
 flowchart TD
-    A[Webpage: /docs/topics/keyspace/ ]
+    A[Webpage: /topics/keyspace/ ]
     A --> B[Template: valkey-io/valkey-website]
     B --> H[Repo: valkey-io/valkey-doc ] --> I[File: /topics/keyspace.md ] --> Y[Topic content]
 ```
@@ -58,7 +58,7 @@ From the root directory of this repo run:
 ```
 
 Then, restart Zola.
-Point your browser at `http://127.0.0.1:1111/docs/topics/` and you should see the fully populated list of topics.
+Point your browser at `http://127.0.0.1:1111/topics/` and you should see the fully populated list of topics.
 All files created in this process are ignored by git.
 Commit your changes to your local copy of `valkey-io/valkey-doc`.
 
