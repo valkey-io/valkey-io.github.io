@@ -1,4 +1,5 @@
 base_url = "https://valkey.io"
+title = "Valkey"
 
 compile_sass = true
 
