@@ -1,6 +1,6 @@
 +++
 title="Using Bitnami's Valkey chart"
-date=2024-06-27 01:01:01
+date=2024-07-09 01:01:01
 description="An introductory example using Bitnami's Valkey chart"
 aliases= [
     "/blog/2024/06/using-bitnami-valkey-chart/"
