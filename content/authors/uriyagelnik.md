@@ -5,5 +5,4 @@ extra:
     github: uriyage
 ---
 
-Uri is a software engineer at AWS 
- 
+Uri Yagelnik is a Software Engineer at AWS with over a decade of experience, Uri is passionate about distributed systems, databases, and performance optimization. In his spare time, he enjoys hiking with his family and reading.
