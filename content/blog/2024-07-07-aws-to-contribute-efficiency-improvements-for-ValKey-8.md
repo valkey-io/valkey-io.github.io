@@ -16,7 +16,7 @@ authors= [ "dantouitou", "uriyagelnik"]
 +++
 Valkey 8.0, set for release in September 2024, brings major performance enhancements through improved multi-threading.
 This update aims to significantly boost throughput and reduce latency across various hardware configurations.
-Read on to learn more about the upcoming features in Valkey 8.0, including the innovative I/O threading implementation and its impact on performance and efficiency.
+Read on to learn more about the new innovative I/O threading implementation and its impact on performance and efficiency.
 
 ### Our Commitment to performance and efficiency
 At AWS, we have hundreds of thousands of customers using Amazon ElastiCache and Amazon MemoryDB.
