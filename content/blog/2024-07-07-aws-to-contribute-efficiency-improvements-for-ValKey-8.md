@@ -14,7 +14,7 @@ description= "Better efficiency reduces cost, improves latency and makes our env
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "dantouitou", "uriyagelnik"]
 +++
-Valkey 8.0, set for release in September 2024, brings major performance enhancements through improved multi-threading.
+Valkey 8.0, set for release in September 2024, will bring major performance enhancements through a variety of improvements including a new multi-threaded architecture.
 This update aims to significantly boost throughput and reduce latency across various hardware configurations.
 Read on to learn more about the new innovative I/O threading implementation and its impact on performance and efficiency.
 
