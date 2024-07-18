@@ -22,14 +22,6 @@ Read on to learn more about the new innovative I/O threading implementation and 
 At AWS, we have hundreds of thousands of customers using Amazon ElastiCache and Amazon MemoryDB.
 Feedback we continuously hear from end users is that they need better absolute performance and want to squeeze more performance from their clusters.
 
-For absolute performance per node, users sometimes face challenges with hot keys or other limitations that prevent them from scaling out.
-They also need better latencies at high percentiles.
-For efficiency, users are constantly trying to optimize their costs and get more out of their hardware.
-
-Besides performance, efficiency is also seen as a way to improve resilience.
-For example, with fork-based snapshotting and full-sync replication, the longer it takes, the more memory is consumed by copied-on-write pages and the replica output buffer, often resulting in high swapping and erratic behavior.
-By reducing execution time, one can achieve a more predictable memory usage and greater stability.
-
 Our commitment to meeting these performance and efficiency needs led us down a path of improving the multi-threaded performance of our ElastiCache and MemoryDB services, through features we called [Enhanced IO](https://aws.amazon.com/blogs/database/boosting-application-performance-and-reducing-costs-with-amazon-elasticache-for-redis/) and [Multiplexing](https://aws.amazon.com/blogs/database/enhanced-io-multiplexing-for-amazon-elasticache-for-redis/).
 Today we are excited to dive into how we are sharing our learnings from this performance journey by contributing a major performance improvement to the Valkey project.
 
@@ -37,8 +29,13 @@ Today we are excited to dive into how we are sharing our learnings from this per
 
 Valkey's common approach to performance and memory improvement is scaling out by adding more shards to the cluster.
 However, the availability of more powerful nodes offers additional flexibility in application design.
-Higher-capacity shards can increase cluster capacity, improve resilience to request surges and provide scaling for hot keys and large collections that can't be addressed by scaling alone.
-They also provide solutions for hot keys and large collections that can't be addressed by scaling out alone.
+Higher-capacity shards can increase cluster capacity, improve resilience to request surges, and reduce latencies at high percentiles.
+This approach is particularly beneficial for Valkey users with workloads that don't respond well to horizontal scaling, such as hot keys and large collections that can't be effectively distributed across multiple shards.
+
+Another challenge with horizontal scaling comes from multi-key operations like MGET.
+These multi-key operations require all involved keys to reside in the same slot, often resulting in users utilizing only a small number of slots, which can significantly restrict the cluster's scalability potential.
+Larger shards can alleviate these constraints by accommodating more keys and larger collections within a single node.
+
 While larger shards offer these benefits, they come with trade-offs.
 Full synchronization for very large instances can be risky, and losing a large shard can be more impactful than losing a smaller one.
 Conversely, managing a cluster with too many small instances can be operationally complex.
