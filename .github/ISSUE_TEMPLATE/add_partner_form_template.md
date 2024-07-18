@@ -8,7 +8,7 @@ assignees: ''
 
 **Add Partner Form**
 
-This is an issue created to request the Valkey Project adding a company as a partner in the website. If you want your company to be added please make sure please make sure the content is factual and related to the Valkey project.
+This is an issue created to request the Valkey Project adding a company as a partner in the website. If you want your company to be added please make sure the content is factual and related to the Valkey project.
 
 **Company Information**
 
