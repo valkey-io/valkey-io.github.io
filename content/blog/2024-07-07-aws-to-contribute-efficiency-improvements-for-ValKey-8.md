@@ -46,7 +46,7 @@ Starting with version 8, Valkey users will benefit from an increase in multi-thr
 ![Performance comparison between existing I/O threading implementation and the new I/O threading implementation available in Valkey 8.](/assets/media/pictures/performance_comparison.png)
 
 The data demonstrates a substantial performance improvement with the new I/O threads approach.
-Throughput increased by approximately 230%, rising from 360K to 1.19M requests per second.
+Throughput increased by approximately 230%, rising from 360K to 1.19M requests per second compared to Valkey 7.2
 Latency metrics improved across all percentiles, with average latency decreasing by 69.8% from 1.792 ms to 0.542 ms.
 
 Tested with 8 I/O threads, 3M keys DB size, 512 bytes value size, and 650 clients running sequential SET commands using AWS EC2 C7g.16xlarge instance.
