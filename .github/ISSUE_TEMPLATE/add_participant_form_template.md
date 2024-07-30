@@ -1,14 +1,14 @@
 ---
-name: 🏢 Add Partner Form
-about: Create a request to add a partner in the website
+name: 🏢 Add Participant Form
+about: Create a request to add a participant in the website
 title: "[PARTNER]"
-labels: 'partner, untriaged'
+labels: 'participant, untriaged'
 assignees: ''
 ---
 
-**Add Partner Form**
+**Add Participant Form**
 
-This is an issue created to request the Valkey Project adding a company as a partner in the website. If you want your company to be added please make sure the content is factual and related to the Valkey project.
+This is an issue created to request the Valkey Project adding a company as a participant in the website. If you want your company to be added please make sure the content is factual and related to the Valkey project.
 
 **Company Information**
 
