@@ -17,6 +17,7 @@ authors= [ "dantouitou", "uriyagelnik"]
 Valkey 8.0, set for release in September 2024, will bring major performance enhancements through a variety of improvements including a new multi-threaded architecture.
 This update aims to significantly boost throughput and reduce latency across various hardware configurations.
 Read on to learn more about the new innovative I/O threading implementation and its impact on performance and efficiency.
+This post is the first in a two-part series. The next post will dive into the new prefetch mechanism and its impact on performance.
 
 ### Our Commitment to performance and efficiency
 At AWS, we have hundreds of thousands of customers using Amazon ElastiCache and Amazon MemoryDB.
@@ -50,6 +51,7 @@ Throughput increased by approximately 230%, rising from 360K to 1.19M requests p
 Latency metrics improved across all percentiles, with average latency decreasing by 69.8% from 1.792 ms to 0.542 ms.
 
 Tested with 8 I/O threads, 3M keys DB size, 512 bytes value size, and 650 clients running sequential SET commands using AWS EC2 C7g.16xlarge instance.
+Please note that these numbers include the Prefetch change that will be described in the next blog post
 
 ### Performance Without Compromising Simplicity
 
@@ -76,5 +78,6 @@ Therefore, we decided to offload `epoll_wait` execution to the I/O threads in th
 I/O threads never sleep on `epoll`, and whenever there are pending I/O operations or commands to be executed, `epoll_wait` calls are scheduled to the I/O threads by the main thread. 
 In all other cases, the main thread executes the `epoll_wait` with the waiting time as in the original Valkey implementation
 
+In addition, before executing commands, the main thread performs a new procedure, prefetch-commands-keys, which aims to reduce the number of external memory accesses needed when executing the commands on the main dictionary. A detailed explanation of the technique used in that procedure will be described in our next blog
 ### Testing and Availability
 The enhanced performance will be available for testing in the first release candidate of Valkey, scheduled to launch in the coming weeks.
