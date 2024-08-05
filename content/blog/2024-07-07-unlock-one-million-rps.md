@@ -9,7 +9,7 @@ date= 2024-08-05 01:01:01
 # 'description' is what is shown as a snippet/summary in various contexts.
 # You can make this the first few lines of the post or (better) a hook for readers.
 # Aim for 2 short sentences.
-description= "Better efficiency reduces cost, improves latency and makes our environment greener"
+description= "Learn about the new performnace improvements in Valkey 8 which reduces cost, improves latency and makes our environment greener."
 # 'authors' are the folks who wrote or contributed to the post.
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "dantouitou", "uriyagelnik"]
