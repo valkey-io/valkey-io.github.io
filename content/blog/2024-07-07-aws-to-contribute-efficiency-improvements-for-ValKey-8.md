@@ -5,7 +5,7 @@ title= "Unlock 1 Million RPS: Experience Triple the Speed with Valkey"
 # For the most part, you can leave this as the day you _started_ the post.
 # The maintainers will update this value before publishing
 # The time is generally irrelvant in how Valkey published, so '01:01:01' is a good placeholder
-date= 2024-07-08 01:01:01
+date= 2024-08-05 01:01:01
 # 'description' is what is shown as a snippet/summary in various contexts.
 # You can make this the first few lines of the post or (better) a hook for readers.
 # Aim for 2 short sentences.
@@ -79,5 +79,6 @@ I/O threads never sleep on `epoll`, and whenever there are pending I/O operation
 In all other cases, the main thread executes the `epoll_wait` with the waiting time as in the original Valkey implementation
 
 In addition, before executing commands, the main thread performs a new procedure, prefetch-commands-keys, which aims to reduce the number of external memory accesses needed when executing the commands on the main dictionary. A detailed explanation of the technique used in that procedure will be described in our next blog
+
 ### Testing and Availability
-The enhanced performance will be available for testing in the first release candidate of Valkey, scheduled to launch in the coming weeks.
+The enhanced performance will be available for testing in the first release candidate of Valkey, available today.
