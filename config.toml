@@ -32,19 +32,7 @@ review_list = [
     "/topics/internals/",
     "/topics/latency/",
     "/topics/lua-api/",
-    "/topics/modules-blocking-ops/",
-    "/topics/modules-intro/",
-    "/topics/pipelining/",
-    "/topics/programmability/",
-    "/topics/protocol/",
-    "/topics/pubsub/",
     "/topics/rdd/",
-    "/topics/replication/",
-    "/topics/security/",
-    "/topics/sentinel-clients/",
-    "/topics/sentinel/",
-    "/topics/transactions/",
-    "/topics/cluster-spec/",
     "/topics/history/"
 ]
 
