@@ -39,7 +39,7 @@ jobs:
           ./build/init-topics.sh ../valkey-doc/topics 
           ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands
       - name: Build only
-        uses: shalzz/zola-deploy-action@v0.19.0
+        uses: shalzz/zola-deploy-action@v0.19.1
         env:
           BUILD_DIR: website
           BUILD_ONLY: true
