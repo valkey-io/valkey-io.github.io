@@ -39,15 +39,9 @@
     <link rel="alternate" type="application/atom+xml" title="Atom feed" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" />
 
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L8FMHY9BG0"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-L8FMHY9BG0');
-    </script>
+<!-- Fathom - beautiful, simple website analytics -->
+<script src="https://cdn.usefathom.com/script.js" data-site="FRZJYDAH" defer></script>
+<!-- / Fathom -->
 
     {% if page and page.extra and page.extra.head_extra %}{{ page.extra.head_extra }}{% endif %}
 </head>
