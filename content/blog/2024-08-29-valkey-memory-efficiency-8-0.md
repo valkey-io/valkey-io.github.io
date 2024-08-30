@@ -1,33 +1,23 @@
 +++
-# `title` is how your post will be listed and what will appear at the top of the post
 title= "Storing more with less: Memory Efficiency in Valkey 8"
-# `date` is when your post will be published.
-# For the most part, you can leave this as the day you _started_ the post.
-# The maintainers will update this value before publishing
-# The time is generally irrelvant in how Valkey published, so '01:01:01' is a good placeholder
 date= 2024-08-29 01:01:01
-# 'description' is what is shown as a snippet/summary in various contexts.
-# You can make this the first few lines of the post or (better) a hook for readers.
-# Aim for 2 short sentences.
 description= "Learn about the new memory efficiency improvements in Valkey 8 which reduces memory overhead, allows more data to be stored in the same amount of memory."
-# 'authors' are the folks who wrote or contributed to the post.
-# Each author corresponds to a biography file (more info later in this document)
 authors= [ "hpatro"]
 +++
 
-Valkey 8.0 GA is around the corner and one of the theme is increasing overall memory efficiency. Memory overhead reduction has the obvious effect of better resource utilization, but also impacts performance. By minimizing unnecessary memory consumption, you can store more data with the same hardware resources and improve overall system responsiveness. This post is going to give a overview into how Valkey internally manages the data and its memory overhead. Additionally, it talks about the two major improvements for Valkey 8.0 that improves the overall memory efficiency.
+Valkey 8.0 GA is around the corner and one of the themes is increasing overall memory efficiency. Memory overhead reduction has the obvious effect of better resource utilization, but also impacts performance. By minimizing unnecessary memory consumption, you can store more data with the same hardware resources and improve overall system responsiveness. This post is going to give an overview into how Valkey internally manages the data and its memory overhead. Additionally, it talks about the two major improvements for Valkey 8.0 that improves the overall memory efficiency.
 
 ## Overview
 
-Valkey has two modes of operation: standalone and cluster mode. Standalone allows for one primary
-with it’s replica(s). To shard data horizontally and scale to store large amounts of data, cluster mode provides a mechanism to set up multiple primaries each with their own replica(s). 
+Valkey has two modes of operation: standalone and cluster mode. Standalone allows for one primary with it’s replica(s). To shard data horizontally and scale to store large amounts of data, cluster mode provides a mechanism to set up multiple primaries each with their own replica(s). 
+
 ![Figure 1 Standalone (left) and Cluster mode (right)](/assets/media/pictures/valkey_operation_mode.png)
 
 For both standalone and cluster mode setup, Valkey's main dictionary is a hash table with a chained linked list: The major components are a **bucket** and **dictionary entry**. A key is hashed to a bucket and each bucket points to a linked list of dictionary entries and further each dictionary entry consists of key, value, and a next pointer. Each pointer takes 8 bytes of memory usage. So, a single dictionary entry has a minimum overhead of 24 bytes.
 
 ![Figure 2 Dictionary bucket pointing to a dictionary entry](/assets/media/pictures/dictionary_bucket_and_entry_overview.png)
 
-In cluster mode, Valkey uses a concept called [hash slots](https://valkey.io/topics/cluster-tutorial/) to shard data. There are 16384 hash slots in cluster, and to compute the hash slot for a given key, the server computes the CRC16 of the key modulo 16384. Keys are distributed on basis of these slots assigned to each of the primary. The server needs to maintain additional metadata for bookkeeping i.e. slot-to-key mapping to move a slot from one primary to another. In order to maintain the slot to key mapping, two additional pointers `slot-prev` and `slot-next` (Figure 3)  are stored as metadata in each dictionary entry forming a double linked list of all keys belonging to a given slot. This further increases the overhead by 16 bytes per dictionary entry i.e. total 40 bytes.
+In cluster mode, Valkey uses a concept called [hash slots](https://valkey.io/topics/cluster-tutorial/) to shard data. There are 16,384 hash slots in cluster, and to compute the hash slot for a given key, the server computes the CRC16 of the key modulo 16,384. Keys are distributed on basis of these slots assigned to each of the primary. The server needs to maintain additional metadata for bookkeeping i.e. slot-to-key mapping to move a slot from one primary to another. In order to maintain the slot to key mapping, two additional pointers `slot-prev` and `slot-next` (Figure 3)  are stored as metadata in each dictionary entry forming a double linked list of all keys belonging to a given slot. This further increases the overhead by 16 bytes per dictionary entry i.e. total 40 bytes.
 
 ![Figure 3 Dictionary in cluster mode (Valkey 7.2) with multiple key value pair](/assets/media/pictures/dictionary_in_cluster_mode_7.2.png)
 
@@ -35,9 +25,9 @@ In cluster mode, Valkey uses a concept called [hash slots](https://valkey.io/top
 
 ### Optimization 1 - [Dictionary per slot](https://github.com/redis/redis/pull/11695)
 
-The first optimization is we have introduced a dictionary per slot (16,384 of them in total), where each dictionary stores data for a given slot. With this simplification, the cost of maintaining additional metadata for the mapping of slot to key is no longer required in Valkey 8. To iterate over all the keys in a given slot, the engine simply finds out the dictionary for a given slot and traverse all the entries in it. This reduces the memory usage per dictionary entry by 16 bytes with a small memory overhead around 1 MB per node. As cluster mode is generally used for storing large amount of keys, avoiding the additional overhead per key allows users to store more number of keys in the same amount of memory.
+The first optimization is a dictionary per slot (16,384 of them in total), where each dictionary stores data for a given slot. With this simplification, the cost of maintaining additional metadata for the mapping of slot to key is no longer required in Valkey 8. To iterate over all the keys in a given slot, the engine simply finds out the dictionary for a given slot and traverse all the entries in it. This reduces the memory usage per dictionary entry by 16 bytes with a small memory overhead around 1 MB per node. As cluster mode is generally used for storing large amount of keys, avoiding the additional overhead per key allows users to store more number of keys in the same amount of memory.
 
-![Figure 4 Dictionary in cluster mode (Valkey 8.0) with multiple key value pair](/assets/media/pictures/dictionary_in_ cluster_mode_8.0.png)
+![Figure 4 Dictionary in cluster mode (Valkey 8.0) with multiple key value pair](/assets/media/pictures/dictionary_in_cluster_mode_8.0.png)
 
 Few of the interesting challenges that comes up with the above improvements are supporting existing use cases which were optimized with a single dictionary for the entire keyspace. The usecases are:
 
@@ -60,9 +50,9 @@ Overall with this new approach, the benefits are:
 
 ### Optimization 2 - [Key embedding into dictionary entry](https://github.com/valkey-io/valkey/pull/541)
 
-After the dictionary per slot change, the memory layout of dictionary entry in cluster mode is the following, there are three pointers (key, value, and next).  The key pointer points to a SDS([simple dynamic string](https://github.com/antirez/sds/blob/master/README.md)) which contains the actual key data. As key is immutable, without bringing in much complexity, it can be embedded into the dictionary entry which has the same lifetime as the former.
+After the dictionary per slot change, the memory layout of dictionary entry in cluster mode is the following, there are three pointers (key, value, and next).  The key pointer points to a SDS ([simple dynamic string](https://github.com/antirez/sds/blob/master/README.md)) which contains the actual key data. As key is immutable, without bringing in much complexity, it can be embedded into the dictionary entry which has the same lifetime as the former.
 
-![Figure 5 Key data storage in 7.2 (left) and 8.0 (right)](static/assets/media/pictures/key_embedding.png)
+![Figure 5 Key data storage in 7.2 (left) and 8.0 (right)](/assets/media/pictures/key_embedding.png)
 
 With this new approach, the overall benefits are: 
 
@@ -126,7 +116,7 @@ used_memory_human:550.56M
 
 #### Overall Improvement
 
-![Figure 6 Overall memory usage with benchmark data](static/assets/media/pictures/memory_usage comparison.png)
+![Figure 6 Overall memory usage with benchmark data](/assets/media/pictures/memory_usage_comparison.png)
 
 #### With dictionary per slot change memory usage reduced from 693.64 MB to 598.77 MB with the same dataset
 
