@@ -259,7 +259,7 @@ p {
   height: 100%;
   margin: 0 auto;
 
-  .container.right-aside img {
+  .container img {
     width: 100%;
     height: auto;
   }
@@ -536,4 +536,26 @@ pre table {
   margin-bottom: 0.5rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+
+.author-container {
+  display: flex;
+  align-items: center;
+  background-color: $grey-lt-000; /* Light grey background */
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+}
+
+.author-photo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  margin-right: 20px;
+}
+
+.author-info {
+  flex: 1;
+  text-align: left;
 }
