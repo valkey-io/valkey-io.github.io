@@ -52,7 +52,7 @@ Overall, with this new approach, the benefits are:
 
 ### Optimization 2 - [Key embedding into dictionary entry](https://github.com/valkey-io/valkey/pull/541)
 
-After the dictionary per slot change, the memory layout of dictionary entry in cluster mode is the following, there are three pointers (key, value, and next).  The key pointer points to a SDS ([simple dynamic string](https://github.com/antirez/sds/blob/master/README.md)) which contains the actual key data. As key is immutable, without bringing in much complexity, it can be embedded into the dictionary entry which has the same lifetime as the former.
+After the dictionary per slot change, the memory layout of dictionary entry in cluster mode is the following, there are three pointers (key, value, and next). The key pointer points to a SDS ([simple dynamic string](https://github.com/antirez/sds/blob/master/README.md)) which contains the actual key data. As a key is immutable, without bringing in much complexity, it can be embedded into the dictionary entry which has the same lifetime as the former.
 
 ![Figure 5 Key data storage in 7.2 (left) and 8.0 (right)](/assets/media/pictures/key_embedding.png)
 
