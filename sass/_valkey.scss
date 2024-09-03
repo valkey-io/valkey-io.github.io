@@ -537,3 +537,14 @@ pre table {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
+
+.banner {
+  .width-limiter {
+    padding-bottom: 10px;
+  }
+
+  background-color:  $grey-lt-300;
+  color: $text;
+  
+  border-top: 1px solid $grey-dk-100;
+}
