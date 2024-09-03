@@ -1,7 +1,7 @@
 +++
 title= "Storing more with less: Memory Efficiency in Valkey 8"
 date= 2024-08-29 01:01:01
-description= "Learn about the new memory efficiency improvements in Valkey 8 which reduces memory overhead, allows more data to be stored in the same amount of memory."
+description= "Learn about the new memory efficiency improvements in Valkey 8 which reduces memory overhead, which allows more data to be stored in the same amount of memory."
 authors= [ "hpatro"]
 +++
 
@@ -33,15 +33,15 @@ A few of the interesting challenges that comes up with the above improvements ar
 
 * [Iterating the entire keyspace](https://valkey.io/commands/scan/) - Command like `SCAN` to iterate over the entire keyspace.
 * [Random key for eviction](https://valkey.io/topics/lru-cache/) - The server does random sampling of the keyspace to find ideal candidate for eviction.
-* [Finding a random key](https://valkey.io/commands/randomkey/) - Command like `RANDOMKEY` retrieves a random key from the database.
+* [Finding a random key](https://valkey.io/commands/randomkey/) - Commands like `RANDOMKEY` retrieve a random key from the database.
 
 
-It is quite possible that some slots contains more keys than others and some could be also empty which could lead the engine to traverse through all the empty dictionary for a full scan i.e. [O(N)](https://en.wikipedia.org/wiki/Big_O_notation) operation if approached naively. When picking a random key for eviction or running `RANDOMKEY` operation, the server needs to pick a non-empty slot in a performant manner. These cases require a data structure which provides the following functionality:
+In order to efficiently implement these functions, we need to be able to both find non-empty slots, to skip over empty slots during scanning, and be able to select a random slot weighted by the number of keys that it owns. These requirements require a data structure which provides the following functionality:
 
-1. Modify value for a given index (slot) - If a key gets added or removed, increment or decrement the value for that given slot by 1 respectively.
-2. Cumulative frequency until each index (slot) - For a given number representing a key between 1 and the total number of keys, return the index (slot) which covers the particular key.
+1. Modify value for a given slot - If a key gets added or removed, increment or decrement the value for that given slot by 1 respectively.
+2. Cumulative frequency until each slot - For a given number representing a key between 1 and the total number of keys, return the slot which covers the particular key.
 
-If approached naively, the former and latter operation would take O(1) and O(N) respectively. However, we want to minimize the latter operation’s time complexity and avoid regression in the operations stated above. Hence, a [binary indexed tree (BIT) or fenwick tree](https://www.topcoder.com/thrive/articles/Binary%20Indexed%20Trees) which provides the above functionality with a minimal memory overhead (~1 MB per node) and the time complexity is also bounded to O(M log N) for both the operations where M = number of modification(s) and N = number of slots. This enables skipping over empty slots efficiently while iterating over the keyspace as well as finding a slot for a given key index in logarithmic time via binary search over the cummulative sum maintained by the BIT. 
+If approached naively, the former and latter operation would take O(1) and O(N) respectively. However, we want to minimize the latter operation’s time complexity and minimally avoid in the former. Hence, a [binary indexed tree (BIT) or fenwick tree](https://www.topcoder.com/thrive/articles/Binary%20Indexed%20Trees) which provides the above functionality with a minimal memory overhead (~1 MB per node) and the time complexity is also bounded to O(M log N) for both the operations where M = number of modification(s) and N = number of slots. This enables skipping over empty slots efficiently while iterating over the keyspace as well as finding a slot for a given key index in logarithmic time via binary search over the cumulative sum maintained by the BIT. 
 
 Overall with this new approach, the benefits are: 
 
@@ -134,5 +134,5 @@ So, the drop in percentage is approximately **20.63% in overall memory usage on 
 
 ## Conclusion
 
-Through the memory efficiency achieved by introducing dictionary per slot and key embedding into dictionary entry, users should have additional capacity to store more keys per node in Valkey 8.0 (around additional 20%, might vary based on the workload). For users, upgrading from Valkey 7.2 to Valkey 8.0, the improvement should be observed automatically and no configuration changes are required. 
-Give it a try by spinning up a [Valkey cluster](https://valkey.io/download/) and join us in the [community](https://github.com/valkey-io/valkey/) to provide feedback. Further, there is an ongoing discussion around overhauling the main dictionary with a more compact memory layout and introduce an open addressing scheme which will have significant memory efficiency. More details can be found [here](https://github.com/valkey-io/valkey/issues/169).
+Through the memory efficiency achieved by introducing dictionary per slot and key embedding into dictionary entry, users should have additional capacity to store more keys per node in Valkey 8.0 (up to 20%, but it will vary based on the workload). For users, upgrading from Valkey 7.2 to Valkey 8.0, the improvement should be observed automatically and no configuration changes are required. 
+Give it a try by spinning up a [Valkey cluster](https://valkey.io/download/) and join us in the [community](https://github.com/valkey-io/valkey/) to provide feedback. Further, there is an ongoing discussion around overhauling the main dictionary with a more compact memory layout and introduce an open addressing scheme which will significantly improve memory efficiency. More details can be found [here](https://github.com/valkey-io/valkey/issues/169).
