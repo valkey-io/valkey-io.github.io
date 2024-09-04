@@ -1,6 +1,6 @@
 +++
 title= "Storing more with less: Memory Efficiency in Valkey 8"
-date= 2024-08-29 01:01:01
+date= 2024-09-04 01:01:01
 description= "Learn about the new memory efficiency improvements in Valkey 8 which reduces memory overhead, which allows more data to be stored in the same amount of memory."
 authors= [ "hpatro"]
 +++
@@ -43,7 +43,7 @@ In order to efficiently implement these functions, we need to be able to both fi
 
 If approached naively, the former and latter operation would take O(1) and O(N) respectively. However, we want to minimize the latter operation’s time complexity and minimally avoid in the former. Hence, a [binary indexed tree (BIT) or fenwick tree](https://www.topcoder.com/thrive/articles/Binary%20Indexed%20Trees) which provides the above functionality with a minimal memory overhead (~1 MB per node) and the time complexity is also bounded to O(M log N) for both the operations where M = number of modification(s) and N = number of slots. This enables skipping over empty slots efficiently while iterating over the keyspace as well as finding a slot for a given key index in logarithmic time via binary search over the cumulative sum maintained by the BIT. 
 
-Another interesting side effect is on the rehashing operation. Rehashing is CPU intensive. By default, a limited number of buckets are allocated in a dictionary and it expands/shrinks dynamically based on usage. While undergoing rehashing, all the data needs to be moved from an old dictionary to a new dictionary. With Valkey 7.2, a global dictionary being shared across all the slots, all the keys get stored under a single dictionary and each time the fill factor (number of keys / number of buckets) goes above 1, the dictionary needs to move to a larger dictionary (multiple of 2) and move a large amount of keys. As this operation is performed on the fly, it causes an increase in latency for regular command operations while it's ongoing. With the per-slot dictionary optimization, the impact of rehashing is localized to the specific dictionary undergoing the process and only a subset of key needs to be moved. 
+Another interesting side effect is on the rehashing operation. Rehashing is CPU intensive. By default, a limited number of buckets are allocated in a dictionary and it expands/shrinks dynamically based on usage. While undergoing rehashing, all the data needs to be moved from an old dictionary to a new dictionary. With Valkey 7.2, a global dictionary being shared across all the slots, all the keys get stored under a single dictionary and each time the fill factor (number of keys / number of buckets) goes above 1, the dictionary needs to move to a larger dictionary (multiple of 2) and move a large amount of keys. As this operation is performed on the fly, it causes an increase in latency for regular command operations while it's ongoing. With the per-slot dictionary optimization, the impact of rehashing is localized to the specific dictionary undergoing the process and only a subset of keys needs to be moved.
 
 Overall, with this new approach, the benefits are: 
 
