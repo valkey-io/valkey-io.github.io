@@ -10,6 +10,10 @@ generate_feeds = true
 [markdown]
 highlight_code = true
 
+# Needed to stop certain command topics from being destroyed by the slugifier
+[slugify]
+"paths" = "safe"
+
 # This is included to override any differences slugs and documentation source filenames
 [extra.slug_source_exceptions]
 "valkey-conf" = "valkey.conf"
