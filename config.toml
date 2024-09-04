@@ -57,3 +57,5 @@ publish_hold = [
     "/topics/protocol/",
     "/topics/rdd/"
 ]
+
+banner = "Register to attend the first-ever [Valkey Developer Day](https://events.linuxfoundation.org/valkey-developer-day/) on September 19 in Vienna"
