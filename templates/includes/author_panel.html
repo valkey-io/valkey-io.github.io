@@ -1,13 +1,18 @@
-<h2><a href="{{author_page.permalink}}">{{author_page.title}}</a></h2>
-{% if author_page.extra and author_page.extra.photo %} 
-<img class="author-photo" src="{{ author_page.extra.photo }}" alt="photo of {{author_page.title}}" /> 
-{% endif %}
-
-{{ author_page.content | safe }}
-<div class="author-social-media">
-  <ul>
-{% if author_page.extra and author_page.extra.github %}
-    <li><a target="_blank" href="https://github.com/{{author_page.extra.github}}"><i class="icon icon-github-square"></i> {{author_page.extra.github}}</a>
-{% endif %}
-  </ul>
+<div class="author-container">
+  <div class="author-photo-container">
+    {% if author_page.extra and author_page.extra.photo %}
+    <img class="author-photo" src="{{ author_page.extra.photo }}" alt="photo of {{author_page.title}}" />
+    {% endif %}
+  </div>
+  <div class="author-info">
+    <h2><a href="{{author_page.permalink}}">{{author_page.title}}</a></h2>
+    {{ author_page.content | safe }}
+    <div class="author-social-media">
+      <ul>
+        {% if author_page.extra and author_page.extra.github %}
+        <li><a target="_blank" href="https://github.com/{{author_page.extra.github}}"><i class="icon icon-github-square"></i> {{author_page.extra.github}}</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
 </div>
