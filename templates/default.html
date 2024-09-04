@@ -5,6 +5,13 @@
   {%- if page.extra.sectionid -%}id="{{ page.extra.sectionid }}"{%- endif -%}
   {%- if page.extra.body_class -%}class="{{ page.body_class }}"{%- endif -%}
   >
+  {%- if config.extra.banner -%}
+  <div class="banner">
+    <div class="width-limiter">
+      {{ config.extra.banner | markdown | safe}}
+    </div>
+  </div>
+  {%- endif -%}
   <div class="header">
     <div class="width-limiter">
       <a href="/" class="logo">
