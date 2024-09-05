@@ -15,6 +15,16 @@
 </div>
 
 {{ page.content | safe }}
+<div class="blog-authors">
+  <h2>About the authors</h2>
+  {% if page.authors %}
+    {% for author in page.authors %}
+      {% set author_path = "authors/" ~ author ~ ".md" %}
+      {% set author_page = get_page(path=author_path) %}
+      {% include "includes/author_panel.html" %}
+    {% endfor %}
+  {% endif %}
+</div>
 <hr />
 {% include "includes/share-buttons.html" %}
 <div class="blog-nav">
@@ -25,14 +35,4 @@
   <a class="next" href="{{page.lower.permalink}}">{{page.lower.title}} &raquo; </a>
   {% endif %}
 </div>
-
-{% endblock main_content %}
-{% block related_content %}
-{% if page.authors %}
-  {% for author in page.authors %}
-    {% set author_path = "authors/" ~ author ~ ".md" %}
-    {% set author_page = get_page(path=author_path) %}
-    {% include "includes/author_panel.html" %}
-  {% endfor %}
-{% endif %}
-{% endblock related_content%}
+{% endblock main_content%}
