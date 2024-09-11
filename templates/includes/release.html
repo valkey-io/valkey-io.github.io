@@ -1,6 +1,14 @@
 <strong>Release Date:</strong>  {{ release_date | date(format="%Y-%m-%d") }} <br/> 
 <strong>GitHub Release:</strong> <a href="https://github.com/valkey-io/valkey/releases/tag/{{release.tag}}">{{release.tag}}</a><br />
 <hr />
+
+{% if most_recent_release_page  %}
+    {% set release_meta = most_recent_release_page %}
+{% else %}
+    {% set release_meta = page %}
+{% endif %}
+
+
 {% for registry in release.container_registry %}
     <h2>{{registry.name}} <small>(<a href="{{registry.link}}">{{registry.id}}</a>)</small></h2>
     <p>Tags:</p>
