@@ -148,7 +148,7 @@ Run the benchmark from a separate instance using the following parameters:
 * Number of threads: 50 (may vary for optimal results)
 
 <pre class="inverted-code">
-./valkey-benchmark -t set -d 512 -r 3000000 -c 650 --threads 50 -h <host-name> -n 100000000000
+./valkey-benchmark -t set -d 512 -r 3000000 -c 650 --threads 50 -h &lt;host-name&gt; -n 100000000000
 </pre>
 
 > Important: When running the benchmark, it may take a few seconds for the database to get populated and for the performance to stabilize. You can adjust the `-n` parameter to ensure the benchmark runs long enough to reach optimal throughput.
