@@ -50,10 +50,10 @@ unsigned long sequentialSum(size_t arr_size, list **la) {
     return res; 
 }
 </pre>
-Executing this function on an array of 16 lists containing 10 million elements each takes approximately 20.8 seconds on a ARM processor (Graviton 3). Now consider the following alternative implementation which instead of scanning the lists separately,  interleaves the executions of the lists scans: 
+Executing this function on an array of 16 lists containing 10 million elements each takes approximately 20.8 seconds on an ARM processor (Graviton 3). Now consider the following alternative implementation which instead of scanning the lists separately,  interleaves the executions of the lists scans: 
 <pre class="inverted-code">
 unsigned long interleavedSum(size_t arr_size, list **la) {
-    list **lthreads =  malloc(arr_size * sizeof(list *)); 
+    list **lthreads = malloc(arr_size * sizeof(list *)); 
     unsigned long res = 0; 
     int n = arr_size; 
 
@@ -102,7 +102,7 @@ On a large enough set of keys, almost every memory address accessed while search
 
 ### Batching and interleaving 
 
-To overcome this inefficiency, we adopted the following approach. Every time a batch of incoming commands from the I/O threads is ready for execution, Valkey’s main thread efficiently prefetches the memory addresses needed for future lookupKey invocations for the keys involved in the commands  before executing the commands. This prefetch phase is achieved by dictPrefetch, which, similarly as with the linked list example from above, interleaves the table→dictEntry→...dictEntry→robj search sequences for all keys. This reduces the time spent on lookupKey by more than 80%. Another issue we had to address was that all the incoming parsed commands from the I/O threads were not present in the L1/L2 caches of the core running Valkey’s main thread. This was also resolved using the same method.  All the relevant code can be found in `memory_prefetch.c`. In total the impact of the memory access amortization on Valkey performance is almost 50% and it increased the requests per second to more than 1.19M rps. 
+To overcome this inefficiency, we adopted the following approach. Every time a batch of incoming commands from the I/O threads is ready for execution, Valkey’s main thread efficiently prefetches the memory addresses needed for future lookupKey invocations for the keys involved in the commands  before executing the commands. This prefetch phase is achieved by dictPrefetch, which, similarly as with the linked list example from above, interleaves the table→dictEntry→...dictEntry→robj search sequences for all keys. This reduces the time spent on lookupKey by more than 80%. Another issue we had to address was that all the incoming parsed commands from the I/O threads were not present in the L1/L2 caches of the core running Valkey’s main thread. This was also resolved using the same method.  All the relevant code can be found in [memory_prefetch.c](https://github.com/valkey-io/valkey/blob/unstable/src/memory_prefetch.c). In total the impact of the memory access amortization on Valkey performance is almost 50% and it increased the requests per second to more than 1.19M rps. 
 
 
 ### How to reproduce Valkey 8.0 performance numbers 
