@@ -1,0 +1,13 @@
+{% extends "right-aside.html" %}
+{% block subhead_content%}
+{% endblock subhead_content%}
+
+{% block main_content %}
+{{ page.content | safe }}
+
+{% include "includes/participants-buttons.html" %}
+<a href="https://learn.percona.com/percona-support-for-valkey" class="logo">
+    <img src="/img/percona.svg" alt="Percona Logo" width="60" height="60"/>
+  </a>
+
+{% endblock main_content %}
