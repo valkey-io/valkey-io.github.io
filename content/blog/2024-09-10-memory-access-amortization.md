@@ -53,7 +53,7 @@ unsigned long sequentialSum(size_t arr_size, list **la) {
 Executing this function on an array of 16 lists containing 10 million elements each takes approximately 20.8 seconds on an ARM processor (Graviton 3). Now consider the following alternative implementation which instead of scanning the lists separately,  interleaves the executions of the lists scans: 
 <pre class="inverted-code">
 unsigned long interleavedSum(size_t arr_size, list **la) {
-    list **lthreads =  malloc(arr_size * sizeof(list *)); 
+    list **lthreads = malloc(arr_size * sizeof(list *)); 
     unsigned long res = 0; 
     int n = arr_size; 
 
