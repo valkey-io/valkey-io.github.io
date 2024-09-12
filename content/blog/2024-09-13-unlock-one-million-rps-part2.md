@@ -5,7 +5,7 @@ title= "Unlock 1 Million RPS: Experience Triple the Speed with Valkey - part 2"
 # For the most part, you can leave this as the day you _started_ the post.
 # The maintainers will update this value before publishing
 # The time is generally irrelvant in how Valkey published, so '01:01:01' is a good placeholder
-date= 2024-09-11 01:01:01
+date= 2024-09-13 01:01:01
 # 'description' is what is shown as a snippet/summary in various contexts.
 # You can make this the first few lines of the post or (better) a hook for readers.
 # Aim for 2 short sentences.
