@@ -51,7 +51,7 @@ Throughput increased by approximately 230%, rising from 360K to 1.19M requests p
 Latency metrics improved across all percentiles, with average latency decreasing by 69.8% from 1.792 ms to 0.542 ms.
 
 Tested with 8 I/O threads, 3M keys DB size, 512 bytes value size, and 650 clients running sequential SET commands using AWS EC2 C7g.16xlarge instance.
-Please note that these numbers include the Prefetch change that will be described in the next blog post
+Please note that these numbers include the Prefetch change that will be described in the next [blog post](/blog/unlock-one-million-rps-part2/)
 
 ### Performance Without Compromising Simplicity
 
