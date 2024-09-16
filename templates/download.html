@@ -1,13 +1,21 @@
 {% extends "right-aside.html" %}
 
 {% block subhead_content%}
-<h1 class="page-title">Download</h1>
+<h1 class="page-title">Download Latest</h1>
 {% endblock subhead_content%}
 {% block main_content %}
+
 
 {% set release_section = get_section(path="download/releases/_index.md") %}
 {% set most_recent_release_page = release_section.pages | slice(end= 1)  %}
 {% set release_date = most_recent_release_page[0].date %}
 {% set release = most_recent_release_page[0].extra %}
+
+You can get the latest release of Valkey ({{ release.tag }}) from this page.<br />
+The <a href="./releases/">releases</a> page contains links to download all current and previous releases (including any security fixes for previous released versions).<br />
+<br />
+
+<hr />
+
 {% include "includes/release.html" %}
 {% endblock main_content %}
