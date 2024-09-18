@@ -12,3 +12,4 @@ page_template = "docs-page.html"
     * [ACL](/topics/acl/)
 * Valkey Manual
   * [Keyspace Notifications](/topics/keyspace/)
+* [Release Notes](topics/release-notes/)
