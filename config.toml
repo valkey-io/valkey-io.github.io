@@ -62,4 +62,4 @@ publish_hold = [
     "/topics/rdd/"
 ]
 
-banner = "Register to attend the first-ever [Valkey Developer Day](https://events.linuxfoundation.org/valkey-developer-day/) on September 19 in Vienna"
+banner = "Valkey 8.0.0 has [higher performance](/blog/unlock-one-million-rps/) and [better memory efficiency](/blog/valkey-memory-efficiency-8-0/). Get [Valkey 8.0.0](/download/releases/v8-0-0/) today!"
