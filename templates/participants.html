@@ -6,8 +6,15 @@
 {{ page.content | safe }}
 
 {% include "includes/participants-buttons.html" %}
-<a href="https://learn.percona.com/percona-support-for-valkey" class="logo">
-    <img src="/img/percona.svg" alt="Percona Logo" width="60" height="60"/>
-  </a>
 
+{% set participants = load_data(path="/_data/participants.yml") %}
+<div class="participant-list">
+  {% for participant in participants %}
+    <div class="participant-{{participant.name | lower() }}">
+      <a href="{{participant.link}}" class="logo">
+        <img src="{{participant.image.path}}" alt="{{participant.image.alt}}" />
+      </a>
+    </div>
+  {% endfor %}
+</div>
 {% endblock main_content %}
