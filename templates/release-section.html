@@ -28,7 +28,7 @@
         {% set major = split_ver | nth(n= 0) %}
 
         {% if major == line %}
-            <li><a href="{{ release.permalink }}"> {{ release.extra.tag }}</a> <small>(Released {{ release.date }})</small></li>
+            <li><a href="{{ release.permalink }}"> {{ release.extra.tag }}</a> <small>(Released {{ release.date | date(format="%Y-%m-%d") }})</small></li>
         {% endif %}
     {% endfor %}
 </ul>
