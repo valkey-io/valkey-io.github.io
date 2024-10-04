@@ -1,0 +1,5 @@
+- name: Percona
+  link: https://learn.percona.com/percona-support-for-valkey
+  image:
+    path: /img/percona.svg
+    alt: Percona Logo
