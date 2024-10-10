@@ -43,3 +43,8 @@ fi
 done
 
 echo "Command stub files created."
+
+grouppath="../${1}/../groups.json"
+ln -s $grouppath ./_data/groups.json
+
+echo "Created link to groups.json"
