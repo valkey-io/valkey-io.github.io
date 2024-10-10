@@ -8,3 +8,4 @@ content/commands/*
 content/topics/*
 !content/topics/_index.md
 _site
+_data/groups.json
