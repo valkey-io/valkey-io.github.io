@@ -546,6 +546,54 @@ pre table {
   
 }
 
+.index-entry {
+  padding: 0.5em 1em;
+  margin-bottom: 0.5em;
+}
+
+.block-menu ul li,
+.index-entry {
+  border: 1px solid $line;
+  border-radius: 3px;
+  a {
+    display: block;
+  }
+}
+
+.block-menu {
+  ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    list-style-type: none;
+    padding: 0;
+    gap: 1em;
+    li {
+      text-align: center;
+      padding: 1em;
+      flex: 1 1 0px;
+      a {
+        text-align: center;
+        padding-bottom: 1em;
+      }
+    }
+  }
+}
+
+.blocks-page {
+  .container {
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .block-menu ul {
+    display: block;
+    li {
+      margin-bottom: 1em;
+    }
+  }
+}
 
 
 
