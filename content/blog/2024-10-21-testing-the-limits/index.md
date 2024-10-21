@@ -150,7 +150,7 @@ Much better! Now we are seeing around 565,000 requests per second and 0.77 msec 
 
 ![A picture of an HTOP window showing all four of our CPU's at 100% utilization.](images/io_threading_htop.png)
 
-Right? Well belive it or not we can squeeze even more performance out of our little CM4! 
+Right? Well believe it or not we can squeeze even more performance out of our little CM4! 
 
 ![A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first core box is the Valkey process and in the next two there are IO Threads. The valkey process has a loop showing it communiacting with both of the IO threads. It also has a bracket showing it managing all the memory.](images/io_threading_arch.png)
 
