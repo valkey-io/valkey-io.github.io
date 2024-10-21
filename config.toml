@@ -49,5 +49,3 @@ publish_hold = [
     "/topics/protocol/",
     "/topics/rdd/"
 ]
-
-banner = "Valkey 8.0 is faster, more efficient, and more reliable. [Read more](/blog/valkey-8-ga/) or get [Valkey 8.0](/download/releases/v8-0-1/) today!"
