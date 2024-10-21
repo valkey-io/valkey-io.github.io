@@ -136,7 +136,7 @@ Wait a second... These results are worse than the ones before? We went from 416k
 
 ![A picutre of the valkey server with 4 cores represented as boxes. In each of the four core boxes there are other boxes. 2 cores have 1 IO Thread Box, 1 Core has 2 IO thread boxes, and the last one has 1 IO Thread box along with a Valkey Process box.](images/io_threads.png)
 
-We have over-perscribed our CPU. This means we've created more worker threads than CPU cores. When a thread is under constant load it is competing with other threads on that core for resources. Not to mention they are also competing with the Valkey process for resources to read IO. 
+We have over-subscribed our CPU. This means we've created more worker threads than CPU cores. When a thread is under constant load it is competing with other threads on that core for resources. Not to mention they are also competing with the Valkey process for resources to read IO. 
 
 That's why [Valkey recommends](https://github.com/valkey-io/valkey/blob/a62d1f177b7888ec88035a0a1ce600fbc2280ce7/valkey.conf#L1337-L1341) setting the number of threads to be a value less than the number of cores you have. For our little 4 core server lets set it to be 2 threads and try again.
 
