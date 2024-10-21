@@ -5,7 +5,7 @@ date= 2024-10-21 01:01:01
 authors= ["dtaivpp"]
 +++
 
-While this test is silly it's made me realize the importance of performance testing. For example, in some of the tests below I ended up managing to use all of the resources of the Raspberry Pi and achieved terrible performance. Every application has different performance characteristics so we'll walk though what factors to consider when it comes to deploying Valkey. 
+While doing extensive performance testing on a Raspberry PI is silly, it's made me realize the complexity of performance testing. For example, in some of the tests below I ended up managing to use all of the resources of the Raspberry Pi and achieved terrible performance. Every application has different performance characteristics so we'll walk though what factors to consider when it comes to deploying Valkey. 
 
 ## The test environment
 
