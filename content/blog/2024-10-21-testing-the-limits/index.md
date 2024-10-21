@@ -1,5 +1,5 @@
 +++
-title=  "Pushing the limits of Valkey on a Raspberry Pi"
+title = "Pushing the limits of Valkey on a Raspberry Pi"
 description = "While most people won't go to produciton on a Raspberry Pi we'll cover how to thoroughly performance test Valkey to understand how it will work in production."
 date= 2024-10-21 01:01:01
 authors= ["dtaivpp"]
