@@ -614,6 +614,62 @@ pre table {
   margin-right: 20px;
 }
 
+.packages-table,
+.package-manager-table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+
+  tbody tr:nth-child(odd) {
+    background-color: $grey-lt-000;
+  }
+
+  tbody {
+    tr {
+      th {
+        font-weight: 400;
+      }
+    }
+  }
+  thead {
+    tr {
+      th {
+        border-bottom: 1px solid $grey-dk-200;
+      }
+    }
+  }
+}
+
+
+.package-manager-table {
+  th:nth-child(1) {
+    width: 25%
+  }
+  th:nth-child(2) {
+    width: 25%
+  }
+
+  th, td {
+    text-align: left;
+  }
+}
+
+.packages-table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  thead th {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+  th, td {
+    text-align: center;
+  }
+  .has-package, .no-package {
+    font-size: 0.8em;
+  }
+}
+
 .author-info {
   flex: 1;
   text-align: left;
