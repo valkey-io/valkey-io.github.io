@@ -1,6 +1,6 @@
 +++
 title = "Pushing the limits of Valkey on a Raspberry Pi"
-description = "While most people won't go to produciton on a Raspberry Pi we'll cover how to thoroughly performance test Valkey to understand how it will work in production."
+description = "While most people won't go to produciton on a Raspberry Pi we'll cover how to thoroughly performance test Valkey to understand how it works in production."
 date= 2024-10-21 01:01:01
 authors= ["dtaivpp"]
 +++
@@ -15,7 +15,7 @@ For hardware we are going to be using a Raspberry Pi [Compute Module 4 (CM4)](ht
 
 Our operating system will be a 64-bit debian based operating system (OS) called [Rasbian](https://www.raspbian.org/). This distribution is specifically modified to perform well on the CM4. Valkey will run in a docker container orchestrated with docker compose. I like deploying in containers as it simplifies operations. If you'd like to follow along here is [a guide for installing Docker](https://docs.docker.com/engine/install/debian/). Make sure to continue to the [second page of the installation process](https://docs.docker.com/engine/install/linux-postinstall/) as well. It's easy to miss and skipping it could make it harder to follow along. 
 
-We'll be using two CM4s for testing. The first will host Valkey and the second will host the benchmarking software. This setup probably better reflects how most people will run in production. Benchmarking is being done with redis-benchmark because it can be installed with `sudo apt install redis-tools`. Valkey does have it's own benchmark utility that is installed Valkey instance. To use valkey-benchmark instead you would need to install Valkey on the benchmarking server or spin up a container and connect into it. Functionally they both operate nearly the same as of the writing of this article. 
+We'll be using two CM4s for testing. The first will host Valkey and the second will host the benchmarking software. This setup probably better reflects how most people will run in production. Benchmarking is being done with redis-benchmark because it can be installed with `sudo apt install redis-tools`. Valkey does have it's own benchmark utility that comes installed Valkey instance. To use valkey-benchmark instead you would need to install Valkey on the benchmarking server or spin up a container and connect into it. Functionally, they both operate nearly the same as of the writing of this article. 
 
 ![Test architecture showing two nodes: a Benchmark server with the ip of 10.0.11.221 with an arrow pointing to a Valkey server with an ip of 10.0.1.136](images/test_setup.png)
 
@@ -29,7 +29,7 @@ services:
   valkey-1:
     image: valkey/valkey:latest
     hostname: valkey1
-    command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD}
+    command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD} --io-threads ${IO_THREADS}
     volumes:
       - ./data:/data
     network_mode: host
@@ -44,6 +44,8 @@ Since we are exposing this to our internal network we will create a password for
 ```bash
 #.env
 VALKEY_PASSWORD=e41fb9818502071d592b36b99f63003019861dad
+NODE_IP=<VALKEY SERVER IP>
+IO_THREADS=1
 ```
 
 Now by running `docker compose -f valkey.yaml up -d` Valkey server will start with password we set! 
@@ -53,7 +55,7 @@ Now by running `docker compose -f valkey.yaml up -d` Valkey server will start wi
 Now we are ready to do some baseline testing. We will log into the benchmarking server. If you haven't installed redis-benchmark yet you can do so with `sudo apt install redis-tools`.  
 
 ```bash
-redis-benchmark -n 1000000 -t set,get -P 16 -q -a <PASSWORD FROM .env>  -h 10.0.1.136
+redis-benchmark -n 1000000 -t set,get -P 16 -q -a <PASSWORD FROM .env> --threads 5 -h 10.0.1.136
 ```
 
 Test breakdown:
@@ -63,20 +65,21 @@ Test breakdown:
 - `-q` - silences the output to show only the final results
 - `-a` - use the specified password
 - `-h` - run the test against the specified host
+- `--threads` - how many threads to generate test data from
 
 Honestly, I was asonished by the first set of results I got. Sure, I expected Valkey to be fast but this speed from a single board computer?? ON A SINGLE THREAD?? Its amazing. 
 
 ```bash
-redis-benchmark -n 1000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad  -h 10.0.1.136
+redis-benchmark -n 1000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad --threads 5 -h 10.0.1.136
 SET: 173040.33 requests per second, p50=4.503 msec                    
 GET: 307031.00 requests per second, p50=2.455 msec
 ```
 
-Between the two tests we averaged 240,000 requests per second with a median time of 3.45 msec (or 0.0034 seconds) for each operation. 
+Between the two tests we averaged 240,000 requests per second.  
 
 ## Raising the CPU clock speed
 
-Since Valkey is a single threaded application it makes sense that higher clock speeds would lead to more performance. I don't expect most people will overclock their servers in production. But different servers may be available with different CPU clock speeds. 
+Since Valkey is a single threaded application it makes sense that higher clock speeds would lead to more performance. I don't expect most people will overclock their servers in production. Different servers may be available with different CPU clock speeds. 
 
 **Note:** Clock speeds generally are only comparable between CPU's with a similar architecture. For example, you could reasonably compare clock speeds between an 12th generation Intel i5 and a 12th generation Intel i7. If the 12th gen i7 had a max clock speed of 5Ghz that doesnt necessarily mean it will be slower than a AMD Ryzen 9 9900X clocked at 5.6Ghz. 
 
@@ -91,62 +94,55 @@ If you're following along on a Pi of your own I've outlined the steps to overclo
     arm_freq=2200
     ```
 3. Save with cmd + x, y, enter 
-4. Restart the server and log back in `sudo restart now`
+4. Restart the Pi and log back in `sudo restart now`
 
 We've just increased the speed of the Pi by 47% by raising the clock speed from 1.5Ghz to 2.2Ghz. Now lets re-run our test and see how things look!
 
 ```bash 
-redis-benchmark -n 1000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad -h 10.0.1.136
+redis-benchmark -n 1000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad --threads 5 -h 10.0.1.136
 SET: 394368.41 requests per second, p50=1.223 msec                    
 GET: 438058.53 requests per second, p50=1.135 msec 
 ```
 
-We're up to 416,000 requests per second with a 1.2 msec (0.0012s) median latency. The mathmaticians out there might notice that this speed up is a lot more than the expected 47% increase. It's a 73% increase in requests per second and a 65% improvement in processing time. Whats happening?!
+We're up to 416,000 requests per second (reminder this is the average between the two operations). The mathmaticians out there might notice that this speed up is a lot more than the expected 47% increase. It's a 73% increase in requests per second. What's happening?!
 
-While I haven't gone to machine code to verify here is what I believe is happening. The memory controller for the CM4 also lives on the CPU. Increasing the clock speed of the CPU also increases the performance of the memory. This means we almost are doubling the expected speedup by increasing the clock speed.
+I actually had to take this one back to the Valkey team to figure out and we've yet to figure out exactly what is happening here. 
 
 ## Adding IO Threading
 
-With all these gains I was super excited to try the new [IO threading available](https://valkey.io/blog/unlock-one-million-rps/) in Valkey 8. First we will take down the previous running docker instance with `docker compose -f valkey.yaml down`. Then we will modify the file to: 
+With all these gains I was super excited to try the new [IO threading available](https://valkey.io/blog/unlock-one-million-rps/) in Valkey 8. First we will take down the previous running docker instance with `docker compose -f valkey.yaml down`. Then we will modify the `.env` file's `IO_THREADS` parameter to 5. 
 
-```yaml
-services:
-  valkey-1:
-    image: valkey/valkey:latest
-    hostname: valkey1
-    command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD} --io-threads 5
-    volumes:
-      - ./data1:/data
-    network_mode: host
+```bash
+#.env
+VALKEY_PASSWORD=e41fb9818502071d592b36b99f63003019861dad
+NODE_IP=<VALKEY SERVER IP>
+IO_THREADS=5
 
-volumes:
-  data1:
-    driver: local
 ```
 
 Then we can `docker compose -f valkey.yaml up -d` to start it again. Remote into the benchmarking server to start the test and...?
 
 ```bash 
-redis-benchmark -n 10000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad -h 10.0.1.136
+redis-benchmark -n 10000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad --threads 5 -h 10.0.1.136
 SET: 345494.75 requests per second, p50=0.911 msec                    
 GET: 327858.09 requests per second, p50=0.879 msec  
 ```
 
 Wait a second... These results are worse than the ones before? We went from 416k requests per second to 336k.... What's happening?
 
-![A picutre of the valkey server with 4 cores represented as boxes. In each of the four core boxes there are other boxes. 2 cores have 1 IO Thread Box, 1 Core has 2 IO thread boxes, and the last one has 1 IO Thread box along with a Valkey Process box.](images/io_threads.png)
+![A picture of the valkey server with 4 cores represented as boxes. In each of the four core boxes there are other boxes. 2 cores have 1 IO Thread Box, 1 Core has 2 IO thread boxes, and the last one has 1 IO Thread box along with a Valkey Process box.](images/io_threads.png)
 
-We have over-subscribed our CPU. This means we've created more worker threads than CPU cores. When a thread is under constant load it is competing with other threads on that core for resources. Not to mention they are also competing with the Valkey process for resources to read IO. 
+We have over-subscribed our CPU. This means we've created more worker threads than CPU cores. When a thread is under constant load it is competing with other threads on that core for resources. Not to mention, they are also competing with the Valkey process for resources to read IO. 
 
-That's why [Valkey recommends](https://github.com/valkey-io/valkey/blob/a62d1f177b7888ec88035a0a1ce600fbc2280ce7/valkey.conf#L1337-L1341) setting the number of threads to be a value less than the number of cores you have. For our little 4 core server lets set it to be 2 threads and try again.
+That's why [Valkey recommends](https://github.com/valkey-io/valkey/blob/a62d1f177b7888ec88035a0a1ce600fbc2280ce7/valkey.conf#L1337-L1341) setting the number of threads to be a value less than the number of cores you have. For our little 4 core server lets change the `IO_THREADS` parameter to be 2 threads in the `.env` file and try again.
 
 ```bash
-redis-benchmark -n 10000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad -h 10.0.1.136
+redis-benchmark -n 10000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad --threads 5 -h 10.0.1.136
 SET: 609050.44 requests per second, p50=0.831 msec                    
 GET: 521186.22 requests per second, p50=0.719 msec
 ```
 
-Much better! Now we are seeing around 565,000 requests per second and 0.77 msec (0.0007s) latency for requests. Thats a 35% increase in performance across both metrics! Not to mention in the picture below you can see that we have 100% utilization across all of our CPU's which means there's no more room for improvement! 
+Much better! Now we are seeing around 565,000 requests per second. Thats a 35% increase in performance across both metrics! Not to mention in the picture below you can see that we have 100% utilization across all of our CPU's which means there's no more room for improvement! 
 
 ![A picture of an HTOP window showing all four of our CPU's at 100% utilization.](images/io_threading_htop.png)
 
@@ -164,7 +160,7 @@ What we are going to do is spin up a Valkey cluster. This cluster will have indi
 
 I am not going into detail with how the keyspaces work but [here is a good 101 guide](https://valkey.io/topics/cluster-tutorial/) for understanding clustering in Valkey. 
 
-Let's to stop our previous Valkey container. Now we can create our docker compose file for starting the cluster. There are a few things I want to point out here. Because each of these are exposed on the host they will all need to be using different ports. Additionally, all of them need to be aware they are started in cluster mode so they can redirect requests to the appropriate instance. 
+Lets stop our previous Valkey container. Now we can create our docker compose file for starting the cluster. There are a few things I want to point out here. Because each of these are exposed on the host they will all need to be using different ports. Additionally, all of them need to be aware they are started in cluster mode so they can redirect requests to the appropriate instance. 
 
 ```yaml
 # valkey-cluster.yaml
@@ -214,7 +210,7 @@ kvtest-valkey-node-3-1
 kvtest-valkey-node-2-1
 ```
 
-I'll use the first one to finish the cluster creation. Once the containers have started up we have to tell them the details they need to use for the cluster. Below I am using the IP of the host and the port configurations of all the containers to create the cluster. This is because these addresses need to be accessible from the benchmarking or application servers. 
+I'll use the first container to finish the cluster creation. Once the containers have started up we have to tell them the details they need to use for the cluster. Below I am using the IP of the host and the port configurations of all the containers to create the cluster. This is because these addresses need to be accessible from the benchmarking or application servers. 
 
 ```bash
 docker exec -it kvtest-valkey-node-1-1 valkey-cli --cluster create 10.0.1.136:6379 10.0.1.136:6380 10.0.1.136:6381 -a e41fb9818502071d592b36b99f63003019861dad
@@ -223,7 +219,7 @@ docker exec -it kvtest-valkey-node-1-1 valkey-cli --cluster create 10.0.1.136:63
 Once that command is run we can run our benchmark! We do need to add the `--cluster` flag as well as several threads to generate data fast enough. Also, because this is so fast I ended up moving from 1 million requests to 10 million requests. That way it has time to fully utilize all the resources. 
 
 ```bash
-redis-benchmark -n 10000000 -t set,get -P 16 -q --threads 10 --cluster -a e41fb9818502071d592b36b99f63003019861dad -h 10.0.1.136 
+redis-benchmark -n 10000000 -t set,get -P 16 -q --threads 10 --cluster -a e41fb9818502071d592b36b99f63003019861dad --threads 5 -h 10.0.1.136 
 Cluster has 3 master nodes:
 
 Master 0: 219294612b44226fa32482871cf21025ff531875 10.0.1.136:6380
@@ -234,6 +230,6 @@ SET: 1122838.50 requests per second, p50=0.575 msec
 GET: 1188071.75 requests per second, p50=0.511 msec  
 ```
 
-**1,155,000 requests per second**. **0.543 msec (0.0005s) latency**. We've managed to double our requests per second and improved our latency by nearly 30% again. All this on a single board computer that's the size of a credit card. 
+**1,155,000 requests per second**. We've managed to double our requests per second. All this on a single board computer that's the size of a credit card. 
 
 While this is far from what I would recommend for a production server these are the same steps I'd reccomend to someone evaluating Valkey. It's important to start testing with a single instance to start finding the optimal settings. Then you can begin to scale up your test by adding more compute. Some other areas I'd reccomend testing is with different pipelineing configurations or with the number of client connections that you anticipate you'd be using in production. If you enjoyed this read make sure to check out my blog [TippyBits.com](https://tippybits.com) where I post content like this on a regular basis. Stay curious my friends!
