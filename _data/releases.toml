@@ -1,0 +1,7 @@
+artifact_source = "https://download.valkey.io/releases/"
+
+[distros]
+
+[distros.notes]
+epel = "Valkey EPEL packages are used in AlmaLinux, Oracle Linux, RHEL (=< 10)"
+

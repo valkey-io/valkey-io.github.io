@@ -1,9 +1,10 @@
 <strong>Release Date:</strong>  {{ release_date | date(format="%Y-%m-%d") }} <br/> 
 <strong>GitHub Release:</strong> <a href="https://github.com/valkey-io/valkey/releases/tag/{{release.tag}}">{{release.tag}}</a><br />
 <hr />
+{% set releases_data = load_data(path="/_data/releases.toml") %}
 
 {% for registry in release.container_registry %}
-    <h2>{{registry.name}} <small>(<a href="{{registry.link}}">{{registry.id}}</a>)</small></h2>
+    <h2 id="{{ registry.name| slugify}}">{{registry.name}} <small>(<a href="{{registry.link}}">{{registry.id}}</a>)</small></h2>
     <p>Tags:</p>
     <ul>
         {% for tag in registry.tags %}
@@ -17,24 +18,44 @@
     <hr />
 {% endfor %}
 {% if release.packages %}
-<h2>Package Managers</h2>
-    {% for package_manager in release.packages %}
-        <h3>{{package_manager.name}}:</h3>
-        Package Name: 
-        {% if package_manager.url %}
-            <a href="{{package_manager.url}}">{{ package_manager.id }}</a>
-        {% else %}
-            {{ package_manager.id }}
-        {% endif %}
-    {% endfor %}
+<h2 id="package-managers">Package Managers</h2>
+<table class="package-manager-table">
+    <thead>
+        <tr>
+            <th scope="col">OS/Distro</th>
+            <th scope="col">Package Name</th>
+            <th scope="col">Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for package_manager in  release.packages | sort(attribute="name") %}
+            {% set package_manager_id = package_manager.name | slugify %}
+        <tr>
+            <th id="{{ package_manager_id }}" scope="row">{{package_manager.name}}</th>
+            <td>
+                {% if package_manager.url %}
+                    <a href="{{package_manager.url}}" target="_blank">{{ package_manager.id }}</a>
+                {% else %}
+                    {{ package_manager.id }}
+                {% endif %}
+            </td>
+            <td>
+                {% if releases_data.distros.notes[package_manager_id] %}
+                    {{ releases_data.distros.notes[package_manager_id] }}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p><small><em>Note:</em> <a href="/download/packages">Other versions of Valkey</a> may be available in different package managers.</small></p>
 {% endif %}
 <hr />
-<h2>Binary Artifacts</h2>
+<h2 id="binary">Binary Artifacts</h2>
 {% if release.artifacts %}
 {% for artifact in release.artifacts %}
     {% for arch in  artifact.arch %}
-        {% set fname = release.artifact_source ~ release.artifact_fname ~ "-" ~ release.tag ~ "-" ~ artifact.distro ~ "-" ~ arch ~ ".tar.gz" %}
-        {# {% capture fname %}{{include.content.artifact_source}}{{include.content.artifact_fname}}-{{include.content.tag}}-{{artifact.distro}}-{{arch}}.tar.gz{% endcapture %} #}
+        {% set fname = releases_data.artifact_source ~ release.artifact_fname ~ "-" ~ release.tag ~ "-" ~ artifact.distro ~ "-" ~ arch ~ ".tar.gz" %}
         <a href="{{fname}}">{{arch}} / {{artifact.distro}}</a> <small>(<a href="{{fname}}.sha256">sha256</a>)</small><br />
     {% endfor %}
 {% endfor  %}
