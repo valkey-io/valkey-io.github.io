@@ -152,25 +152,31 @@ Right? Well believe it or not we can squeeze even more performance out of our li
 
 Above is a representitive outline of what's happening on the server. The Valkey process has to take up valuble cycles managing the IO Threads. Not only that it has to perform a lot of work to manage all the memory assigned to it. That's a lot of work for a single process.
 
-Now there is actually one more optimization we can use to make single threaded Valkey even faster. Pinning threads <todo>
+Now there is actually one more optimization we can use to make single threaded Valkey even faster. Valkey recently has done a substantial amount of work to support speculative execution. This work allows Valkey to predict which values will be needed from memory in future processing steps. This way Valkey server does't have to wait for memory access which is an order of magnitude slower than L1 caches. While I won't go through the details of how this works as there's already a [great blog that describes how to take advanage of these optimizations](https://valkey.io/blog/unlock-one-million-rps-part2/) here are the results: 
+
+```bash
+redis-benchmark -n 10000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad --threads 5 -h 10.0.1.136
+SET: 632791.25 requests per second, p50=1.191 msec
+GET: 888573.00 requests per second, p50=0.695 msec
+```
+
+While these results are better they are a bit confusing. After talking with some of Valkey's maintainers it seems there may be something different in the way that Rasbian is configured when it comes to memory writes. In their testing the `GET/SET` requests were nearly identical but in my testing so far the write speed seems to always be behind read speed. If you think you know why please reach out!
 
 ## Clustered Valkey
 
 ![A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first three core boxs are Valkey processes. Each of them has a bracket around a portion of the memory.](images/valkey_clustered.png)
 
-What we are going to do is spin up a Valkey cluster. This cluster will have individual instances of Valkey runnning that each will be responsible for managing their own keys. With this method Valkey instaces are not waiting on IO threads to return data. They each read from their own IO and can access memory as soon as they get a request. 
+For our last step we are going to spin up a Valkey cluster. This cluster will have individual instances of Valkey runnning that each will be responsible for managing their own keys. This way each instance can execute operations in parallel much more easily.  
 
 I am not going into detail with how the keyspaces work but [here is a good 101 guide](https://valkey.io/topics/cluster-tutorial/) for understanding clustering in Valkey. 
 
-Lets stop our previous Valkey container. Now we can create our docker compose file for starting the cluster. There are a few things I want to point out here. Because each of these are exposed on the host they will all need to be using different ports. Additionally, all of them need to be aware they are started in cluster mode so they can redirect requests to the appropriate instance. 
+First we'll stop our previous Valkey container `docker compose -f valkey.yaml down`. Now we can create our docker compose file for the cluster. Because each of these are exposed on the host they will all need to be using different ports. Additionally, all of them need to be aware they are started in cluster mode so they can redirect requests to the appropriate instance. 
 
 ```yaml
 # valkey-cluster.yaml
 services:
   valkey-node-1:
     hostname: valkey1
-    environment: 
-      - ALLOW_EMPTY_PASSWORD=yes
     image: valkey/valkey:latest
     command: valkey-server --port 6379 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD}
     volumes:
@@ -178,8 +184,6 @@ services:
     network_mode: host
   valkey-node-2:
     hostname: valkey2
-    environment: 
-      - ALLOW_EMPTY_PASSWORD=yes
     image: valkey/valkey:latest
     command: valkey-server --port 6380 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD}
     volumes:
@@ -187,8 +191,6 @@ services:
     network_mode: host
   valkey-node-3:
     hostname: valkey3
-    environment: 
-      - ALLOW_EMPTY_PASSWORD=yes
     image: valkey/valkey:latest
     command: valkey-server --port 6381 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD}
     volumes:
@@ -203,7 +205,7 @@ volumes:
   data2:
     driver: local
 ```
-Run `docker compose -f valkey-cluster.yaml up -d` to start the cluster. There is one more step to get the cluster running. First, find the name of one of your nodes with `docker ps --format '{{.Names}}'`. 
+Run `docker compose -f valkey-cluster.yaml up -d` to start the cluster. There is one more step to get the cluster running. Find the name of one of your nodes with `docker ps --format '{{.Names}}'`. 
 
 ```bash
 docker ps --format '{{.Names}}
@@ -212,13 +214,13 @@ kvtest-valkey-node-3-1
 kvtest-valkey-node-2-1
 ```
 
-I'll use the first container to finish the cluster creation. Once the containers have started up we have to tell them the details they need to use for the cluster. Below I am using the IP of the host and the port configurations of all the containers to create the cluster. This is because these addresses need to be accessible from the benchmarking or application servers. 
+I'll use the first container to finish the cluster creation. Once the containers have started up we have to tell them the details they need to use for the cluster. Below I am using the IP of the host and the port configurations of all the containers to create the cluster. This is because these addresses need to be accessible from the benchmarking server. 
 
 ```bash
 docker exec -it kvtest-valkey-node-1-1 valkey-cli --cluster create 10.0.1.136:6379 10.0.1.136:6380 10.0.1.136:6381 -a e41fb9818502071d592b36b99f63003019861dad
 ```
 
-Once that command is run we can run our benchmark! We do need to add the `--cluster` flag as well as several threads to generate data fast enough. Also, because this is so fast I ended up moving from 1 million requests to 10 million requests. That way it has time to fully utilize all the resources. 
+Now we can run our benchmark! We need to add the `--cluster` flag to our benchmarking command. Also, because this is so fast I ended up moving from 1 million requests to 10 million requests. That way we can make sure Valkey has time to fully utilize all it's resources. 
 
 ```bash
 redis-benchmark -n 10000000 -t set,get -P 16 -q --threads 10 --cluster -a e41fb9818502071d592b36b99f63003019861dad --threads 5 -h 10.0.1.136 
@@ -234,4 +236,8 @@ GET: 1188071.75 requests per second, p50=0.511 msec
 
 **1,155,000 requests per second**. We've managed to double our requests per second. All this on a single board computer that's the size of a credit card. 
 
-While this is far from what I would recommend for a production server these are the same steps I'd reccomend to someone evaluating Valkey. It's important to start testing with a single instance to start finding the optimal settings. Then you can begin to scale up your test by adding more compute. Some other areas I'd reccomend testing is with different pipelineing configurations or with the number of client connections that you anticipate you'd be using in production. If you enjoyed this read make sure to check out my blog [TippyBits.com](https://tippybits.com) where I post content like this on a regular basis. Stay curious my friends!
+While this is far from what I would recommend for a production server these are the same steps I'd reccomend to someone evaluating Valkey. It's important test with a single instance to start finding the optimal settings. Then you can begin to scale up your test by adding either more IO Threads or Valkey instances. 
+
+Testing should mirror your production workload as best it can. That's why I'd recommend checking out the documentation to find what other settings you may need to test with. For example, we tested with the default settings of 50 client connections and 3 byte payloads. Your production workload may look different so explore all the settings!
+
+If you enjoyed this read make sure to check out my blog [TippyBits.com](https://tippybits.com) where I post content like this on a regular basis. Stay curious my friends!
