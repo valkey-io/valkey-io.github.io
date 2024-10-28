@@ -59,7 +59,7 @@ redis-benchmark -n 1000000 -t set,get -P 16 -q -a <PASSWORD FROM .env> --threads
 ```
 
 Test breakdown:
-- `-n` - this will run 1,000,000 operations using the commands set in -t
+- `-n` - this will run 1,000,000 operations using the commands in -t
 - `-t` - will run the set and get tests
 - `-P` - this specifies that we would like the tests to use 16 pipelines (send 16 operations per request). 
 - `-q` - silences the output to show only the final results
@@ -67,7 +67,7 @@ Test breakdown:
 - `-h` - run the test against the specified host
 - `--threads` - how many threads to generate test data from
 
-Honestly, I was asonished by the first set of results I got. Sure, I expected Valkey to be fast but this speed from a single board computer?? ON A SINGLE THREAD?? Its amazing. 
+Honestly, I was asonished by the first set of results I got. Sure, I expected Valkey to be fast but this speed from a single board computer?? ON A SINGLE THREAD?? It's amazing. 
 
 ```bash
 redis-benchmark -n 1000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad --threads 5 -h 10.0.1.136
@@ -81,7 +81,7 @@ Between the two tests we averaged 240,000 requests per second.
 
 Since Valkey is a single threaded application it makes sense that higher clock speeds would lead to more performance. I don't expect most people will overclock their servers in production. Different servers may be available with different CPU clock speeds. 
 
-**Note:** Clock speeds generally are only comparable between CPU's with a similar architecture. For example, you could reasonably compare clock speeds between an 12th generation Intel i5 and a 12th generation Intel i7. If the 12th gen i7 had a max clock speed of 5Ghz that doesnt necessarily mean it will be slower than a AMD Ryzen 9 9900X clocked at 5.6Ghz. 
+**Note:** Clock speeds generally are only comparable between CPU's with a similar architecture. For example, you could reasonably compare clock speeds between an 12th generation Intel i5 and a 12th generation Intel i7. If the 12th gen i7 had a max clock speed of 5Ghz that doesn't necessarily mean it will be slower than a AMD Ryzen 9 9900X clocked at 5.6Ghz. 
 
 If you're following along on a Pi of your own I've outlined the steps to overclock your CM4 below. Otherwise you can skip to the results section below.
 
@@ -132,7 +132,7 @@ Wait a second... These results are worse than the ones before? We went from 416k
 
 ![A picture of the valkey server with 4 cores represented as boxes. In each of the four core boxes there are other boxes. 2 cores have 1 IO Thread Box, 1 Core has 2 IO thread boxes, and the last one has 1 IO Thread box along with a Valkey Process box.](images/io_threads.png)
 
-We have over-subscribed our CPU. This means we've created more worker threads than CPU cores. When a thread is under constant load it is competing with other threads on that core for resources. Not to mention, they are also competing with the Valkey process for resources to read IO. 
+We have over-subscribed our CPU. This means we've created more worker threads than CPU cores. When a thread is under constant load it is competing with other threads on that core for resources. Not to mention, they are also competing with the Valkey process for resources. 
 
 That's why [Valkey recommends](https://github.com/valkey-io/valkey/blob/a62d1f177b7888ec88035a0a1ce600fbc2280ce7/valkey.conf#L1337-L1341) setting the number of threads to be a value less than the number of cores you have. For our little 4 core server lets change the `IO_THREADS` parameter to be 2 threads in the `.env` file and try again.
 
@@ -150,7 +150,9 @@ Right? Well believe it or not we can squeeze even more performance out of our li
 
 ![A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first core box is the Valkey process and in the next two there are IO Threads. The valkey process has a loop showing it communiacting with both of the IO threads. It also has a bracket showing it managing all the memory.](images/io_threading_arch.png)
 
-Above is a representitive outline of what's happening on the server. The Valkey process has to take up valuble cycles managing the IO Threads. Not only that it has to perform a lot of work to manage all the memory assigned to it. That's a lot of work for a single process. 
+Above is a representitive outline of what's happening on the server. The Valkey process has to take up valuble cycles managing the IO Threads. Not only that it has to perform a lot of work to manage all the memory assigned to it. That's a lot of work for a single process.
+
+Now there is actually one more optimization we can use to make single threaded Valkey even faster. Pinning threads <todo>
 
 ## Clustered Valkey
 
