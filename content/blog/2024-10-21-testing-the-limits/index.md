@@ -237,6 +237,6 @@ GET: 1188071.75 requests per second, p50=0.511 msec
 
 While this is far from what I would recommend for a production server these are the same steps I'd reccomend to someone evaluating Valkey. It's important test with a single instance to start finding the optimal settings. Then you can begin to scale up your test by adding either more IO Threads or Valkey instances. 
 
-Testing should mirror your production workload as best it can. That's why I'd recommend checking out the documentation to find what other settings you may need to test with. For example, we tested with the default settings of 50 client connections and 3 byte payloads. Your production workload may look different so explore all the settings!
+Testing should mirror your production workload as best it can. This test is using syntehtic data. That's why I'd recommend checking out the documentation to find what other settings you may need to test with. For example, we tested with the default settings of 50 client connections and 3 byte payloads. Your production workload may look different so explore all the settings!
 
 If you enjoyed this read make sure to check out my blog [TippyBits.com](https://tippybits.com) where I post content like this on a regular basis. Stay curious my friends!
