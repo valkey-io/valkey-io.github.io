@@ -1,17 +1,17 @@
 +++
 title = "Pushing the limits of Valkey on a Raspberry Pi"
-description = "While most people won't go to produciton on a Raspberry Pi we'll cover how to thoroughly performance test Valkey to understand how it works in production."
+description = "While most people won't go to prodcution on a Raspberry Pi we'll cover how to thoroughly performance test Valkey to understand how it works in production."
 date= 2024-10-21 01:01:01
 authors= ["dtaivpp"]
 +++
 
-While doing extensive performance testing on a Raspberry PI is silly, it's made me realize the complexity of performance testing. For example, in some of the tests below I ended up managing to use all of the resources of the Raspberry Pi and achieved terrible performance. Every application has different performance characteristics so we'll walk though what factors to consider when it comes to deploying Valkey. 
+While doing extensive performance testing on a Raspberry Pi is silly, it's made me realize the complexity of performance testing. For example, in some of the tests below I ended up managing to use all of the resources of the Raspberry Pi and achieved terrible performance. Every application has different performance characteristics so we'll walk through what factors to consider when it comes to deploying Valkey. 
 
 ## The test environment
 
 ![Picture of the Compute Module 4 credit Raspberry Pi Ltd (CC BY-SA)](images/cm4.png)
 
-For hardware we are going to be using a Raspberry Pi [Compute Module 4 (CM4)](https://www.raspberrypi.com/products/compute-module-4/?variant=raspberry-pi-cm4001000). It's a single board computer (SBC) that comes with a tiny 1.5Ghz 4 core Broadcomm CPU and 8GB of system memory. This is hardly the first device someone would pick when deciding on a production system. Using the CM4 makes it easy to showcase how to optimize Valkey depending on your different hardware constraints.
+For hardware we are going to be using a Raspberry Pi [Compute Module 4 (CM4)](https://www.raspberrypi.com/products/compute-module-4/?variant=raspberry-pi-cm4001000). It's a single board computer (SBC) that comes with a tiny 1.5Ghz 4-core Broadcomm CPU and 8GB of system memory. This is hardly the first device someone would pick when deciding on a production system. Using the CM4 makes it easy to showcase how to optimize Valkey depending on your different hardware constraints.
 
 Our operating system will be a 64-bit debian based operating system (OS) called [Rasbian](https://www.raspbian.org/). This distribution is specifically modified to perform well on the CM4. Valkey will run in a docker container orchestrated with docker compose. I like deploying in containers as it simplifies operations. If you'd like to follow along here is [a guide for installing Docker](https://docs.docker.com/engine/install/debian/). Make sure to continue to the [second page of the installation process](https://docs.docker.com/engine/install/linux-postinstall/) as well. It's easy to miss and skipping it could make it harder to follow along. 
 
@@ -67,7 +67,7 @@ Test breakdown:
 - `-h` - run the test against the specified host
 - `--threads` - how many threads to generate test data from
 
-Honestly, I was asonished by the first set of results I got. Sure, I expected Valkey to be fast but this speed from a single board computer?? ON A SINGLE THREAD?? It's amazing. 
+Honestly, I was astonished by the first set of results I got. Sure, I expected Valkey to be fast but this speed from a single board computer?? ON A SINGLE THREAD?? It's amazing. 
 
 ```bash
 redis-benchmark -n 1000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad --threads 5 -h 10.0.1.136
@@ -85,16 +85,17 @@ Since Valkey is a single threaded application it makes sense that higher clock s
 
 If you're following along on a Pi of your own I've outlined the steps to overclock your CM4 below. Otherwise you can skip to the results section below.
 
-1. Open the below file in a text editor like nano.
+**Warning** Just a reminder overclocking your device can cause damage to your device. Please use caution and do your own research for settings that are safe. 
+
+1. Open the below file
     - `sudo nano /boot/firmware/config.txt`
-2. At the end of the file add this section below the `[all]` tag.
+2. At the end of the file add this section below the `[all]` tag
     ```
     [all]
     over_voltage=8
     arm_freq=2200
     ```
-3. Save with cmd + x, y, enter 
-4. Restart the Pi and log back in `sudo restart now`
+3. Restart the Pi and log back in `sudo restart now`
 
 We've just increased the speed of the Pi by 47% by raising the clock speed from 1.5Ghz to 2.2Ghz. Now lets re-run our test and see how things look!
 
@@ -105,8 +106,6 @@ GET: 438058.53 requests per second, p50=1.135 msec
 ```
 
 We're up to 416,000 requests per second (reminder this is the average between the two operations). The mathmaticians out there might notice that this speed up is a lot more than the expected 47% increase. It's a 73% increase in requests per second. What's happening?!
-
-I actually had to take this one back to the Valkey team to figure out and we've yet to figure out exactly what is happening here. 
 
 ## Adding IO Threading
 
