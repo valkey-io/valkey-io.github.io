@@ -235,7 +235,7 @@ GET: 1188071.75 requests per second, p50=0.511 msec
 
 **1,155,000 requests per second**. We've managed to double our requests per second. All this on a single board computer that's the size of a credit card. 
 
-While this is far from what I would recommend for a production server these are the same steps I'd reccomend to someone evaluating Valkey. It's important test with a single instance to start finding the optimal settings. Then you can begin to scale up your test by adding either more IO Threads or Valkey instances. 
+While this is far from what I would recommend for a production server these are the same steps I'd recommend to someone evaluating Valkey. It's important test with a single instance to start finding the optimal settings. Then you can begin to scale up your test by adding either more IO Threads or Valkey instances. 
 
 Testing should mirror your production workload as best it can. This test is using synthetic data. That's why I'd recommend checking out the documentation to find what other settings you may need to test with. For example, we tested with the default settings of 50 client connections and 3 byte payloads. Your production workload may look different so explore all the settings! You may find that IO threading works better for your use case than I did in this case.
 
