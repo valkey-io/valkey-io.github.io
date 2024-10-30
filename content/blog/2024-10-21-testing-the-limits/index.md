@@ -151,7 +151,7 @@ Right? Well believe it or not we can squeeze even more performance out of our li
 
 Above is a representitive outline of what's happening on the server. The Valkey process has to take up valuble cycles managing the IO Threads. Not only that it has to perform a lot of work to manage all the memory assigned to it. That's a lot of work for a single process.
 
-Now there is actually one more optimization we can use to make single threaded Valkey even faster. Valkey recently has done a substantial amount of work to support speculative execution. This work allows Valkey to predict which values will be needed from memory in future processing steps. This way Valkey server does't have to wait for memory access which is an order of magnitude slower than L1 caches. While I won't go through the details of how this works as there's already a [great blog that describes how to take advanage of these optimizations](https://valkey.io/blog/unlock-one-million-rps-part2/) here are the results: 
+Now there is actually one more optimization we can use to make single threaded Valkey even faster. Valkey recently has done a substantial amount of work to support speculative execution. This work allows Valkey to predict which values will be needed from memory in future processing steps. This way Valkey server doesn't have to wait for memory access which is an order of magnitude slower than L1 caches. While I won't go through the details of how this works as there's already a [great blog that describes how to take advantage of these optimizations](https://valkey.io/blog/unlock-one-million-rps-part2/) here are the results: 
 
 ```bash
 redis-benchmark -n 10000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad --threads 5 -h 10.0.1.136
