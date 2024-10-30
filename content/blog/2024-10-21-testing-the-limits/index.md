@@ -39,7 +39,7 @@ volumes:
     driver: local
 ```
 
-Since we are exposing this to our internal network we will create a password for our default user. I used `head -16 /dev/urandom | openssl sha1` to generate a random password. Because of how fast Valkey can process requests a brute force attack could try hundereds of thousands of passwords per second. After generating that password I put it in a `.env` file in the same directory as our docker compose. 
+Since we are exposing this to our internal network we will create a password for our default user. I used `head -16 /dev/urandom | openssl sha1` to generate a random password. Because of how fast Valkey can process requests a brute force attack could try hundreds of thousands of passwords per second. After generating that password, I put it in a `.env` file in the same directory as our docker compose. 
 
 ```bash
 #.env
