@@ -29,7 +29,7 @@ services:
   valkey-1:
     image: valkey/valkey:latest
     hostname: valkey1
-    command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD} --io-threads ${IO_THREADS}
+    command: valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD} --io-threads ${IO_THREADS} --save ""
     volumes:
       - ./data:/data
     network_mode: host
@@ -177,21 +177,21 @@ services:
   valkey-node-1:
     hostname: valkey1
     image: valkey/valkey:latest
-    command: valkey-server --port 6379 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD}
+    command: valkey-server --port 6379 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD} --save ""
     volumes:
       - ./data1:/data
     network_mode: host
   valkey-node-2:
     hostname: valkey2
     image: valkey/valkey:latest
-    command: valkey-server --port 6380 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD}
+    command: valkey-server --port 6380 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD} --save ""
     volumes:
       - ./data2:/data
     network_mode: host
   valkey-node-3:
     hostname: valkey3
     image: valkey/valkey:latest
-    command: valkey-server --port 6381 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD}
+    command: valkey-server --port 6381 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD} --save ""
     volumes:
       - ./data3:/data
     network_mode: host
