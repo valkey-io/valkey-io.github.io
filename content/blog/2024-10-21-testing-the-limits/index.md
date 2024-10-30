@@ -165,7 +165,7 @@ While these results are better they are a bit confusing. After talking with some
 
 ![A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first three core boxs are Valkey processes. Each of them has a bracket around a portion of the memory.](images/valkey_clustered.png)
 
-For our last step we are going to spin up a Valkey cluster. This cluster will have individual instances of Valkey runnning that each will be responsible for managing their own keys. This way each instance can execute operations in parallel much more easily.  
+For our last step we are going to spin up a Valkey cluster. This cluster will have individual instances of Valkey running that each will be responsible for managing their own keys. This way each instance can execute operations in parallel much more easily.  
 
 I am not going into detail with how the keyspaces work but [here is a good 101 guide](https://valkey.io/topics/cluster-tutorial/) for understanding clustering in Valkey. 
 
