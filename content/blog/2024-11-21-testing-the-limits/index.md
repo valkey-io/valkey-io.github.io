@@ -1,7 +1,7 @@
 +++
 title = "Pushing the limits of Valkey on a Raspberry Pi"
 description = "While most people won't go to prodcution on a Raspberry Pi we'll cover how to thoroughly performance test Valkey to understand how it works in production."
-date= 2024-10-21 01:01:01
+date= 2024-11-21 01:01:01
 authors= ["dtaivpp"]
 +++
 
@@ -15,7 +15,7 @@ For hardware we are going to be using a Raspberry Pi [Compute Module 4 (CM4)](ht
 
 Our operating system will be a 64-bit Debian based operating system (OS) called [Rasbian](https://www.raspbian.org/). This distribution is specifically modified to perform well on the CM4. Valkey will run in a docker container orchestrated with docker compose. I like deploying in containers as it simplifies operations. If you'd like to follow along here is [a guide for installing Docker](https://docs.docker.com/engine/install/debian/). Make sure to continue to the [second page of the installation process](https://docs.docker.com/engine/install/linux-postinstall/) as well. It's easy to miss and skipping it could make it harder to follow along. 
 
-We'll be using two CM4s for testing. The first will host Valkey and the second will host the benchmarking software. This setup probably better reflects how most people will run in production. Benchmarking is being done with redis-benchmark because it can be installed with `sudo apt install redis-tools`. Valkey does have its own benchmark utility that comes installed Valkey instance. To use valkey-benchmark instead you would need to install Valkey on the benchmarking server or spin up a container and connect into it. Functionally, they both operate nearly the same as of the writing of this article. 
+We'll be using two CM4s for testing. The first will host Valkey and the second will host the benchmarking software. This setup probably better reflects how most people will run in production. Benchmarking is being done with redis-benchmark because it can be installed with `sudo apt install redis-tools`. Valkey does have its own benchmark utility that comes installed with Valkey. To use valkey-benchmark instead you would need to install Valkey on the benchmarking server or spin up a container and connect into it. Functionally, they both operate nearly the same as of the writing of this article. 
 
 ![Test architecture showing two nodes: a Benchmark server with the ip of 10.0.11.221 with an arrow pointing to a Valkey server with an ip of 10.0.1.136](images/test_setup.png)
 
@@ -151,7 +151,7 @@ Right? Well believe it or not we can squeeze even more performance out of our li
 
 Above is a representitive outline of what's happening on the server. The Valkey process has to take up valuble cycles managing the IO Threads. Not only that it has to perform a lot of work to manage all the memory assigned to it. That's a lot of work for a single process.
 
-Now there is actually one more optimization we can use to make single threaded Valkey even faster. Valkey recently has done a substantial amount of work to support speculative execution. This work allows Valkey to predict which values will be needed from memory in future processing steps. This way Valkey server doesn't have to wait for memory access which is an order of magnitude slower than L1 caches. While I won't go through the details of how this works as there's already a [great blog that describes how to take advantage of these optimizations](https://valkey.io/blog/unlock-one-million-rps-part2/) here are the results: 
+Now there is actually one more optimization we can use to make single threaded Valkey even faster. Valkey recently has done a substantial amount of work to support speculative execution. This work allows Valkey to predict which values will be needed from memory in future processing steps. This way Valkey server doesn't have to wait for memory access which is an order of magnitude slower than L1 caches. While I won't go through the details of how this works as there's already a [great blog that describes how to take advantage of these optimizations](https://valkey.io/blog/unlock-one-million-rps-part2/). Here are the results: 
 
 ```bash
 redis-benchmark -n 10000000 -t set,get -P 16 -q -a e41fb9818502071d592b36b99f63003019861dad --threads 5 -h 10.0.1.136
