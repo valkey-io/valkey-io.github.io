@@ -38,6 +38,9 @@
 {% else %}
     {{ content_with_fixed_links | markdown | safe }}
 {% endif %}
+{% if page.slug == "valkey-clients" %}
+    {% include "client_feature_table.html" %}
+{% endif %}
 {% endblock main_content %}
 
 {% block related_content %}
