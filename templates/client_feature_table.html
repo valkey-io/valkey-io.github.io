@@ -1,0 +1,31 @@
+<hr/>
+<h2>Feature Comparison Table</h2>
+{% if page.slug == "valkey-clients" %}
+    <div style="margin: 20px 0; padding: 10px; border: 2px solid #dcdcdc; background-color: #f9f9f9; border-radius: 5px; overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; color: #333;">
+            <thead>
+                <tr style="background-color: #f1f1f1; text-align: center; font-weight: bold; border-bottom: 2px solid #ddd;"> <!-- Center align the headers -->
+                    {% for header in ["Client Name", "Language","Valkey Version Compatibility", "Read From Replica", "Smart Backoff to Prevent Connection Storm",  "PubSub State Restoration", "Cluster Scan", "Latency-Based Read From Replica", "AZ-Based Read From Replica", "Client Side Caching", "CLIENT CAPA Redirect", "Persistent Connection Pool"] %}
+                        <th style="padding: 12px; border-right: 1px solid #ddd; text-align: center;">{{ header }}</th> <!-- Add wrapping for header -->
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {%- for path in config.extra.recommended_clients_paths %}
+                    {% set json_data = load_data(path = docs::client_json_path(client_path= path), format="json") %}
+                    <tr style="background-color: {% if loop.index is even %}#f9f9f9 {% else %}#ffffff{% endif %}; ">
+                        {% for field in ["name", "language","valkey_version_compatibility", "read_from_replica", "smart_backoff_to_prevent_connection_storm", "pubsub_state_restoration", "cluster_scan", "latency_based_read_from_replica", "AZ_based_read_from_replica", "client_side_caching", "client_capa_redirect", "persistent_connection_pool"] %}
+                            <td style="padding: 10px; border-right: 1px solid #ddd; text-align: center; white-space: normal; word-wrap: break-word;">
+                                {% if field not in ["name","language", "valkey_version_compatibility"] %}
+                                    {{ docs::boolean_to_yes_no(value=json_data[field]) }}
+                                {% else %}
+                                    {{ json_data[field] }}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {%- endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}

@@ -49,6 +49,16 @@ done
 
 echo "Topic stub files created at content/topics."
 
+
+#create symlink to clients, expect if it already exists
+topics_path="$1"
+doc_path="${topics_path%%valkey-doc/*}valkey-doc/"
+clients_path="$doc_path/clients"
+#required_client_names=("valkey-glide" "valkey-py" "iovalkey" "valkey-go")
+if [ ! -L build-clients -o "$(readlink build-clients)" != "$clients_path" ]; then
+    ln -s "$clients_path" ./build-clients
+fi
+
 for fname in $(find $1 -maxdepth 1  -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif")
 do
     base=${fname##*/}
