@@ -1,0 +1,9 @@
+<div class="branding-section">
+    <h3>{{ title }}</h3>
+    <p>{{ body }}</p>
+    <img 
+        src="{{ image_url }}" 
+        width="{{ image_width }}" 
+        alt="{{ image_alt }}" 
+        {% if class %} class="{{ class }}" {% endif %} />
+</div>
