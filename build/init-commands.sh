@@ -31,12 +31,14 @@ for fname in $(find $1 -maxdepth 1  -iname "*.md")
 do
     base=${fname##*/}
     command=${base%.*}
+    command_upper=$(awk '{ print toupper($0) }' <<< $command)
     if [[ "$command" != "index" ]]; then 
         cat << EOF > "./content/commands/$command.md"
 +++
 # This is a generated stub file.
 # To edit the command description see /commands/$command.md in the 'valkey-doc' repo
 # The command metadata is generated from /src/$command.json in the 'valkey' repo
+aliases = ["/commands/$command_upper/"]
 +++
 EOF
 fi
