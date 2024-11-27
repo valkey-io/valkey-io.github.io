@@ -33,8 +33,9 @@
         {% set frontmatter_data = load_data(literal= frontmatter, format="yaml") %}
         {% set description = frontmatter_data.description | escape | safe %}
         {% set description_no_line_breaks = description | regex_replace(pattern=`[\u0000-\u001F]`, rep=` `) %}
+        {% set title= docs::remove_valkey_title(title= frontmatter_data.title) %}
 
-        {% set_global list = list | concat(with= ['{ "title" : "' ~ frontmatter_data.title ~ '", "path" : "' ~ page.path ~ '", "description" : "' ~ description_no_line_breaks ~ '" }']) %}
+        {% set_global list = list | concat(with= ['{ "title" : "' ~ title ~ '", "path" : "' ~ page.path ~ '", "description" : "' ~ description_no_line_breaks ~ '" }']) %}
     {% endif %}
    
 

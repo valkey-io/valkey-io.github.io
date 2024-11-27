@@ -7,6 +7,21 @@
 {%- if markdown_content -%}{{ markdown_content }}{% endif %}
 {% endmacro load_doc %}
 
+{%- macro remove_valkey_title(title) -%}
+{%- if title is starting_with("Valkey") -%}
+{%- set noValkey = title | replace(from="Valkey ", to="") -%}
+{%- for letter in noValkey -%}
+  {%- if loop.index == 1 -%}
+    {{ letter | upper }}
+  {%- else -%}
+    {{ letter }}
+  {%- endif -%}
+{%- endfor -%}
+{%- else -%}
+{{ title }}
+{%- endif -%}
+{%- endmacro remove_valkey_title -%}
+
 {%- macro extract_frontmatter(content) %}
 {%- set markdown_split = content | split(pat="---") -%}
 {%- set markdown_part_count = markdown_split | length() -%}
