@@ -12,7 +12,7 @@
     {% set has_frontmatter = true %}
     {% set page_contents = docs::extract_markdown(content= docs_file_contents) %}
     {% if frontmatter_data.title %}
-        {% set frontmatter_title = frontmatter_data.title %}
+        {% set frontmatter_title = docs::remove_valkey_title(title= frontmatter_data.title) %}
     {% endif %} 
 {% else %}
     {% set page_contents = docs_file_contents %}
