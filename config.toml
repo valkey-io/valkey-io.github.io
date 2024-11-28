@@ -48,15 +48,3 @@ publish_hold = [
     "/topics/internals/",
     "/topics/rdd/"
 ]
-
-recommended_clients_paths = [
-    "/python/github.com/AWS/valkey-GLIDE.json",
-    "/python/github.com/valkey/valkey-py.json",
-    "/nodejs/github.com/AWS/valkey-GLIDE.json",
-    "/nodejs/github.com/valkey/iovalkey.json",
-    "/java/github.com/AWS/valkey-GLIDE.json",
-    "/java/github.com/valkey/valkey-java.json",
-    "/go/github.com/valkey/valkey-go.json",
-    "/php/github.com/phpredis/phpredis.json",
-    "/php/github.com/nrk/predis.json",
-]

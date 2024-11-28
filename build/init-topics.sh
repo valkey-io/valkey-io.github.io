@@ -54,7 +54,6 @@ echo "Topic stub files created at content/topics."
 topics_path="$1"
 doc_path="${topics_path%%valkey-doc/*}valkey-doc/"
 clients_path="$doc_path/clients"
-#required_client_names=("valkey-glide" "valkey-py" "iovalkey" "valkey-go")
 if [ ! -L build-clients -o "$(readlink build-clients)" != "$clients_path" ]; then
     ln -s "$clients_path" ./build-clients
 fi
