@@ -14,6 +14,11 @@
       <a href="{{participant.link}}" class="logo">
         <img src="{{participant.image.path}}" alt="{{participant.image.alt}}" />
       </a>
+      <h3>Valkey offering:</h3>
+      {{ participant.offering | markdown | safe }}
+      <h3>About the company:</h3>
+      {{ participant.company | markdown | safe }}
+      
     </div>
   {% endfor %}
 </div>
