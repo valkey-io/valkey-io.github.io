@@ -1,0 +1,67 @@
+{% extends "docs-page.html" %}
+{% import "macros/docs.html" as docs %}
+
+{% block main_content %}
+    {% if config.extra.review_list is containing(page.path) %}
+    <p><strong>This page is under review.</strong> The page is likely incorrect, contains invalid links, and/or needs technical review. 
+        In the future it may change substantially or be removed entirely.</p>
+    <hr />
+    {% endif %}
+    {%- set content_with_fixed_links = docs::fix_links(content= page_contents) -%}
+    {% if config.extra.publish_hold is containing(page.path) %}
+        <p><code>{{ page.path }}</code> may be available after revisions.</p>
+    {% else %}
+        {{ content_with_fixed_links | markdown | safe }}
+    {% endif %}
+
+    <div class="client-list">
+        <h2>Table of Contents</h2>
+        <ul>
+            {% set languages = ["Python", "JavaScript/Node.js", "Java", "Go", "PHP"] %}
+            {% for language in languages %}
+            <li><a href="#{{ language | slugify }}">{{ language }}</a></li>
+            {% endfor %}
+            <li><a href="#feature-comparison-table">Feature Comparison Table</a></li>
+        </ul>
+        {% for language in languages %}
+            <h2 id="{{ language | slugify }}">{{ language }}</h2>
+            <div class="language-clients">
+                {% for path in page.extra.recommended_clients_paths %}
+                    {% set client = load_data(path = docs::client_json_path(client_path= path), format="json") %}
+                    {% if client.language == language %}
+                    <div class="client-item">
+                        <h3>{{ client.name }}</h3>
+                        <ul>
+                            <li><strong>GitHub:</strong> <a href="{{ client.github }}">{{ client.name }}</a></li>
+                            <li>
+                                <strong>Installation:</strong>
+                                {% if client.installation is iterable %}
+                                    <ul>
+                                        {% for installation_type in client.installation %}
+                                            <li>
+                                                {{ installation_type.type }}:
+                                                {% if installation_type.type == "Maven" %}
+                                                    <pre><code>{{ installation_type.command }}</code></pre>
+                                                {% else %}
+                                                    <code>{{ installation_type.command }}</code>
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <code>{{ client.installation }}</code>
+                                {% endif %}
+                            </li>
+                            <li><strong>Description:</strong> {{ client.description }}</li>
+                        </ul>
+                    </div>                    
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+    <div  id="feature-comparison-table" class = "feature-comparison-table" >
+        {% set client_paths = page.extra.recommended_clients_paths %}
+        {% include "client-feature-table.html" %}
+    </div>
+{% endblock main_content %}
