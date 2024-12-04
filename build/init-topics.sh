@@ -29,14 +29,21 @@ for fname in $(find $1 -maxdepth 1  -iname "*.md")
 do
     base=${fname##*/}
     topic=${base%.*}
+
     if [[ "$topic" != "index" ]]; then
-        cat << EOF > "./content/topics/$topic.md"
+        if [ -f "./build/custom-frontmatter/topics/$topic.toml" ]; then
+            echo "+++" >> "./content/topics/$topic.md"
+            cat "./build/custom-frontmatter/topics/$topic.toml" >> "./content/topics/$topic.md"
+            echo "+++" >> "./content/topics/$topic.md"
+        else
+            cat << EOF > "./content/topics/$topic.md"
 +++
 # This is a generated stub file.
 # To edit the content see /topic/$topic.md in the 'valkey-doc' repo
 aliases = ["/docs/topics/$topic/"]
 +++
 EOF
+fi
 fi
 done
 
