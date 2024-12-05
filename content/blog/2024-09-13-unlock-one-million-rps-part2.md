@@ -112,8 +112,8 @@ grep eth0 /proc/interrupts | awk '{print $1}' | cut -d : -f 1
 ```
 In our setup, lines `48` to `55` are allocated for `eth0` interrupts. Allocate one core per 4 IRQ lines: 
 ```bash 
-for i in {48..50}; do echo 1000 > /proc/irq/$i/smp_affinity; done
-for i in {51..55}; do echo 2000 > /proc/irq/$i/smp_affinity; done  
+for i in {48..51}; do echo 1000 > /proc/irq/$i/smp_affinity; done
+for i in {52..55}; do echo 2000 > /proc/irq/$i/smp_affinity; done
 ```
 Server configuration - launch the Valkey server with these minimal configurations:
 ```bash
