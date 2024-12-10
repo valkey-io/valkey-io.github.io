@@ -3,3 +3,12 @@
   image:
     path: /img/percona.svg
     alt: Percona Logo
+  company: >
+    Percona is a world-class open source database software, support, and services company.
+    The organization is dedicated to helping businesses ensure their databases — and the applications that depend on them — are secure, compliant, performant, and highly available.
+    For more information, visit [www.percona.com](http://www.percona.com/)
+  offering: >
+    Valkey expertise, where and when you need it.
+
+    From day-to-day operational support to hands-on assistance for complex projects, Percona can meet your Valkey database needs. 
+    We’ll soon be offering support, managed services, and project-based consulting, so together, we can tackle any challenge and continue to keep open source, open.
