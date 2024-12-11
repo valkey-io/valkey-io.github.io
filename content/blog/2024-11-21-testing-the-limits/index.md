@@ -1,6 +1,6 @@
 +++
 title = "Pushing the limits of Valkey on a Raspberry Pi"
-description = "While most people won't go to prodcution on a Raspberry Pi we'll cover how to thoroughly performance test Valkey to understand how it works in production."
+description = "While most people won't go to production on a Raspberry Pi, we'll cover how to thoroughly performance test Valkey to understand how it works in production."
 date= 2024-11-21 01:01:01
 authors= ["dtaivpp"]
 +++
