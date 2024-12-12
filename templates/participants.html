@@ -1,0 +1,25 @@
+{% extends "right-aside.html" %}
+{% block subhead_content%}
+{% endblock subhead_content%}
+
+{% block main_content %}
+{{ page.content | safe }}
+
+{% include "includes/participants-buttons.html" %}
+
+{% set participants = load_data(path="/_data/participants.yml") %}
+<div class="participant-list">
+  {% for participant in participants %}
+    <div class="participant-{{participant.name | lower() }}">
+      <a href="{{participant.link}}" class="logo">
+        <img src="{{participant.image.path}}" alt="{{participant.image.alt}}" />
+      </a>
+      <h3>Valkey offering:</h3>
+      {{ participant.offering | markdown | safe }}
+      <h3>About the company:</h3>
+      {{ participant.company | markdown | safe }}
+      
+    </div>
+  {% endfor %}
+</div>
+{% endblock main_content %}
