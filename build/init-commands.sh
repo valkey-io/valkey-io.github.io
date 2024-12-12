@@ -31,15 +31,22 @@ for fname in $(find $1 -maxdepth 1  -iname "*.md")
 do
     base=${fname##*/}
     command=${base%.*}
+    command_upper=$(awk '{ print toupper($0) }' <<< $command)
     if [[ "$command" != "index" ]]; then 
         cat << EOF > "./content/commands/$command.md"
 +++
 # This is a generated stub file.
 # To edit the command description see /commands/$command.md in the 'valkey-doc' repo
 # The command metadata is generated from /src/$command.json in the 'valkey' repo
+aliases = ["/commands/$command_upper/"]
 +++
 EOF
 fi
 done
 
 echo "Command stub files created."
+
+grouppath="../${1}/../groups.json"
+ln -s $grouppath ./_data/groups.json
+
+echo "Created link to groups.json"

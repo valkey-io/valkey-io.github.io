@@ -21,7 +21,7 @@
 
 {% block subhead_content %}
 {% if has_frontmatter and frontmatter_title %}
-<h1 class="page-title">{{ frontmatter_title }}</h1>
+<h1 class="page-title">Documentation: {{ frontmatter_title }}</h1>
 {% endif  %}
 {% endblock subhead_content %}
 
@@ -39,3 +39,10 @@
     {{ content_with_fixed_links | markdown | safe }}
 {% endif %}
 {% endblock main_content %}
+
+{% block related_content %}
+<div class="edit_box">
+    See an error?
+    <a href="https://github.com/valkey-io/valkey-doc/edit/main/topics/{{ page.slug }}.md">Update this Page on Github!</a>
+</div>
+{% endblock related_content %}

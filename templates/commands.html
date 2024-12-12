@@ -1,4 +1,4 @@
-{% extends "fullwidth.html" %}
+{% extends "right-aside.html" %}
 
 {% import "macros/command.html" as commands %}
 
@@ -6,6 +6,9 @@
 {% if section.pages | length == 0 %}
 <strong>No command pages found.</strong> You likely need to build the command pages. See "Building additional content" in README.md file.
 {% endif %}
+
+{% set_global group_descriptions = load_data(path= "../_data/groups.json", required= false) %}
+
 {% set commands_entries = [] %}
 {% for page in section.pages %}
     {% set command_data = load_data(path= commands::command_json_path(slug= page.slug), required= false) %}
@@ -16,21 +19,59 @@
         {% if command_data_obj.container %}
             {% set command_display = command_data_obj.container ~ " " ~ command_display %}
         {% endif %}
-            
+
         {% set command_entry = [
             command_display,
             page.permalink | safe, 
-            command_data_obj.summary
-            
+            command_data_obj.summary,
+            command_data_obj.group
         ] %}
-        
         {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
-
-        {# <div class="command-entry"><code><a href="{{ page.permalink | safe }}">{{ command_display }}</a></code> {{command_data_obj.summary}}</div> #}
     {% endif %}
 {% endfor %}
-{% for entry in commands_entries | sort(attribute="0") %}
-    <div class="command-entry"><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code> {{entry[2]}}</div>
+{% set_global grouped = commands_entries | sort(attribute="3") | group_by(attribute="3") %}
 
+
+{% for command_group_name, command_group in grouped %}
+    <div class="command-group">
+    {% set command_group_description_name = command_group_name | replace(from="_", to="-") %}
+    <h2 id="{{command_group_description_name}}">{{ group_descriptions[command_group_description_name].display }}</h2>
+    <div class="command-group-meta">
+        <p><small>{{ group_descriptions[command_group_description_name].description }}</small></p>
+        <hr />
+    </div>
+    {% for entry in command_group | sort(attribute="0") %}
+        <div class="command-entry"><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code> {{entry[2]}}</div>
+    {% endfor %}
+    <div class="command-group-meta">
+        <small><a href="#top">Back to top</a></small>
+    </div>
+    </div>
 {% endfor %}
+
 {% endblock main_content %}
+
+{% block related_content %}
+<h2 id="top">Command Categories</h2>
+<ul>
+{% if group_descriptions %}
+{% for command_group_name, group_description in group_descriptions %}
+    {% set replaced_group_id = command_group_name | replace(from="-", to="_") %}
+    {% if grouped[replaced_group_id]  %}<li>  <a href="#{{ command_group_name }}">{{ group_description.display }}</a></li>{% endif %}
+{% endfor %}
+{% endif %}
+</ul>
+
+<h2>Alphabetical Command List</h2>
+<ul>
+{% set alpha_entries = commands_entries | sort(attribute="0")  %}
+{% for entry in alpha_entries  %}
+    <li><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code></li>
+{% endfor %}
+</ul>
+{% endblock related_content %}
+
+
+{% block subhead_content %}
+<h1 class="page-title">Documentation: Command Reference</h1>
+{% endblock subhead_content %}

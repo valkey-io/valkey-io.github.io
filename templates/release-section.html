@@ -1,0 +1,38 @@
+{% extends "right-aside.html" %}
+
+{% block subhead_content%}
+<h1 class="page-title">Valkey Releases</h1>
+{% endblock subhead_content%}
+{% block main_content %}
+
+
+{% set_global release_lines = [] %}
+
+
+{% for release in section.pages %}
+    {% set split_ver = release.extra.tag | split(pat=".")%}
+    {% set major = split_ver | nth(n= 0) %}
+    {% set minor = split_ver | nth(n= 1) %}
+    {% set patch = split_ver | nth(n= 2) %}
+
+    
+    {% set_global release_lines = release_lines | concat(with=major) %}
+{% endfor %}
+
+{% set release_lines_unique = release_lines | unique %}
+{% for line in release_lines_unique %}
+    <h2>{{ line }}.x.x</h2>
+    <ul>
+    {% for release in section.pages %}
+        {% set split_ver = release.extra.tag | split(pat=".")%}
+        {% set major = split_ver | nth(n= 0) %}
+
+        {% if major == line %}
+            <li><a href="{{ release.permalink }}"> {{ release.extra.tag }}</a> <small>(Released {{ release.date | date(format="%Y-%m-%d") }})</small></li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endfor %}
+
+
+{% endblock main_content %}

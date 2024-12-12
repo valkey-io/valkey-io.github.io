@@ -36,19 +36,7 @@ review_list = [
     "/topics/internals/",
     "/topics/latency/",
     "/topics/lua-api/",
-    "/topics/modules-blocking-ops/",
-    "/topics/modules-intro/",
-    "/topics/pipelining/",
-    "/topics/programmability/",
-    "/topics/protocol/",
-    "/topics/pubsub/",
     "/topics/rdd/",
-    "/topics/replication/",
-    "/topics/security/",
-    "/topics/sentinel-clients/",
-    "/topics/sentinel/",
-    "/topics/transactions/",
-    "/topics/cluster-spec/",
     "/topics/history/"
 ]
 
@@ -61,5 +49,3 @@ publish_hold = [
     "/topics/protocol/",
     "/topics/rdd/"
 ]
-
-banner = "Register to attend the first-ever [Valkey Developer Day](https://events.linuxfoundation.org/valkey-developer-day/) on September 19 in Vienna"

@@ -1,0 +1,5 @@
+# Custom front matter
+aliases = [
+    "/docs/topics/history/",
+    "/about/"
+]

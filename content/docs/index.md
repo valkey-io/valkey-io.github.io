@@ -1,14 +1,11 @@
 +++
-title = "Docs"
-template = "fullwidth.html"
+title = "Documentation"
+template = "block-menu.html"
 page_template = "docs-page.html"
+[extra]
+body_class=  "blocks-page"
 +++
 
-* [Command Reference](/commands/)
-* [All Documentation Topics](/topics/)
-* Management
-  * [Persistence](/topics/persistence/)
-  * Security
-    * [ACL](/topics/acl/)
-* Valkey Manual
-  * [Keyspace Notifications](/topics/keyspace/)
+
+* [Command Reference](/commands/) A categorized listing of all Valkey commands
+* [Documentation by topic](/topics/) In-depth documentation covering a wide variety of operational and usage subjects
