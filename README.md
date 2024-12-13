@@ -3,8 +3,6 @@
 This repo contains the source for the valkey.io website (build scripts, template, blog posts, stylesheets, etc.).
 The build integrates content from [`valkey-io/valkey-doc`](https://github.com/valkey-io/valkey-doc) and the commands definitions from [`valkey-io/valkey`](https://github.com/valkey-io/valkey-doc) (see [Build Locally](#build-locally) below for more details).
 
-**Note**: The site is currently in transition to a new static site generator. The current production website is built from branch `jekyll-version` but will be built from `main` in the near future.
-
 ## Contributing
 
 We welcome contributions! Please see our [CONTRIBUTING](CONTRIBUTING.md) page to learn more about how to contribute to the website.
