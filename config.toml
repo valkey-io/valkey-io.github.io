@@ -41,11 +41,9 @@ review_list = [
 ]
 
 publish_hold = [
-    "/topics/protocol/",
     "/topics/license/",
     "/topics/internals-eventlib/",
     "/topics/internals-vm/",
     "/topics/internals/",
-    "/topics/protocol/",
     "/topics/rdd/"
 ]
