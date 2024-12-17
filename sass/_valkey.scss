@@ -697,3 +697,49 @@ pre table {
   
   border-top: 1px solid $grey-dk-100;
 }
+
+.table-container {
+  padding: 10px;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.table-header {
+  background-color: #f4f4f4; 
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 2px #ccc;
+}
+
+.table-header-cell {
+  padding: 10px;
+  border-right: 1px solid #e0e0e0; 
+  text-align: center;
+  color: #555;
+}
+
+.table-row {
+  &.even-row {
+    background-color: #fbfbfb;
+  }
+  &.odd-row {
+    background-color: #ffffff;
+  }
+}
+
+.table-cell {
+  padding: 8px 12px;
+  border-right: 1px solid #eee; 
+  text-align: center;
+  color: #444; 
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.table-cell:first-child {
+  font-weight: bold;
+  text-align: center;
+  color: #555;
+}

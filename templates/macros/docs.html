@@ -49,3 +49,17 @@
         | regex_replace(pattern=`\[(?<id>.*)\}\s*(?P<url>.*)`, rep=`[$id]: $url`)
 }}
 {%- endmacro fix_links -%}
+
+
+{%- macro client_json_path(client_path) -%}
+{{config.extra.client_json_path }}{{ client_path }}
+{%- endmacro client_json_path -%}
+
+
+{%- macro boolean_to_yes_no(value) -%}
+    {% if value == true %}
+        Yes
+    {% else %}
+        No
+    {% endif %}
+{%- endmacro %}
