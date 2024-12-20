@@ -12,7 +12,7 @@ This seems nearly unbelievable given how much has changed in only a few short mo
 
 Now, at the end of 2024, Valkey has had both a minor and major release as well as a few patches.
 Valkey 7.2 primarily introduced the project and new name while carrying over the feature set and performance from before the fork.
-Valkey 8.0 made substantial internal changes, bringing higher performance through multi-threaded I/O, better memory efficiency from a rewritten main dictionary, and more granular visibility into performance and resource usage.
+Valkey 8.0 made substantial internal changes, bringing higher performance through multi-threaded I/O, better memory efficiency from a rewritten main dictionary, more granular visibility into performance and resource usage, and enhanced reliability in replication and slot migration.
 In 2025, the project is looking toward a future with new functionality and a whole boatload of optimizations in both performance and efficiency.
 
 ## Beginnings
