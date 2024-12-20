@@ -65,7 +65,7 @@ Similarly, Linux distributions have [widely adopted Valkey in their package mana
 The latest version of Fedora, version 41, goes beyond just packaging Valkey: [it obsoletes Redis in lieu of Valkey](https://fedoraproject.org/wiki/Changes/Replace_Redis_With_Valkey#Upgrade/compatibility_impact).
 Functionally, this means that if you upgraded to Fedora 41 and consumed Redis packaged by Fedora, you were automatically migrated to Valkey and all future attempts to install Redis from the package manager gives you Valkey.
 
-[AlmaLinux, “the forever-free, Enterprise OS”](https://almalinux.org/) provides Valkey to it’s users but also is a user of Valkey in their mirroring  system.
+[AlmaLinux, “the forever-free, Enterprise OS”](https://almalinux.org/) provides Valkey to it’s users but also is a user of Valkey in their mirroring system.
 In an interview with Jonathan Wright, Lead for the infrastructure special interest group at AlmaLinux, he described how the mirror list system within AlmaLinux handles “millions and millions of requests per day” for systems requesting package updates.
 The information is not simple: geolocation, subnet, and ASN matching means that querying a relational database directly was not an option: it would just be too inefficient and too slow.
 The system, which originally ran on Redis, takes the total request time from “2-3 seconds per request” down to just 50 milliseconds.
