@@ -11,11 +11,11 @@
             {%- set end = "" -%}
         {%- endif -%}
         {%- set token = "" -%}
-        {%- if arguments.type and arguments.type !=  "pure-token" and arguments.token -%}
+        {%- if arguments.type and arguments.token -%}
             {%- set token = arguments.token -%}
         {%- endif -%}
         {%- set name = "" -%}
-        {%- if arguments.type and arguments.type !=  "block"  and arguments.type !=  "oneof" -%}
+        {%- if arguments.type and arguments.type !=  "block"  and arguments.type !=  "oneof" and arguments.type !=  "pure-token" -%}
             {%- set name = arguments.name -%}
         {%- endif -%}
         {%- set next = "" -%}
