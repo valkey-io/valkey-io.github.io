@@ -1,0 +1,15 @@
+<div class="palette-container">
+    <div class="palette-icon" style="background-color:{{ palette_hex }};">
+        {%- if palette_text_hex -%}
+        <p class="palette-icon-text" style="color: {{ palette_text_hex }};">
+                Use {{ palette_text_hex }} for text color 
+            </p>
+        {%- endif -%}
+    </div>
+    <div class="palette-text">
+        <p>HEX: {{ palette_hex }}</p>
+        <p>RGB: {{ palette_rgb }}</p>
+        <p>CMYK: {{ palette_cmyk }}</p>
+        <p>Pantone: {{ palette_pantone }}</p>
+    </div>
+</div>
