@@ -8,7 +8,7 @@
         <table >
             <thead>
                 <tr class="table-header">
-                    {% for header in ["Client Name", "Language", "Valkey Version Compatibility","Package Size", "Read From Replica", "Smart Backoff to Prevent Connection Storm", "PubSub State Restoration", "Cluster Scan", "Latency-Based Read From Replica", "AZ-Based Read From Replica", "Client Side Caching", "CLIENT CAPA Redirect", "Persistent Connection Pool"] %}
+                    {% for header in ["Client Name", "Language", "Valkey Version Compliance","Package Size", "Read From Replica", "Smart Backoff to Prevent Connection Storm", "PubSub State Restoration", "Cluster Scan", "Latency-Based Read From Replica", "AZ-Based Read From Replica", "Client Side Caching", "CLIENT CAPA Redirect", "Persistent Connection Pool"] %}
                         <th class="table-header-cell">{{ header }}</th>
                     {% endfor %}
                 </tr>
@@ -17,9 +17,9 @@
                 {%- for path in client_paths %}
                     {% set json_data = load_data(path = docs::client_json_path(client_path= path), format="json") %}
                     <tr class="table-row {% if loop.index is even %}even-row{% else %}odd-row{% endif %}">
-                        {% for field in ["name", "language", "valkey_version_compatibility","package_size", "read_from_replica", "smart_backoff_to_prevent_connection_storm", "pubsub_state_restoration", "cluster_scan", "latency_based_read_from_replica", "AZ_based_read_from_replica", "client_side_caching", "client_capa_redirect", "persistent_connection_pool"] %}
+                        {% for field in ["name", "language", "valkey_version_compliance","package_size", "read_from_replica", "smart_backoff_to_prevent_connection_storm", "pubsub_state_restoration", "cluster_scan", "latency_based_read_from_replica", "AZ_based_read_from_replica", "client_side_caching", "client_capa_redirect", "persistent_connection_pool"] %}
                             <td class="table-cell">
-                                {% if field not in ["name", "language", "valkey_version_compatibility", "package_size"] %}
+                                {% if field not in ["name", "language", "valkey_version_compliance", "package_size"] %}
                                     {{ docs::boolean_to_yes_no(value=json_data[field]) }}
                                 {% else %}
                                     {{ json_data[field] }}

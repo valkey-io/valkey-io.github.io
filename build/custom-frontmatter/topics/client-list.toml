@@ -1,14 +1,14 @@
 # Custom front matter
-template = "client_list.html"
+template = "client-list.html"
 [extra]
 recommended_clients_paths = [
-    "/python/github.com/valkey/valkey-GLIDE.json",
-    "/python/github.com/valkey/valkey-py.json",
-    "/nodejs/github.com/valkey/valkey-GLIDE.json",
-    "/nodejs/github.com/valkey/iovalkey.json",
-    "/java/github.com/valkey/valkey-GLIDE.json",
-    "/java/github.com/valkey/valkey-java.json",
-    "/go/github.com/valkey/valkey-go.json",
-    "/php/github.com/phpredis/phpredis.json",
-    "/php/github.com/nrk/predis.json",
-]
+    "/client-page-clients/python/valkey-GLIDE.json",
+    "/client-page-clients/python/valkey-py.json",
+    "/client-page-clients/nodejs/valkey-GLIDE.json",
+    "/client-page-clients/nodejs/iovalkey.json",
+    "/client-page-clients/java/valkey-GLIDE.json",
+    "/client-page-clients/java/valkey-java.json",
+    "/client-page-clients/go/valkey-go.json",
+    "/client-page-clients/php/phpredis.json",
+    "/client-page-clients/php/predis.json",
+] 

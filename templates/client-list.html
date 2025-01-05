@@ -1,18 +1,14 @@
-{% extends "docs-page.html" %}
+{% extends "right-aside.html" %}
 {% import "macros/docs.html" as docs %}
 
+{% block subhead_content %}
+<h1 class="page-title">Documentation: Clients</h1>
+{% endblock subhead_content %}
+
 {% block main_content %}
-    {% if config.extra.review_list is containing(page.path) %}
-    <p><strong>This page is under review.</strong> The page is likely incorrect, contains invalid links, and/or needs technical review. 
-        In the future it may change substantially or be removed entirely.</p>
-    <hr />
-    {% endif %}
-    {%- set content_with_fixed_links = docs::fix_links(content= page_contents) -%}
-    {% if config.extra.publish_hold is containing(page.path) %}
-        <p><code>{{ page.path }}</code> may be available after revisions.</p>
-    {% else %}
-        {{ content_with_fixed_links | markdown | safe }}
-    {% endif %}
+    <div class="markdown-content">
+        {{ section.content | markdown | safe }}
+    </div>
 
     <div class="client-list">
         <h2>Table of Contents</h2>
@@ -26,7 +22,7 @@
         {% for language in languages %}
             <h2 id="{{ language | slugify }}">{{ language }}</h2>
             <div class="language-clients">
-                {% for path in page.extra.recommended_clients_paths %}
+                {% for path in section.extra.recommended_clients_paths %}
                     {% set client = load_data(path = docs::client_json_path(client_path= path), format="json") %}
                     {% if client.language == language %}
                     <div class="client-item">
@@ -53,6 +49,15 @@
                                 {% endif %}
                             </li>
                             <li><strong>Description:</strong> {{ client.description }}</li>
+                            {% if client.specific_properties %}
+                                <li><strong>Specific Properties:</strong>
+                                    <ul>
+                                        {% for property in client.specific_properties %}
+                                            <li> {{ property }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </li>
+                            {% endif %}
                         </ul>
                     </div>                    
                     {% endif %}
@@ -61,7 +66,7 @@
         {% endfor %}
     </div>
     <div  id="feature-comparison-table" class = "feature-comparison-table" >
-        {% set client_paths = page.extra.recommended_clients_paths %}
+        {% set client_paths = section.extra.recommended_clients_paths %}
         {% include "client-feature-table.html" %}
     </div>
 {% endblock main_content %}
