@@ -13,6 +13,7 @@
     From day-to-day operational support to hands-on assistance for complex projects, Percona can meet your Valkey database needs. 
     We’ll soon be offering support, managed services, and project-based consulting, so together, we can tackle any challenge and continue to keep open source, open.
 
+
 - name: Aiven
   link: https://aiven.io/valkey
   image:
@@ -24,3 +25,16 @@
   offering: >
     Aiven for Valkey is a managed, in-memory NoSQL database with a small footprint and big performance.
     It is built on open source Valkey and compatible with legacy Redis® OSS.
+
+- name: UpCloud
+  link: https://upcloud.com/valkey
+  image:
+    path: /img/upcloud.svg
+    alt: UpCloud Logo
+  company: >
+    UpCloud is a leading European cloud provider with a global platform spanning four continents and 13 data centres.
+    Founded in 2012 and headquartered in Helsinki, Finland, our international team ensures uninterrupted services with a 100% SLA, empowering businesses worldwide to thrive with our reliable, cloud-native product portfolio.
+  offering: >
+    Valkey on UpCloud simplifies database management with a fully managed service hosted on our GDPR-compliant cloud.
+    Enjoy seamless deployment, expert maintenance, and high performance with minimal downtime. 
+    Backed by UpCloud’s global reach, Valkey ensures reliability and scalability, freeing developers to focus on building great applications.
