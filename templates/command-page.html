@@ -72,6 +72,29 @@
 <code>ERROR. Command description not loaded</code><br />
 {% endif %}
 
+{% set_global resp2_replies = load_data(path="../_data/resp2_replies.json", required=false) -%}
+{% set_global resp3_replies = load_data(path="../_data/resp3_replies.json", required=false) -%}
+{% if resp2_replies and resp3_replies -%}
+    {% set resp2_reply = resp2_replies | get(key=command_title) | join(sep="\n\n") -%}
+    {% set resp3_reply = resp3_replies | get(key=command_title) | join(sep="\n\n") -%}
+
+    {% if resp2_reply or resp3_reply -%}
+        {% if resp2_reply == resp3_reply -%}
+            <h3>RESP2/RESP3 Reply</h3>
+            {{ commands::fix_links(content=resp2_reply) | markdown | safe }}
+        {% else %}
+            {% if resp2_reply -%}
+                <h3>RESP2 Reply</h3>
+                {{ commands::fix_links(content=resp2_reply) | markdown | safe }}
+            {% endif -%}
+            {% if resp3_reply -%}
+                <h3>RESP3 Reply</h3>
+                {{ commands::fix_links(content=resp3_reply) | markdown | safe }}
+            {% endif -%}
+        {% endif -%}
+    {% endif -%}
+{% endif -%}
+
 {% if command_data_obj and command_data_obj.history %}
 <h3>History</h3>
 <table>
