@@ -1,6 +1,6 @@
 +++
 title= "Reducing application latency and lowering Cloud bill by setting up your client library"
-date= 2024-12-22 01:01:01
+date= 2025-01-08 01:01:01
 description= "By implementing AZ affinity routing in Valkey and using GLIDE, you can achieve lower latency and cost savings by routing requests to replicas in the same AZ as the client."
 authors= [ "asafporatstoler", "adarovadya"]
 +++
