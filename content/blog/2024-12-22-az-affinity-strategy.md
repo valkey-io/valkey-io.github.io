@@ -60,7 +60,7 @@ Setting up AZ affinity routing in GLIDE is simple, allowing you to leverage its 
 
 ### Steps to Set Up AZ Affinity Routing in GLIDE
 
-1. Configure Valkey nodes availability zone
+1. Configure Valkey nodes availability zone - 
     Assign each Valkey node to a specific AZ based on its physical or virtual location within the Cloud provider's region. 
     The initial configuration must to be done with a separate management client on node initialization, as the clients gets the info from the replicas on the first reconnect. 
     In some managed services like Amazon ElastiCache, this mapping is configured automatically and this step is not required. 
@@ -81,8 +81,10 @@ Setting up AZ affinity routing in GLIDE is simple, allowing you to leverage its 
     client.configSet({"availability-zone": az}, { route: {type: "routeByAddress", host:"address.example.com", port:6379}})
     ```
 
-2. Configure GLIDE with AZ-Specific Targeting
+2. Configure GLIDE with AZ-Specific Targeting - 
     Here are Python, Java, and Node.JS examples showing how to set up an AZ affinity client that directs calls to nodes in the same AZ as the client.
+    
+    **Python:**
     ```python
     from glide import (
         GlideClient,
