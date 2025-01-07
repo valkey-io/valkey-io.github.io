@@ -13,6 +13,19 @@
     From day-to-day operational support to hands-on assistance for complex projects, Percona can meet your Valkey database needs. 
     We’ll soon be offering support, managed services, and project-based consulting, so together, we can tackle any challenge and continue to keep open source, open.
 
+
+- name: Aiven
+  link: https://aiven.io/valkey
+  image:
+    path: /img/aiven.svg
+    alt: Aiven Logo
+  company: >
+    Aiven is a versatile platform empowering you with AI-driven workload optimization and control over your data.
+    Deploy widely adopted technologies across multiple clouds with just a few clicks to stream, store, and serve your data.
+  offering: >
+    Aiven for Valkey is a managed, in-memory NoSQL database with a small footprint and big performance.
+    It is built on open source Valkey and compatible with legacy Redis® OSS.
+
 - name: UpCloud
   link: https://upcloud.com/valkey
   image:
