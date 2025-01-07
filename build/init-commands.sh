@@ -46,7 +46,8 @@ done
 
 echo "Command stub files created."
 
-grouppath="../${1}/../groups.json"
-ln -s $grouppath ./_data/groups.json
+for datafile in groups.json resp2_replies.json resp3_replies.json; do
+    ln -s "../${1}/../${datafile}" "./_data/${datafile}"
 
-echo "Created link to groups.json"
+    echo "Created link to ${datafile}"
+done
