@@ -13,6 +13,19 @@
     From day-to-day operational support to hands-on assistance for complex projects, Percona can meet your Valkey database needs. 
     We’ll soon be offering support, managed services, and project-based consulting, so together, we can tackle any challenge and continue to keep open source, open.
 
+
+- name: Aiven
+  link: https://aiven.io/valkey
+  image:
+    path: /img/aiven.svg
+    alt: Aiven Logo
+  company: >
+    Aiven is a versatile platform empowering you with AI-driven workload optimization and control over your data.
+    Deploy widely adopted technologies across multiple clouds with just a few clicks to stream, store, and serve your data.
+  offering: >
+    Aiven for Valkey is a managed, in-memory NoSQL database with a small footprint and big performance.
+    It is built on open source Valkey and compatible with legacy Redis® OSS.
+
 - name: UpCloud
   link: https://upcloud.com/valkey
   image:
@@ -25,3 +38,16 @@
     Valkey on UpCloud simplifies database management with a fully managed service hosted on our GDPR-compliant cloud.
     Enjoy seamless deployment, expert maintenance, and high performance with minimal downtime. 
     Backed by UpCloud’s global reach, Valkey ensures reliability and scalability, freeing developers to focus on building great applications.
+
+- name: Amazon Web Services
+  link: https://aws.amazon.com/elasticache/redis/?nc=sn&loc=0
+  image:
+    path: /img/aws.svg
+    alt: AWS logo
+  company: > 
+    [Amazon Web Services (AWS)](https://aws.amazon.com/what-is-aws/?nc1=f_cc) is the world’s most comprehensive and broadly adopted cloud, offering over 200 fully featured services from data centers globally.
+    Millions of customers—including the fastest-growing startups, largest enterprises, and leading government agencies—are using AWS to lower costs, become more agile, and innovate faster.
+  offering: >
+    [Amazon ElastiCache](https://aws.amazon.com/elasticache/redis/?nc=sn&loc=0) is a fully managed, Valkey-compatible service delivering real-time, cost-optimized performance.
+    ElastiCache scales to millions of operations per second with microsecond latency and enterprise-level security and reliability.
+    With ElastiCache, you combine the speed, simplicity, and versatility of Valkey with the manageability, security, and scalability from Amazon to power the most demanding data-driven applications in Gaming, Ad-Tech, E-Commerce, Healthcare, Financial Services, and IoT.
