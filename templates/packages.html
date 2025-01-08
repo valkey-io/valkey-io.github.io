@@ -1,0 +1,58 @@
+{% extends "fullwidth.html" %}
+
+{% block subhead_content%}
+<h1 class="page-title">Packages </h1>
+{% endblock subhead_content%}
+{% block main_content %}
+
+{{ page.content | safe }}
+
+{% set releases_section = get_section(path="download/releases/_index.md") %}
+{% set releases = releases_section.pages | sort(attribute="date") | reverse %}
+
+
+{% set package_names = [] %}
+{% for release in releases %}
+    {% if release.extra.packages %}
+        {% for package in release.extra.packages %}
+            {% set_global package_names = package_names | concat(with= [ package.name ]) %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+{% set package_cols = package_names | unique() | sort() %}
+{% set has_package = "⬤" %}
+{% set no_package = "◯" %}
+
+<h2>Valkey packages for each version</h2>
+<table class="packages-table">
+    <thead>
+        <tr>
+            <th scope="col">Version</th>
+        {% for col in package_cols %}
+            <th scope="col" ><div>{{ col }}</div></th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for release in releases %}
+            <tr>
+                <th id="{{ release.title | slugify }}" scope="row"><a href="{{release.permalink}}">{{ release.title }}</a></th>
+                {% for col in package_cols %}
+                    {% if release.extra.packages %}
+                        {% set package = release.extra.packages | filter(attribute="name", value= col) %}
+                        {% if package.0 %}       	
+                            <td class="has-package">{{ has_package | safe }}</td>
+                        {% else %}
+                            <td class="no-package">{{ no_package | safe }}</td>
+                        {% endif%}
+                    {% else %}
+                        <td class="no-package">{{ no_package | safe  }}</td>
+                    {% endif %}
+
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<small>Note this table may scroll horizontally.</small>
+{% endblock main_content %}
