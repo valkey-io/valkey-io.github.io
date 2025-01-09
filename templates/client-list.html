@@ -12,21 +12,27 @@
 
     <div class="client-list">
         <h2>Table of Contents</h2>
-        <ul>
-            {% set languages = ["Python", "JavaScript/Node.js", "Java", "Go", "PHP"] %}
+        <ul>              
+            {% set languages = [] %}
+            {% for path in section.extra.recommended_clients_paths %}
+                {% set language = path | split(pat="/") | nth(n=1) %}
+                {% if language not in languages %}
+                    {% set_global languages = languages | concat(with=language) %}
+                {% endif %}
+            {% endfor %}
             {% for language in languages %}
-            <li><a href="#{{ language | slugify }}">{{ language }}</a></li>
+            <li><a href="#{{ language | slugify }}">{{ language | title }}</a></li>
             {% endfor %}
             <li><a href="#feature-comparison-table">Feature Comparison Table</a></li>
         </ul>
         {% for language in languages %}
-            <h2 id="{{ language | slugify }}">{{ language }}</h2>
             <div class="language-clients">
+                <h2 id="{{ language | slugify }}">{{ language | title }}</h2>
                 {% for path in section.extra.recommended_clients_paths %}
                     {% set client = load_data(path = docs::client_json_path(client_path= path), format="json") %}
                     {% if client.language == language %}
-                    <div class="client-item">
-                        <h3>{{ client.name }}</h3>
+                    <div class="client-item" >
+                        <h3 id="{{ client.name | slugify }}">{{ client.name }}</h3>
                         <ul>
                             <li><strong>GitHub:</strong> <a href="{{ client.github }}">{{ client.name }}</a></li>
                             <li>
@@ -67,6 +73,7 @@
     </div>
     <div  id="feature-comparison-table" class = "feature-comparison-table" >
         {% set client_paths = section.extra.recommended_clients_paths %}
+        {% set client_fields = section.extra.client_fields %}
         {% include "client-feature-table.html" %}
     </div>
 {% endblock main_content %}

@@ -56,10 +56,10 @@
 {%- endmacro client_json_path -%}
 
 
-{%- macro boolean_to_yes_no(value) -%}
+{%- macro boolean_to_checkmark(value) -%}
     {% if value == true %}
-        Yes
+        ✓
     {% else %}
-        No
+        ✗
     {% endif %}
 {%- endmacro %}
