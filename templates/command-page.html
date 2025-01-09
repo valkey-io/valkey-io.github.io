@@ -75,10 +75,12 @@
 {% set_global resp2_replies = load_data(path="../_data/resp2_replies.json", required=false) -%}
 {% set_global resp3_replies = load_data(path="../_data/resp3_replies.json", required=false) -%}
 {% if resp2_replies and resp3_replies -%}
-    {% set resp2_reply = resp2_replies | get(key=command_title) | join(sep="\n\n") -%}
-    {% set resp3_reply = resp3_replies | get(key=command_title) | join(sep="\n\n") -%}
+    {% set resp2_reply = resp2_replies | get(key=command_title, default="") -%}
+    {% set resp3_reply = resp3_replies | get(key=command_title, default="") -%}
 
-    {% if resp2_reply or resp3_reply -%}
+    {% if resp2_reply and resp2_reply != "" and resp3_reply and resp3_reply != "" -%}
+        {% set resp2_reply = resp2_reply | join(sep="\n\n") -%}
+        {% set resp3_reply = resp3_reply | join(sep="\n\n") -%}
         {% if resp2_reply == resp3_reply -%}
             <h3>RESP2/RESP3 Reply</h3>
             {{ commands::fix_links(content=resp2_reply) | markdown | safe }}
