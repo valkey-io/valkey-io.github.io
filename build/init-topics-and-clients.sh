@@ -8,9 +8,19 @@ if [ -z "$1" ]; then
     exit 1
 fi 
 
+if [ -z "$2" ]; then
+    echo "You must supply a path to the clients directory as the first argument" 
+    exit 1
+fi 
+
 # check for validity of these agruments as paths
 if [ ! -d "$1" ]; then
     echo "The topics directory must exist and be a valid path"
+    exit 1
+fi
+
+if [ ! -d "$2" ]; then
+    echo "The clients directory must exist and be a valid path"
     exit 1
 fi
 
@@ -49,18 +59,15 @@ done
 
 echo "Topic stub files created at content/topics."
 
-
-#create symlink to clients, expect if it already exists
-topics_path="$1"
-doc_path="${topics_path%%valkey-doc/*}valkey-doc/"
-clients_path="$doc_path/clients"
-if [ ! -L build-clients -o "$(readlink build-clients)" != "$clients_path" ]; then
-    ln -s "$clients_path" ./build-clients
-fi
-
 for fname in $(find $1 -maxdepth 1  -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.gif")
 do
     base=${fname##*/}
     cp ${fname} ./content/topics/${base}
 done
 echo "Copied images to topics directory."
+
+
+#create symlink to clients, expect if it already exists
+if [ ! -L build-clients -o "$(readlink build-clients)" != "$2" ]; then
+    ln -s $2 ./build-clients
+fi
