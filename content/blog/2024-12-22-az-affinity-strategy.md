@@ -43,10 +43,10 @@ In Valkey 8,  ```availability-zone``` configuration was introduced, allowing cli
     **Example:**
     Consider a cluster with three nodes, one primary and two replicas. Each node is located in a different availability zone. The client located in az-2 along with replica-1. 
 
-    **With ```PERFER_REPLICA``` strategy**:
+    **With ```PREFER_REPLICA``` strategy**:
     In this case, the client will read commands from any replica that is available. It may be located in a different AZ as shown below, and the average latency is, for example, 800 microseconds.
 
-    ![PERFER_REPLICA Read strategy latency example](/assets/media/pictures/PERFER_REPLICA_strategy.png)
+    ![PREFER_REPLICA Read strategy latency example](/assets/media/pictures/PREFER_REPLICA_strategy.png)
 
 
     **With ```AZ_AFFINITY``` strategy**:
