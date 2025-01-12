@@ -9,7 +9,7 @@
             <thead>
                 <tr class="table-header">
                     {% for header in client_fields %}
-                        <th class="table-header-cell">{{ header | replace(from="_", to=" ") |  title | replace (from= "Az", to= "AZ") }}</th>
+                        <th class="table-header-cell">{{ header | replace(from="_", to=" ") |replace (from= "size", to= "Size*")|  title | replace (from= "Az", to= "AZ") }}</th>
                     {% endfor %}
                 </tr>
             </thead>
@@ -31,4 +31,5 @@
             </tbody>
         </table>
     </div>
+    <p>* Unpacked package size including dependencies. </p>
 {% endblock main_content %}

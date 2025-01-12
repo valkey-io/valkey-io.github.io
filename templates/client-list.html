@@ -42,11 +42,7 @@
                                         {% for installation_type in client.installation %}
                                             <li>
                                                 {{ installation_type.type }}:
-                                                {% if installation_type.type == "Maven" %}
-                                                    <pre><code>{{ installation_type.command }}</code></pre>
-                                                {% else %}
-                                                    <code>{{ installation_type.command }}</code>
-                                                {% endif %}
+                                                <pre>{{ installation_type.command }}</pre>
                                             </li>
                                         {% endfor %}
                                     </ul>
