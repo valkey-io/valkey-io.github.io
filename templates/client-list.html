@@ -34,7 +34,7 @@
                     <div class="client-item" >
                         <h3 id="{{ client.name | slugify }}">{{ client.name }}</h3>
                         <ul>
-                            <li><strong>GitHub:</strong> <a href="{{ client.github }}">{{ client.name }}</a></li>
+                            <li><strong>Repo:</strong> <a href="{{ client.repo }}">{{ client.name }}</a></li>
                             <li>
                                 <strong>Installation:</strong>
                                 {% if client.installation is iterable %}
