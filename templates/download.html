@@ -5,7 +5,6 @@
 {% endblock subhead_content%}
 {% block main_content %}
 
-
 {% set release_section = get_section(path="download/releases/_index.md") %}
 {% set most_recent_release_page = release_section.pages | reverse | slice(end= 1) %}
 {% set release_date = most_recent_release_page[0].date %}
@@ -15,6 +14,7 @@
 {% set_global major = split_ver | nth(n= 0) %}
 
 You can get the latest releases of Valkey from this page.<br />
+For installation instructions, supported package managers, and how to configure Valkey, see the <a href="/topics/installation">installation</a> page.<br />
 The <a href="./releases/">releases</a> page contains links to download all current and previous releases (including any security fixes for previous released versions).<br />
 <br />
 
