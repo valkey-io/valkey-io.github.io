@@ -9,13 +9,13 @@
 {% set_global release_lines = [] %}
 
 
-{% for release in section.pages %}
+{% for release in section.pages | reverse %}
     {% set split_ver = release.extra.tag | split(pat=".")%}
     {% set major = split_ver | nth(n= 0) %}
     {% set minor = split_ver | nth(n= 1) %}
     {% set patch = split_ver | nth(n= 2) %}
 
-    
+
     {% set_global release_lines = release_lines | concat(with=major) %}
 {% endfor %}
 
