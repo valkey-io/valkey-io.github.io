@@ -7,15 +7,33 @@
 
 
 {% set release_section = get_section(path="download/releases/_index.md") %}
-{% set most_recent_release_page = release_section.pages | slice(end= 1)  %}
+{% set most_recent_release_page = release_section.pages | reverse | slice(end= 1) %}
 {% set release_date = most_recent_release_page[0].date %}
 {% set release = most_recent_release_page[0].extra %}
 
-You can get the latest release of Valkey ({{ release.tag }}) from this page.<br />
+{% set split_ver = release.tag | split(pat=".")%}
+{% set_global major = split_ver | nth(n= 0) %}
+
+You can get the latest releases of Valkey from this page.<br />
 The <a href="./releases/">releases</a> page contains links to download all current and previous releases (including any security fixes for previous released versions).<br />
 <br />
 
 <hr />
 
+<h3> Version {{major}}.x.x </h3>
 {% include "includes/release.html" %}
+
+<h2> Latest supported version of past releases</h2>
+
+{% for older_release in release_section.pages | reverse %}
+    {% set older_split_ver = older_release.extra.tag | split(pat=".")%}
+    {% set older_major = older_split_ver | nth(n= 0) %}
+    {% if older_major != major %}
+        {% set_global major = older_major %}
+        {% set release = older_release.extra %}
+        <h3> Version {{major}}.x.x </h3>
+        {% include "includes/release.html" %}
+    {% endif %}
+{% endfor %}
+
 {% endblock main_content %}
