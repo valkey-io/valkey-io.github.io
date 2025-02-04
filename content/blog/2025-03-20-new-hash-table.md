@@ -172,12 +172,12 @@ keys are stored in top-level buckets.
 | table 0  -------->| m x x x x x x x | m x x x x x x c | m x x x x x x x | ...
 | table 1   |       +-----------------+---------------|-+-----------------+-----
 +-----------+                                         |
-                                        Child bucket  v
+                                        child bucket  v
                                        +-----------------+
                                        | m x x x x x x c |
                                        +---------------|-+
                                                        |
-                                         Child bucket  v
+                                         child bucket  v
                                         +-----------------+
                                         | m x x x x x x x |
                                         +-----------------+
