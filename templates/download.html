@@ -20,10 +20,11 @@ The <a href="./releases/">releases</a> page contains links to download all curre
 
 <hr />
 
-<h2> Version {{major}}.x.x </h2>
+
+<h3> Version {{major}}.x.x </h3>
 {% include "includes/release.html" %}
 
-<h1> Latest supported version of past releases</h1>
+<h2> Latest supported version of past releases</h2>
 
 {% for older_release in release_section.pages | reverse %}
     {% set older_split_ver = older_release.extra.tag | split(pat=".")%}
@@ -31,7 +32,7 @@ The <a href="./releases/">releases</a> page contains links to download all curre
     {% if older_major != major %}
         {% set_global major = older_major %}
         {% set release = older_release.extra %}
-        <h2> Version {{major}}.x.x </h2>
+        <h3> Version {{major}}.x.x </h3>
         {% include "includes/release.html" %}
     {% endif %}
 {% endfor %}

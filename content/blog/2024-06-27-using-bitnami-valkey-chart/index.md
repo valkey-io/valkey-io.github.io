@@ -27,7 +27,7 @@ The sections below describe the steps to configure the deployment, get and deplo
 
 ## Getting and deploying the Bitnami package for Valkey Helm chart
 
-You can deploy the the [community](https://github.com/bitnami/charts/blob/main/LICENSE.md) Bitnami-packaged Valkey Helm chart from the open source Bitnami Application Catalog. Alternatively, if you have access to an enterprise Tanzu Application Catalog instance, it can also be deployed from there.
+You can deploy the [community](https://github.com/bitnami/charts/blob/main/LICENSE.md) Bitnami-packaged Valkey Helm chart from the open source Bitnami Application Catalog. Alternatively, if you have access to an enterprise Tanzu Application Catalog instance, it can also be deployed from there.
 
 ### Deploying the open source version of the chart through Bitnami Application Catalog
 
