@@ -1,5 +1,5 @@
 +++
 page_template= "release-page.html"
 template= "release-section.html"
-sort_by= "weight"
+sort_by= "title"
 +++
