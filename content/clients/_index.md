@@ -1,5 +1,5 @@
 +++
-title = "Client list"
+title = "Client Libraries"
 template = "client-list.html"
 [extra]
 recommended_clients_paths = [

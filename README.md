@@ -28,8 +28,9 @@ Changes to external content (command reference, documentation topics) require a 
 
 ## Building additional content
 
-**By default, the site will build without documentation topics, command reference or the clients page.**
-This content is stored within the `valkey-io/valkey-doc` and `valkey-io/valkey` repos respectively.
+**By default, the site will build without documentation topics, command reference, or the clients page.**
+The content for documentation topics and the clients page are stored within the `valkey-io/valkey-doc` repo. 
+The content for the command reference page is in the `valkey-io/valkey` repo.
 
 If you want to build the site with this content, you'll need to have a local copy of `valkey-io/valkey-doc` and `valkey-io/valkey` _outside_ of this repo.
 Then follow the instructions to [build the documentation topics and clients](#building-the-documentation-topics-and-clients-page) and/or [build the command reference](#building-the-command-reference).

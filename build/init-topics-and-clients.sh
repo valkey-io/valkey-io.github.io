@@ -71,3 +71,5 @@ echo "Copied images to topics directory."
 if [ ! -L build-clients -o "$(readlink build-clients)" != "$2" ]; then
     ln -s $2 ./build-clients
 fi
+echo "Symlink to clients has been created at ./build-clients "
+
