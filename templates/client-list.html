@@ -50,6 +50,8 @@
                                     <code>{{ client.installation }}</code>
                                 {% endif %}
                             </li>
+                            <li><strong>Version:</strong> <code>{{ client.version }}</code></li>
+                            <li><strong>Version Released:</strong> {{ client.version_released }}</li>
                             <li><strong>Description:</strong> {{ client.description }}</li>
                             <li><strong>License:</strong> {{ client.license }}</li>
                             {% if client.specific_properties %}

@@ -17,7 +17,6 @@ recommended_clients_paths = [
 client_fields =[
     "name",
     "language",
-    "package_size",
     "read_from_replica",
     "smart_backoff_to_prevent_connection_storm",
     "pubsub_state_restoration",
