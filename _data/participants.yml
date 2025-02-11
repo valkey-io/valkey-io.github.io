@@ -51,3 +51,13 @@
     [Amazon ElastiCache](https://aws.amazon.com/elasticache/redis/?nc=sn&loc=0) is a fully managed, Valkey-compatible service delivering real-time, cost-optimized performance.
     ElastiCache scales to millions of operations per second with microsecond latency and enterprise-level security and reliability.
     With ElastiCache, you combine the speed, simplicity, and versatility of Valkey with the manageability, security, and scalability from Amazon to power the most demanding data-driven applications in Gaming, Ad-Tech, E-Commerce, Healthcare, Financial Services, and IoT.
+
+- name: Google Cloud
+  link: https://cloud.google.com/memorystore
+  image:
+    path: /img/gcp.svg
+    alt: Google Cloud logo
+  company: >
+    Our mission at [Google Cloud](https://cloud.google.com/) is to accelerate every organization's ability to digitally transform its business and industry. We empower our customers to become digital and AI leaders by combining Google's AI innovation with differentiated solutions for compute, app development, data, security, and collaboration — all built on Google's reliable and planet-scale infrastructure.
+  offering: >
+    [Google Cloud Memorystore](https://cloud.google.com/memorystore) is the most versatile, fully-managed, in-memory database service for Valkey, offering sub-millisecond data access, scalability, and high availability.
