@@ -45,7 +45,7 @@ It’s like Redis, but with more caffeine, a bigger dev team, and a community th
 
 Beyond seeing this coverage, less than six months after the establishment of the project a report indicated that [63% of respondents were already familiar with Valkey](https://thenewstack.io/redis-users-want-a-change/), so it’s no surprise that there are countless folks already using it.
 These specific stories being told in public are a valuable data point for the next wave of migrations.
-At Open Source Summit Hong Kong in September, [Dirk Hohndel](https://www.facesofopensource.com/dirk-hohndel/) from Verizion talks about migrating his own app over to Valkey 8.0 release candidate and seeing a 3x performance increase.
+At Open Source Summit Hong Kong in September, [Dirk Hohndel](https://www.facesofopensource.com/dirk-hohndel/) from Verizon talks about migrating his own app over to Valkey 8.0 release candidate and seeing a 3x performance increase.
 
 [![YouTube video thumbnail of open source summit hong kong](images/osshk-dirk.jpg)](https://www.youtube.com/watch?v=Qp74Nn-d5a8)
 

@@ -1,7 +1,7 @@
 # Valkey.io website
 
 This repo contains the source for the valkey.io website (build scripts, template, blog posts, stylesheets, etc.).
-The build integrates content from [`valkey-io/valkey-doc`](https://github.com/valkey-io/valkey-doc) and the commands definitions from [`valkey-io/valkey`](https://github.com/valkey-io/valkey-doc) (see [Build Locally](#build-locally) below for more details).
+The build integrates content from [`valkey-io/valkey-doc`](https://github.com/valkey-io/valkey-doc) and the commands definitions from [`valkey-io/valkey`](https://github.com/valkey-io/valkey) (see [Build Locally](#build-locally) below for more details).
 
 ## Contributing
 
@@ -62,15 +62,16 @@ Commit your changes to your local copy of `valkey-io/valkey-doc`.
 
 ### Building the command reference
 
-The command reference (i.e. `/command/set/`, `/command/get/`, `/command/lolwut/`) sources information from `valkey-io/valkey`, and `valkey-io/valkey-doc`.
-`valkey-io/valkey` provides the command metadata (items like computational complexity, version history, arguments, etc) whilst `valkey-io/valkey-doc` provides the actual command description.
+The command reference (i.e. `/commands/set/`, `/commands/get/`, `/commands/lolwut/`) sources information from `valkey-io/valkey`, and `valkey-io/valkey-doc`.
+`valkey-io/valkey` provides the command metadata (items like computational complexity, version history, arguments, etc) whilst `valkey-io/valkey-doc` provides the command description and the command reply.
 
 ```mermaid
 flowchart TD
-    A[Webpage: valkey.io/set/command]
+    A[Webpage: valkey.io/commands/set]
     A --> B[Template: valkey-io/valkey-website]
     B --> F[Repo: valkey-io/valkey ] --> G[File: /src/commands/set.json ] --> X[Command Metadata]
     B --> H[Repo: valkey-io/valkey-doc ] --> I[File: /commands/set.md ] --> Y[Command Description]
+    H --> J[Files: /resp2_replies.json,<br/>/resp3_replies.json] --> Z[Command Reply]
 ```
 
 Let's say that this repo and your local copy of `valkey-io/valkey-doc` and `valkey-io/valkey` reside in the same directories.

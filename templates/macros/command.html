@@ -58,5 +58,6 @@
     | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md\)`, rep=`](/topics/$fname)`)
     | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+\.\./topics/(?P<fname>.*?).md`, rep=`[$token]: /topics/$fname`)
     | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+(?P<fname>.*?).md`, rep=`[$token]: $fname`)
+    | safe
     }}
 {%- endmacro fix_links -%}

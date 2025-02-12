@@ -3,7 +3,7 @@
 <hr />
 
 {% for registry in release.container_registry %}
-    <h2>{{registry.name}} <small>(<a href="{{registry.link}}">{{registry.id}}</a>)</small></h2>
+    <h4>{{registry.name}} <small>(<a href="{{registry.link}}">{{registry.id}}</a>)</small></h4>
     <p>Tags:</p>
     <ul>
         {% for tag in registry.tags %}
@@ -17,9 +17,9 @@
     <hr />
 {% endfor %}
 {% if release.packages %}
-<h2>Package Managers</h2>
+<h4>Package Managers</h4>
     {% for package_manager in release.packages %}
-        <h3>{{package_manager.name}}:</h3>
+        <h5>{{package_manager.name}}:</h5>
         Package Name: 
         {% if package_manager.url %}
             <a href="{{package_manager.url}}">{{ package_manager.id }}</a>
@@ -29,7 +29,7 @@
     {% endfor %}
 {% endif %}
 <hr />
-<h2>Binary Artifacts</h2>
+<h4>Binary Artifacts</h4>
 {% if release.artifacts %}
 {% for artifact in release.artifacts %}
     {% for arch in  artifact.arch %}
