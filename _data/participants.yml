@@ -60,4 +60,4 @@
   company: >
     Our mission at [Google Cloud](https://cloud.google.com/) is to accelerate every organization's ability to digitally transform its business and industry. We empower our customers to become digital and AI leaders by combining Google's AI innovation with differentiated solutions for compute, app development, data, security, and collaboration — all built on Google's reliable and planet-scale infrastructure.
   offering: >
-    [Google Cloud Memorystore](https://cloud.google.com/memorystore) is the most versatile, fully-managed, in-memory database service for Valkey, offering sub-millisecond data access, scalability, and high availability.
+    [Google Cloud Memorystore](https://cloud.google.com/memorystore) is a versatile, fully-managed, in-memory database service for Valkey, offering sub-millisecond data access, scalability, and high availability.
