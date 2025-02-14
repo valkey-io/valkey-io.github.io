@@ -1,0 +1,60 @@
+name: Zola on GitHub Pages
+
+on:
+  push:
+    branches: ["test"]
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout prod
+        uses: actions/checkout@v4
+        with:
+          ref: prod_zola
+          path: website
+
+      - name: Checkout valkey-doc
+        uses: actions/checkout@v4
+        with:
+          repository: valkey-io/valkey-doc
+          path: valkey-doc
+
+      - name: Checkout valkey
+        uses: actions/checkout@v4
+        with:
+          repository: valkey-io/valkey
+          path: valkey
+          
+      - name: Init commands and topics
+        run: |
+          cd website
+          ./build/init-topics.sh ../valkey-doc/topics 
+          ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands
+      - name: Build only
+        uses: shalzz/zola-deploy-action@v0.19.1
+        env:
+          BUILD_DIR: website
+          BUILD_ONLY: true
+          BUILD_THEMES: false
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./website/public
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
