@@ -1,4 +1,4 @@
-name: Zola on GitHub Pages
+name: Deploy Zola branch to GitHub pages
 
 on:
   push:
