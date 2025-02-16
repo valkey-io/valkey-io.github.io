@@ -9,6 +9,7 @@ recommended_clients_paths = [
     "/node.js/iovalkey.json",
     "/java/valkey-GLIDE.json",
     "/java/valkey-java.json",
+    "/go/valkey-GLIDE.json",
     "/go/valkey-go.json",
     "/php/phpredis.json",
     "/php/predis.json",
