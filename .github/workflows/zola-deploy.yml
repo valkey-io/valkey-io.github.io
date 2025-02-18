@@ -1,8 +1,8 @@
-name: Zola on GitHub Pages
+name: Deploy website
 
 on:
   push:
-    branches: ["prod_zola"]
+    branches: ["main"]
   
   workflow_dispatch:
 
@@ -18,7 +18,7 @@ jobs:
       - name: Checkout prod
         uses: actions/checkout@v4
         with:
-          ref: prod_zola
+          ref: main
           path: website
 
       - name: Checkout valkey-doc
