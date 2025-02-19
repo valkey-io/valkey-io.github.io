@@ -11,23 +11,27 @@
 
 {% set commands_entries = [] %}
 {% for page in section.pages %}
-    {% set command_data = load_data(path= commands::command_json_path(slug= page.slug), required= false) %}
-    {% if command_data %}
-        {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
-        {% set command_data_obj = command_data[command_obj_name] %}
-        {% set command_display = command_obj_name %}
-        {% if command_data_obj.container %}
-            {% set command_display = command_data_obj.container ~ " " ~ command_display %}
+    {% for json_path in [
+        commands::command_json_path(slug=page.slug),
+        commands::command_bloom_json_path(slug=page.slug)
+    ] %}
+        {% set command_data = load_data(path= json_path, required= false) %}
+        {% if command_data %}
+            {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
+            {% set command_data_obj = command_data[command_obj_name] %}
+            {% set command_display = command_obj_name %}
+            {% if command_data_obj.container %}
+                {% set command_display = command_data_obj.container ~ " " ~ command_display %}
+            {% endif %}
+            {% set command_entry = [
+                command_display,
+                page.permalink | safe, 
+                command_data_obj.summary,
+                command_data_obj.group
+            ] %}
+            {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
         {% endif %}
-
-        {% set command_entry = [
-            command_display,
-            page.permalink | safe, 
-            command_data_obj.summary,
-            command_data_obj.group
-        ] %}
-        {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
-    {% endif %}
+    {% endfor %}
 {% endfor %}
 {% set_global grouped = commands_entries | sort(attribute="3") | group_by(attribute="3") %}
 
