@@ -24,20 +24,30 @@ if [ ! -d "$2" ]; then
     exit 1
 fi
 
+if [ ! -d "$3" ]; then
+    echo "The bloom module command JSON directory must exist and be a valid path"
+    exit 1
+fi
+
 ln -s $1 ./build-command-docs
 ln -s $2 ./build-command-json
-
+ln -s $3 ./build-bloom-command-json
 for fname in $(find $1 -maxdepth 1  -iname "*.md")
 do
     base=${fname##*/}
     command=${base%.*}
     command_upper=$(awk '{ print toupper($0) }' <<< $command)
     if [[ "$command" != "index" ]]; then 
+        if [ -f "$2/$command.json" ]; then
+            metadata_path="/commands/$command.json in the 'valkey' repo"
+        elif [ -f "$3/$command.json" ]; then
+            metadata_path="/commands/$command.json in the 'valkey-bloom' repo"
+        fi
         cat << EOF > "./content/commands/$command.md"
 +++
 # This is a generated stub file.
 # To edit the command description see /commands/$command.md in the 'valkey-doc' repo
-# The command metadata is generated from /src/$command.json in the 'valkey' repo
+# The command metadata is generated from $metadata_path
 aliases = ["/commands/$command_upper/"]
 +++
 EOF
@@ -46,7 +56,7 @@ done
 
 echo "Command stub files created."
 
-for datafile in groups.json resp2_replies.json resp3_replies.json; do
+for datafile in groups.json resp2_replies.json resp3_replies.json modules.json; do
     ln -s "../${1}/../${datafile}" "./_data/${datafile}"
 
     echo "Created link to ${datafile}"

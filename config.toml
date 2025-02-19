@@ -21,6 +21,7 @@ highlight_code = true
 [extra]
 command_description_path = "../build-command-docs/"
 command_json_path = "../build-command-json/"
+command_bloom_json_path = "../build-bloom-command-json/"
 doc_topic_path = "../build-topics/"
 
 review_list = [
