@@ -33,10 +33,10 @@ jobs:
           repository: valkey-io/valkey
           path: valkey
           
-      - name: Init commands and topics
+      - name: Init commands, topics and clients
         run: |
           cd website
-          ./build/init-topics.sh ../valkey-doc/topics 
+          ./build/init-topics-and-clients.sh ../valkey-doc/topics ../valkey-doc/clients
           ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands
       - name: Build only
         uses: shalzz/zola-deploy-action@v0.19.1
