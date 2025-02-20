@@ -7,7 +7,13 @@
 {% set upper_slug = page.slug | upper %}
 
 {% set command_description = load_data(path=config.extra.command_description_path ~ page.slug ~ ".md", required= false) %}
-{% set command_data = load_data(path= commands::command_json_path(slug= page.slug), required= false) %}
+{% set command_sources = [
+    load_data(path= commands::command_json_path(slug= page.slug), required= false),
+    load_data(path= commands::command_bloom_json_path(slug= page.slug), required= false)
+] %}
+
+{% set command_data = command_sources | filter(attribute="") | first %}
+
 {% if command_data %}
     {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
     {% set command_data_obj = command_data[command_obj_name] %} 
