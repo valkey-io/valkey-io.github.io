@@ -161,8 +161,9 @@ most likely in the same bucket, so no extra memory access is required.
 
 If a bucket becomes full, the last element slots in the bucket is replaced by a
 pointer to a child bucket. A child bucket has the same layout as a regular
-bucket, but it's a separate allocation. Child buckets form a chain. There is
-some probability of this happening, but long chains are very rare. Most of the
+bucket, but it's a separate allocation. The length of these bucket chains are
+not bounded, but long chains are very rare as long as keys are well distributed
+by the hashing function. Most of the
 keys are stored in top-level buckets.
 
 ```
