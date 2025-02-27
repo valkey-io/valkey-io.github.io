@@ -3,7 +3,8 @@ name: Deploy website
 on:
   push:
     branches: ["main"]
-  
+  repository_dispatch:
+    types: ["deploy"]
   workflow_dispatch:
 
 permissions:
