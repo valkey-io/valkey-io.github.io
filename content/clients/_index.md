@@ -31,7 +31,7 @@ client_fields =[
 
 +++
 
-Selecting the right client is a complex task, given that there are over 200 clients compatible with Valkey across different programming languages. This document offers an overview of recommended Valkey clients for various programming languages. To be included in this list, a client must support a mandatory set of features, such as TLS support and cluster mode. Additionally, a table of advanced features supported by the respective clients is provided, highlighting the unique advantages of one client over another.
+This page offers an overview of recommended Valkey clients for various programming languages. To be included in this list, a client must support a mandatory set of features, such as TLS support and cluster mode. Additionally, a table of advanced features supported by the respective clients is provided, highlighting the unique advantages of one client over another.
 
 This page includes only clients which are regularly tested and recommended. However, it's important to note that all Redis and Valkey clients are compatible with Valkey 7.2 and above. 
 
