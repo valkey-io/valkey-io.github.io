@@ -3,7 +3,8 @@
 
 {% block main_content %}
     <div class="markdown-content">
-        {{ section.content | markdown | safe }}
+        {% set content_parts = section.content | split(pat="<!-- split -->") %}
+        {{ content_parts[0] | markdown | safe }}
     </div>
 
     <div class="client-list">
@@ -46,25 +47,19 @@
                                     <code>{{ client.installation }}</code>
                                 {% endif %}
                             </li>
-                            <li><strong>Version:</strong> <code>{{ client.version }}</code></li>
+                            <li><strong>Version:</strong> {{ client.version }}</li>
                             <li><strong>Version Released:</strong> {{ client.version_released }}</li>
                             <li><strong>Description:</strong> {{ client.description }}</li>
                             <li><strong>License:</strong> {{ client.license }}</li>
-                            {% if client.specific_properties %}
-                                <li><strong>Specific Properties:</strong>
-                                    <ul>
-                                        {% for property in client.specific_properties %}
-                                            <li> {{ property }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                </li>
-                            {% endif %}
                         </ul>
                     </div>                    
                     {% endif %}
                 {% endfor %}
             </div>
         {% endfor %}
+    </div>
+    <div class="markdown-content">
+        {{ content_parts[1] | markdown | safe }}
     </div>
     <div  id="feature-comparison-table" class = "feature-comparison-table" >
         {% set client_paths = section.extra.recommended_clients_paths %}

@@ -58,8 +58,8 @@
 
 {%- macro boolean_to_checkmark(value) -%}
     {% if value == true %}
-        ✓
+        <span class="checkmark-true">✓</span>
     {% else %}
-        ✗
+        <span class="checkmark-false">✗</span>
     {% endif %}
 {%- endmacro %}

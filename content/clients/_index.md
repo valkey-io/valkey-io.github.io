@@ -31,15 +31,11 @@ client_fields =[
 
 +++
 
-This page offers an overview of recommended Valkey clients for various programming languages. To be included in this list, a client must support a mandatory set of features, such as TLS support and cluster mode. Additionally, a table of advanced features supported by the respective clients is provided, highlighting the unique advantages of one client over another.
+This page offers an overview of recommended Valkey clients for various programming languages. A table of advanced features supported by the respective clients is provided, highlighting the unique advantages of one client over another.
 
-This page includes only clients which are regularly tested and recommended. However, it's important to note that all Redis and Valkey clients are compatible with Valkey 7.2 and above. 
+This page includes only clients which are regularly tested and recommended. However, it's important to note that other clients that support Redis OSS version 7.2 are compatible with Valkey 7.2 and above. To add your client to the list, please refer to [this link.](https://github.com/valkey-io/valkey-doc/blob/main/clients/README.md)
 
-Mandatory Features Overview
-----
-1. **Cluster Support** - The ability to operate in a clustered environment, where the data is distributed across multiple shards. Cluster support is essential for applications that require high scalability.
-
-2. **TLS/SSL Support** - The capability to establish secure connections using TLS/SSL, which encrypts the data transmitted between the client and the server. This is a critical feature for applications that require data privacy and protection against eavesdropping.
+<!-- split -->
 
 Advanced Features Overview
 -----

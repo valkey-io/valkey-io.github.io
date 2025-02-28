@@ -829,3 +829,13 @@ pre table {
     }
   }
 }
+
+.checkmark-true {
+  color: green;
+  font-weight: bold;
+}
+
+.checkmark-false {
+  color: rgb(190, 9, 9);
+  font-weight: bold;
+}
