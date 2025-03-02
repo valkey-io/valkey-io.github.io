@@ -52,7 +52,7 @@ First, stop the `zola serve` process if you're running it.
 From the root directory of this repo run:
 
 ```shell
-# You should only need to run this once or when you add a new topic.
+# You should only need to run this once or when you add a new topic/client.
 ./build/init-topics-and-clients.sh ../valkey-doc/topics ../valkey-doc/clients
 ```
 

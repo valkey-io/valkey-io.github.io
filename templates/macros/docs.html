@@ -63,3 +63,11 @@
         <span class="checkmark-false">✗</span>
     {% endif %}
 {%- endmacro %}
+
+{% macro format_language(language) %}
+    {% if language == "php" %}
+        {{ language | upper }}
+    {% else %}
+        {{ language | title }}
+    {% endif %}
+{% endmacro %}
