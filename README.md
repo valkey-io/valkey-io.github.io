@@ -28,16 +28,17 @@ Changes to external content (command reference, documentation topics) require a 
 
 ## Building additional content
 
-**By default, the site will build without documentation topics nor command reference.**
-This content is stored within the `valkey-io/valkey-doc` and `valkey-io/valkey` repos respectively.
+**By default, the site will build without documentation topics, command reference, or the clients page.**
+The content for documentation topics and the clients page are stored within the `valkey-io/valkey-doc` repo. 
+The content for the command reference page is in the `valkey-io/valkey` repo.
 
 If you want to build the site with this content, you'll need to have a local copy of `valkey-io/valkey-doc` and `valkey-io/valkey` _outside_ of this repo.
-Then follow the instructions to [build the documentation topics](#building-the-documentation-topics) and/or [build the command reference](#building-the-command-reference).
+Then follow the instructions to [build the documentation topics and clients](#building-the-documentation-topics-and-clients-page) and/or [build the command reference](#building-the-command-reference).
 The instructions show how to use scripts that create symbolic links to the `valkey-io/valkey-doc` and `valkey-io/valkey` repos as well as create a series of empty stub files that tell Zola to create pages.
 
-### Building the documentation topics
+### Building the documentation topics and clients page
 
-Documentation 'topics' (i.e. `/topics/keyspace/`, `/topics/encryption/`, `/topics/transactions/`) sources content from `valkey-io/valkey-doc`.
+Documentation 'topics' (i.e. `/topics/keyspace/`, `/topics/encryption/`, `/topics/transactions/`) and the client libraries' data (i.e. `/client-page-clients/nodejs/valkey-glide`, `/client-page-clients/python/valkey-py`) sources content from `valkey-io/valkey-doc`.
 
 ```mermaid
 flowchart TD
@@ -51,12 +52,12 @@ First, stop the `zola serve` process if you're running it.
 From the root directory of this repo run:
 
 ```shell
-# You should only need to run this once or when you add a new topic.
-./build/init-topics.sh ../valkey-doc/topics 
+# You should only need to run this once or when you add a new topic/client.
+./build/init-topics-and-clients.sh ../valkey-doc/topics ../valkey-doc/clients
 ```
 
 Then, restart Zola.
-Point your browser at `http://127.0.0.1:1111/topics/` and you should see the fully populated list of topics.
+Point your browser at `http://127.0.0.1:1111/topics/` and you should see the fully populated list of topics and clients.
 All files created in this process are ignored by git.
 Commit your changes to your local copy of `valkey-io/valkey-doc`.
 
