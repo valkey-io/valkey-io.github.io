@@ -69,4 +69,13 @@
     alt: Ericsson logo
   company: >
     Founded in 1876, Ericsson is a Swedish communication technology and services provider. The company offers software, services, and infrastructure for information and communications technology used by telecommunications operators, including traditional telecommunications, Internet Protocol networking equipment and business support solutions. Ericsson is headquartered in Stockholm, Sweden.
+
+- name: Oracle
+  link: https://www.oracle.com/cloud/
+  image:
+    path: /img/oracle.svg
+    alt: Oracle logo
+  company: >
+    The next-generation cloud designed to run any application, faster and more securely, for less.
   offering: >
+    Achieve sub-millisecond latency with [Oracle Cloud Infrastructure (OCI) Cache](https://www.oracle.com/cloud/cache/).
