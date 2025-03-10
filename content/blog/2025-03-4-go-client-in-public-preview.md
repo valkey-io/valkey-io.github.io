@@ -19,7 +19,7 @@ The Go client extends Valkey GLIDE to the Go community, offering a robust, clien
 
 ### Advanced Cluster Topology Management
 
-Connect to your Valkey cluster with minimal configuration. The client automatically discovers the entire cluster topology - no need to manually track every node!
+Connect to your Valkey cluster with minimal configuration. The client seamlessly detects the entire cluster topology and automatically configures connection management based on industry best practices.
 
 ```go
 config := api.NewGlideClusterClientConfiguration().
@@ -42,16 +42,6 @@ Cluster topology can change over time as nodes are added, removed, or when slot 
 - **Proactive Topology Monitoring**: GLIDE performs periodic background checks for cluster topology changes, This approach ensures a comprehensive and up-to-date view of the cluster, improving availability and reducing tail latency.
 - **Consensus-Based Resolution**: GLIDE queries multiple nodes for their topology view and selects the one with the highest agreement, reducing the risk of stale or incorrect mappings and ensuring a more accurate and up-to-date cluster view, improving the overall availability of the cluster.
 - **Efficient Resource Management**: GLIDE employs an efficient algorithm to compare node views and dynamically throttles client-management requests to prevent overloading Valkey servers, ensuring a balance between maintaining an up-to-date topology map and optimizing resource utilization.
-
-#### Request Routing
-
-In a cluster, data is divided into slots with each primary node responsible for specific slots. GLIDE adheres to Valkey OSS guidelines to route commands to the correct node based on key distribution, automatically handling the slot-to-node mapping complexity.
-For more details on the routing of specific commands, please refer to the documentation within the code for routing configuration.
-
-#### Comprehensive Response Aggregation
-
-When requests span multiple shards, GLIDE follows Valkey OSS guidelines and determines how the responses can be aggregated from multiple shards within the cluster.
-For detailed information on response aggregation for specific commands, please refer to the in-code documentation.
 
 ### Enhanced Connection Management
 
@@ -351,6 +341,5 @@ A huge thank you to all the contributors who have made this possible - your dedi
 [Yury Fridlyand](https://github.com/Yury-Fridlyand) (Amazon Web Services)
 
 [Prateek Kumar](https://github.com/prateek-kumar-improving) (Amazon Web Services)
-
 
 Kudos to [Aaron Congo](https://github.com/aaron-congo) who created the backbone of the client 🚀
