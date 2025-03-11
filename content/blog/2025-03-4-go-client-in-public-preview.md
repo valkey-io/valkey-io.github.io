@@ -90,7 +90,7 @@ if err != nil {
       fmt.Println("Detected a ClosingError:", closingErr.Msg)
   }
   // This provides the same error message but within the program's standard logging format
-  log.Fatal("Glide example failed with an error: ", err)
+  log.Fatal("Glide example has failed with an error: ", err)
 }
 ```
 
