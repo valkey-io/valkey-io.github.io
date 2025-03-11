@@ -341,8 +341,8 @@ A huge thank you to all the contributors who have made this possible - your dedi
 
 [Omkar Mestry](https://github.com/omangesg) (Google Cloud Platform)
 
-[Yury Fridlyand](https://github.com/Yury-Fridlyand) (Amazon Web Services)
+[Yury Fridlyand](https://github.com/Yury-Fridlyand) (Improving)
 
-[Prateek Kumar](https://github.com/prateek-kumar-improving) (Amazon Web Services)
+[Prateek Kumar](https://github.com/prateek-kumar-improving) (Improving)
 
 Kudos to [Aaron Congo](https://github.com/aaron-congo) who created the backbone of the client 🚀
