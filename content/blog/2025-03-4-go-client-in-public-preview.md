@@ -19,7 +19,7 @@ The Go client extends Valkey GLIDE to the Go community, offering a robust, clien
 
 ### Advanced Cluster Topology Management
 
-Connect to your Valkey cluster with minimal configuration. The client seamlessly detects the entire cluster topology and automatically configures connection management based on industry best practices.
+Connect to your Valkey cluster with minimal configuration. The client automatically detects the entire cluster topology and configures connection management based on industry best practices.
 
 ```go
 config := api.NewGlideClusterClientConfiguration().
@@ -28,8 +28,7 @@ config := api.NewGlideClusterClientConfiguration().
 client, err := api.NewGlideClusterClient(config)
 ```
 
-The Go client provides advanced topology management to ensure cluster reliability and performance
-With just a single seed node address, GLIDE handles the complexity of cluster interaction:
+The Go client provides advanced topology managements features such as:
 
 #### Automatic Topology Discovery
 
@@ -39,7 +38,7 @@ GLIDE automatically discovers all cluster nodes from a single seed node, elimina
 
 Cluster topology can change over time as nodes are added, removed, or when slot ownership changes. GLIDE implements several mechanisms to maintain an accurate view of the cluster:
 
-- **Proactive Topology Monitoring**: GLIDE performs periodic background checks for cluster topology changes, This approach ensures a comprehensive and up-to-date view of the cluster, improving availability and reducing tail latency.
+- **Proactive Topology Monitoring**: GLIDE performs periodic background checks for cluster topology changes. This approach ensures a comprehensive and up-to-date view of the cluster, improving availability and reducing tail latency.
 - **Consensus-Based Resolution**: GLIDE queries multiple nodes for their topology view and selects the one with the highest agreement, reducing the risk of stale or incorrect mappings and ensuring a more accurate and up-to-date cluster view, improving the overall availability of the cluster.
 - **Efficient Resource Management**: GLIDE employs an efficient algorithm to compare node views and dynamically throttles client-management requests to prevent overloading Valkey servers, ensuring a balance between maintaining an up-to-date topology map and optimizing resource utilization.
 
@@ -82,20 +81,26 @@ Rather than maintaining connection pools, GLIDE establishes a single multiplexed
 We've implemented standardized error handling to make debugging and error management straightforward:
 
 ```go
+client.Close()
+
 result, err := client.Get("mykey")
 if err != nil {
-    log.Fatal("Glide example failed with an error: ", err.Msg)
+    // Check for specific error types
+   if closingErr, ok := err.(*errors.ClosingError); ok {
+      fmt.Println("Detected a ClosingError:", closingErr.Msg)
+  }
+  // This provides the same error message but within the program's standard logging format
+  log.Fatal("Glide example failed with an error: ", err)
 }
 ```
 
 No matter what kind of error occurs—whether it's a connection timeout, authentication failure, or invalid argument—the go client provides a consistent error interface. Under the hood, the go client categorizes errors into specific types like ConnectionError, TimeoutError, or RequestError, but you can handle them uniformly with a clean, consistent API.
 
+For a complete information of error types, see our [errors package](https://github.com/valkey-io/valkey-glide/blob/main/go/api/errors/errors.go).
+
 ### Built for Performance
 
-The Go client is designed from the ground up with performance in mind:
-
-#### Concurrent Command Execution
-
+The Go client is designed from the ground up with performance in mind while still being simple to use.
 The Go client provides a synchronous API for simplicity and compatibility with existing Go key-value store clients. While each individual command is blocking (following the familiar patterns in the ecosystem), the client is fully thread-safe and designed for concurrent usage:
 
 ```go
@@ -138,11 +143,9 @@ Under the hood, the client efficiently handles these concurrent requests by:
 2. Implementing thread-safe command execution
 3. Efficiently routing concurrent commands to the appropriate server nodes
 
-While the current API is synchronous, the implementation is specifically optimized for concurrent usage through Go's native goroutines. The team is monitoring user feedback to assess whether to add async/channel-based APIs in future releases.
+While the current API is synchronous, the implementation is specifically optimized for concurrent usage through Go's native goroutines. We would love feedback about whether to add async/channel-based APIs in future releases.
 
 ## Getting Started
-
-The Valkey GLIDE Go client provides a seamless experience for Go developers to interact with Valkey servers. With support for both standalone and cluster deployments, it's designed to be easy to integrate into your existing Go applications.
 
 You can add Valkey GLIDE to your project with the following two commands:
 
