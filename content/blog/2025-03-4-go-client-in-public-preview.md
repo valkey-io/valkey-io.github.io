@@ -298,6 +298,9 @@ config := api.NewGlideClientConfiguration().
 
 ## Behind the Scenes: Technical Architecture
 
+The Valkey GLIDE Go client is built on top of the Valkey GLIDE core. The core framework is written in Rust (lib.rs), which exposes public functions. These functions are converted to a C header file using Cbindgen. The Go client then uses CGO to call these C functions, providing Go developers with an idiomatic interface while leveraging Rust's performance advantages. This architecture ensures consistent behavior across all Valkey GLIDE language implementations (Java, Python, Node.js, and Go) while maintaining performance and reliability.
+
+### Component details
 ```text
 +------------+      +------+      +------------+      +------------+      +------------+
 |            |      |      |      |            |      |            |      |            |
@@ -308,19 +311,11 @@ config := api.NewGlideClientConfiguration().
 +------------+      +------+      +------------+      +------------+      +------------+
 ```
 
-Valkey GLIDE's Go client brings the power of Valkey to Go developers through a sophisticated multi-language architecture.
-
-### Technical Components
-
 - **Go Client**: The language-specific interface for Go developers
 - **CGO**: Allows Go code to call C functions
 - **Cbindgen**: Automates the generation of C header files from Rust public APIs
 - **Rust Core**: High-performance framework that connects to and communicates with Valkey servers
 - **Rust FFI Library**: Enables cross-language function calls between Rust and other languages
-
-The implementation workflow is straightforward: The core framework is written in Rust (lib.rs), which exposes public functions. These functions are converted to a C header file using Cbindgen. The Go client then uses CGO to call these C functions, providing Go developers with an idiomatic interface while leveraging Rust's performance advantages.
-
-This architecture ensures consistent behavior across all Valkey GLIDE language implementations (Java, Python, Node.js, and Go) while maintaining performance and reliability.
 
 ## Join the Journey
 
@@ -332,9 +327,8 @@ You can join our development journey by:
 
 ## Looking Forward
 
-As we move toward general availability, we'll be expanding command support, enhancing performance, and adding even more features to make the Valkey GLIDE Go client the best possible choice for Go developers.
+As we move toward general availability, we'll be expanding command support, enhancing performance, and adding even more features to make the Valkey GLIDE Go client a great choice for Go developers.
 
-Start building with Valkey GLIDE for Go today, and experience the difference that a thoughtfully designed, high-performance client can make in your applications!
 
 Checkout our [Valkey GLIDE go client](https://github.com/valkey-io/valkey-glide/tree/main/go) for the source code.
 For implementation examples, please refer to the [README of the Go examples](https://github.com/valkey-io/valkey-glide/blob/main/go/README.md) for instructions on running the Standalone and Cluster examples.
