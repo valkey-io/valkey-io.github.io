@@ -1,6 +1,6 @@
 +++
 title= "Introducing the Valkey Glide Go Client: Now in Public Preview!"
-description = "Valkey Glide is pleased to announce the public preview release of the GLIDE Go Client"
+description = "Valkey Glide is now supports GO, designed for performance and developer productivity"
 date= 2025-03-04 01:01:01
 authors= [ "niharikabhavaraju"]
 +++
