@@ -76,40 +76,6 @@ Rather than maintaining connection pools, GLIDE establishes a single multiplexed
 - Maintains high throughput through efficient connection pipelining
 - Decreases server-side connection management burden
 
-### Developer-Friendly Error Handling
-
-We've implemented standardized error handling to make debugging and error management straightforward:
-
-```go
-result, err := client.Get("mykey")
-if err != nil {
-    // Check for specific error types
-    switch specificErr := err.(type) {
-    case *errors.ClosingError:
-        fmt.Println("Detected a ClosingError:", specificErr.Msg)
-    case *errors.ConnectionError:
-        fmt.Println("Detected a ConnectionError:", specificErr.Msg)
-    case *errors.RequestError:
-        fmt.Println("Detected a RequestError:", specificErr.Msg)
-    case *errors.ExecAbortError:
-        fmt.Println("Detected an ExecAbortError:", specificErr.Error())
-    case *errors.TimeoutError:
-        fmt.Println("Detected a TimeoutError:", specificErr.Error())
-    case *errors.DisconnectError:
-        fmt.Println("Detected a DisconnectError:", specificErr.Error())
-    default:
-        fmt.Println("Unknown error type:", err)
-    }
-    
-    // This provides the same error message but within the program's standard logging format
-    log.Fatal("Glide example has failed with an error: ", err)
-}
-```
-
-No matter what kind of error occurs—whether it's a connection timeout or invalid argument—the go client provides a consistent error interface. Under the hood, the go client categorizes errors into specific types like ConnectionError, TimeoutError, or RequestError, but you can handle them uniformly with a clean, consistent API.
-
-For a complete information of error types, see our [errors package](https://github.com/valkey-io/valkey-glide/blob/main/go/api/errors/errors.go).
-
 ### Built for Performance
 
 The Go client is designed from the ground up with performance in mind while still being simple to use.
