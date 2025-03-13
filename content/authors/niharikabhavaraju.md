@@ -1,7 +1,7 @@
 ---
 title: Niharika Bhavaraju
 extra:
-    photo: '/assets/media/authors/niharikab.jpeg'
+    photo: '/assets/media/authors/niharikab.jpg'
     github: niharikabhavaraju
 ---
 
