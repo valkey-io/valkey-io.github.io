@@ -70,7 +70,7 @@
   company: >
     Founded in 1876, Ericsson is a Swedish communication technology and services provider. The company offers software, services, and infrastructure for information and communications technology used by telecommunications operators, including traditional telecommunications, Internet Protocol networking equipment and business support solutions. Ericsson is headquartered in Stockholm, Sweden.
 
-- name: Oracle
+- name: Oracle Cloud Infrastructure
   link: https://www.oracle.com/cloud/
   image:
     path: /img/oracle.svg
