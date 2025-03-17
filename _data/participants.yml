@@ -61,3 +61,21 @@
     Our mission at [Google Cloud](https://cloud.google.com/) is to accelerate every organization's ability to digitally transform its business and industry. We empower our customers to become digital and AI leaders by combining Google's AI innovation with differentiated solutions for compute, app development, data, security, and collaboration — all built on Google's reliable and planet-scale infrastructure.
   offering: >
     [Google Cloud Memorystore](https://cloud.google.com/memorystore) is a versatile, fully-managed, in-memory database service for Valkey, offering sub-millisecond data access, scalability, and high availability.
+
+- name: Ericsson
+  link: https://www.ericsson.com/
+  image:
+    path: /img/ericsson.svg
+    alt: Ericsson logo
+  company: >
+    Founded in 1876, Ericsson is a Swedish communication technology and services provider. The company offers software, services, and infrastructure for information and communications technology used by telecommunications operators, including traditional telecommunications, Internet Protocol networking equipment and business support solutions. Ericsson is headquartered in Stockholm, Sweden.
+
+- name: Oracle Cloud Infrastructure
+  link: https://www.oracle.com/cloud/
+  image:
+    path: /img/oracle.svg
+    alt: Oracle logo
+  company: >
+    The next-generation cloud designed to run any application, faster and more securely, for less.
+  offering: >
+    Achieve sub-millisecond latency with [Oracle Cloud Infrastructure (OCI) Cache](https://www.oracle.com/cloud/cache/).
