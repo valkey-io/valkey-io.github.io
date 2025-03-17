@@ -317,4 +317,4 @@ A huge thank you to all the contributors who have made this possible - your dedi
 
 [Prateek Kumar](https://github.com/prateek-kumar-improving) (Improving)
 
-Kudos to [Aaron Congo](https://github.com/aaron-congo) who created the backbone of the client 🚀 and to [Umit Unal](https://github.com/umit) , [Michael](https://github.com/MikeMwita) for their contributions!
+Kudos to [Aaron Congo](https://github.com/aaron-congo) who created the backbone of the client 🚀 and to [Umit Unal](https://github.com/umit), [Michael](https://github.com/MikeMwita) for their contributions!
