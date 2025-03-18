@@ -3,6 +3,7 @@ public
 build-command-docs
 build-command-json
 build-topics
+build-clients
 content/commands/*
 !content/commands/_index.md
 content/topics/*
