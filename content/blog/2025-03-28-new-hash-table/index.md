@@ -201,8 +201,10 @@ Results
 By replacing the hash table with a different implementation, we've managed to
 reduce the memory usage by roughly 20 bytes per key-value pair.
 
-The zigzag patterns in the graphs below are because of aliasing between the
-datapoint spacing and the memory allocator's discrete allocation sizes.
+The graph below shows the memory overhead for different value sizes. The
+overhead is the memory usage excluding the key and the value itself. Lower is
+better. The zigzag pattern is because of aliasing between the datapoint spacing
+and the memory allocator's discrete allocation sizes.
 
 ![memory usage by version](memory-usage.png)
 
