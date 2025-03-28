@@ -1,66 +1,48 @@
 +++
 title= "A new hash table"
 date= 2025-03-20 00:00:00
-description= "Designing a state-of-the art hash table implementation"
-authors= [ "zuiderkwast", "SoftlyRaining"]
+description= "Designing a state-of-the art hash table"
+authors= ["viktor-soderqvist"]
 +++
 
-Valkey is essentially a giant hash table attached to the network. A hash table
-is the data structure that maps keys to values. When optimizing for latency, CPU
-and memory usage, it's natural to look at the hash table internals. By replacing
-the hash table with a different implementation, we have managed to reduce the
-memory usage by roughly 20 bytes per key-value pair and improve the latency and
-CPU usage by rougly 10% for instances without I/O threading.
+At the core of Valkey, there's a data stuctures for storing keys and values: a
+hash table. It's the data structure that maps keys to values. It works by
+chopping a key into a number of bits that are used as a memory address to
+where the value is supposed to be stored. It's a very fast way of jumping directly
+to the right place in memory without scanning trough the keys.
 
-Results
--------
+A hash table has a central role in Valkey so we looked into the internals to
+squeeze out some speed and lower its memory usage overhead.
 
-Memory usage for keys of length N and value of length M bytes. TBD.
+Minimize memory accesses
+------------------------
 
-| Version    | Memory usage per key   |
-|------------|------------------------|
-| Valkey 7.2 | ? bytes                |
-| Valkey 8.0 | ? bytes                |
-| Valkey 8.1 | ? bytes                |
+One of the slower operations when looking up a key-value pair is reading from
+the main RAM memory. A key point is therefore to make sure we have as few memory
+accesses as possible. Ideally, the memory we want to access should already
+stored in the CPU cache, which is a smaller but much faster memory that belong
+to the CPU.
 
-The benchmarks below were run using a key size of N and a value size of M bytes, without pipelining.
+Optimizing the memory usage, we also want to minimize the number of distinct
+memory allocations and the number of pointers between them, because storing a
+pointer needs 8 bytes in a 64-bit system. If we can save one pointer per
+key-value pair, for 100 million keys that's almost a gigabyte.
 
-| Command                 | Valkey 7.2 | Valkey 8.0 | Valkey 8.1 |
-|-------------------------|------------|------------|------------|
-| SET                     | Xµs, Y QPS | ?          | ?          |
-| GET                     | Xµs, Y QPS | ?          | ?          |
-| ...                     | ...        | ?          | ?          |
-
-The benchmark was run on an xxxx using yyyy, without I/O threads.
-
-Background
-----------
-
-The slowest operation when looking up a key-value pair is by far reading from
-the main RAM memory. A key point when optimizing a hash table is therefore to
-make sure we have as few memory accesses as possible. Ideally, the memory
-reading is already in the CPU cache, which is much faster memory that belong to
-the CPU.
-
-When optimizing for memory usage, we also want to minimize the number of
-allocation and pointers between them, because a pointer is 8 bytes in a 64-bit
-system. If we save one pointer per key-value pair, for 100 million keys that's
-almost a gigabyte.
-
-When a computer loads some data from the main memory into the CPU cache, it does
-so in blocks of one cache line. The cache-line size is 64 bytes on almost all
-modern hardware. Recent work on hash tables, such as "Swiss tables", are highly
-optimized for cache lines. When looking up a key, if it's not found where you
-first look for it (due to a hash collission), then it should ideally be found
-within the same cache line. If it is, then it can be found very fast once this
-cache line has been loaded into the CPU cache.
+When the CPU loads some data from the main memory into the CPU cache, it does so
+in fixed size blocks called cache lines. The cache-line size is 64 bytes on
+almost all modern hardware. Recent work on hash tables, such as [Swiss
+tables](https://abseil.io/about/design/swisstables), are highly optimized for
+cache lines. If the key you're not looking for isn't found where you first look
+for it (due to a hash collission), then it should ideally be found within the
+same cache line. If it is, then it's found very fast once this cache line has
+been loaded into the CPU cache.
 
 Required features
 -----------------
 
 Why not use an open-source state-of-the-art hash table implementation such as
 Swiss tables? The answer is that we require some specific features, apart from
-the basic operations like add, lookup, replace, delete:
+the basic operations like add, lookup, replace and delete:
 
 * Incremental rehashing, so that when the hashtable is full, we don't freeze the
   server while the table is being resized.
@@ -71,7 +53,7 @@ the basic operations like add, lookup, replace, delete:
 
 * Random element sampling, for commands like [RANDOMKEY](/commands/randomkey/).
 
-These are not standard features, so we could not pick an off-the-shelf hash
+These aren't standard features, so we couldn't simply pick an off-the-shelf hash
 table. We had to design one ourselves.
 
 The hash table used until Valkey 8.0, called "dict", has the following memory
@@ -183,20 +165,27 @@ keys are stored in top-level buckets.
                                         +-----------------+
 ```
 
+Results
+-------
+
+By replacing the hash table with a different implementation, we've managed to
+reduce the memory usage by roughly 20 bytes per key-value pair.
+
+![memory usage by version](memory-usage.png)
+
+For keys with a an [expire](/commands/expire/) (time-to-live, TTL) the memory
+usage is down even more, roughly 30 bytes.
+
+![memory usage with expire](memory-usage-with-expire.png)
+
+In some workloads, such as when storing very small objects and when pipelining
+is used extensively, the latency and CPU usage are also improved. In most cases
+though this is negligble in practice. The key takeaway appears to be reduced
+memory usage.
+
 Hashes, sets and sorted sets
 ----------------------------
 
 The nested data types Hashes, Sets and Sorted sets also make use of the new hash
-table. The memory usage is reduced by roughly 10-20 bytes per entry. Memory and
-latency/throughput results are WIP.
-
-Iterator prefetching
---------------------
-
-Iterating over the elements in a hash table is done in various scenarios, for
-example when a Valkey node needs to send all the keys to a newly connected
-replica. The iterator functionality is improved by memory prefetching. This
-means that when an element is going to be returned to the caller, the bucket and
-its elements have already been loaded into CPU cache when the previous bucket
-was being iterated. This makes the iterator 3.5 times faster than without
-prefetching.
+table when they contain a large number of elements. The memory usage is down by
+roughly 10-20 bytes per element for these types of keys.
