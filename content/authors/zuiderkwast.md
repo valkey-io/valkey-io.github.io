@@ -1,7 +1,7 @@
 ---
 title: Viktor Söderqvist
 extra:
-    photo: '/assets/media/authors/viktor-soderqvist.jpeg'
+    photo: '/assets/media/authors/zuiderkwast.jpeg'
     github: zuiderkwast
 ---
 

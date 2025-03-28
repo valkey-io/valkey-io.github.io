@@ -1,18 +1,72 @@
 +++
 title= "A new hash table"
-date= 2025-03-20 00:00:00
+date= 2025-03-28 00:00:00
 description= "Designing a state-of-the art hash table"
-authors= ["viktor-soderqvist"]
+authors= ["zuiderkwast"]
 +++
 
-At the core of Valkey, there's a data stuctures for storing keys and values: a
-hash table. It's the data structure that maps keys to values. It works by
-chopping a key into a number of bits that are used as a memory address to
-where the value is supposed to be stored. It's a very fast way of jumping directly
-to the right place in memory without scanning trough the keys.
+Many workloads are bound on storing data. Being able to store more data allows
+you to reduce the size of your clusters.
 
-A hash table has a central role in Valkey so we looked into the internals to
-squeeze out some speed and lower its memory usage overhead.
+In Valkey, keys and values are stored in what's known as a hash table. A hash
+table works by chopping a key into a number of seemingly random bits. These bits
+are shaped into a memory address, pointing to where the value is supposed to be
+stored. It's a very fast way of jumping directly to the right place in memory
+without scanning trough all the keys.
+
+For the 8.1 release, we looked into improving the performance and memory usage,
+so that users can store more data using less memory. This work led us to the
+design of a new hash table, but first, let's take a look at the hash table that
+was used in Valkey until now.
+
+The dict
+--------
+
+The hash table used Valkey until now, called "dict", has the following memory
+layout:
+
+```
++---------+
+| dict    |      table
++---------+     +-----+-----+-----+-----+-----+-----+-----
+| table 0 ----->|  x  |  x  |  x  |  x  |  x  |  x  | ...
+| table 1 |     +-----+-----+--|--+-----+-----+-----+-----
++---------+                    |
+                               v
+                         +-----------+         +-------+
+                         | dictEntry |    .--->| "FOO" |
+                         +-----------+   /     +-------+
+                         |    key  -----'
+                         |           |         +-------------------+
+                         |   value ----------->| serverObject      |
+                         |           |         +-------------------+
+                         |   next    |         | type, encoding,   |
+                         +-----|-----+         | ref-counter, etc. |
+                               |               | "BAR" (embedded)  |
+                               v               +-------------------+
+                         +-----------+
+                         | dictEntry |
+                         +-----------+
+                         |    key    |
+                         |   value   |
+                         |   next    |
+                         +-----|-----+
+                               |
+                               v
+                              ...
+```
+
+The dict has two tables, called "table 0" and "table 1". Usually only one
+exists, but both are used when incremental rehashing is in progress.
+
+It's a chained hash table, so if multiple keys are hashed to the same slot in
+the table, their key-value entries form a linked list. That's what the "next"
+pointer in the dictEntry is for.
+
+To lookup a key "FOO" and access the value "BAR", Valkey still has to read from
+memory four times. If there is a hash collission, it has to follow two more
+pointers for each hash collission and thus read twice more from memory (the key
+and the next pointer).
 
 Minimize memory accesses
 ------------------------
@@ -31,11 +85,11 @@ key-value pair, for 100 million keys that's almost a gigabyte.
 When the CPU loads some data from the main memory into the CPU cache, it does so
 in fixed size blocks called cache lines. The cache-line size is 64 bytes on
 almost all modern hardware. Recent work on hash tables, such as [Swiss
-tables](https://abseil.io/about/design/swisstables), are highly optimized for
-cache lines. If the key you're not looking for isn't found where you first look
-for it (due to a hash collission), then it should ideally be found within the
-same cache line. If it is, then it's found very fast once this cache line has
-been loaded into the CPU cache.
+tables](https://abseil.io/about/design/swisstables), are highly optimized to
+store and access data within a single cache line. If the key you're not looking
+for isn't found where you first look for it (due to a hash collision), then it
+should ideally be found within the same cache line. If it is, then it's found
+very fast once this cache line has been loaded into the CPU cache.
 
 Required features
 -----------------
@@ -56,55 +110,6 @@ the basic operations like add, lookup, replace and delete:
 These aren't standard features, so we couldn't simply pick an off-the-shelf hash
 table. We had to design one ourselves.
 
-The hash table used until Valkey 8.0, called "dict", has the following memory
-layout:
-
-```
-+---------+
-| dict    |          table
-+---------+         +-----+-----+-----+-----+-----+-----+-----
-| table 0 --------->|  x  |  x  |  x  |  x  |  x  |  x  | ...
-| table 1 |         +-----+-----+--|--+-----+-----+-----+-----
-+---------+                        |
-                                   v
-                             +-----------+         +-------+
-                             | dictEntry |    .--->| "FOO" |
-                             +-----------+   /     +-------+
-                             |    key  -----'
-                             |           |         +-------------------+
-                             |   value ----------->| serverObject      |
-                             |           |         +-------------------+
-                             |   next    |         | type, encoding,   |
-                             +-----|-----+         | ref-counter, etc. |
-                                   |               | "BAR" (embedded)  |
-                                   v               +-------------------+
-                             +-----------+
-                             | dictEntry |
-                             +-----------+
-                             |    key    |
-                             |   value   |
-                             |   next    |
-                             +-----|-----+
-                                   |
-                                   v
-                                  ...
-```
-
-The dict has two tables, called "table 0" and "table 1". Usually only one
-exists, but both are used when incremental rehashing is in progress.
-
-It is a chained hash table, so if multiple keys are hashed to the same slot in
-the table, their key-value entries form a linked list. That's what the "next"
-pointer in the dictEntry is for.
-
-To lookup a key "FOO" and access the value "BAR", Valkey still had to read from
-memory four times. If there is a hash collission, it has to follow two more
-pointers for each hash collission and thus read twice more from memory (the key
-and the next pointer).
-
-In Valkey 8.0, an optimization was made to embed the key ("FOO" in the drawing
-above) in the dictEntry, eliminating one pointer and one memory access.
-
 Design
 ------
 
@@ -120,20 +125,20 @@ along with other metadata for the key.
 
 ```
 +-----------+
-| hashtable |        bucket            bucket            bucket
-+-----------+       +-----------------+-----------------+-----------------+-----
-| table 0  -------->| m x x x x x x x | m x x x x x x x | m x x x x x x x | ...
-| table 1   |       +-----------------+-----|-----------+-----------------+-----
-+-----------+                               |
-                                            v
-                               +------------------------+
-                               | serverObject           |
-                               +------------------------+
-                               | type, encoding,        |
-                               | ref-counter, etc.      |
-                               | "FOO" (embedded key)   |
-                               | "BAR" (embedded value) |
-                               +------------------------+
+| hashtable |      bucket            bucket            bucket
++-----------+     +-----------------+-----------------+-----------------+-----
+| table 0  ------>| m x x x x x x x | m x x x x x x x | m x x x x x x x | ...
+| table 1   |     +-----------------+-----|-----------+-----------------+-----
++-----------+                             |
+                                          v
+                             +------------------------+
+                             | serverObject           |
+                             +------------------------+
+                             | type, encoding,        |
+                             | ref-counter, etc.      |
+                             | "FOO" (embedded key)   |
+                             | "BAR" (embedded value) |
+                             +------------------------+
 ```
 
 Assuming the hashtable and the table are already in the CPU cache, looking up
@@ -145,25 +150,24 @@ If a bucket becomes full, the last element slot in the bucket is replaced by a
 pointer to a child bucket. A child bucket has the same layout as a regular
 bucket, but it's a separate allocation. The length of these bucket chains are
 not bounded, but long chains are very rare as long as keys are well distributed
-by the hashing function. Most of the
-keys are stored in top-level buckets.
+by the hashing function. Most of the keys are stored in top-level buckets.
 
 ```
 +-----------+
-| hashtable |        bucket            bucket            bucket
-+-----------+       +-----------------+-----------------+-----------------+-----
-| table 0  -------->| m x x x x x x x | m x x x x x x c | m x x x x x x x | ...
-| table 1   |       +-----------------+---------------|-+-----------------+-----
-+-----------+                                         |
-                                        child bucket  v
-                                       +-----------------+
-                                       | m x x x x x x c |
-                                       +---------------|-+
-                                                       |
-                                         child bucket  v
-                                        +-----------------+
-                                        | m x x x x x x x |
-                                        +-----------------+
+| hashtable |    bucket            bucket            bucket
++-----------+   +-----------------+-----------------+-----------------+-----
+| table 0  ---->| m x x x x x x x | m x x x x x x c | m x x x x x x x | ...
+| table 1   |   +-----------------+---------------|-+-----------------+-----
++-----------+                                     |
+                                    child bucket  v
+                                   +-----------------+
+                                   | m x x x x x x c |
+                                   +---------------|-+
+                                                   |
+                                     child bucket  v
+                                    +-----------------+
+                                    | m x x x x x x x |
+                                    +-----------------+
 ```
 
 Results
@@ -172,10 +176,13 @@ Results
 By replacing the hash table with a different implementation, we've managed to
 reduce the memory usage by roughly 20 bytes per key-value pair.
 
+The zigzag patterns in the graphs below are because of aliasing between the
+datapoint spacing and the memory allocator's discrete allocation sizes.
+
 ![memory usage by version](memory-usage.png)
 
-For keys with a an [expire](/commands/expire/) (time-to-live, TTL) the memory
-usage is down even more, roughly 30 bytes.
+For keys with an [expire time](/commands/expire/) (time-to-live, TTL) the memory
+usage is down even more, roughly 30 bytes per key-value pair.
 
 ![memory usage with expire](memory-usage-with-expire.png)
 
@@ -188,5 +195,8 @@ Hashes, sets and sorted sets
 ----------------------------
 
 The nested data types Hashes, Sets and Sorted sets also make use of the new hash
-table when they contain a large number of elements. The memory usage is down by
-roughly 10-20 bytes per element for these types of keys.
+table when they contain a sufficiently large number of elements. The memory
+usage is down by roughly 10-20 bytes per element for these types of keys.
+
+Special thanks to Rain Valentine for the graphs and for the help with
+integrating this hash table into Valkey.
