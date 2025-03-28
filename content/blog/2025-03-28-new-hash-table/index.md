@@ -25,6 +25,8 @@ The dict
 The hash table used Valkey until now, called "dict", has the following memory
 layout:
 
+<!-- ![dict structure](dict-structure.png) -->
+
 ```
 +---------+
 | dict    |      table
@@ -61,7 +63,7 @@ exists, but both are used when incremental rehashing is in progress.
 
 It's a chained hash table, so if multiple keys are hashed to the same slot in
 the table, their key-value entries form a linked list. That's what the "next"
-pointer in the dictEntry is for.
+pointer in the `dictEntry` is for.
 
 To lookup a key "FOO" and access the value "BAR", Valkey still has to read from
 memory four times. If there is a hash collission, it has to follow two more
@@ -77,7 +79,7 @@ accesses as possible. Ideally, the memory we want to access should already
 stored in the CPU cache, which is a smaller but much faster memory that belong
 to the CPU.
 
-Optimizing the memory usage, we also want to minimize the number of distinct
+Optimizing for memory usage, we also want to minimize the number of distinct
 memory allocations and the number of pointers between them, because storing a
 pointer needs 8 bytes in a 64-bit system. If we can save one pointer per
 key-value pair, for 100 million keys that's almost a gigabyte.
@@ -115,13 +117,12 @@ Design
 
 In the new hash table designed for Valkey 8.1, the table consists of buckets of
 64 bytes, one cache line. Each bucket can store up to seven elements. Keys that
-map to the same bucket are all stored in the same bucket. The bucket also has a
-metadata section which contains a one byte secondary hash for each key. This is
-used for quickly eliminating hash collissions when looking up a key. In this
-way, we can avoid comparing the key for a mismatching key, except once in 256.
+map to the same bucket are all stored in the same bucket. The bucket also
+contains a metadata section, marked "m" in the figures. The bucket layout
+including the metadata section is explained in more detail below.
 
-We eliminated the dictEntry and instead embed key and value in the serverObject,
-along with other metadata for the key.
+We've eliminated the `dictEntry` and instead embed key and value in the
+`serverObject`, along with other data for the key.
 
 ```
 +-----------+
@@ -134,16 +135,16 @@ along with other metadata for the key.
                              +------------------------+
                              | serverObject           |
                              +------------------------+
-                             | type, encoding,        |
+                             | type, encoding, LRU,   |
                              | ref-counter, etc.      |
                              | "FOO" (embedded key)   |
                              | "BAR" (embedded value) |
                              +------------------------+
 ```
 
-Assuming the hashtable and the table are already in the CPU cache, looking up
+Assuming the `hashtable` structure is already in the CPU cache, looking up
 key-value entry now requires only two memory lookups: The bucket and the
-serverObject. If there is a hash collission, the object we're looking for is
+`serverObject`. If there is a hash collision, the object we're looking for is
 most likely in the same bucket, so no extra memory access is required.
 
 If a bucket becomes full, the last element slot in the bucket is replaced by a
@@ -169,6 +170,30 @@ by the hashing function. Most of the keys are stored in top-level buckets.
                                     | m x x x x x x x |
                                     +-----------------+
 ```
+
+The elements in the same bucket, or bucket chain, are stored without any
+internal ordering. When inserting a new entry into the bucket, any of the free
+slots can be used.
+
+As mentioned earlier, each bucket also contains a metadata section. The bucket
+metadata consists of eight bytes of which one bit indicates whether the bucket
+has a child bucket or not. The next seven bits, one bit for each of the seven
+element slots, indicates whether that slot is filled, i.e. whether it contains
+an element or not. The remaining seven bytes are used for storing a one byte
+secondary hash for each of the entries stored in the bucket.
+
+![bucket structure](hash-bucket-structure.png)
+
+The secondary hash is made up of hash bits that are not used when looking up the
+bucket. Out of a 64 bits hash, we need not more than 56 bits for looking up the
+bucket and we use the remaining 8 bits as the secondary hash. These hash bits
+are used for quickly eliminating mismatching entries when looking up a key
+without comparing the keys. Comparing the keys of each entry in the bucket would
+require an extra memory access per entry. If the secondary hash mismatches the
+key we're looking for, we can immediately skip that entry. The chance of a false
+positive, meaning an entry for which the secondary hash is matching although the
+entry doesn't match the key were looking for, is one in 256, so this eliminates
+99.6% of the false positives.
 
 Results
 -------
