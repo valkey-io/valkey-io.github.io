@@ -102,8 +102,10 @@ With bloom filters, applications can create a unique bloom filter for every adve
 </tr>
 </table>
 <br>
-<img src="/assets/media/pictures/bloomfilter_memusage.png" style="width: 50%;" alt="SET vs Bloom Filter Memory Usage Comparison">
-<p>In this example, we are able to benefit from 93% - 98% savings in memory usage when using Bloom Filters compared to the Set data type. Depending on your workload, you can expect similar results.</p>
+<div style="display: flex; align-items: center;">
+<p style="flex: 1;">In this example, we are able to benefit from 93% - 98% savings in memory usage when using Bloom Filters compared to the Set data type. Depending on your workload, you can expect similar results.</p>
+<img src="/assets/media/pictures/bloomfilter_memusage.png" style="width: 40%;" alt="SET vs Bloom Filter Memory Usage Comparison">
+</div>
 
 ## Limits and recommendations
 
