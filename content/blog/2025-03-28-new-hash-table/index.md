@@ -25,38 +25,7 @@ The dict
 The hash table used Valkey until now, called "dict", has the following memory
 layout:
 
-<!-- ![dict structure](dict-structure.png) -->
-
-```
-+---------+
-| dict    |      table
-+---------+     +-----+-----+-----+-----+-----+-----+-----
-| table 0 ----->|  x  |  x  |  x  |  x  |  x  |  x  | ...
-| table 1 |     +-----+-----+--|--+-----+-----+-----+-----
-+---------+                    |
-                               v
-                         +-----------+         +-------+
-                         | dictEntry |    .--->| "FOO" |
-                         +-----------+   /     +-------+
-                         |    key  -----'
-                         |           |         +-------------------+
-                         |   value ----------->| serverObject      |
-                         |           |         +-------------------+
-                         |   next    |         | type, encoding,   |
-                         +-----|-----+         | ref-counter, etc. |
-                               |               | "BAR" (embedded)  |
-                               v               +-------------------+
-                         +-----------+
-                         | dictEntry |
-                         +-----------+
-                         |    key    |
-                         |   value   |
-                         |   next    |
-                         +-----|-----+
-                               |
-                               v
-                              ...
-```
+![dict structure](dict-structure.png)
 
 The dict has two tables, called "table 0" and "table 1". Usually only one
 exists, but both are used when incremental rehashing is in progress.
@@ -66,8 +35,8 @@ the table, their key-value entries form a linked list. That's what the "next"
 pointer in the `dictEntry` is for.
 
 To lookup a key "FOO" and access the value "BAR", Valkey still has to read from
-memory four times. If there is a hash collission, it has to follow two more
-pointers for each hash collission and thus read twice more from memory (the key
+memory four times. If there is a hash collision, it has to follow two more
+pointers for each hash collision and thus read twice more from memory (the key
 and the next pointer).
 
 Minimize memory accesses
@@ -124,23 +93,7 @@ including the metadata section is explained in more detail below.
 We've eliminated the `dictEntry` and instead embed key and value in the
 `serverObject`, along with other data for the key.
 
-```
-+-----------+
-| hashtable |      bucket            bucket            bucket
-+-----------+     +-----------------+-----------------+-----------------+-----
-| table 0  ------>| m x x x x x x x | m x x x x x x x | m x x x x x x x | ...
-| table 1   |     +-----------------+-----|-----------+-----------------+-----
-+-----------+                             |
-                                          v
-                             +------------------------+
-                             | serverObject           |
-                             +------------------------+
-                             | type, encoding, LRU,   |
-                             | ref-counter, etc.      |
-                             | "FOO" (embedded key)   |
-                             | "BAR" (embedded value) |
-                             +------------------------+
-```
+![hashtable structure](hashtable-structure.png)
 
 Assuming the `hashtable` structure is already in the CPU cache, looking up
 key-value entry now requires only two memory lookups: The bucket and the
@@ -153,23 +106,7 @@ bucket, but it's a separate allocation. The length of these bucket chains are
 not bounded, but long chains are very rare as long as keys are well distributed
 by the hashing function. Most of the keys are stored in top-level buckets.
 
-```
-+-----------+
-| hashtable |    bucket            bucket            bucket
-+-----------+   +-----------------+-----------------+-----------------+-----
-| table 0  ---->| m x x x x x x x | m x x x x x x c | m x x x x x x x | ...
-| table 1   |   +-----------------+---------------|-+-----------------+-----
-+-----------+                                     |
-                                    child bucket  v
-                                   +-----------------+
-                                   | m x x x x x x c |
-                                   +---------------|-+
-                                                   |
-                                     child bucket  v
-                                    +-----------------+
-                                    | m x x x x x x x |
-                                    +-----------------+
-```
+![hashtable structure](hashtable-child-buckets.png)
 
 The elements in the same bucket, or bucket chain, are stored without any
 internal ordering. When inserting a new entry into the bucket, any of the free
@@ -203,8 +140,8 @@ reduce the memory usage by roughly 20 bytes per key-value pair.
 
 The graph below shows the memory overhead for different value sizes. The
 overhead is the memory usage excluding the key and the value itself. Lower is
-better. The zigzag pattern is because of aliasing between the datapoint spacing
-and the memory allocator's discrete allocation sizes.
+better. (The zigzag pattern is because of unused memory resulting from the memory
+allocator's discrete allocation sizes.)
 
 ![memory usage by version](memory-usage.png)
 
