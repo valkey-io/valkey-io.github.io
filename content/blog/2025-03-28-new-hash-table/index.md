@@ -44,9 +44,9 @@ Minimize memory accesses
 
 One of the slower operations when looking up a key-value pair is reading from
 the main RAM memory. A key point is therefore to make sure we have as few memory
-accesses as possible. Ideally, the memory we want to access should already
-stored in the CPU cache, which is a smaller but much faster memory that belong
-to the CPU.
+accesses as possible. Ideally, the memory we want to access should already be
+loaded in the CPU cache, which is a smaller but much faster memory belonging to
+the CPU.
 
 Optimizing for memory usage, we also want to minimize the number of distinct
 memory allocations and the number of pointers between them, because storing a
