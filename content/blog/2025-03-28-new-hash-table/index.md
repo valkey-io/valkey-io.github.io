@@ -12,7 +12,7 @@ In Valkey, keys and values are stored in what's called a hash table. A hash
 table works by chopping a key into a number of seemingly random bits. These bits
 are shaped into a memory address, pointing to where the value is supposed to be
 stored. It's a very fast way of jumping directly to the right place in memory
-without scanning trough all the keys.
+without scanning through all the keys.
 
 For the 8.1 release, we looked into improving the performance and memory usage,
 so that users can store more data using less memory. This work led us to the
@@ -102,7 +102,7 @@ most likely in the same bucket, so no extra memory access is required.
 
 If a bucket becomes full, the last element slot in the bucket is replaced by a
 pointer to a child bucket. A child bucket has the same layout as a regular
-bucket, but it's a separate allocation. The length of these bucket chains are
+bucket, but it's a separate allocation. The lengths of these bucket chains are
 not bounded, but long chains are very rare as long as keys are well distributed
 by the hashing function. Most of the keys are stored in top-level buckets.
 
@@ -152,7 +152,7 @@ usage is down even more, roughly 30 bytes per key-value pair.
 
 In some workloads, such as when storing very small objects and when pipelining
 is used extensively, the latency and CPU usage are also improved. In most cases
-though this is negligble in practice. The key takeaway appears to be reduced
+though this is negligible in practice. The key takeaway appears to be reduced
 memory usage.
 
 Hashes, sets and sorted sets
