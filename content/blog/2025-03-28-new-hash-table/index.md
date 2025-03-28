@@ -5,10 +5,10 @@ description= "Designing a state-of-the art hash table"
 authors= ["zuiderkwast"]
 +++
 
-Many workloads are bound on storing data. Being able to store more data allows
-you to reduce the size of your clusters.
+Many workloads are bound on storing data. Being able to store more data using
+less memory allows you to reduce the size of your clusters.
 
-In Valkey, keys and values are stored in what's known as a hash table. A hash
+In Valkey, keys and values are stored in what's called a hash table. A hash
 table works by chopping a key into a number of seemingly random bits. These bits
 are shaped into a memory address, pointing to where the value is supposed to be
 stored. It's a very fast way of jumping directly to the right place in memory
