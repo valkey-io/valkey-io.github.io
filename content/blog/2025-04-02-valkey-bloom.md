@@ -11,7 +11,7 @@ As an example, previously, Valkey users could use the `SET` data type for handli
 
 ## Introduction
 
-Bloom filters are a space efficient probabilistic data structure that allows adding elements and checking whether elements exist. False positives are possible where a filter incorrectly indicates that an element exists, even though it was not added. However, Bloom Filters guarantee that false negatives (incorrectly indicating that an element does not exist, even though it was added) do not occur. Bloom Filters were first introduced in a paper from 1970 by Burton H. Bloom.
+Bloom filters are a space efficient probabilistic data structure that allows adding elements and checking whether elements exist. False positives are possible where a filter incorrectly indicates that an element exists, even though it was not added. However, Bloom Filters guarantee that false negatives do not occur, meaning it can never be the case that an element was added successfully and a filter reports it as non existing. Bloom Filters were first introduced in a paper from 1970 by Burton H. Bloom.
 
 <img src="/assets/media/pictures/bloomfilter_bitvector.png" style="width: 75%;" alt="Bloom Filter Bit Vector">
 <p style="text-align: center;"><i>Image taken from <a href="https://upload.wikimedia.org/wikipedia/commons/a/ac/Bloom_filter.svg">source</a></i></p>
@@ -118,7 +118,7 @@ The implication of the memory limit is that operations involving bloom filter cr
 ```
 This poses an issue to users where their scalable bloom filters can reach the memory limit after some number of days of data population and it starts failing scale outs during the insertion of unique items.
 
-As a solution, to help users understand at what capacity their bloom filter will hit the memory limit, valkey-bloom has two options. This is useful to check beforehand to ensure that your bloom filter will not fail scale outs or creations later on as part of your workload.
+As a solution, to help users understand at what capacity their bloom filter will hit the memory limit, valkey-bloom has two options. These are useful to check beforehand to ensure that your bloom filter will not fail scale outs or creations later on as part of your workload.
 
 1. Perform a memory check prior to bloom filter creation
 
