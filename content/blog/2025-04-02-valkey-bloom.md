@@ -11,12 +11,12 @@ As an example, previously, Valkey users could use the `SET` data type for handli
 
 ## Introduction
 
-Bloom filters are a space efficient probabilistic data structure that allows adding elements to a set and checking whether elements exist. Bloom Filters were first introduced in a paper from 1970 by Burton H. Bloom. False positives are possible where a filter incorrectly indicates that an element exists, even though it was not added. However, Bloom Filters guarantee that false negatives (incorrectly indicating that an element does not exist, even though it was added) do not occur.
+Bloom filters are a space efficient probabilistic data structure that allows adding elements and checking whether elements exist. False positives are possible where a filter incorrectly indicates that an element exists, even though it was not added. However, Bloom Filters guarantee that false negatives (incorrectly indicating that an element does not exist, even though it was added) do not occur. Bloom Filters were first introduced in a paper from 1970 by Burton H. Bloom.
 
 <img src="/assets/media/pictures/bloomfilter_bitvector.png" style="width: 75%;" alt="Bloom Filter Bit Vector">
 <p style="text-align: center;"><i>Image taken from <a href="https://upload.wikimedia.org/wikipedia/commons/a/ac/Bloom_filter.svg">source</a></i></p>
 
-When adding an item to a bloom filter, k hash functions compute k corresponding bits from the bit vector which are set to 1. Checking existence involves the same hash functions - if any bit is 0, the item is definitely absent; if all bits are 1, the item likely exists (with a defined false positive probability). This bit-based approach, rather than full item allocation, makes bloom filters very space efficient with the trade off being potential false positives.
+When adding an item to a bloom filter, K hash functions compute K corresponding bits from the bit vector which are set to 1. Checking existence involves the same hash functions - if any bit is 0, the item is definitely absent; if all bits are 1, the item likely exists (with a defined false positive probability). This bit-based approach, rather than full item allocation, makes bloom filters very space efficient with the trade off being potential false positives.
 
 Valkey-Bloom (BSD-3 licensed) is an official Valkey module that introduces bloom filters as a new data type to Valkey, providing both scalable and non-scalable variants. It is API compatible with the bloom filter command syntax of the official Valkey client libraries including valkey-py, valkey-java, valkey-go (as well as the equivalent Redis libraries). The module was developed by the following authors: Karthik Subbarao ([KarthikSubbarao](https://github.com/KarthikSubbarao)), Cameron Zack ([zackcam](https://github.com/zackcam)), Vanessa Tang ([YueTang-Vanessa](https://github.com/YueTang-Vanessa)), Nihal Mehta ([nnmehta](https://github.com/nnmehta)), and wuranxx ([wuranxx](https://github.com/wuranxx)).
 
@@ -47,15 +47,15 @@ Any default creation as a result of `BF.ADD`, `BF.MADD`, `BF.INSERT` will be a s
 
 Capacity - The number of unique items that can be added before a bloom filter scales out occurs (in case of scalable bloom filters) or before any command which inserts a new item is rejected (in case of non scalable bloom filters).
 
-False Positive Rate (aka Error Rate) - The rate that controls the probability of bloom set/check operations being false positives. Example: 0.001 means 1 in every 1000 unique item adds/checks can be a false positive.
+False Positive Rate (FP) - The rate that controls the probability of item add/exists operations being false positives. Example: 0.001 means 1 in every 1000 operations can be a false positive.
 
 ## Use cases / Memory Savings
 
-In this example, we are simulating a very common use case of bloom filters: Ad / Event Deduplication. Applications can utilize bloom filters to track whether an advertisement / event notification has already been shown to a customer and use this to prevent showing it again to the customer.
+In this example, we are simulating a very common use case of bloom filters: Advertisement Deduplication. Applications can utilize bloom filters to track whether an advertisement / event notification has already been shown to a customer and use this to prevent showing it again to the customer.
 
 Let us assume we have 500 unique advertisements and our service has 5M customers. Both advertisements and customers are identified by a UUID (36 characters).
 
-Without bloom filters, applications could use the `SET` Valkey data type such that they have a unique `SET` for every advertisement. Then, they can use the `SADD` command track every customer who has already seen this particular advertisement by adding them to the set. This means we have 500 sets, each with 5M members. This will require 152.57GB.
+Without bloom filters, applications could use the `SET` Valkey data type such that they have a unique `SET` for every advertisement. Then, they can use the `SADD` command track every customer who has already seen this particular advertisement by adding them to the set. This means we have 500 sets, each with 5M members. This will require 152.57 GB of `used_memory`.
 
 With bloom filters, applications can create a unique bloom filter for every advertisement with the `BF.RESERVE` or `BF.INSERT` command. Here, they can specify the exact capacity they require: 5M - which means 5M items can be added to the bloom filter. For every customer that the advertisement is shown to, the application can add the UUID of the customer onto the specific filter. So, we have 500 bloom filters, each with a capacity of 5M. This will require variable memory depending on the false positive rate. In all cases (even stricter false positive rates), we can see there is a significant memory optimization compared to using the `SET` data type.
 
@@ -66,7 +66,7 @@ With bloom filters, applications can create a unique bloom filter for every adve
 <th>FP Rate</th>
 <th>FP Rate Description</th>
 <th>Total Used Memory (GB)</th>
-<th>Memory Saved % to SETS</th>
+<th>Memory Saved % compared to SETS</th>
 </tr>
 <tr>
 <td>500</td>
@@ -103,7 +103,7 @@ With bloom filters, applications can create a unique bloom filter for every adve
 </table>
 <br>
 <div style="display: flex; align-items: center;">
-<p style="flex: 1;">In this example, we are able to benefit from 93% - 98% savings in memory usage when using Bloom Filters compared to the Set data type. Depending on your workload, you can expect similar results.</p>
+<p style="flex: 1;">In this example, we are able to benefit from 93% - 98% savings in memory usage when using Bloom Filters compared to the SET data type. Depending on your workload, you can expect similar results.</p>
 <img src="/assets/media/pictures/bloomfilter_memusage.png" style="width: 40%;" alt="SET vs Bloom Filter Memory Usage Comparison">
 </div>
 
@@ -174,7 +174,7 @@ To get an idea of what the memory usage looks like for the max capacity of an in
 
 ## Performance 
 
-The bloom commands which involve adding items or checking the existence of items have a time complexity of O(n * k) where n is the number of hash functions used by the bloom filter and k is the number of elements being inserted. This means that both `BF.ADD` and `BF.EXISTS` are both O(n) as they only operate on one item.
+The bloom commands which involve adding items or checking the existence of items have a time complexity of O(N * K) where N is the number of hash functions used by the bloom filter and K is the number of elements being inserted. This means that both `BF.ADD` and `BF.EXISTS` are both O(N) as they only operate on one item.
 
 Since performance relies on the number of hash functions, choosing the correct capacity and expansion rate can be important. In case of scalable bloom filters, with every scale out, we increase the number of checks (using hash functions of each sub filter) performed during any add / exists operation. For this reason, it is recommended that users choose a capacity after evaluating the use case / workload to avoid several scale outs and reduce the number of checks.
 
@@ -185,4 +185,4 @@ The other bloom filter commands are O(1) time complexity: `BF.CARD`, `BF.INFO`, 
 
 valkey-bloom offers an efficient solution for high-volume membership testing through bloom filters, providing significant memory usage savings compared to traditional data types. This enhances Valkey's capability to handle various workloads including large-scale advertisement / event deduplication, fraud detection, and reducing disk / backend lookups more efficiently.
 
-To learn more about getting started with valkey-bloom, you can read through instructions [here](https://github.com/valkey-io/valkey-bloom/blob/unstable/README.md) and the [quick start guide](https://github.com/valkey-io/valkey-bloom/blob/unstable/QUICK_START.md). Additionally, to try out valkey-bloom on Docker (along with other official modules), you can check out the [Valkey Extensions Docker Image](https://hub.docker.com/r/valkey/valkey-extension).
+To learn more about [valkey-bloom](https://github.com/valkey-io/valkey-bloom/), you can read about the data type [here](https://valkey.io/topics/bloomfilters/) and follow the [quick start guide](https://github.com/valkey-io/valkey-bloom/blob/unstable/QUICK_START.md) to try it yourself. Additionally, to use valkey-bloom on Docker (along with other official modules), you can check out the [Valkey Extensions Docker Image](https://hub.docker.com/r/valkey/valkey-extension).
