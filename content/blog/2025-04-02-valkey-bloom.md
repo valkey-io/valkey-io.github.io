@@ -55,7 +55,7 @@ In this example, we are simulating a very common use case of bloom filters: Adve
 
 Let us assume we have 500 unique advertisements and our service has 5M customers. Both advertisements and customers are identified by a UUID (36 characters).
 
-Without bloom filters, applications could use the `SET` Valkey data type such that they have a unique `SET` for every advertisement. Then, they can use the `SADD` command track every customer who has already seen this particular advertisement by adding them to the set. This means we have 500 sets, each with 5M members. This will require 152.57 GB of `used_memory`.
+Without bloom filters, applications could use the `SET` Valkey data type such that they have a unique `SET` for every advertisement. Then, they can use the `SADD` command track every customer who has already seen this particular advertisement by adding them to the set. This means we have 500 sets, each with 5M members. This will require ~152.57 GB of `used_memory` on a Valkey 8 server.
 
 With bloom filters, applications can create a unique bloom filter for every advertisement with the `BF.RESERVE` or `BF.INSERT` command. Here, they can specify the exact capacity they require: 5M - which means 5M items can be added to the bloom filter. For every customer that the advertisement is shown to, the application can add the UUID of the customer onto the specific filter. So, we have 500 bloom filters, each with a capacity of 5M. This will require variable memory depending on the false positive rate. In all cases (even stricter false positive rates), we can see there is a significant memory optimization compared to using the `SET` data type.
 
