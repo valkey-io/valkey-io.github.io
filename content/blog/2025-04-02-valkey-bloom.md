@@ -51,7 +51,7 @@ False Positive Rate (FP) - The rate that controls the probability of item add/ex
 
 ## Use cases / Memory Savings
 
-In this example, we are simulating a very common use case of bloom filters: Advertisement Deduplication. Applications can utilize bloom filters to track whether an advertisement / event notification has already been shown to a customer and use this to prevent showing it again to the customer.
+In this example, we are simulating a very common use case of bloom filters: Advertisement Deduplication. Applications can utilize bloom filters to track whether an advertisement / promotion has already been shown to a customer and use this to prevent showing it again to the customer.
 
 Let us assume we have 500 unique advertisements and our service has 5M customers. Both advertisements and customers are identified by a UUID (36 characters).
 
