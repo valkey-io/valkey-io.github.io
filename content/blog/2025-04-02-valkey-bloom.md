@@ -22,9 +22,9 @@ Valkey-Bloom (BSD-3 licensed) is an official Valkey module that introduces bloom
 
 ## Data type overview
 
-The “Bloom Object” is the main bloom data type structure. This is what gets created with any bloom filter creation command and this structure can act either as a “scaling bloom filter” or “non scaling bloom filter” depending on the user configuration. It consists of a vector of “Sub Filters” with length >= 1 in case of scaling and only 1 in case of non scaling.
+The "Bloom Object" is the main bloom data type structure. This is what gets created with any bloom filter creation command and this structure can act either as a "scaling bloom filter" or "non scaling bloom filter" depending on the user configuration. It consists of a vector of "Sub Filters" with length >= 1 in case of scaling and only 1 in case of non scaling.
 
-The “Sub Filter” is an inner structure which is created and used within the “Bloom Object”. It tracks the capacity, number of items added, and an instance of a Bloom Filter (of the specified properties) from an external crate named bloomfilter.
+The "Sub Filter" is an inner structure which is created and used within the "Bloom Object". It tracks the capacity, number of items added, and an instance of a Bloom Filter (of the specified properties) from an external crate named bloomfilter.
 
 <img src="/assets/media/pictures/bloomfilter_datatype.png" style="width: 75%;" alt="bloom filter data type">
 
