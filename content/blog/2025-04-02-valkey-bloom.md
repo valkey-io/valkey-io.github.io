@@ -176,7 +176,7 @@ To get an idea of what the memory usage looks like for the max capacity of an in
 
 The bloom commands which involve adding items or checking the existence of items have a time complexity of O(N * K) where N is the number of hash functions used by the bloom filter and K is the number of elements being inserted. This means that both `BF.ADD` and `BF.EXISTS` are both O(N) as they only operate on one item.
 
-Since performance relies on the number of hash functions, choosing the correct capacity and expansion rate can be important. In case of scalable bloom filters, with every scale out, we increase the number of checks (using hash functions of each sub filter) performed during any add / exists operation. For this reason, it is recommended that users choose a capacity after evaluating the use case / workload to avoid several scale outs and reduce the number of checks.
+In case of scalable bloom filters, with every scale out, we increase the number of checks (using hash functions of each sub filter) performed during any add / exists operation. For this reason, it is recommended that users choose a capacity and expansion rate after evaluating the use case / workload to avoid several scale outs and reduce the number of checks.
 
 The other bloom filter commands are O(1) time complexity: `BF.CARD`, `BF.INFO`, `BF.RESERVE`, and `BF.INSERT` (when no items are provided).
 
