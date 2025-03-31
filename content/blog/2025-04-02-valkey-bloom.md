@@ -11,7 +11,7 @@ As an example, previously, Valkey users could use the `SET` data type for handli
 
 ## Introduction
 
-Bloom filters are a space efficient probabilistic data structure that allows adding elements and checking whether elements exist. False positives are possible where a filter incorrectly indicates that an element exists, even though it was not added. However, Bloom Filters guarantee that false negatives do not occur, meaning it can never be the case that an element was added successfully and a filter reports it as non existing. Bloom Filters were first introduced in a paper from 1970 by Burton H. Bloom.
+Bloom filters are a space efficient probabilistic data structure that allows adding elements and checking whether elements exist. False positives are possible where a filter incorrectly indicates that an element exists, even though it was not added. However, Bloom Filters guarantee that false negatives do not occur, meaning it can never be the case that an element was added successfully and a filter reports it as not existing. Bloom Filters were first introduced in a paper from 1970 by Burton H. Bloom.
 
 <img src="/assets/media/pictures/bloomfilter_bitvector.png" style="width: 75%;" alt="Bloom Filter Bit Vector">
 <p style="text-align: center;"><i>Image taken from <a href="https://upload.wikimedia.org/wikipedia/commons/a/ac/Bloom_filter.svg">source</a></i></p>
