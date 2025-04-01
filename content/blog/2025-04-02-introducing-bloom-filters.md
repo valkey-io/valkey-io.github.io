@@ -109,7 +109,7 @@ With bloom filters, applications can create a unique bloom filter for every adve
 
 ## Large Bloom Filters and Recommendations
 
-To ensure optimal server performance during serialization and deserialization of bloom filters, we have added a limit on their memory usage per object. The default memory usage limit of a bloom filter is defined by the `BF.BLOOM-MEMORY-USAGE-LIMIT` module configuration which has a default value of 128 MB. However, the limit can be tuned using the configuration above.
+To ensure optimal server performance during serialization and deserialization of bloom filters, we have added validation on the memory usage per object. The default memory usage limit of a bloom filter is defined by the `BF.BLOOM-MEMORY-USAGE-LIMIT` module configuration which has a default value of 128 MB. However, the value can be tuned using the configuration above.
 
 The implication of the memory limit is that operations involving bloom filter creations or scaling out that result in a bloom filter with overall memory usage over the limit will be rejected. Example:
 ```
