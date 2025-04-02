@@ -62,7 +62,7 @@ Attaching a photo isn’t always possible, so don’t fret if you don’t want t
 
 ## Step 4: Put everything together
 
-[Valkey.io](http://valkey.io/) uses Zola to build the website: each page requires what’s called *frontmatter*.
+[Valkey.io](http://valkey.io/) follows Zola format to build the website: each page requires what’s called *frontmatter*.
 *Frontmatter* is a short snippet of [TOML](https://toml.io/en/) surrounded by `+++` that defines metadata about your post.
 
 Here is an example of the frontmatter:
@@ -83,6 +83,8 @@ description= "It's become clear that people want to talk about Valkey and have b
 # 'authors' are the folks who wrote or contributed to the post.
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "maury", "jacobim" ]
+categories= "update"
+trending= true
 +++
 ```
 

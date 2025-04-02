@@ -1,14 +1,24 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-public
-build-command-docs
-build-command-json
-build-topics
-build-clients
-content/commands/*
-!content/commands/_index.md
-content/topics/*
-!content/topics/_index.md
-_site
-_data/groups.json
-_data/resp2_replies.json
-_data/resp3_replies.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
