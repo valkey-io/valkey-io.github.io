@@ -57,7 +57,7 @@ When the CPU loads some data from the main memory into the CPU cache, it does so
 in fixed size blocks called cache lines. The cache-line size is 64 bytes on
 almost all modern hardware. Recent work on hash tables, such as [Swiss
 tables](https://abseil.io/about/design/swisstables), are highly optimized to
-store and access data within a single cache line. If the key you're not looking
+store and access data within a single cache line. If the key you're looking
 for isn't found where you first look for it (due to a hash collision), then it
 should ideally be found within the same cache line. If it is, then it's found
 very fast once this cache line has been loaded into the CPU cache.
