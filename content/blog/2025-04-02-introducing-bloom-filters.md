@@ -198,11 +198,15 @@ With a 128MB limit and default false positive rate, we can create a bloom filter
 The bloom commands which involve adding items or checking the existence of items have a time complexity of O(N * K) where N is the number of hash functions used by the bloom filter and K is the number of elements being inserted.
 This means that both `BF.ADD` and `BF.EXISTS` are both O(N) as they only operate on one item.
 
-In case of scalable bloom filters, with every scale out, we increase the number of checks (using hash functions of each sub filter) performed during any add / exists operation.
+In scalable bloom filters, with every scale out, we increase the number of hash function based checks during add/exists operations; Each sub filter requires at least one hash function and this number increases as the false positive rate becomes stricter with scale outs due to the [tightening ratio](https://valkey.io/topics/bloomfilters/#advanced-properties).
 For this reason, it is recommended that users choose a capacity and expansion rate after evaluating the use case / workload to avoid several scale outs and reduce the number of checks.
 
-The other bloom filter commands are O(1) time complexity: `BF.CARD`, `BF.INFO`, `BF.RESERVE`, and `BF.INSERT` (when no items are provided).
+Example: For a bloom filter to achieve an overall capacity of 10M with a starting capacity of 100K and expansion rate of 1, it will require 100 sub filters (after 99 scale outs).
+Instead, with the same starting capacity of 100K and expansion rate of 2, a bloom filter can achieve an overall capacity of ~12.7M with just 7 sub filters.
+Alternatively, with the same expansion rate of 1 and starting capacity of 1M, a bloom filter can achieve an overall capacity of 10M with 10 sub filters.
+Both approaches reduces the number of checks per item add / exists operation.
 
+The other bloom filter commands are O(1) time complexity: `BF.CARD`, `BF.INFO`, `BF.RESERVE`, and `BF.INSERT` (when no items are provided).
 
 ## Conclusion
 
