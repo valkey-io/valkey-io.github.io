@@ -17,8 +17,8 @@ Bloom filters are a space efficient probabilistic data structure that allows add
 However, Bloom Filters guarantee that false negatives do not occur, meaning it can never be the case that an element was added successfully and a filter reports it as not existing.
 Bloom Filters were first introduced in a paper from 1970 by Burton H. Bloom.
 
-<img src="/assets/media/pictures/bloomfilter_bitvector.png" style="width: 75%;" alt="Bloom Filter Bit Vector">
-<p style="text-align: center;"><i>Image taken from <a href="https://upload.wikimedia.org/wikipedia/commons/a/ac/Bloom_filter.svg">source</a></i></p>
+![Bloom Filter Bit Vector](/assets/media/pictures/bloomfilter_bitvector.png)
+*Image taken from [source](https://en.wikipedia.org/wiki/Bloom_filter#/media/File:Bloom_filter.svg)*
 
 When adding an item to a bloom filter, K hash functions compute K corresponding bits from the bit vector which are set to 1.
 Checking existence involves the same hash functions - if any bit is 0, the item is definitely absent; if all bits are 1, the item likely exists (with a defined false positive probability).
@@ -35,7 +35,7 @@ It consists of a vector of "Sub Filters" with length >= 1 in case of scaling and
 
 The "Sub Filter" is an inner structure which is created and used within the "Bloom Object". It tracks the capacity, number of items added, and an instance of a Bloom Filter (of the specified properties) from an external crate named bloomfilter.
 
-<img src="/assets/media/pictures/bloomfilter_datatype.png" style="width: 75%;" alt="bloom filter data type">
+![bloom filter data type](/assets/media/pictures/bloomfilter_datatype.png)
 
 **Non Scaling**
 
@@ -75,53 +75,16 @@ Here, they can specify the exact capacity they require: 5M - which means 5M item
 To check if a customer has seen the ad, the `BF.EXISTS` or `BF.MEXISTS` command can be used. So, we have 500 bloom filters, each with a capacity of 5M.
 This will require variable memory depending on the false positive rate. In all cases (even stricter false positive rates), we can see there is a significant memory optimization compared to using the `SET` data type.
 
-<table width="100%" border="1" style="border-collapse: collapse; border: 1px solid black" cellpadding="8">
-<tr>
-<th>Number of Bloom Filters</th>
-<th>Capacity</th>
-<th>FP Rate</th>
-<th>FP Rate Description</th>
-<th>Total Used Memory (GB)</th>
-<th>Memory Saved % compared to SETS</th>
-</tr>
-<tr>
-<td>500</td>
-<td>5000000</td>
-<td>0.01</td>
-<td>One in every 100</td>
-<td>2.9</td>
-<td style="background-color: #90EE90;">98.08%</td>
-</tr>
-<tr>
-<td>500</td>
-<td>5000000</td>
-<td>0.001</td>
-<td>One in every 1K</td>
-<td>4.9</td>
-<td style="background-color: #90EE90;">96.80%</td>
-</tr>
-<tr>
-<td>500</td>
-<td>5000000</td>
-<td>0.00001</td>
-<td>One in every 100K</td>
-<td>7.8</td>
-<td style="background-color: #90EE90;">94.88%</td>
-</tr>
-<tr>
-<td>500</td>
-<td>5000000</td>
-<td>0.0000002</td>
-<td>One in every 5M</td>
-<td>9.8</td>
-<td style="background-color: #90EE90;">93.60%</td>
-</tr>
-</table>
-<br>
-<div style="display: flex; align-items: center;">
-<p style="flex: 1;">In this example, we are able to benefit from 93% - 98% savings in memory usage when using Bloom Filters compared to the SET data type. Depending on your workload, you can expect similar results.</p>
-<img src="/assets/media/pictures/bloomfilter_memusage.png" style="width: 40%;" alt="SET vs Bloom Filter Memory Usage Comparison">
-</div>
+| Number of Bloom Filters | Capacity | FP Rate | FP Rate Description  | Total Used Memory (GB) | Memory Saved % compared to SETS |
+|-------------------------|----------|---------|----------------------|------------------------|----------------------------------|
+| 500                     | 5000000  | 0.01    | One in every 100      | 2.9                    | **98.08%** |
+| 500                     | 5000000  | 0.001   | One in every 1K       | 4.9                    | **96.80%** |
+| 500                     | 5000000  | 0.00001 | One in every 100K     | 7.8                    | **94.88%** |
+| 500                     | 5000000  | 0.0000002| One in every 5M      | 9.8                    | **93.60%** |
+
+In this example, we are able to benefit from 93% - 98% savings in memory usage when using Bloom Filters compared to the SET data type. Depending on your workload, you can expect similar results.
+
+![SET vs Bloom Filter Memory Usage Comparison](/assets/media/pictures/bloomfilter_memusage.png)
 
 ## Large Bloom Filters and Recommendations
 
@@ -160,38 +123,12 @@ We can use the `BF.INFO` command to find out the maximum capacity that the scala
 To get an idea of what the memory usage looks like for the max capacity of an individual non scaling filter, we have a table below.
 With a 128MB limit and default false positive rate, we can create a bloom filter with 112M as the capacity. With a 512MB limit, a bloom filter can hold 448M items.
 
-<table width="100%" border="1" style="border-collapse: collapse; border: 1px solid black" cellpadding="8">
-<tr>
-<th>Non Scaling Filter - Capacity</th>
-<th>FP Rate</th>
-<th>Memory Usage (MB)</th>
-<th>Notes</th>
-</tr>
-<tr>
-<td>112M</td>
-<td>0.01</td>
-<td>~128</td>
-<td>Default FP Rate and Default Memory Limit</td>
-</tr>
-<tr>
-<td>74M</td>
-<td>0.001</td>
-<td>~128</td>
-<td>Custom FP Rate and Default Memory Limit</td>
-</tr>
-<tr>
-<td>448M</td>
-<td>0.01</td>
-<td>~512</td>
-<td>Default FP Rate and Custom Memory Limit</td>
-</tr>
-<tr>
-<td>298M</td>
-<td>0.001</td>
-<td>~512</td>
-<td>Custom FP Rate and Custom Memory Limit</td>
-</tr>
-</table>
+| Non Scaling Filter - Capacity | FP Rate | Memory Usage (MB) | Notes                                    |
+|------------------------------|---------|-------------------|------------------------------------------|
+| 112M                         | 0.01    | ~128              | Default FP Rate and Default Memory Limit |
+| 74M                          | 0.001   | ~128              | Custom FP Rate and Default Memory Limit |
+| 448M                         | 0.01    | ~512              | Default FP Rate and Custom Memory Limit |
+| 298M                         | 0.001   | ~512              | Custom FP Rate and Custom Memory Limit  |
 
 ## Performance 
 
