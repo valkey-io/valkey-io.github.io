@@ -1,75 +1,145 @@
-{%- extends "right-aside.html" -%}
+{%- extends "default.html" -%}
 
-{%- block main_content -%}
-<div class="section headline">
-    <h1>{{ section.extra.headline }}</h1>
-</div>
-<hr />
-<div class="section">
-{{ section.content | safe }}
-</div>
-{%- endblock main_content -%}
-
-
-
-{%- block related_content -%}
-<div role="complementary">
-    {% if section.extra and section.extra.ctas and section.extra.ctas.pre %}
-        {{section.extra.ctas.pre}} 
-    {% endif %}
-    {% if section.extra and section.extra.download_ctas %}
-        {% for cta in section.extra.download_ctas %}
-        <a href="{{ cta.url }}" class="cta">
-            {{ cta.text }}
-        </a>
+{%- block content -%}
+{% if section.extra and section.extra.hero %}
+<div class="hero-section">
+    <div class="hero-content">
+        {% for heading in section.extra.hero.headings %}
+        <h1 class="hero-heading">{{ heading }}</h1>
         {% endfor %}
-    {% endif %}
-    {% if section.extra and section.extra.ctas and section.extra.ctas.post %}
-        {{section.extra.ctas.post}} 
-    {% endif %}
-    {% if section.extra and section.extra.docs %}
-        {% for docs_link in section.extra.docs %}
-        <a href="{{ docs_link.url }}" class="link-readmore">{{ docs_link.title }}</a>
-        {% endfor %}
-    {% endif %}
-    <div class="featured-repos">
-        {% if section.extra and section.extra.repos_heading %}<h3>{{section.extra.repos_heading}}</h3>{% endif %}
-        <div class="sidebar-repo">
-            {% set repos = load_data(path="/_data/repos.yml") %}
-            {% for repo in repos %}
-                {% if repo.featured %}
-                    <h4><a href="{{repo.url}}" target="_blank">{{ repo.title }}</a></h4>
-                    <p>{{ repo.description }}</p>
-                {% endif %}
-            {% endfor %}
-        </div>
-        {% if section.extra and section.extra.github_org and section.extra.github_org_text %}
-            <a href="{{ section.extra.github_org }}" class="link-readmore" target="_blank">{{ section.extra.github_org_text }}</a>
-        {% endif %}
+        <p class="hero-subtitle">
+            {{ section.extra.hero.subtitle }}
+        </p>
+        <a href="{{ section.extra.hero.button_url }}" class="hero-button">{{ section.extra.hero.button_text }}</a>
     </div>
-
-    {% set blog_post_section = get_section(path="blog/_index.md") %}
-    {% set blog_posts = blog_post_section.pages | slice(end=2) %}
-    <div class="whats-new">
-        <h3>What's new?</h3>
-        {% for post in blog_posts %}
-            <h4><a href="{{ post.permalink }}">{{ post.title }}</a></h4>
-            <p>{{ post.description }}</p>
-        {% endfor %}
-    </div>
-
 </div>
-
-{% if section.extra and section.extra.sidebar %}
-    {% for sidebar_category in section.extra.sidebar  %}
-        <h3>{{sidebar_category.title}}</h3>
-        <ul class="list-links-small">
-            {% for link in sidebar_category.links %}
-            <li><a href="{{ link.url }}">{{ link.title}}</a></li>
-            {% endfor %}
-        </ul>
-        {% if sidebar_category.more %} <a href="{{ sidebar_category.more.url }}" class="link-readmore">{{sidebar_category.more.title}}</a> {% endif %}
-    {% endfor %}
 {% endif %}
 
-{%- endblock related_content -%}
+<div class="documentation-section">
+    <div class="row">
+        <div class="col">
+            {{ section.content | safe }}
+        </div>
+    </div>
+    <div class="row documentation-card-grid">
+        {% if section.extra and section.extra.documentation_cards %}
+            {% for card in section.extra.documentation_cards %}
+            <div class="col col_3">
+                <div class="documentation-card">
+                    <h3>{{ card.title }}</h3>
+                    <p>{{ card.description }}</p>
+                    {% if card.features %}
+                    <ul>
+                        {% for feature in card.features %}
+                        <li>{{ feature }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    <a class="btn" href="{{ card.button_url }}">{{ card.button_text }}</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<div class="whats-new-section">
+    <h2>What's New?</h2>
+
+    <div class="whats-new-inner row">
+        <div class="col col-8">   
+            <h3>Release Notes</h3>
+            <div class="inner-card">
+                {% set release_section = get_section(path="download/releases/_index.md") %}
+                {% set releases = release_section.pages | reverse %}
+                
+                {% set_global active_releases = [] %}
+                {% for release in releases %}
+                    {% if release.extra.tag is not matching(".*-.*") %}
+                        {% set_global active_releases = active_releases | concat(with=release) %}
+                    {% endif %}
+                {% endfor %}
+                
+                {% set most_recent_release_page = active_releases | slice(end= 1) %}
+                {% set release_date = most_recent_release_page[0].date %}
+                {% set release = most_recent_release_page[0].extra %}
+                
+                {% set split_ver = release.tag | split(pat=".")%}
+                {% set_global major = split_ver | nth(n= 0) %}
+                
+                <p>You can get the latest releases of Valkey from this page.</p>
+                <p>For installation instructions, supported package managers, and how to configure Valkey, see the <a href="/topics/installation">installation</a> page.</p>
+                <p>The <a href="/download/releases/">releases</a> page contains links to download all current and previous releases (including any security fixes for previous released versions).</p>
+            </div>
+            
+            <h3> Version {{major}}.x.x </h3>
+            <div class="inner-card">
+                {% include "includes/release.html" %}
+            </div>
+
+            <h3> Latest supported version of past releases</h3>
+            
+            <div class="inner-card">
+                {% for older_release in active_releases %}
+                    {% set older_split_ver = older_release.extra.tag | split(pat=".")%}
+                    {% set older_major = older_split_ver | nth(n= 0) %}
+                    {% if older_major != major %}
+                        {% set_global major = older_major %}
+                        {% set release = older_release.extra %}
+                        <h4> Version {{major}}.x.x </h4>
+                        {% include "includes/release.html" %}
+                    {% endif %}
+                {% endfor %}
+            </div>                   
+        </div>        
+        
+        <div class="col col-4">   
+            <h3>Latest From Our Blog</h3>
+            <div class="inner-card">
+                {% set blog_post_section = get_section(path="blog/_index.md") %}
+                {% set blog_posts = blog_post_section.pages | slice(end=2) %}
+                {% for post in blog_posts %}
+                    <h4><a href="{{ post.permalink }}">{{ post.title }}</a></h4>
+                    <p>{{ post.description }}</p>
+                {% endfor %}
+            </div>
+
+     
+            {% if section.extra and section.extra.repos_heading %}
+                <h3>{{section.extra.repos_heading}}</h3>
+            {% endif %}
+
+            <div class="inner-card">
+                {% set repos = load_data(path="/_data/repos.yml") %}
+                {% for repo in repos %}
+                    {% if repo.featured %}
+                        <h4><a href="{{repo.url}}" target="_blank">{{ repo.title }}</a></h4>
+                        <p>{{ repo.description }}</p>
+                    {% endif %}
+                {% endfor %}
+
+                {% if section.extra and section.extra.github_org and section.extra.github_org_text %}
+                    <a href="{{ section.extra.github_org }}" class="link-readmore" target="_blank">{{ section.extra.github_org_text }}</a>
+                {% endif %}
+            </div>
+
+            {% if section.extra and section.extra.sidebar %}
+                {% for sidebar_category in section.extra.sidebar %}
+                    <h3>{{sidebar_category.title}}</h3>
+                    <div class="inner-card">
+                        <ul class="list-links-small">
+                            {% for link in sidebar_category.links %}
+                            <li><a href="{{ link.url }}">{{ link.title}}</a></li>
+                            {% endfor %}
+                        </ul>
+                        {% if sidebar_category.more %} 
+                            <a href="{{ sidebar_category.more.url }}" class="link-readmore">{{sidebar_category.more.title}}</a> 
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>        
+    </div>
+</div>
+
+{%- endblock content -%}
