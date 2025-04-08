@@ -19,7 +19,7 @@ However, Bloom Filters guarantee that false negatives do not occur, meaning that
 ![Bloom Filter Bit Vector](/assets/media/pictures/bloomfilter_bitvector.png)
 *Image taken from [source](https://en.wikipedia.org/wiki/Bloom_filter#/media/File:Bloom_filter.svg)*
 
-When adding an item to a bloom filter, K hash functions compute K corresponding bits from the bit vector which are set to 1.
+When adding an item to a bloom filter, K different hash functions compute K corresponding bits from the bit vector, which are then set to 1.
 Checking existence involves the same hash functions - if any bit is 0, the item is definitely absent; if all bits are 1, the item likely exists (with a defined false positive probability).
 This bit-based approach, rather than full item allocation, makes bloom filters very space efficient with the trade off being potential false positives.
 
