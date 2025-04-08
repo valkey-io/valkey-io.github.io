@@ -5,7 +5,7 @@ date= 2025-04-09 01:01:01
 authors= [ "karthiksubbarao"]
 +++
 
-The Valkey project is introducing Bloom Filters as a new data type via [valkey-bloom](https://github.com/valkey-io/valkey-bloom/), an official Valkey Module which is compatible with Valkey versions >= 8.0. Bloom filters provide efficient, large-scale membership testing, improving performance and offering significant memory savings for high-volume applications.
+The Valkey project is introducing Bloom Filters as a new data type via [valkey-bloom](https://github.com/valkey-io/valkey-bloom/) (BSD-3 licensed), an official Valkey Module which is compatible with Valkey versions >= 8.0. Bloom filters provide efficient, large-scale membership testing, improving performance and offering significant memory savings for high-volume applications.
 
 As an example, to handle advertisement deduplication workloads and answer the question, "Has this customer seen this ad before?", Valkey developers could use the SET data type.
 This is done by adding the customer IDs (of those who viewed an ad) into a `SET` object representing a particular advertisement. However, the problem with this approach is high memory usage since every item in the set is allocated.
@@ -23,9 +23,8 @@ When adding an item to a bloom filter, K hash functions compute K corresponding 
 Checking existence involves the same hash functions - if any bit is 0, the item is definitely absent; if all bits are 1, the item likely exists (with a defined false positive probability).
 This bit-based approach, rather than full item allocation, makes bloom filters very space efficient with the trade off being potential false positives.
 
-Valkey-Bloom (BSD-3 licensed) is an official Valkey module that introduces bloom filters as a new data type to Valkey, providing both scalable and non-scalable variants.
+Valkey-Bloom introduces bloom filters as a new data type to Valkey, providing both scalable and non-scalable variants.
 It is API compatible with the bloom filter command syntax of the official Valkey client libraries including valkey-py, valkey-java, valkey-go (as well as the equivalent Redis libraries).
-The module was developed by the following authors: Karthik Subbarao ([KarthikSubbarao](https://github.com/KarthikSubbarao)), Cameron Zack ([zackcam](https://github.com/zackcam)), Vanessa Tang ([YueTang-Vanessa](https://github.com/YueTang-Vanessa)), Nihal Mehta ([nnmehta](https://github.com/nnmehta)), and wuranxx ([wuranxx](https://github.com/wuranxx)).
 
 ## Data type overview
 
@@ -151,3 +150,10 @@ This enhances Valkey's capability to handle various workloads including large-sc
 
 To learn more about [valkey-bloom](https://github.com/valkey-io/valkey-bloom/), you can read about the data type [here](https://valkey.io/topics/bloomfilters/) and follow the [quick start guide](https://github.com/valkey-io/valkey-bloom/blob/1.0.0/QUICK_START.md) to try it yourself.
 Additionally, to use valkey-bloom on Docker (along with other official modules), you can check out the [Valkey Extensions Docker Image](https://hub.docker.com/r/valkey/valkey-extension).
+
+Thank you to all those who helped develop the module:
+* Karthik Subbarao ([KarthikSubbarao](https://github.com/KarthikSubbarao))
+* Cameron Zack ([zackcam](https://github.com/zackcam))
+* Vanessa Tang ([YueTang-Vanessa](https://github.com/YueTang-Vanessa))
+* Nihal Mehta ([nnmehta](https://github.com/nnmehta))
+* wuranxx ([wuranxx](https://github.com/wuranxx))
