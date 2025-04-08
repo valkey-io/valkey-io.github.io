@@ -80,7 +80,7 @@ This will require variable memory depending on the false positive rate. In all c
 | 500                     | 5000000  | 0.00001 | One in every 100K     | 7.8                    | **94.88%** |
 | 500                     | 5000000  | 0.0000002| One in every 5M      | 9.8                    | **93.60%** |
 
-In this example, we are able to benefit from 93% - 98% savings in memory usage when using Bloom Filters compared to the SET data type. Depending on your workload, you can expect similar results.
+In this example, we are able to benefit from 93% - 98% savings in memory usage when using Bloom Filters compared to the `SET` data type. Depending on your workload, you can expect similar results.
 
 ![SET vs Bloom Filter Memory Usage Comparison](/assets/media/pictures/bloomfilter_memusage.png)
 
@@ -90,7 +90,7 @@ To improve server performance during serialization and deserialization of bloom 
 The default memory usage limit of a bloom filter is defined by the `BF.BLOOM-MEMORY-USAGE-LIMIT` configuration which has a default value of 128 MB.
 However, the value can be tuned using the configuration above.
 
-The implication of the memory limit is that operations involving bloom filter creations or scaling out that result in a bloom filter with overall memory usage over the limit will return an error. Example:
+The implication of the memory limit is that operations involving bloom filter creations or scaling out, that result in a bloom filter with overall memory usage over the limit, will return an error. Example:
 ```
 127.0.0.1:6379> BF.ADD ad1_filter user1
 (error) ERR operation exceeds bloom object memory limit
