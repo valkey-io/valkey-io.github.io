@@ -1,7 +1,7 @@
 +++
 title= "Introducing Bloom Filters for Valkey"
 description = "Learn how to use bloom filters to perform large-scale membership testing with significant memory savings."
-date= 2025-04-02 01:01:01
+date= 2025-04-09 01:01:01
 authors= [ "karthiksubbarao"]
 +++
 
@@ -141,7 +141,7 @@ For this reason, it is recommended that users choose a capacity and expansion ra
 Example: For a bloom filter to achieve an overall capacity of 10M with a starting capacity of 100K and expansion rate of 1, it will require 100 sub filters (after 99 scale outs).
 Instead, with the same starting capacity of 100K and expansion rate of 2, a bloom filter can achieve an overall capacity of ~12.7M with just 7 sub filters.
 Alternatively, with the same expansion rate of 1 and starting capacity of 1M, a bloom filter can achieve an overall capacity of 10M with 10 sub filters.
-Both approaches reduces the number of checks per item add / exists operation.
+Both approaches significantly reduce the number of checks per item add / exists operation.
 
 The other bloom filter commands are O(1) time complexity: `BF.CARD`, `BF.INFO`, `BF.RESERVE`, and `BF.INSERT` (when no items are provided).
 
