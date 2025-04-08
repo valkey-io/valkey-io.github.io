@@ -131,8 +131,8 @@ With a 128MB limit and default false positive rate, we can create a bloom filter
 
 ## Performance 
 
-The bloom commands which involve adding items or checking the existence of items have a time complexity of O(N * K) where N is the number of hash functions used by the bloom filter and K is the number of elements being inserted.
-This means that both `BF.ADD` and `BF.EXISTS` are both O(N) as they only operate on one item.
+The bloom commands which involve adding items or checking the existence of items have a time complexity of O(N * K) where N is the number of elements being inserted and K is the number of hash functions used by the bloom filter.
+This means that both `BF.ADD` and `BF.EXISTS` are both O(K) as they only operate on one item.
 
 In scalable bloom filters, we increase the number of hash function based checks during add/exists operations with each scale out; Each sub filter requires at least one hash function and this number increases as the false positive rate becomes stricter with scale outs due to the [tightening ratio](https://valkey.io/topics/bloomfilters/#advanced-properties).
 For this reason, it is recommended that users choose a capacity and expansion rate after evaluating the use case / workload to avoid several scale outs and reduce the number of checks.
