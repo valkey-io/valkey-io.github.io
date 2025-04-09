@@ -21,6 +21,8 @@ highlight_code = true
 [extra]
 command_description_path = "../build-command-docs/"
 command_json_path = "../build-command-json/"
+command_bloom_json_path = "../build-bloom-command-json/"
+client_json_path = "../build-clients/"
 doc_topic_path = "../build-topics/"
 
 review_list = [
@@ -48,4 +50,7 @@ publish_hold = [
     "/topics/rdd/"
 ]
 
-banner = "The Release Candidate for Valkey 8.1 is available! [Check it out on GitHub](https://github.com/valkey-io/valkey/releases/tag/8.1.0-rc1)"
+banner = "The Release Candidate for Valkey 8.1 is available! [Check it out](https://valkey.io/download/releases/v8-1-0/)"
+
+
+

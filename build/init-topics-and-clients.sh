@@ -8,9 +8,19 @@ if [ -z "$1" ]; then
     exit 1
 fi 
 
+if [ -z "$2" ]; then
+    echo "You must supply a path to the clients directory as the first argument" 
+    exit 1
+fi 
+
 # check for validity of these agruments as paths
 if [ ! -d "$1" ]; then
     echo "The topics directory must exist and be a valid path"
+    exit 1
+fi
+
+if [ ! -d "$2" ]; then
+    echo "The clients directory must exist and be a valid path"
     exit 1
 fi
 
@@ -55,3 +65,11 @@ do
     cp ${fname} ./content/topics/${base}
 done
 echo "Copied images to topics directory."
+
+
+#create symlink to clients, expect if it already exists
+if [ ! -L build-clients -o "$(readlink build-clients)" != "$2" ]; then
+    ln -s $2 ./build-clients
+fi
+echo "Symlink to clients has been created at ./build-clients "
+

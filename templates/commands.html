@@ -10,24 +10,33 @@
 {% set_global group_descriptions = load_data(path= "../_data/groups.json", required= false) %}
 
 {% set commands_entries = [] %}
-{% for page in section.pages %}
-    {% set command_data = load_data(path= commands::command_json_path(slug= page.slug), required= false) %}
-    {% if command_data %}
-        {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
-        {% set command_data_obj = command_data[command_obj_name] %}
-        {% set command_display = command_obj_name %}
-        {% if command_data_obj.container %}
-            {% set command_display = command_data_obj.container ~ " " ~ command_display %}
-        {% endif %}
+<!-- command search box -->
+<div class="search-container">
+    <input type="text" id="search-box" placeholder="Search commands..." onkeyup="searchCommands()" />
+</div>
 
-        {% set command_entry = [
-            command_display,
-            page.permalink | safe, 
-            command_data_obj.summary,
-            command_data_obj.group
-        ] %}
-        {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
-    {% endif %}
+{% for page in section.pages %}
+    {% for json_path in [
+        commands::command_json_path(slug=page.slug),
+        commands::command_bloom_json_path(slug=page.slug)
+    ] %}
+        {% set command_data = load_data(path= json_path, required= false) %}
+        {% if command_data %}
+            {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
+            {% set command_data_obj = command_data[command_obj_name] %}
+            {% set command_display = command_obj_name %}
+            {% if command_data_obj.container %}
+                {% set command_display = command_data_obj.container ~ " " ~ command_display %}
+            {% endif %}
+            {% set command_entry = [
+                command_display,
+                page.permalink | safe, 
+                command_data_obj.summary,
+                command_data_obj.group
+            ] %}
+            {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
+        {% endif %}
+    {% endfor %}
 {% endfor %}
 {% set_global grouped = commands_entries | sort(attribute="3") | group_by(attribute="3") %}
 
@@ -48,6 +57,61 @@
     </div>
     </div>
 {% endfor %}
+
+<script>
+function searchCommands() {
+    var input = document.getElementById("search-box").value.toLowerCase();
+    var groups = document.querySelectorAll(".command-group");
+
+    groups.forEach(function (group) {
+        var items = group.querySelectorAll(".command-entry");
+        var found = false;
+        items.forEach(function (item) {
+            var text = item.querySelector("a").innerText.toLowerCase();
+            if (text.includes(input)) {
+                item.style.display = "";
+                found = true;
+            } else {
+                item.style.display = "none";
+            }
+        });
+        group.style.display = found ? "" : "none";
+    });
+}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("search-box").focus();
+});
+</script>
+
+<style>
+.search-container {
+    margin: 20px 0;
+    text-align: center;
+}
+
+#search-box {
+    width: 60%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#search-box:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+#search-box::placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+</style>
 
 {% endblock main_content %}
 
