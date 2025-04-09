@@ -50,7 +50,7 @@ publish_hold = [
     "/topics/rdd/"
 ]
 
-banner = "The Release Candidate for Valkey 8.1 is available! [Check it out](https://valkey.io/download/releases/v8-1-0/)"
+banner = "Valkey 8.1 is generally available! [Check it out](https://valkey.io/download/releases/v8-1-0/)"
 
 
 
