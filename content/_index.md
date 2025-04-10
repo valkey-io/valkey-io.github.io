@@ -7,8 +7,40 @@ github_org= "https://github.com/valkey-io"
 github_org_text= "All repos in the Valkey GitHub organization"
 
 headline= "Valkey: an open source, in-memory data store"
-
 long_description= ""
+
+[extra.hero]
+headings = ["FAST.", "RELIABLE.", "OPEN SOURCE, FOREVER."]
+subtitle = "Accelerate your applications with Valkey, the high-performance, in-memory database built for speed, scale, and open innovation. Backed by the Linux Foundation, Valkey delivers the real-time capabilities you need - without vendor lock-in"
+button_text = "GET STARTED"
+button_url = "/topics/quickstart"
+
+[[extra.documentation_cards]]
+title = "Install"
+description = "Step-by-step instructions on how to install and configure Valkey for first-time users."
+button_text = "See Installation Guide"
+button_url = "/topics/installation"
+
+[[extra.documentation_cards]]
+title = "Modules"
+description = "Detailed documentation on the language used within Valkey, including syntax, commands, and examples."
+features = ["JSON", "Bloom Filters", "Vector Search"]
+button_text = "Learn More"
+button_url = "/topics/modules-intro"
+
+[[extra.documentation_cards]]
+title = "Programming with Valkey"
+description = "Step-by-step instructions on how to install and configure Valkey for first-time users."
+features = ["Full Command List", "Pipelining", "Pub/Sub Messaging", "And more"]
+button_text = "Command Reference"
+button_url = "/commands"
+
+[[extra.documentation_cards]]
+title = "Clients"
+description = "Official Valkey client libraries include support for:"
+features = ["Python", "Java", "Go", "Node.js", "PHP"]
+button_text = "Learn More"
+button_url = "/clients"
 
 [[extra.download_ctas]]
 text= "Get Valkey"
@@ -18,7 +50,6 @@ url=  "/download/"
 url= "/docs/"
 title= "Read the docs"
 
-
 [[extra.sidebar]]
 title= "Founding documents"
 [[extra.sidebar.links]]
@@ -27,13 +58,11 @@ url= "https://www.linuxfoundation.org/press/linux-foundation-launches-open-sourc
 
 +++
 
+## Documentation
+
 Valkey is an open source (BSD) high-performance key/value datastore that supports a variety of workloads such as **caching**, **message queues**, and can act as a **primary database**.
 Valkey can run as either a **standalone** daemon or in a **cluster**, with options for **replication** and **high availability**.
 
 Valkey natively supports a rich collection of datatypes, including **strings**, **numbers**, **hashes**, **lists**, **sets**, **sorted sets**, **bitmaps**, **hyperloglogs** and more.
 You can operate on data structures in-place with an expressive collection of commands.
 Valkey also supports native extensibility with built-in scripting support for **Lua** and supports **module** plugins to create new commands, data types, and more.
-
----
-
-**Get Started**: Join the vibrant Valkey community and check out the code on [GitHub](https://github.com/valkey-io/valkey).

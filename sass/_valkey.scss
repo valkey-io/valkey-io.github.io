@@ -176,7 +176,6 @@ p {
 .body {
   flex-grow: 1;
   height: 100%;
-  margin-bottom: 20px;
 
   .width-limiter {
     background: #fff;
@@ -271,6 +270,43 @@ p {
   }
 }
 
+.row {
+  display: flex;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: var(--max-width);
+
+  .col {
+    flex: 1 1 100%;
+    padding: 0 2rem;
+  }
+
+  .col-10 {
+    flex: 1 1 83.33%;
+  }
+
+  .col-8 {
+    flex: 1 1 66.66%;
+  }
+
+  .col-6 {
+    flex: 1 1 50%;
+  }
+
+  .col-4 {
+    flex: 1 1 33.33%;
+  }
+
+  .col_3 {
+    flex: 1 1 100%;
+
+    @include respond-min(768px) {
+      flex: 1 1 25%;
+    }
+  }
+}
+
 .page-title {
   max-width: var(--max-width);
   background: #fff;
@@ -345,18 +381,6 @@ aside {
     font-size: 1.8rem;
     border-bottom: 1px solid $line;
     padding-bottom: .25em;
-  }
-}
-
-.sidebar-repo,
-.whats-new-post {
-  h4 {
-    margin-top: 1.25em;
-    margin-bottom: .25em;
-  }
-
-  p {
-    margin-top: .5em;
   }
 }
 
@@ -838,4 +862,221 @@ pre table {
 .checkmark-false {
   color: rgb(190, 9, 9);
   font-weight: bold;
+}
+
+// Hero Section Styles
+.hero-section {
+  position: relative;
+  min-height: none;
+  background-size: cover;
+  background-position: center bottom;
+  background-color: #30186e;
+  background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0.15), rgba(48, 24, 110, 0.75)), url('/img/hero-bg.webp');
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 8rem 2rem;
+
+  @include respond-min(768px) {
+    padding: 8rem 2rem;
+    min-height: 75vh;
+
+  }
+}
+
+.hero-content {
+    max-width: 1200px;
+    text-align: center;
+    z-index: 1;
+    color: white;
+}
+
+.hero-heading {
+  font-size: 4rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1;
+  letter-spacing: 2px;
+  color: white;
+
+  @include respond-min(768px) {
+    font-size: 8rem;
+  }
+}
+
+.hero-subtitle {
+    font-size: 1.8rem;
+    font-weight: 700;
+    max-width: 800px;
+    margin: 2rem auto 4rem;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.9);
+}
+
+.hero-button {
+  display: inline-block;
+  line-height: 1.2;
+  border-radius: 30px;
+  font-weight: 600;
+  height: auto;
+  font-size: 2.4rem;
+  color: #6983FF;
+  padding: 10px 20px;
+  background-image: linear-gradient(to right, #ffffff, #B7C2F7);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.3s ease-in-out;
+  min-width: 100%;
+
+  @include respond-min(768px) {
+    min-width: 380px;
+  }
+}
+
+// Documentation Section Styles
+.documentation-section {
+  padding-bottom: 4rem;
+  background-image: linear-gradient(rgb(48, 23, 110), rgb(105, 131, 255));
+  position: relative;
+  text-align: center;
+  color: white;
+
+  @include respond-min(768px) {
+    padding-bottom: 8rem;
+  }
+
+  .col {
+    max-width: 890px;
+    margin: 0 auto;
+  }
+
+  a {
+    color: white;
+    text-decoration: underline;
+  }
+
+  h2 {
+    width: 100%;
+    line-height: 1.2;
+    font-size: 3.75rem;
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 1.75rem;
+
+    @include respond-min(768px) {
+      font-size: 6rem;
+    }
+  }
+
+  p {
+    margin-bottom: 2rem;
+  }
+}
+
+.documentation-card-grid {
+  margin-top: 4rem;
+}
+
+.documentation-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 4rem;
+  border-radius: 20px;
+  color: white;
+  background: #2d2471;
+  margin-bottom: 3rem;
+
+  @include respond-min(768px) {
+    margin-bottom: 0;
+    min-height: 100%;
+  }
+
+  h3 {
+    font-weight: 700;
+    font-size: 2rem;
+    line-height: 1.2;
+    text-align: center;
+    color: white;
+    margin: 0 0 .5rem;
+  }
+
+  p {
+    text-align: left;
+    margin: 0;
+  }
+
+  ul {
+    text-align: left;
+    padding: 0 0 0 18px;
+    margin: 10px 0 20px;
+  }
+
+  a.btn {
+    color: white;
+    border-radius: 24px;
+    border: 1px solid currentcolor;
+    padding: 1rem;
+    margin-top: auto;
+    text-decoration: none;
+  }
+}
+
+// What's New Section Styles
+.whats-new-section {
+  padding: 4rem 2rem;
+  background-image: linear-gradient(rgb(105, 131, 255), rgb(48, 23, 110));
+
+  @include respond-min(768px) {
+    padding: 8rem 0;
+  }
+
+  h2 {
+    width: 100%;
+    line-height: 1.2;
+    font-size: 3.75rem;
+    color: white;
+    text-align: center;
+    font-weight: 700;
+    margin: 0 0 1.75rem;
+
+    @include respond-min(768px) {
+      font-size: 6rem;
+    }
+  }
+}
+
+.whats-new-inner {
+  display: flex;
+  width: 100%;
+  padding: 2rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.2);
+
+  @include respond-min(768px) {
+    padding: 4rem;
+  }
+
+  h3 {
+    color: white;
+    font-size: 2.75rem;
+    font-weight: 700;
+    width: 100%;
+    margin: 0 0 1rem;
+  }
+
+  .inner-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    margin: 0 0 3rem;
+
+    h4 {
+      margin: 0 0 1rem;
+    }
+
+    hr {
+      margin: 2rem 0;
+    }
+  }
 }
