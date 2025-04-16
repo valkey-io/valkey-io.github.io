@@ -344,43 +344,6 @@ p {
   }
 }
 
-.row {
-  display: flex;
-  margin: 0 auto;
-  flex-wrap: wrap;
-  width: 100%;
-  max-width: var(--max-width);
-
-  .col {
-    flex: 1 1 100%;
-    padding: 0 2rem;
-  }
-
-  .col-10 {
-    flex: 1 1 83.33%;
-  }
-
-  .col-8 {
-    flex: 1 1 66.66%;
-  }
-
-  .col-6 {
-    flex: 1 1 50%;
-  }
-
-  .col-4 {
-    flex: 1 1 33.33%;
-  }
-
-  .col_3 {
-    flex: 1 1 100%;
-
-    @include respond-min(768px) {
-      flex: 1 1 25%;
-    }
-  }
-}
-
 .footer {
   border-top: 1px solid $grey-dk-100;
   background-color: $grey-lt-300;
