@@ -22,11 +22,10 @@ button_text = "See Installation Guide"
 button_url = "/topics/installation"
 
 [[extra.documentation_cards]]
-title = "Modules"
-description = "Detailed documentation on the language used within Valkey, including syntax, commands, and examples."
-features = ["JSON", "Bloom Filters", "Vector Search"]
-button_text = "Learn More"
-button_url = "/topics/modules-intro"
+title = "Usage guide"
+description = "Detailed documentation on the various datatype supported by Valkey and best practices."
+button_text = "Documentation by topic"
+button_url = "/topics/"
 
 [[extra.documentation_cards]]
 title = "Programming with Valkey"
