@@ -28,9 +28,8 @@ button_text = "Documentation by topic"
 button_url = "/topics/"
 
 [[extra.documentation_cards]]
-title = "Programming with Valkey"
-description = "Step-by-step instructions on how to install and configure Valkey for first-time users."
-features = ["Full Command List", "Pipelining", "Pub/Sub Messaging", "And more"]
+title = "Valkey API"
+description = "View the full list of Valkey commands including first party modules."
 button_text = "Command Reference"
 button_url = "/commands"
 
