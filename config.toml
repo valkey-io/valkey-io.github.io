@@ -49,3 +49,6 @@ publish_hold = [
     "/topics/internals/",
     "/topics/rdd/"
 ]
+
+banner = "Valkey 8.1 is generally available! [Check it out](https://valkey.io/download/releases/v8-1-0/)"
+
