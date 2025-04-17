@@ -28,6 +28,7 @@ GLIDE provides flexible options tailored to your application’s needs:
 * ```PRIMARY```: Always read from the primary to ensure the freshness of data.
 * ```PREFER_REPLICA```: Distribute requests among all replicas in a round-robin manner. If no replica is available, fallback to the primary.
 * ```AZ_AFFINITY```: Prioritize replicas in the same AZ as the client. If no replicas are available in the zone, fallback to other replicas or the primary if needed.
+* ```AZ_AFFINITY_REPLICAS_AND_PRIMARY```: Prioritize replicas in the same AZ as the client. If no replicas are available in the zone, fallback to the primary in the same AZ. If neither are available, fallback to other replicas or the primary in other zones.
 
 In Valkey 8,  ```availability-zone``` configuration was introduced, allowing clients to specify the AZ for each Valkey server. GLIDE leverages this new configuration to empower its users with the ability to use AZ Affinity routing. At the time of writing, GLIDE is the only Valkey client library supporting the AZ Affinity strategy, offering a unique advantage.
 
@@ -40,7 +41,7 @@ In Valkey 8,  ```availability-zone``` configuration was introduced, allowing cli
 
 2. **Minimize Latency** Distance between AZs within the same region— for example, in AWS, is typically up to 60 miles (100 kilometers)—adds extra roundtrip latency, usually in the range of 500µs to 1000µs. By ensuring requests remain within the same AZ, you can reduce latency and improve the responsiveness of your application.
     
-    **Example:**
+    **Example 1:**
     Consider a cluster with three nodes, one primary and two replicas. Each node is located in a different availability zone. The client located in az-2 along with replica-1. 
 
     **With ```PREFER_REPLICA``` strategy**:
@@ -53,6 +54,20 @@ In Valkey 8,  ```availability-zone``` configuration was introduced, allowing cli
     In this case, the client will read commands from a replica in the same client's AZ and the average latency is, for example, about 300 microseconds.
 
     ![AZ_AFFINITY Read strategy latency example](/assets/media/pictures/AZ_AFFINITY_strategy.png)
+    
+    **Example 2:**
+    Consider a cluster with three nodes, one primary and two replicas. Each node is located in a different availability zone. The client located in az-2 along with the primary node. The replicas are located in az-1 and az-3.
+    
+    **With ```AZ_AFFINITY``` strategy**:
+    In this case, the client attempts to read from a replica in the same AZ. Since none are available in az-2, it falls back to a replica in another AZ, such as az-1 or az-3.  
+    and the average latency is, for example, about 800 microseconds.
+    
+    ![AZ_AFFINITY Read strategy latency example](/assets/media/pictures/AZ_AFFINITY_strategy2.png)
+
+    **With `AZ_AFFINITY_REPLICAS_AND_PRIMARY` strategy**:  
+    In this case, the client first attempts to read from a replica in the same AZ. Since no local replica exists, it reads from the primary located in az-2. The average latency is, for example, about 300 microseconds.
+
+    ![AZ_AFFINITY_REPLICAS_AND_PRIMARY Read strategy latency example](/assets/media/pictures/AZ_AFFINITY_REPLICAS_AND_PRIMARY_strategy.png)
 
 ## Configuring AZ Affinity Connections with GLIDE
 
