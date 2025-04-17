@@ -104,20 +104,24 @@ p {
 }
 
 .header {
-  border-bottom: 1px solid $grey-lt-000;
-  color: $lf-dark-blue;
-  padding: 10px 0;
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  border-bottom: 1px solid #ddd;
 
   .width-limiter {
-    display: flex;
-    gap: 2rem;
-    flex-flow: row nowrap;
+    flex-direction: row;
+    align-items: center;
+    max-width: var(--max-width);
+    min-height: 80px;
     justify-content: space-between;
-    align-items: baseline;
+    color: #6983ff;
+    width: 100%;
+    padding: 10px;
+    padding: 0 20px;
 
-    @media all and (max-width: 768px) {
-        flex-flow: column;
-        align-items: center;
+    @include respond-min(768px) {
+      padding: 0 20px;
     }
   }
 
@@ -127,48 +131,175 @@ p {
     align-items: center;
 
     img {
-        width: 6rem;
-        height: 6rem;
-        display: block;
+      width: 130px;
+      height: 46px;
+      display: block;
     }
 
     span {
-    @include sans-serif;
-    font-weight: 400;
-    font-size: 6rem;
-    line-height: 5.75rem;
-    color: inherit;
-    text-decoration: none;
-    letter-spacing: -0.2rem;
-    color: $lf-dark-blue;
+      @include sans-serif;
+      font-weight: 400;
+      font-size: 6rem;
+      line-height: 5.75rem;
+      color: inherit;
+      text-decoration: none;
+      letter-spacing: -0.2rem;
+      color: $lf-dark-blue;   
     }
   }
 
   nav {
     display: flex;
     flex-flow: row nowrap;
-    gap: 2rem;
+    gap: 3rem;
     @include sans-serif;
-    font-size: 1.5rem;
-    font-weight: 400;
 
-    @media all and (max-width: 480px) {
-        gap: 1rem;
-        display: grid;
-        text-align: center;
-    }
+    font-size: 1.6rem;
+    font-weight: 600;
 
     a {
       white-space: nowrap;
       color: inherit;
       cursor: pointer;
+      padding: .5rem 0;
+      border-bottom: none;
+
+      @include respond-min(768px) {
+        border-bottom: 3px solid;
+        padding: 1rem 0;
+        border-color: transparent;
+      }
+    }
+
+    >a {
+      &:hover {
+        border-color: inherit;
+        text-decoration: underline;
+
+        @include respond-min(768px) {
+          text-decoration: none;
+        }
+      }
+    }
+
+    @media (max-width: 768px) {
+      display: none;
+      gap: 1rem;
+
+      &.active {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        margin-top: 1px;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        z-index: 1000;
+
+        a, .has-submenu > span {
+          padding: .75rem 0;
+          display: block;
+          width: 100%;
+        }
+
+        .submenu {
+          position: static;
+          box-shadow: none;
+          padding-left: 1rem;
+        }
+      }
+    }
+  }
+  .btn-menu {
+    display: none;
+    padding: 20px 0;
+    cursor: pointer;
+    background: none;
+    gap: 0.625rem;
+    justify-content: center;
+    flex-direction: column;
+
+    &:before {
+      content: "";
+      display: block;
+      height: 2px;
+      width: 2.5rem;
+      background-color: #6983ff;
+      transition-duration: .2s;
+    }
+
+    &:after {
+      content: "";
+      display: block;
+      height: 2px;
+      width: 2.5rem;
+      background-color: #6983ff;
+      transition-duration: .2s;
+    }
+
+    @media (max-width: 768px) {
+      display: flex;
+    }
+  }
+}
+
+.has-submenu {
+  position: relative;
+  display: block;
+  align-items: center;
+
+  @include respond-min(768px) {
+    display: flex;
+  }
+
+  &:hover {
+    > span {
+      color: #04202a;
+    }
+
+    .submenu {
+      display: flex;
+    }
+  }
+
+  > span {
+    cursor: pointer;
+  }
+
+  >a {
+    &:hover {
+      text-decoration: underline;
+
+      @include respond-min(768px) {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .submenu {
+    position: absolute;
+    top: 100%;
+    z-index: 9;
+    display: block;
+    flex-flow: column nowrap;
+    background: #fff;
+    min-width: 100%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: .25rem 0;
+
+    @include respond-min(768px) {
+      display: none;
+    }
+
+    > a {
+      padding: .5rem 1rem;
 
       &:hover {
-        color: #04202a;
         text-decoration: underline;
-        text-decoration-thickness: 2px;
-        text-underline-offset: 4px;
-      }
+      }    
     }
   }
 }
@@ -558,39 +689,6 @@ aside {
   ul {
     list-style-type: none;
     padding-left: 0;
-  }
-}
-
-.has-submenu {
-  position: relative;
-
-  &:hover {
-    > span {
-      color: #04202a;
-    }
-
-    .submenu {
-      display: flex;
-    }
-  }
-
-  > span {
-    cursor: pointer;
-  }
-
-  .submenu {
-    position: absolute;
-    z-index: 9;
-    display: none;
-    flex-flow: column nowrap;
-    background: #fff;
-    min-width: 100%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    padding: .25rem 0;
-
-    > a {
-      padding: .5rem 1rem;
-    }
   }
 }
 
