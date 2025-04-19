@@ -1,4 +1,4 @@
-{% extends "right-aside.html" %}
+{% extends "left-aside.html" %}
 
 {% import "macros/command.html" as commands %}
 
@@ -12,7 +12,15 @@
 {% set commands_entries = [] %}
 <!-- command search box -->
 <div class="search-container">
+    <label>Search Commands:</label>
     <input type="text" id="search-box" placeholder="Search commands..." onkeyup="searchCommands()" />
+</div>
+
+<!-- No results message -->
+<div id="no-results-message" class="no-results-message"  style="display: none;">
+    <span>&lt;/&gt;</span>
+    <h4>We couldn't find any results matching your search</h4>
+    <p>Check your spelling or try different keywords</p>
 </div>
 
 {% for page in section.pages %}
@@ -43,18 +51,16 @@
 
 {% for command_group_name, command_group in grouped %}
     <div class="command-group">
-    {% set command_group_description_name = command_group_name | replace(from="_", to="-") %}
-    <h2 id="{{command_group_description_name}}">{{ group_descriptions[command_group_description_name].display }}</h2>
-    <div class="command-group-meta">
-        <p><small>{{ group_descriptions[command_group_description_name].description }}</small></p>
-        <hr />
-    </div>
-    {% for entry in command_group | sort(attribute="0") %}
-        <div class="command-entry"><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code> {{entry[2]}}</div>
-    {% endfor %}
-    <div class="command-group-meta">
-        <small><a href="#top">Back to top</a></small>
-    </div>
+        {% set command_group_description_name = command_group_name | replace(from="_", to="-") %}
+        <h2 id="{{command_group_description_name}}">{{ group_descriptions[command_group_description_name].display }}
+            <span>{{ group_descriptions[command_group_description_name].description }}</span>
+        </h2>
+        {% for entry in command_group | sort(attribute="0") %}
+            <div class="command-entry"><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code> {{entry[2]}}</div>
+        {% endfor %}
+        <div class="command-group-meta">
+            <small><a href="#top">Back to top</a></small>
+        </div>
     </div>
 {% endfor %}
 
@@ -62,6 +68,8 @@
 function searchCommands() {
     var input = document.getElementById("search-box").value.toLowerCase();
     var groups = document.querySelectorAll(".command-group");
+    var noResultsMessage = document.getElementById("no-results-message");
+    var totalVisible = 0;
 
     groups.forEach(function (group) {
         var items = group.querySelectorAll(".command-entry");
@@ -71,12 +79,16 @@ function searchCommands() {
             if (text.includes(input)) {
                 item.style.display = "";
                 found = true;
+                totalVisible++;
             } else {
                 item.style.display = "none";
             }
         });
         group.style.display = found ? "" : "none";
     });
+
+    // Show/hide no results message based on search results
+    noResultsMessage.style.display = totalVisible === 0 ? "block" : "none";
 }
 </script>
 
@@ -85,34 +97,6 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("search-box").focus();
 });
 </script>
-
-<style>
-.search-container {
-    margin: 20px 0;
-    text-align: center;
-}
-
-#search-box {
-    width: 60%;
-    padding: 10px;
-    font-size: 16px;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-#search-box:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-#search-box::placeholder {
-    color: #aaa;
-    font-style: italic;
-}
-</style>
-
 {% endblock main_content %}
 
 {% block related_content %}
@@ -137,5 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 {% block subhead_content %}
-<h1 class="page-title">Documentation: Command Reference</h1>
+<div class="styled-title">
+    <h1>Documentation: Command Reference</h1>
+</div>
 {% endblock subhead_content %}
