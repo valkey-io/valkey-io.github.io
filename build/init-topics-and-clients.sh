@@ -73,3 +73,11 @@ if [ ! -L build-clients -o "$(readlink build-clients)" != "$2" ]; then
 fi
 echo "Symlink to clients has been created at ./build-clients "
 
+# Check if the clients directory exists and set the `clients_built` flag in frontmatter
+if [ -d "build-clients" ]; then
+    # Set `clients_built = true` if the build-clients directory exists
+    sed -i 's/clients_built = false/clients_built = true/' content/clients/_index.md
+fi
+
+echo "Updated clients_built flag in frontmatter."
+
