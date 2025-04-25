@@ -1073,6 +1073,19 @@ pre table {
 
 .documentation-card-grid {
   margin-top: 4rem;
+
+  @media (max-width: 1100px) {
+    .col {
+      flex: 1 1 50%;
+      margin-bottom: 3rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .col {
+      flex: 1 1 100%;
+    }
+  }
 }
 
 .documentation-card {
@@ -1083,10 +1096,8 @@ pre table {
   border-radius: 20px;
   color: white;
   background: #2d2471;
-  margin-bottom: 3rem;
 
   @include respond-min(768px) {
-    margin-bottom: 0;
     min-height: 100%;
   }
 
