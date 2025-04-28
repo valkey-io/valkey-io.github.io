@@ -345,33 +345,81 @@ p {
 }
 
 .footer {
-  border-top: 1px solid $grey-dk-100;
-  background-color: $grey-lt-300;
+  background-color: #1a2026;
   @include sans-serif;
   font-size: 1.4rem;
+  color: #fff;
+  padding: 2rem 0;
 
-  .links {
+  .icon-links {
     display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-evenly;
-    margin-bottom: 4em;
-  }
+    flex-direction: column;
+    gap: 15px;
 
-  nav {
-    font-size: 1.5rem;
-    font-weight: 600;
-
-    h4 {
-      font-weight: 400;
-      @include sans-serif;
-      font-size: 1.5rem;
+    @include respond-min(768px) {
+      flex-direction: row;
+      border: none;
     }
 
     a {
-      display: list-item;
-      list-style: none;
-      white-space: nowrap;
-      margin-bottom: 1em;
+      display: flex;
+      align-items: center;
+      color: #fff;
+
+      &:hover {
+        color: #fff;
+        text-decoration: underline;
+        opacity: 0.8;
+      }
+
+      img {
+        margin-right: 5px;
+      }
+    }
+
+  }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 2rem;
+    padding-top: 2rem;
+
+    @include respond-min(768px) {
+      flex-direction: row;
+      border: none;
+      margin-top: 0;
+      padding-top: 0;
+      }
+
+    a {
+      color: #fff;
+      text-decoration: underline;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+
+  &_bottom {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 2rem;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+
+    p {
+      max-width: 720px;
+      margin: 8px auto;
+    }
+
+    a {
+      color: #6983ff;
 
       &:hover {
         text-decoration: underline;
@@ -410,28 +458,35 @@ p {
 
   .col {
     flex: 1 1 100%;
-    padding: 0 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 
   .col-10 {
-    flex: 1 1 83.33%;
+    @include respond-min(768px) {
+      flex: 1 1 83.33%;
+    }
   }
 
   .col-8 {
-    flex: 1 1 66.66%;
+    @include respond-min(768px) {
+      flex: 1 1 66.66%;
+    }
   }
 
   .col-6 {
-    flex: 1 1 50%;
+    @include respond-min(768px) {
+      flex: 1 1 50%;
+    }
   }
 
   .col-4 {
-    flex: 1 1 33.33%;
+    @include respond-min(768px) {
+      flex: 1 1 33.33%;
+    }
   }
 
   .col_3 {
-    flex: 1 1 100%;
-
     @include respond-min(768px) {
       flex: 1 1 25%;
     }
