@@ -574,7 +574,6 @@ p {
   padding: 80px;
 
   h1 {
-    @include sans-serif;
     font-size: 4rem;
     font-weight: 700;
     line-height: 1;
@@ -582,6 +581,14 @@ p {
     margin: 0;
     padding: 0;
   }
+
+  p {
+    line-height: 1.2;
+    color: #fff;
+    margin: 1rem 0 0;
+    padding: 0;
+  }
+   
 }
 
 #principles {
@@ -677,13 +684,104 @@ aside {
   }
 }
 
-.bloglist {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.blog-inner {
+  
+  .blog-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 
-  .meta {
-    margin-top: 10px;
+    li {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+
+      h2 a {
+        color: #30176e;
+        margin: 0;
+      }
+
+      a.link-readmore {
+        color: #747bff ;
+      }
+
+      .meta {
+        margin-top: 2px;
+      }
+
+    }
+  
+  }
+}
+
+.blog-trending {
+
+  h2 {
+    color: #30176e;
+    margin-bottom: 1rem;
+    font-size: 120%;
+  }
+
+  &-card {
+    display: flex;
+    background: #fff;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+
+    img {
+      max-width: 50%;
+      height: auto;
+      object-fit: cover;
+      border-top-left-radius: 10px;      
+      border-bottom-left-radius: 10px;      
+    }
+
+    .info {
+      flex: 1 1 50%;
+      width: 50%;
+      padding: 1.25rem;
+
+      h4 {
+        margin: 0 0 1.25rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+
+        a {
+          color: #000;
+        }
+      }
+    
+      p {
+        margin: 0 0 1.25rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .read-more {
+
+      }
+    }
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      line-height: 1.2;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px 24px;
+      border: 1px solid #e2e8f0;
+      border-radius: 50px;
+      color: #2d3748;
+      align-self: flex-end;
+      margin-left: auto;
+      transition: all 0.2s;
+    }
+
   }
 }
 
