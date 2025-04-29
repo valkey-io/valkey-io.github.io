@@ -5,7 +5,7 @@ date= 2025-03-04 01:01:01
 authors= [ "niharikabhavaraju"]
 [extra]
 trending = true
-featured_image = "/img/blog/default.webp"
+featured_image = "/assets/media/featured/default.webp"
 +++
 
 Valkey-Glide is pleased to announce the public preview release of the GLIDE(General Language Independent Driver for the Enterprise) Go client. This release brings the power and reliability of Valkey to Go developers with an API designed for performance and developer productivity.

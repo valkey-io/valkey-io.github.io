@@ -5,7 +5,7 @@ description= "By implementing AZ affinity routing in Valkey and using GLIDE, you
 authors= [ "asafporatstoler", "adarovadya"]
 [extra]
 trending = true
-featured_image = "/img/blog/random-04.webp"
+featured_image = "/assets/media/featured/random-04.webp"
 +++
 How can adjusting your client library help you reduce Cloud costs and improve latency?
 

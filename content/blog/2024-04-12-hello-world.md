@@ -8,8 +8,9 @@ description= "Welcome! For the inaugural blog post on valkey.io, I’d like to r
 authors= ["kyledvs"]
 
 [extra]
-
 categories= "update"
+trending = false
+featured_image = "/assets/media/featured/random-05.webp"
 +++
 
 Welcome!
