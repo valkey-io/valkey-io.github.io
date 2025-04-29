@@ -7,3 +7,26 @@
 @import '../typography';
 @import '../pygments';
 @import '../valkey';
+
+/* Styling for Markdown Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+}
+
+th {
+    background-color: #123678;
+    color: white;
+    padding: 8px;
+    text-align: left;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}

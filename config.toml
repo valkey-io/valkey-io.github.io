@@ -21,6 +21,7 @@ highlight_code = true
 [extra]
 command_description_path = "../build-command-docs/"
 command_json_path = "../build-command-json/"
+command_bloom_json_path = "../build-bloom-command-json/"
 client_json_path = "../build-clients/"
 doc_topic_path = "../build-topics/"
 
@@ -48,3 +49,6 @@ publish_hold = [
     "/topics/internals/",
     "/topics/rdd/"
 ]
+
+banner = "Valkey 8.1 is generally available! [Check it out](https://valkey.io/download/releases/v8-1-0/)"
+

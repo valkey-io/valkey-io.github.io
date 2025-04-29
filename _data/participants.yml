@@ -79,3 +79,13 @@
     Oracle Cloud Infrastructure (OCI) is a deep and broad platform of public cloud services that enables customers to build and run a wide range of applications in a scalable, secure, highly available, fault-tolerant, and high-performance environment.
   offering: >
     Achieve sub-millisecond latency with [Oracle Cloud Infrastructure (OCI) Cache](https://www.oracle.com/cloud/cache/).
+
+- name: NetApp Instaclustr
+  link: https://www.instaclustr.com/platform/
+  image:
+    path: /img/netapp_instaclustr.svg
+    alt: NetApp Instaclustr logo
+  company: >
+    The [Instaclustr Platform](https://www.instaclustr.com/platform/) offers a unified approach to optimizing every facet of your data infrastructure, streamlining the process and enhancing your data ecosystem using open source software.
+  offering: >
+    [NetApp® Instaclustr for Valkey™](https://www.instaclustr.com/platform/managed-valkey/) gives you a powerful combination of automated features within our platform, 24x7 expert support, and enterprise-grade processes that can handle the most demanding customer requirements.
