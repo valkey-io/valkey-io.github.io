@@ -9,7 +9,8 @@
 {% set command_description = load_data(path=config.extra.command_description_path ~ page.slug ~ ".md", required= false) %}
 {% set command_sources = [
     load_data(path= commands::command_json_path(slug= page.slug), required= false),
-    load_data(path= commands::command_bloom_json_path(slug= page.slug), required= false)
+    load_data(path= commands::command_bloom_json_path(slug= page.slug), required= false),
+    load_data(path= commands::command_json_json_path(slug= page.slug), required= false)
 ] %}
 
 {% set command_data = command_sources | filter(attribute="") | first %}
@@ -60,6 +61,10 @@
             {% set module_reply = load_data(path="../_data/modules.json", required=false) -%}
             <dt>Module:</dt>
             <dd><a href={{module_reply.valkey_bloom.repo}}>{{module_reply.valkey_bloom.name}}</a></dd>
+        {% elif "json." in page.slug %}
+            {% set module_reply = load_data(path="../_data/modules.json", required=false) -%}
+            <dt>Module:</dt>
+            <dd><a href={{module_reply.valkey_json.repo}}>{{module_reply.valkey_json.name}}</a></dd>
         {% endif %}
     <dl>
     <dl>

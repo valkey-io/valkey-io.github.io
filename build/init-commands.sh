@@ -29,9 +29,15 @@ if [ ! -d "$3" ]; then
     exit 1
 fi
 
+if [ ! -d "$4" ]; then
+    echo "The JSON module command JSON directory must exist and be a valid path"
+    exit 1
+fi
+
 ln -s $1 ./build-command-docs
 ln -s $2 ./build-command-json
 ln -s $3 ./build-bloom-command-json
+ln -s $4 ./build-json-command-json
 for fname in $(find $1 -maxdepth 1  -iname "*.md")
 do
     base=${fname##*/}
@@ -42,6 +48,8 @@ do
             metadata_path="/commands/$command.json in the 'valkey' repo"
         elif [ -f "$3/$command.json" ]; then
             metadata_path="/commands/$command.json in the 'valkey-bloom' repo"
+        elif [ -f "$4/$command.json" ]; then
+            metadata_path="/commands/$command.json in the 'valkey-json' repo"
         fi
         cat << EOF > "./content/commands/$command.md"
 +++
