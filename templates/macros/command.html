@@ -56,6 +56,10 @@
 {{config.extra.command_bloom_json_path }}{{ slug }}.json
 {%- endmacro load_bloom_command_json -%}
 
+{%- macro command_json_json_path(slug) -%}
+{{config.extra.command_json_json_path }}{{ slug }}.json
+{%- endmacro load_json_command_json -%}
+
 {%- macro fix_links(content) -%}
 {{ content
     | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md#(?P<hash>.*?)\)`, rep=`](/topics/$fname#$hash)`)

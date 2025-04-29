@@ -40,6 +40,12 @@ jobs:
             repository: valkey-io/valkey-bloom
             path: valkey-bloom
 
+      - name: Checkout valkey-json
+        uses: actions/checkout@v4
+        with:
+            repository: valkey-io/valkey-json
+            path: valkey-json
+
       - name: Init commands, topics and clients
         run: |
           cd website
