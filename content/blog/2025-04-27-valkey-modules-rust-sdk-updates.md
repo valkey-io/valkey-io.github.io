@@ -6,10 +6,9 @@ authors= ["dmitrypol"]
 categories= "modules"
 +++
 
-In an earlier [article](/blog/modules-101/) we discussed the process of building Valkey Modules.
-Modules allow adding extra features (such as new commands and data types) to Valkey without making changes to the core code.
-We briefly touched on how to use the [Valkey Modules Rust SDK](https://github.com/valkey-io/valkeymodule-rs) to build a simple module.
-In this article we will expand on this topic and discuss some of the new features added to the SDK over the last year.
+In an earlier [article](/blog/modules-101/) we explored the process of building Valkey Modules—extensions that let developers add new commands and data types to Valkey without modifying its core.
+We also introduced the [Valkey Modules Rust SDK](https://github.com/valkey-io/valkeymodule-rs) demonstrating how to use it to create a basic module.
+In this follow-up article, we’ll dive deeper into the SDK and highlight several new features and improvements introduced over the past year.
 
 ## What is the Valkey Modules Rust SDK?  
 
@@ -242,25 +241,17 @@ enable-system-alloc = ["valkey-module/system-alloc"]
 cargo test --features enable-system-alloc
 ```
 
-## Ideas for future development
+## Conclusion
 
-* Mock Context for unit testing - enable unit testing functions that require `&ctx`
-* Context in Filters - enable more operations to be done in filters.
-* Environment specific config support - during development or unit testing it is useful to have different config settings.
-* Crontab - `cron_event_handler` uses `serverCron` (10 times per second by default) but it can be extended to run custom code on pre-determined schedule and configured via custom commands.
-* And more.  Please stay tuned.
+The Valkey Modules Rust SDK has seen exciting improvements over the past year, making it easier and more powerful to extend Valkey.
+But we are not stopping.
+Some of ideas for future development include mock context support for unit testing, enhanced context access within filters, and environment-specific config to streamline development and testing.
+Additionally, the introduction of crontab scheduling will allow executing custom logic on a defined schedule using cron_event_handler.
 
-## List of contributors
+We hope this overview helped you understand how to leverage the SDK and inspired you to explore what's possible with Valkey modules.
+Stay tuned for future updates.
 
-Below are the Github handles of the developers who contibuted to the SDK in the past year
-
-* [KarthikSubbarao](https://github.com/KarthikSubbarao)
-* [dmitrypol](https://github.com/dmitrypol)
-* [sachinvmurthy](https://github.com/sachinvmurthy)
-* [zackcam](https://github.com/zackcam)
-* [YueTang-Vanessa](https://github.com/YueTang-Vanessa)
-* [hahnandrew](https://github.com/hahnandrew)
-* [Mkmkme](https://github.com/Mkmkme)
+We also want to express appreciation to the engineers who contibuted to the SDK in the past year - [KarthikSubbarao](https://github.com/KarthikSubbarao), [dmitrypol](https://github.com/dmitrypol), [sachinvmurthy](https://github.com/sachinvmurthy), [zackcam](https://github.com/zackcam), [YueTang-Vanessa](https://github.com/YueTang-Vanessa), [hahnandrew](https://github.com/hahnandrew), [Mkmkme](https://github.com/Mkmkme).
 
 ## Usefull links
 
