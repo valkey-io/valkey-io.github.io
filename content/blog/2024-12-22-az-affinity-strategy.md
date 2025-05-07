@@ -167,6 +167,9 @@ Setting up AZ affinity routing in GLIDE is simple, allowing you to leverage its 
 ## Conclusion
 By implementing AZ affinity routing in Valkey and using GLIDE, you can achieve lower latency and cost savings by routing requests to replicas in the same AZ as the client.
 
+---
+*Updated May 2025 to cover the `AZ_AFFINITY_REPLICAS_AND_PRIMARY` strategy and a corresponding example.*
+
 ### Further Reading
 * [Valkey GLIDE GitHub Repository](https://github.com/valkey-io/valkey-glide)
 * [Valkey Documentation](https://valkey.io/)
