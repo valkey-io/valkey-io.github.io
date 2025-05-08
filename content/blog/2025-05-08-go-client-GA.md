@@ -305,7 +305,8 @@ Use `api.NewTransaction(client)` to create a new transaction with established cl
 
  Queue commands in the order they should be executed.
 Each queued command is added to the transaction but not immediately executed..
-`cmd.CommandName` allows you to queue multiple transactions ,
+`cmd.CommandName` allows you to queue multiple transactions.
+
 **Example:**
 
 ```go
@@ -314,6 +315,7 @@ cmd.Get("key1")
 ```
 
 **Execute Transaction:**
+
  Run all queued commands atomically
  After queueing the commands, transaction can be executed with `tx.Exec()`
  All the queued commands will be executed and returns an response array which consists of the commands result.
