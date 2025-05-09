@@ -449,6 +449,121 @@ p {
   }
 }
 
+.left-aside {
+  display: flex;
+  width: 100%;
+  background-color: #e2e8f0;
+  flex-direction: column;
+
+  @include respond-min(768px) {
+    flex-direction: row-reverse;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.25rem 0;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+
+  }
+
+  main {
+    flex: 1;
+    padding: 2rem;
+  }
+
+  .main-inner {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 1rem 2rem 2rem;
+  }
+
+  aside {
+    background-color: #f1f0fa;
+    padding: 2rem;
+    width: 100%;
+    
+    @include respond-min(768px) {
+      max-width: 420px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 2rem 0;
+
+      li {
+
+        a {
+          display: block;
+          background-color: #d1d9ff;
+          padding: 1.2rem;
+          margin-bottom: 1rem;
+          color: #000;
+          text-transform: uppercase;
+          cursor: pointer;
+
+          &:hover {
+            background-color: #b9c6ff;
+          }
+        }
+      }
+    }
+  }
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  margin: 0 -2rem 2rem;
+  padding: 0 2rem 1rem;
+  border-bottom: 1px solid rgb(104, 147, 238);
+
+  label {
+    margin-right: 10px;
+    font-size: 80%;
+  }
+
+  input {
+    flex: 1;
+    width: 100%;
+    min-width: 0px;
+    outline: none;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 50px;
+    font-size: 80%;
+
+    &:focus {
+      border-color: #6983ff;;
+    }
+  }
+}
+
+.no-results-message {
+  color: #30176e;
+  padding: 5rem 2rem 7rem;
+  text-align: center;
+
+  span {
+    font-size: 6rem;
+    font-weight: 800;
+  }
+  
+  h4 {
+    font-size: 1.75rem;
+    margin: 0.75rem 0;
+  }
+
+  p {
+    font-size: 1.75rem;
+    margin: 0;
+  }
+}
+
 .row {
   display: flex;
   margin: 0 auto;
@@ -503,6 +618,25 @@ p {
   font-weight: 300;
   font-size: 4rem;
   @include sans-serif;
+}
+
+.styled-title {
+  padding-top: var(--chakra-space-16);
+  padding-bottom: var(--chakra-space-16);
+  color: var(--chakra-colors-white);
+  text-align: center;
+  background-image: linear-gradient(rgb(59, 42, 102), rgb(78, 81, 191));
+  padding: 80px;
+
+  h1 {
+    @include sans-serif;
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 #principles {
@@ -776,19 +910,28 @@ pre table {
 }
 
 .command-group {
-  .command-entry {
-    border-bottom: 1px dotted $line;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    padding-top: 1rem;
+  margin-bottom: 2rem;
+  
+  h2 {
+    border-bottom: 1px solid $line;
     padding-bottom: 1rem;
+    margin: 0;
+
+    span {
+      font-weight: 400;
+    }
+  }
+
+  .command-entry {
+    font-size: 1.5rem;
+    border-bottom: 1px solid $line;
+    padding: 1.25rem 0;
+
+    a {
+      text-decoration: underline;
+    }
     
   }
-  .command-entry, 
-  .command-group-meta {
-    margin-left: 1em;
-  }
-  
 }
 
 .index-entry {
