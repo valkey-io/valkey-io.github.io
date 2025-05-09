@@ -504,6 +504,7 @@ p {
           color: #000;
           text-transform: uppercase;
           cursor: pointer;
+          font-weight: 600;
 
           &:hover {
             background-color: #b9c6ff;
@@ -512,6 +513,12 @@ p {
       }
     }
   }
+}
+
+.topic-description {
+  display: block;
+  text-transform: none;
+  font-size: 90%;
 }
 
 .search-container {
@@ -939,8 +946,7 @@ pre table {
   margin-bottom: 0.5em;
 }
 
-.block-menu ul li,
-.index-entry {
+.block-menu ul li {
   border: 1px solid $line;
   border-radius: 3px;
   a {
