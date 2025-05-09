@@ -78,6 +78,16 @@
         <dd>{{ command_data_obj.since }}</dd>
     <dl>
     {% endif %}
+    {% if command_data_obj.acl_categories %}
+    <dl>
+        <dt>ACL Categories:</dt>
+        <dd>        
+            {% for category in command_data_obj.acl_categories %}
+            @{{ category|lower }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </dd>
+    <dl>
+    {% endif %}
     </dl>
 
 {% else %}
