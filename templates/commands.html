@@ -26,7 +26,8 @@
 {% for page in section.pages %}
     {% for json_path in [
         commands::command_json_path(slug=page.slug),
-        commands::command_bloom_json_path(slug=page.slug)
+        commands::command_bloom_json_path(slug=page.slug),
+        commands::command_json_json_path(slug=page.slug)
     ] %}
         {% set command_data = load_data(path= json_path, required= false) %}
         {% if command_data %}
