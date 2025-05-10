@@ -5,14 +5,10 @@
     {% endif %}
   </div>
   <div class="author-info">
-    <h2><a href="{{author_page.permalink}}">{{author_page.title}}</a></h2>
+    <h4>{{author_page.title}}</h4>
+    {% if author_page.extra and author_page.extra.github %}
+    <a target="_blank" href="https://github.com/{{author_page.extra.github}}"><i class="icon icon-github-square"></i> @{{author_page.extra.github}}</a>
+    {% endif %}
     {{ author_page.content | safe }}
-    <div class="author-social-media">
-      <ul>
-        {% if author_page.extra and author_page.extra.github %}
-        <li><a target="_blank" href="https://github.com/{{author_page.extra.github}}"><i class="icon icon-github-square"></i> {{author_page.extra.github}}</a></li>
-        {% endif %}
-      </ul>
-    </div>
   </div>
 </div>

@@ -83,6 +83,19 @@ description= "It's become clear that people want to talk about Valkey and have b
 # 'authors' are the folks who wrote or contributed to the post.
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "maury", "jacobim" ]
+[extra]
+    # 'trending' controls whether the blog post appears in the trending section on the main blog page
+    trending = true
+    # 'featured_image' sets the main image for the blog header
+    # Choose from one of the available images:
+    # "/assets/media/featured/random-01.webp"
+    # "/assets/media/featured/random-02.webp"
+    # "/assets/media/featured/random-03.webp"
+    # "/assets/media/featured/random-04.webp"
+    # "/assets/media/featured/random-05.webp"
+    # "/assets/media/featured/random-06.webp"
+    # "/assets/media/featured/random-07.webp"
+    featured_image = "/assets/media/featured/random-01.webp"
 +++
 ```
 
