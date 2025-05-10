@@ -15,16 +15,13 @@ extra:
     packages:
 
     artifacts:
-        -   distro: focal
-            arch:
-                -   arm64
-                -   x86_64
         -   distro: jammy
             arch:
                 -   arm64
                 -   x86_64
         -   distro: noble
             arch:
+                -   arm64
                 -   x86_64
 ---
 
