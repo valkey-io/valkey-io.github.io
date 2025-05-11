@@ -2,6 +2,7 @@
 title = "Client Libraries"
 template = "client-list.html"
 [extra]
+clients_built = true
 recommended_clients_paths = [
     "/python/valkey-GLIDE.json",
     "/python/valkey-py.json",

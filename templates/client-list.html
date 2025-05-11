@@ -2,6 +2,9 @@
 {% import "macros/docs.html" as docs %}
 
 {% block main_content %}
+{% if not section.extra.clients_built %}
+    <strong>Clients page not found.</strong> You likely need to build the client page. See "Building additional content" in README.md file.
+{% else %}
     <div class="markdown-content">
         {% set content_parts = section.content | split(pat="<!-- split -->") %}
         {{ content_parts[0] | markdown | safe }}
@@ -66,4 +69,5 @@
         {% set client_fields = section.extra.client_fields %}
         {% include "client-feature-table.html" %}
     </div>
+{% endif %}
 {% endblock main_content %}
