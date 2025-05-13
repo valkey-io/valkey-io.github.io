@@ -1,7 +1,7 @@
 +++
 title= "Upgrade Stories from the Community, Volume 1:" 
 description = "Two new Valkey users describe what it's really like to upgrade" 
-date= 2025-05-02 01:01:01 
+date= 2025-05-14 01:01:01 
 authors= ["kyledvs", "nigel"] 
 +++
 
