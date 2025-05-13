@@ -12,14 +12,14 @@ Many potential Valkey users have told the project that they're interested in hea
 
 Valkey is a multi-vendor/vendor neutral project. With the support of the a large and diverse community, the project is innovating at a rapid pace. In September 2024, we released Valkey 8.0 which brought performance improvements. Six months later in March 2025, Valkey 8.1 added memory efficiency improvements, extended observability, and more performance improvements. Further, it has a permissive, open source license allowing for anyone to use, modify, and provide Valkey as a Service. This allows organizations to make changes that best fit their values, budgets, and technical constraints. Valkey provides choice and prevents lock-in by being offered across many vendors, Linux distributions, with no licensing costs. 
 
-According to [Muse](https://www.museml.com/), they are,  “the first intelligent creative assistant and inspiration studio for storytellers and world builders.” They use Valkey in several ways:
+According to [Muse's website](https://www.museml.com/), they are,  “the first intelligent creative assistant and inspiration studio for storytellers and world builders.” Garth Henson, Director of Engineering at Muse, says they use Valkey in several ways:
 
 * Caching: “We utilize standard HTML and payload caching to offload redundant data retrieval and computation, improving performance and efficiency.”
 * Pub/Sub Messaging – “Valkey’s topic-based subscriptions drive our event-driven workflows across multiple system layers and support real-time WebSocket client communication.”
 * Lua Scripting – “We leverage Valkey’s single-threaded Lua execution for complex and multi-stage data retrievals, ensuring consistency while avoiding concurrency issues and race conditions.”
 * Taxonomies & Tagging Strategies – “The ability to handle massive lists at low cost has allowed us to efficiently implement taxonomies and data mappings, making retrieval seamless.”
 
-One of the key reasons Muse chose Valkey was that it is open source. Garth Henson, Director of Engineering at Muse says, “Redis’ licensing change prompted us to seek a truly open source alternative that aligns with our values.” They also mentioned the cost and performance as well as Valkey being a drop-in replacement as reasons they upgraded.
+One of the key reasons Muse chose Valkey was that it is open source. Garth says, “Redis’ licensing change prompted us to seek a truly open source alternative that aligns with our values.” They also mentioned the cost and performance as well as Valkey being a drop-in replacement as reasons they upgraded.
 
 For them, the change was seamless. They learned about Valkey on a Thursday, began evaluating the next Monday and were fully migrated by Wednesday with zero downtime. That’s four working days from idea to production. They said that so far they’ve noticed benefits of cost efficiency, storage optimization, and performance stability since upgrading to Valkey.
 
