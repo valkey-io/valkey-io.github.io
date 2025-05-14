@@ -40,6 +40,12 @@ jobs:
             repository: valkey-io/valkey-bloom
             path: valkey-bloom
 
+      - name: Checkout valkey-search
+        uses: actions/checkout@v4
+        with:
+            repository: valkey-io/valkey-search
+            path: valkey-search
+
       - name: Checkout valkey-json
         uses: actions/checkout@v4
         with:
@@ -50,7 +56,7 @@ jobs:
         run: |
           cd website
           ./build/init-topics-and-clients.sh ../valkey-doc/topics ../valkey-doc/clients
-          ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands ../valkey-bloom/src/commands ../valkey-json/src/commands
+          ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands ../valkey-bloom/src/commands ../valkey-json/src/commands ../valkey-search/src/commands
 
       - name: Build only
         uses: shalzz/zola-deploy-action@v0.19.1

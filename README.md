@@ -1,7 +1,7 @@
 # Valkey.io website
 
 This repo contains the source for the valkey.io website (build scripts, template, blog posts, stylesheets, etc.).
-The build integrates content from [`valkey-io/valkey-doc`](https://github.com/valkey-io/valkey-doc) and the commands definitions from [`valkey-io/valkey`](https://github.com/valkey-io/valkey), [`valkey-io/valkey-bloom`](https://github.com/valkey-io/valkey-bloom), and [`valkey-io/valkey-json`](https://github.com/valkey-io/valkey-json) (see [Build Locally](#build-locally) below for more details) 
+The build integrates content from [`valkey-io/valkey-doc`](https://github.com/valkey-io/valkey-doc) and the commands definitions from [`valkey-io/valkey`](https://github.com/valkey-io/valkey), [`valkey-io/valkey-bloom`](https://github.com/valkey-io/valkey-bloom), and [`valkey-io/valkey-json`](https://github.com/valkey-io/valkey-json) (see [Build Locally](#build-locally) below for more details)
 
 ## Contributing
 
@@ -29,7 +29,7 @@ Changes to external content (command reference, documentation topics) require a 
 ## Building additional content
 
 **By default, the site will build without documentation topics, command reference, or the clients page.**
-The content for documentation topics and the clients page are stored within the `valkey-io/valkey-doc` repo. 
+The content for documentation topics and the clients page are stored within the `valkey-io/valkey-doc` repo.
 The content for the command reference page is in the `valkey-io/valkey` repo.
 
 If you want to build the site with this content, you'll need to have a local copy of `valkey-io/valkey-doc` and `valkey-io/valkey` _outside_ of this repo.
@@ -64,7 +64,8 @@ Commit your changes to your local copy of `valkey-io/valkey-doc`.
 ### Building the command reference
 
 The command reference (i.e. `/commands/set/`, `/commands/get/`, `/commands/lolwut/`) sources information from `valkey-io/valkey`, `valkey-io/valkey-bloom`, and `valkey-io/valkey-doc`.
-`valkey-io/valkey`, `valkey-io/valkey-bloom` and `valkey-io/valkey-json` provides the command metadata (items like computational complexity, version history, arguments, etc) whilst `valkey-io/valkey-doc` provides the command description and the command reply.
+`valkey-io/valkey`, `valkey-io/valkey-bloom`, `valkey-io/valkey-json` and `valkey-io/valkey-search` provides the command metadata (items like computational complexity, version history, arguments, etc)
+whilst `valkey-io/valkey-doc` provides the command description and the command reply.
 
 ```mermaid
 flowchart TD
@@ -75,13 +76,16 @@ flowchart TD
     H --> J[Files: /resp2_replies.json,<br/>/resp3_replies.json] --> Z[Command Reply]
 ```
 
-Let's say that this repo and your local copy of `valkey-io/valkey-doc`, `valkey-io/valkey-bloom`, `valkey-io/valkey-json`, and `valkey-io/valkey` reside in the same directories.
+Let's say that this repo and your local copy of `valkey-io/valkey-doc`, `valkey-io/valkey-bloom`, `valkey-io/valkey-json`, `valkey-io/valkey-search`
+and `valkey-io/valkey` reside in the same directories.
+
 First, stop the `zola serve` process if you're running it.
 From the root directory of this repo run:
 
 ```shell
 # You should only need to run this once or when you add a new command.
-./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands ../valkey-bloom/src/commands ../valkey-json/src/commands
+./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands \
+    ../valkey-bloom/src/commands ../valkey-json/src/commands ../valkey-search/src/commands
 ```
 
 Then, restart Zola.
