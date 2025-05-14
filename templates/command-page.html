@@ -78,12 +78,54 @@
         <dd>{{ command_data_obj.since }}</dd>
     <dl>
     {% endif %}
-    {% if command_data_obj.acl_categories %}
+    {% if command_data_obj.acl_categories or command_data_obj.command_flags %}
     <dl>
         <dt>ACL Categories:</dt>
-        <dd>        
-            {% for category in command_data_obj.acl_categories %}
-            @{{ category|lower }}{% if not loop.last %}, {% endif %}
+        <dd>
+            {% set all_categories = [] %}
+            
+            {% if command_data_obj.acl_categories %}
+                {% set all_categories = command_data_obj.acl_categories %}
+            {% endif %}
+            
+            {% if command_data_obj.command_flags %}
+                {# Command flag WRITE implies ACL category WRITE #}
+                {% if "WRITE" in command_data_obj.command_flags %}
+                    {% set all_categories = all_categories | concat(with="WRITE") %}
+                {% endif %}
+
+                {# Command flag READONLY and not ACL category SCRIPTING implies ACL category READ #}
+                {% if "READONLY" in command_data_obj.command_flags and (not command_data_obj.acl_categories or not "SCRIPTING" in command_data_obj.acl_categories) %}
+                    {% set all_categories = all_categories | concat(with="READ") %}
+                {% endif %}
+
+                {# Command flag ADMIN implies ACL categories ADMIN and DANGEROUS #}
+                {% if "ADMIN" in command_data_obj.command_flags %}
+                    {% set all_categories = all_categories | concat(with="ADMIN") | concat(with="DANGEROUS") %}
+                {% endif %}
+
+                {% if "FAST" in command_data_obj.command_flags %}
+                    {% set all_categories = all_categories | concat(with="FAST") %}
+                {% endif %}
+
+                {# Command flag PUBSUB implies ACL category PUBSUB #}
+                {% if "PUBSUB" in command_data_obj.command_flags %}
+                    {% set all_categories = all_categories | concat(with="PUBSUB") %}
+                {% endif %}
+
+                {# Command flag BLOCKING implies ACL category BLOCKING #}
+                {% if "BLOCKING" in command_data_obj.command_flags %}
+                    {% set all_categories = all_categories | concat(with="BLOCKING") %}
+                {% endif %}
+            {% endif %}
+
+            {# Not ACL category FAST implies ACL category SLOW. "If it's not fast, it's slow." #}
+            {% if "FAST" not in all_categories %}
+                {% set all_categories = all_categories | concat(with="SLOW") %}
+            {% endif %}
+
+            {% for category in all_categories %}
+                @{{ category|lower }}{% if not loop.last %}, {% endif %}
             {% endfor %}
         </dd>
     <dl>
