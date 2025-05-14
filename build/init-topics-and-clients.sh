@@ -4,16 +4,16 @@
 
 # first check to make sure there are arguments
 if [ -z "$1" ]; then
-    echo "You must supply a path to the topics as the first argument" 
+    echo "You must supply a path to the topics as the first argument"
     exit 1
-fi 
+fi
 
 if [ -z "$2" ]; then
-    echo "You must supply a path to the clients directory as the first argument" 
+    echo "You must supply a path to the clients directory as the second argument"
     exit 1
-fi 
+fi
 
-# check for validity of these agruments as paths
+# check for validity of these arguments as paths
 if [ ! -d "$1" ]; then
     echo "The topics directory must exist and be a valid path"
     exit 1
