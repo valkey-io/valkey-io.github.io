@@ -27,7 +27,8 @@
     {% for json_path in [
         commands::command_json_path(slug=page.slug),
         commands::command_bloom_json_path(slug=page.slug),
-        commands::command_json_json_path(slug=page.slug)
+        commands::command_json_json_path(slug=page.slug),
+        commands::command_search_json_path(slug=page.slug)
     ] %}
         {% set command_data = load_data(path= json_path, required= false) %}
         {% if command_data %}
@@ -39,7 +40,7 @@
             {% endif %}
             {% set command_entry = [
                 command_display,
-                page.permalink | safe, 
+                page.permalink | safe,
                 command_data_obj.summary,
                 command_data_obj.group
             ] %}
