@@ -6,6 +6,32 @@ window.toggleHeaderMenu = function() {
     }
 };
 
+// Set active menu item based on current URL
+function setActiveMenuItem() {
+    const nav = document.querySelector('.header nav');
+    if (!nav) return;
+
+    const currentPath = window.location.pathname;
+    const menuItems = nav.querySelectorAll('a[role="menuitem"]');
+
+    menuItems.forEach(item => {
+        const itemPath = item.getAttribute('href');
+        // Remove trailing slash for comparison
+        const normalizedItemPath = itemPath.replace(/\/$/, '');
+        const normalizedCurrentPath = currentPath.replace(/\/$/, '');
+        
+        // Check if current path starts with the menu item path
+        if (normalizedCurrentPath.startsWith(normalizedItemPath) && normalizedItemPath !== '') {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
+
+// Run when DOM is loaded
+document.addEventListener('DOMContentLoaded', setActiveMenuItem);
+
 // Class detection function that checks if an element with a given class name exists
 // This provides backwards compatibility for older browsers (IE6-8) that don't support getElementsByClassName
 // Used by the navigation menu to detect presence of certain UI elements

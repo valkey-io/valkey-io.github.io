@@ -172,8 +172,9 @@ p {
     }
 
     >a {
-      &:hover {
-        border-color: inherit;
+      &:hover,
+      &.active {
+          border-color: inherit;
         text-decoration: underline;
 
         @include respond-min(768px) {
@@ -1392,4 +1393,145 @@ pre table {
       margin: 2rem 0;
     }
   }
+}
+
+// Community Page Styles
+.community-hero {
+  background: linear-gradient(90deg, #4e3bbd 0%, #6983ff 100%);
+  padding: 3rem 0 2rem 0;
+  text-align: center;
+}
+
+.community-header {
+
+  h1 {
+    text-align: center;
+    background-image: linear-gradient(rgb(59, 42, 102), rgb(78, 81, 191));
+    padding: 80px;
+    margin: 0 0 5rem;
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+  }
+
+  h2 {
+    color: #30176e;
+    font-size: 3.25rem;
+    font-weight: 700;
+    margin-bottom: 0;
+  }
+
+  p {
+    color: #30176e;
+    margin: 0 0 0;
+
+  }
+}
+
+.community-title {
+  color: #fff;
+  font-size: 3.2rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.community-section {
+  background: #e9eef7;
+  text-align: center;
+  padding-bottom: 6rem;
+}
+
+.community-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  max-width: 1100px;
+  margin: 3rem auto 0;
+  @media (max-width: 1100px) {
+    padding: 0 3rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .community-card-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .community-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.community-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 rgba(105, 131, 255, 0.10);
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s;
+}
+.community-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(105, 131, 255, 0.18);
+}
+
+.community-card-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1.2rem;
+}
+
+.community-card h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d2471;
+  margin: 0 0 0.7rem 0;
+  text-align: center;
+}
+
+.community-card p {
+  color: #3a3a4d;
+  font-size: 1.75rem;
+  margin: 0 0 1.5rem 0;
+  text-align: left;
+}
+
+.community-card-actions {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  margin-top: auto;
+}
+
+.community-card .btn {
+  background: none;
+  color: #072150;
+  border: 1px solid #072150;
+  border-radius: 24px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+}
+
+.community-card .btn:hover {
+  background: #072150;
+  color: #fff;
+  border: 1px solid #072150;
+}
+
+.icon-social {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.3rem;
 }
