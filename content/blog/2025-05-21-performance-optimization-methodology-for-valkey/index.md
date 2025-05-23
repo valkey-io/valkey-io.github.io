@@ -15,7 +15,7 @@ When examining software CPU optimization approaches, two fundamental strategies 
 
 This strategy involves redesigning software architecture to fully leverage multiple CPU cores. By effectively distributing workloads across available computing resources, applications can achieve significant throughput improvements—a critical advantage as processor core counts continue to increase.
 
-The I/O threading model in Valkey exemplifies this approach. As described in the [Valkey blog post "Unlock One Million RPS"](https://valkey.io/blog/unlock-one-million-rps/), this architecture enables Valkey to offload operations to dedicated threads, allowing better utilization of available CPU cores. Rather than handling all operations in a single thread, this model intelligently delegates tasks to multiple threads, reducing bottlenecks and improving throughput. This enhancement has demonstrated impressive scalability, enabling near-linear performance scaling with additional cores.
+The I/O threading model in Valkey exemplifies this approach. As described in the Valkey blog post ["Unlock 1 Million RPS: Experience Triple the Speed with Valkey"](https://valkey.io/blog/unlock-one-million-rps/), this architecture enables Valkey to offload operations to dedicated threads, allowing better utilization of available CPU cores. Rather than handling all operations in a single thread, this model intelligently delegates tasks to multiple threads, reducing bottlenecks and improving throughput. This enhancement has demonstrated impressive scalability, enabling near-linear performance scaling with additional cores.
 
 ### Strategy 2: Enhancing CPU Efficiency
 
