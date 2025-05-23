@@ -5,6 +5,8 @@ description= "What have people been saying about Valkey in June 2024? Read on to
 [extra]
 authors= ["kyledvs"]
 categories= "roundup"
+trending = false
+featured_image = "/assets/media/featured/random-01.webp"
 +++
 
 What have people been saying since the [last what's new post](/blog/may-roundup/)? Read on to find out.
