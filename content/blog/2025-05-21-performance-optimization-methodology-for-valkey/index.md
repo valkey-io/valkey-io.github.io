@@ -118,7 +118,7 @@ False sharing can be difficult to detect because it doesn't cause functional iss
 
 Tools that help identify false sharing include:
 - `perf c2c` - A Linux performance tool specifically designed for detecting cache line contention,
-- Intel® VTune™ Profiler with Memory Access Analysis,
+- [Intel® VTune™ Profiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler.html) with Memory Access Analysis,
 - Performance counter monitoring tools tracking cache coherence events.
 
 These tools have transformed false sharing from a difficult-to-diagnose problem into one that can be efficiently located and addressed.
