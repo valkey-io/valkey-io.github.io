@@ -1,11 +1,9 @@
 +++
 title= "Performance Optimization Methodology for Valkey - Part 1"
-date= 2025-05-21 09:00:00
+date= 2025-05-27 00:00:00
 description= "Performance Optimization Methodology for Valkey"
 authors= ["lipzhu", "guowangy"]
 +++
-
-# Performance Optimization Methodology for Valkey - Part 1
 
 Performance optimization is a multifaceted domain, particularly for high-performance systems like Valkey. While overall system performance depends on numerous factors including hardware specifications, OS configurations, network conditions, and deployment architectures, our work focuses specifically on optimizing Valkey's performance at the CPU level.
 
@@ -13,19 +11,19 @@ Performance optimization is a multifaceted domain, particularly for high-perform
 
 When examining software CPU optimization approaches, two fundamental strategies are generally recognized:
 
-- **Strategy 1: Maximizing Parallelism**
+### Strategy 1: Maximizing Parallelism
 
 This strategy involves redesigning software architecture to fully leverage multiple CPU cores. By effectively distributing workloads across available computing resources, applications can achieve significant throughput improvements—a critical advantage as processor core counts continue to increase.
 
 The I/O threading model in Valkey exemplifies this approach. As described in the [Valkey blog post "Unlock One Million RPS"](https://valkey.io/blog/unlock-one-million-rps/), this architecture enables Valkey to offload operations to dedicated threads, allowing better utilization of available CPU cores. Rather than handling all operations in a single thread, this model intelligently delegates tasks to multiple threads, reducing bottlenecks and improving throughput. This enhancement has demonstrated impressive scalability, enabling near-linear performance scaling with additional cores.
 
-- **Strategy 2: Enhancing CPU Efficiency**
+### Strategy 2: Enhancing CPU Efficiency
 
 This strategy focuses on maximizing performance within limited CPU resources through two complementary approaches:
 
 1. **Reducing Instruction Count**: Eliminating redundant code and unnecessary operations to decrease the total work the CPU must perform.
 
-2. **Improving Instructions Per Cycle (IPC)**: Optimizing how efficiently the processor executes instructions by addressing microarchitectural bottlenecks like cache misses, branch mispredictions, and memory access patterns.
+2. **Improving IPC**: Optimizing how efficiently the processor executes instructions by addressing microarchitectural bottlenecks like cache misses, branch mispredictions, and memory access patterns.
 
 Through our analysis and optimization efforts, we've identified several key methodologies that deliver significant performance improvements: eliminating redundant code, reducing lock contention, and addressing false sharing. We've also explored other techniques including asynchronous processing, batch operations, and leveraging CPU-specific instructions such as SIMD vectorization.
 
@@ -40,10 +38,10 @@ Reliable performance optimization requires consistent, reproducible measurements
 
 To isolate CPU performance factors and eliminate variables that might affect measurements, we've implemented the following constraints:
 
-1. **Bare-metal servers** rather than virtual machines to eliminate hypervisor overhead and contention
-2. **Process pinning** using taskset to pin Valkey to specific cores, preventing thread migration overhead
-3. **Local network interfaces** (loopback) for client-server communication to minimize network variability
-4. **High CPU utilization** benchmark parameters to ensure we're measuring true CPU performance limits
+1. **Bare-metal servers** rather than virtual machines to eliminate hypervisor overhead and contention,
+2. **Process pinning** using taskset to pin Valkey to specific cores, preventing thread migration overhead,
+3. **Local network interfaces** (loopback) for client-server communication to minimize network variability,
+4. **High CPU utilization** benchmark parameters to ensure we're measuring true CPU performance limits.
 
 This controlled environment allows us to accurately attribute improvements to specific code optimizations, providing reliable measurements of throughput and latency improvements. For each optimization attempt, we establish baseline performance metrics, implement changes in isolation, and then re-measure to quantify the impact. This disciplined approach ensures that our optimizations deliver genuine benefits rather than illusory improvements that might disappear in production environments.
 
@@ -59,20 +57,20 @@ Simplifying execution paths by removing redundant operations is a straightforwar
 
 The key to finding redundant code lies in having:
 
-1. **Representative Workloads**: Test workloads that reflect real-world usage patterns
-2. **Proper Profiling Tools**: Tools like `perf` and Intel® VTune™ Profiler to identify hot code paths
-3. **Systematic Code Review**: Manual inspection of hot paths to find redundancies that automated tools might miss
-4. **Trace-based Analysis**: Execution traces that highlight repeated operations
+1. **Representative Workloads**: Test workloads that reflect real-world usage patterns,
+2. **Proper Profiling Tools**: Tools like `perf` and [Intel® VTune™ Profiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler.html) to identify hot code paths,
+3. **Systematic Code Review**: Manual inspection of hot paths to find redundancies that automated tools might miss,
+4. **Trace-based Analysis**: Execution traces that highlight repeated operations.
 
 #### Real-World Examples
 
 Through detailed CPU cycle hotspot analysis, we identified redundant logic in how Valkey prepares client connections for write operations. By analyzing execution patterns during high-throughput benchmarks, we discovered opportunities to eliminate unnecessary function calls in critical paths.
 
-**Example 1: Optimizing Client Write Preparation (PR #670)**
+**Example 1: Optimizing Client Write Preparation**
 
 In [PR #670](https://github.com/valkey-io/valkey/pull/670), we found redundant calls to `prepareClientToWrite()` when multiple `addReply` operations were performed consecutively. By restructuring the code to call this function only when necessary, we eliminated redundant operations in a hot path.
 
-**Example 2: Improving List Command Efficiency (PR #860)**
+**Example 2: Improving List Command Efficiency**
 
 Similarly, in [PR #860](https://github.com/valkey-io/valkey/pull/860), we moved the `prepareClientToWrite()` call outside of a loop in the `lrange` command, preventing it from being called repeatedly for each list element.
 
@@ -82,8 +80,8 @@ These relatively simple code changes yielded measurable performance improvements
 
 When discussing lock overhead, we consider two aspects:
 
-1. **Protected code scope**: The cost of operations within critical sections
-2. **Lock implementation overhead**: The cost of the synchronization mechanism itself
+1. **Protected code scope**: The cost of operations within critical sections,
+2. **Lock implementation overhead**: The cost of the synchronization mechanism itself.
 
 Due to Valkey's single main thread design, there aren't many complex mutex-protected critical sections. Therefore, we focus on the overhead of synchronization primitives themselves, which becomes significant when the protected work is minimal.
 
@@ -91,7 +89,7 @@ In Valkey, atomic operations are used to update global variables and shared data
 
 #### Real-World Examples
 
-**Thread-local Storage for Memory Tracking (PR #674)**
+**Thread-local Storage for Memory Tracking**
 
 In [PR #674](https://github.com/valkey-io/valkey/pull/674), we introduced thread-local storage variables to optimize memory tracking. Previously, Valkey used atomic operations to update the global `used_memory` variable tracking memory allocation across all threads.
 
@@ -100,9 +98,9 @@ Our profiling identified that most operations on this variable were writes occur
 By implementing thread-local variables for each thread to track its own memory usage, we eliminated atomic operations during frequent writes. Each thread now updates its local counter using regular (non-atomic) operations, with the global value computed only when needed by summing thread-local values.
 
 This optimization pattern is particularly effective when:
-1. Most operations occur within a single thread
-2. Values are written frequently but read infrequently
-3. Synchronization overhead is significant compared to the work being protected
+1. Most operations occur within a single thread,
+2. Values are written frequently but read infrequently,
+3. Synchronization overhead is significant compared to the work being protected.
 
 ### 3. Eliminating False Sharing
 
@@ -114,14 +112,14 @@ When one thread modifies its variable, the entire cache line is invalidated for 
 
 False sharing can be difficult to detect because it doesn't cause functional issues. Signs include:
 
-1. **Unexplained Performance Scaling Issues**: Poor scaling despite threads working independently
-2. **High Cache Coherence Traffic**: Monitoring shows high rates of cache line invalidations
-3. **Thread-dependent Performance Variations**: Unusual performance patterns with different thread counts
+1. **Unexplained Performance Scaling Issues**: Poor scaling despite threads working independently,
+2. **High Cache Coherence Traffic**: Monitoring shows high rates of cache line invalidations,
+3. **Thread-dependent Performance Variations**: Unusual performance patterns with different thread counts.
 
 Tools that help identify false sharing include:
-- `perf c2c` - A Linux performance tool specifically designed for detecting cache line contention
-- Intel® VTune™ Profiler with Memory Access Analysis
-- Performance counter monitoring tools tracking cache coherence events
+- `perf c2c` - A Linux performance tool specifically designed for detecting cache line contention,
+- Intel® VTune™ Profiler with Memory Access Analysis,
+- Performance counter monitoring tools tracking cache coherence events.
 
 These tools have transformed false sharing from a difficult-to-diagnose problem into one that can be efficiently located and addressed.
 
@@ -129,14 +127,14 @@ These tools have transformed false sharing from a difficult-to-diagnose problem 
 
 When addressing false sharing, several approaches are available:
 
-1. **Data Structure Padding**: Adding padding between variables accessed by different threads
-2. **Cache Line Alignment**: Aligning thread-specific data to cache line boundaries
-3. **Thread-local Storage**: Using thread-local variables instead of shared arrays
-4. **Data Structure Redesign**: Reorganizing data structures to group thread-specific data
+1. **Data Structure Padding**: Adding padding between variables accessed by different threads,
+2. **Cache Line Alignment**: Aligning thread-specific data to cache line boundaries,
+3. **Thread-local Storage**: Using thread-local variables instead of shared arrays,
+4. **Data Structure Redesign**: Reorganizing data structures to group thread-specific data.
 
 #### Real-World Examples
 
-**Strategic False Sharing Mitigation (PR #1179)**
+**Strategic False Sharing Mitigation**
 
 In [PR #1179](https://github.com/valkey-io/valkey/pull/1179), we encountered false sharing in memory tracking counters used by both the main thread and I/O threads.
 
