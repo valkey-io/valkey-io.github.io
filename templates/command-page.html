@@ -10,14 +10,15 @@
 {% set command_sources = [
     load_data(path= commands::command_json_path(slug= page.slug), required= false),
     load_data(path= commands::command_bloom_json_path(slug= page.slug), required= false),
-    load_data(path= commands::command_json_json_path(slug= page.slug), required= false)
+    load_data(path= commands::command_json_json_path(slug= page.slug), required= false),
+    load_data(path= commands::command_search_json_path(slug= page.slug), required= false)
 ] %}
 
 {% set command_data = command_sources | filter(attribute="") | first %}
 
 {% if command_data %}
     {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
-    {% set command_data_obj = command_data[command_obj_name] %} 
+    {% set command_data_obj = command_data[command_obj_name] %}
     {% if command_data_obj.container %}
         {% set command_title =  command_data_obj.container  ~ " " ~ command_obj_name %}
     {% else %}
@@ -57,7 +58,7 @@
     {% endif %}
     {% if command_data_obj.module_since %}
     <dl>
-        {% if "bf." in page.slug  %} 
+        {% if "bf." in page.slug  %}
             {% set module_reply = load_data(path="../_data/modules.json", required=false) -%}
             <dt>Module:</dt>
             <dd><a href={{module_reply.valkey_bloom.repo}}>{{module_reply.valkey_bloom.name}}</a></dd>
@@ -65,6 +66,10 @@
             {% set module_reply = load_data(path="../_data/modules.json", required=false) -%}
             <dt>Module:</dt>
             <dd><a href={{module_reply.valkey_json.repo}}>{{module_reply.valkey_json.name}}</a></dd>
+        {% elif "ft." in page.slug %}
+            {% set module_reply = load_data(path="../_data/modules.json", required=false) -%}
+            <dt>Module:</dt>
+            <dd><a href={{module_reply.valkey_search.repo}}>{{module_reply.valkey_search.name}}</a></dd>
         {% endif %}
     <dl>
     <dl>
@@ -188,7 +193,7 @@
             <td>{{ entry[1] | markdown | safe}}</td>
         </tr>
         {% endfor %}
-    
+
     </tbody>
 </table>
 {% endif %}
