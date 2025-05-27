@@ -4,7 +4,7 @@ date= 2025-03-28 00:00:00
 description= "Designing a state-of-the art hash table"
 authors= ["zuiderkwast"]
 [extra]
-trending = false
+featured = false
 featured_image = "/assets/media/featured/random-05.webp"
 
 +++

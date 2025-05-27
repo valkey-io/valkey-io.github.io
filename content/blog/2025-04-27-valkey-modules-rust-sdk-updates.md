@@ -4,6 +4,11 @@ date= 2025-05-20 01:01:01
 description= "Extending Valkey using Rust SDK."
 authors= ["dmitrypol"]
 categories= "modules"
+
+[extra]
+categories= "performance"
+featured = false
+featured_image = "/assets/media/featured/random-04.webp"
 +++
 
 In an earlier [article](/blog/modules-101/) we explored the process of building Valkey Modules to enable developers to add features such as new commands and data types to Valkey without modifying its core.

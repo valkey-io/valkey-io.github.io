@@ -5,7 +5,7 @@ date= 2025-04-09 01:01:01
 authors= [ "karthiksubbarao"]
 
 [extra]
-trending = false
+featured = false
 featured_image = "/assets/media/featured/random-02.webp"
 +++
 

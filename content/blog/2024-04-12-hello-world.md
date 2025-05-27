@@ -9,7 +9,7 @@ authors= ["kyledvs"]
 
 [extra]
 categories= "update"
-trending = false
+featured = false
 featured_image = "/assets/media/featured/random-05.webp"
 +++
 
