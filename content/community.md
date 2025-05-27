@@ -14,6 +14,7 @@ cards = [
   ] },
   { icon = "icon-users.svg", title = "Connect on Social Media", description = "Stay updated and connect with us on our social media platforms.", links = [
     { url = "https://www.linkedin.com/company/valkey/", text = "LinkedIn" },
+    { url = "https://bsky.app/profile/valkeyio.bsky.social/", text = "Bluesky" },
     { url = "https://twitter.com/valkey_io", text = "Twitter" }
   ] },
   { icon = "icon-bulb.svg", title = "Suggest Features", description = "We value your ideas! If you have a suggestion for a new feature, please submit a feature request on our GitHub.", links = [
