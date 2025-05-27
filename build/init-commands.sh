@@ -4,16 +4,16 @@
 
 # first check to make sure there are arguments
 if [ -z "$1" ]; then
-    echo "You must supply a path to the command docs as the first argument" 
-    exit 1
-fi 
-
-if [ -z "$2" ]; then
-    echo "You must supply a path to the command json as the second argument" 
+    echo "You must supply a path to the command docs as the first argument"
     exit 1
 fi
 
-# check for validity of these agruments as paths
+if [ -z "$2" ]; then
+    echo "You must supply a path to the command json as the second argument"
+    exit 1
+fi
+
+# check for validity of these arguments as paths
 if [ ! -d "$1" ]; then
     echo "The command doc directory must exist and be a valid path"
     exit 1
@@ -34,22 +34,31 @@ if [ ! -d "$4" ]; then
     exit 1
 fi
 
+if [ ! -d "$5" ]; then
+    echo "The Search module command JSON directory must exist and be a valid path"
+    exit 1
+fi
+
 ln -s $1 ./build-command-docs
 ln -s $2 ./build-command-json
 ln -s $3 ./build-bloom-command-json
 ln -s $4 ./build-json-command-json
+ln -s $5 ./build-search-command-json
+
 for fname in $(find $1 -maxdepth 1  -iname "*.md")
 do
     base=${fname##*/}
     command=${base%.*}
     command_upper=$(awk '{ print toupper($0) }' <<< $command)
-    if [[ "$command" != "index" ]]; then 
+    if [[ "$command" != "index" ]]; then
         if [ -f "$2/$command.json" ]; then
             metadata_path="/commands/$command.json in the 'valkey' repo"
         elif [ -f "$3/$command.json" ]; then
             metadata_path="/commands/$command.json in the 'valkey-bloom' repo"
         elif [ -f "$4/$command.json" ]; then
             metadata_path="/commands/$command.json in the 'valkey-json' repo"
+        elif [ -f "$5/$command.json" ]; then
+            metadata_path="/commands/$command.json in the 'valkey-search' repo"
         fi
         cat << EOF > "./content/commands/$command.md"
 +++
