@@ -3,14 +3,14 @@
     <title>Try Valkey</title>
 
     <!-- Scripts -->
-    <script src="http://dtq9kvai1345o.cloudfront.net/vos/v86/libv86.js"></script>
-    <script src="http://dtq9kvai1345o.cloudfront.net/vos/xterm/xterm.min.js"></script>
-    <script src="http://dtq9kvai1345o.cloudfront.net/vos/pako/pako.min.js"></script>
-    <script src="http://dtq9kvai1345o.cloudfront.net/vos/v86/serial_xterm.js"></script>
+    <script src="https://download.valkey.io/try-me-valkey/vos/v86/libv86.js"></script>
+    <script src="https://download.valkey.io/try-me-valkey/vos/xterm/xterm.min.js"></script>
+    <script src="https://download.valkey.io/try-me-valkey/vos/pako/pako.min.js"></script>
+    <script src="https://download.valkey.io/try-me-valkey/vos/v86/serial_xterm.js"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="http://dtq9kvai1345o.cloudfront.net/vos/xterm/xterm.css" />
-    <link rel="stylesheet" href="https://dtq9kvai1345o.cloudfront.net/vos/valkey-try-me.css" />
+    <link rel="stylesheet" href="https://download.valkey.io/try-me-valkey/vos/xterm/xterm.css" />
+    <link rel="stylesheet" href="https://download.valkey.io/try-me-valkey/vos/valkey-try-me.css" />
 
 {%- endblock -%}
 {% block main_content %}
@@ -34,7 +34,7 @@
 
     <script>
         "use strict";
-        const FILE_URL = "http://dtq9kvai1345o.cloudfront.net/8.1.0/states/state.bin.gz";  // Path to the .gz file
+        const FILE_URL = "https://download.valkey.io/try-me-valkey/8.1.0/states/state.bin.gz";  // Path to the .gz file
         const CACHE_KEY = "valkey_binary_cache";
         const LAST_MODIFIED_KEY = "valkey_last_modified";
         let emulator;
@@ -138,12 +138,12 @@
             progressText.innerText = "Starting emulator...";
 
             emulator = new V86({
-                wasm_path: "http://dtq9kvai1345o.cloudfront.net/vos/v86/v86.wasm",
+                wasm_path: "https://download.valkey.io/try-me-valkey/vos/v86/v86.wasm",
                 memory_size: 512 * 1024 * 1024,
-                bios: { url: "http://dtq9kvai1345o.cloudfront.net/vos/v86/bios/seabios.bin" },
+                bios: { url: "https://download.valkey.io/try-me-valkey/vos/v86/bios/seabios.bin" },
                 filesystem: {
-                    baseurl: "http://dtq9kvai1345o.cloudfront.net/8.1.0/fs/alpine-rootfs-flat",
-                    basefs: "http://dtq9kvai1345o.cloudfront.net/8.1.0/fs/alpine-fs.json",
+                    baseurl: "https://download.valkey.io/try-me-valkey/8.1.0/fs/alpine-rootfs-flat",
+                    basefs: "https://download.valkey.io/try-me-valkey/8.1.0/fs/alpine-fs.json",
                 },
                 autostart: true,
                 bzimage_initrd_from_filesystem: true,
