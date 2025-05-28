@@ -3,56 +3,15 @@
     <title>Try Valkey</title>
 
     <!-- Scripts -->
-    <script src="https://dtq9kvai1345o.cloudfront.net/vos/v86/libv86.js"></script>
-    <script src="https://dtq9kvai1345o.cloudfront.net/vos/xterm/xterm.min.js"></script>
-    <script src="https://dtq9kvai1345o.cloudfront.net/vos/pako/pako.min.js"></script>
-    <script src="https://dtq9kvai1345o.cloudfront.net/vos/v86/serial_xterm.js"></script>
+    <script src="http://dtq9kvai1345o.cloudfront.net/vos/v86/libv86.js"></script>
+    <script src="http://dtq9kvai1345o.cloudfront.net/vos/xterm/xterm.min.js"></script>
+    <script src="http://dtq9kvai1345o.cloudfront.net/vos/pako/pako.min.js"></script>
+    <script src="http://dtq9kvai1345o.cloudfront.net/vos/v86/serial_xterm.js"></script>
     
     <!-- Styles -->
-    <link rel="stylesheet" href="https://dtq9kvai1345o.cloudfront.net/vos/xterm/xterm.css" />
+    <link rel="stylesheet" href="http://dtq9kvai1345o.cloudfront.net/vos/xterm/xterm.css" />
+    <link rel="stylesheet" href="https://dtq9kvai1345o.cloudfront.net/vos/valkey-try-me.css" />
 
-    <style>
-        /* Container Styles */
-        .container {
-            background: rgb(47, 47, 47);
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
-            overflow-y: hidden;
-            align-items: center;
-        }
-
-        #terminal-container {
-            width: 100%;
-            height: 100%;
-            background: #000;
-            color: #fff;
-            border: none;
-            overflow-y: hidden;
-            overflow-x: hidden;
-        }
-
-        #loadingContainer {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        #progressText {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        #progressBar {
-            width: 80%;
-            height: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #e9ecef;
-        }
-    </style>
 {%- endblock -%}
 {% block main_content %}
     <p>This is an in-browser Valkey server and CLI that runs directly within your browser using a V86 emulator, requiring no external installations. </p>
@@ -75,7 +34,7 @@
 
     <script>
         "use strict";
-        const FILE_URL = "https://dtq9kvai1345o.cloudfront.net/8.1.0/states/state.bin.gz";  // Path to the .gz file
+        const FILE_URL = "http://dtq9kvai1345o.cloudfront.net/8.1.0/states/state.bin.gz";  // Path to the .gz file
         const CACHE_KEY = "valkey_binary_cache";
         const LAST_MODIFIED_KEY = "valkey_last_modified";
         let emulator;
@@ -179,12 +138,12 @@
             progressText.innerText = "Starting emulator...";
 
             emulator = new V86({
-                wasm_path: "https://dtq9kvai1345o.cloudfront.net/vos/v86/v86.wasm",
+                wasm_path: "http://dtq9kvai1345o.cloudfront.net/vos/v86/v86.wasm",
                 memory_size: 512 * 1024 * 1024,
-                bios: { url: "https://dtq9kvai1345o.cloudfront.net/vos/v86/bios/seabios.bin" },
+                bios: { url: "http://dtq9kvai1345o.cloudfront.net/vos/v86/bios/seabios.bin" },
                 filesystem: {
-                    baseurl: "https://dtq9kvai1345o.cloudfront.net/8.1.0/fs/alpine-rootfs-flat",
-                    basefs: "https://dtq9kvai1345o.cloudfront.net/8.1.0/fs/alpine-fs.json",
+                    baseurl: "http://dtq9kvai1345o.cloudfront.net/8.1.0/fs/alpine-rootfs-flat",
+                    basefs: "http://dtq9kvai1345o.cloudfront.net/8.1.0/fs/alpine-fs.json",
                 },
                 autostart: true,
                 bzimage_initrd_from_filesystem: true,
