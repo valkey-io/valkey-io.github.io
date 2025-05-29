@@ -105,7 +105,7 @@ SET: 394368.41 requests per second, p50=1.223 msec
 GET: 438058.53 requests per second, p50=1.135 msec 
 ```
 
-We're up to 416,000 requests per second (reminder this is the average between the two operations). The mathmaticians out there might notice that this speed up is a lot more than the expected 47% increase. It's a 73% increase in requests per second. What's happening?!
+We're up to 416,000 requests per second (reminder this is the average between the two operations). The mathematicians out there might notice that this speed up is a lot more than the expected 47% increase. It's a 73% increase in requests per second. What's happening?!
 
 ## Adding IO Threading
 
