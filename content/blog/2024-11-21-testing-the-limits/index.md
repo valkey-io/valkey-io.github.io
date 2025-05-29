@@ -83,7 +83,7 @@ Since Valkey is a single threaded application, it makes sense that higher clock 
 
 **Note:** Clock speeds generally are only comparable between CPU's with a similar architecture. For example, you could reasonably compare clock speeds between an 12th generation Intel i5 and a 12th generation Intel i7. If the 12th gen i7 had a max clock speed of 5Ghz that doesn't necessarily mean it will be slower than a AMD Ryzen 9 9900X clocked at 5.6Ghz. 
 
-If you're following along on a Pi of your own I've outlined the steps to overclock your CM4 below. Otherwise you can skip to the results section below.
+If you're following along on a Pi of your own I've outlined the steps to overclock your CM4 below. Otherwise, you can skip to the results section below.
 
 **Warning** Just a reminder overclocking your device can cause damage to your device. Please use caution and do your own research for settings that are safe. 
 
