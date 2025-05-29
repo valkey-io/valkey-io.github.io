@@ -149,7 +149,7 @@ Right? Well believe it or not we can squeeze even more performance out of our li
 
 ![A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first core box is the Valkey process and in the next two there are IO Threads. The valkey process has a loop showing it communicating with both of the IO threads. It also has a bracket showing it managing all the memory.](images/io_threading_arch.png)
 
-Above is a representitive outline of what's happening on the server. The Valkey process has to take up valuble cycles managing the IO Threads. Not only that it has to perform a lot of work to manage all the memory assigned to it. That's a lot of work for a single process.
+Above is a representative outline of what's happening on the server. The Valkey process has to take up valuble cycles managing the IO Threads. Not only that it has to perform a lot of work to manage all the memory assigned to it. That's a lot of work for a single process.
 
 Now there is actually one more optimization we can use to make single threaded Valkey even faster. Valkey recently has done a substantial amount of work to support speculative execution. This work allows Valkey to predict which values will be needed from memory in future processing steps. This way Valkey server doesn't have to wait for memory access which is an order of magnitude slower than L1 caches. While I won't go through the details of how this works as there's already a [great blog that describes how to take advantage of these optimizations](https://valkey.io/blog/unlock-one-million-rps-part2/). Here are the results: 
 
