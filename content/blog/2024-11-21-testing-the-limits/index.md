@@ -147,7 +147,7 @@ Much better! Now we are seeing around 565,000 requests per second. Thats a 35% i
 
 Right? Well believe it or not we can squeeze even more performance out of our little CM4! 
 
-![A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first core box is the Valkey process and in the next two there are IO Threads. The valkey process has a loop showing it communiacting with both of the IO threads. It also has a bracket showing it managing all the memory.](images/io_threading_arch.png)
+![A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first core box is the Valkey process and in the next two there are IO Threads. The valkey process has a loop showing it communicating with both of the IO threads. It also has a bracket showing it managing all the memory.](images/io_threading_arch.png)
 
 Above is a representitive outline of what's happening on the server. The Valkey process has to take up valuble cycles managing the IO Threads. Not only that it has to perform a lot of work to manage all the memory assigned to it. That's a lot of work for a single process.
 
