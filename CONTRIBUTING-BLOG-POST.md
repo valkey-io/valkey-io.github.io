@@ -5,7 +5,7 @@ The contribution model is lightweight, transparent, and uses well-understood ope
 
 ## Step 0: Setup
 
-Before you begin, it’s a good idea to setup an environment to write, test, and contribute your blog post.
+Before you begin, it’s a good idea to set up an environment to write, test, and contribute your blog post.
 First, [fork the website repo](https://github.com/valkey-io/valkey-io.github.io), then clone the website to your local environment.
 The general workflow is to write your post locally in a branch, confirm that it looks the way you want, then contribute your changes as a pull request.
 
