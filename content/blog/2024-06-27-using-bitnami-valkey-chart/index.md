@@ -12,7 +12,7 @@ Valkey is a high-performance key/value datastore that supports workloads such as
 
 [Bitnami](https://bitnami.com/) offers a number of secure, up-to-date, and easy to deploy charts for a number of popular open source applications.
 
-This blog will serve as a walk-through on how you can deploy and use the [Bitnami Helm chart for Valkey](https://github.com/bitnami/charts/tree/main/bitnami/valkey).
+This blog will serve as a walkthrough on how you can deploy and use the [Bitnami Helm chart for Valkey](https://github.com/bitnami/charts/tree/main/bitnami/valkey).
 
 # Assumptions and prerequisites
 

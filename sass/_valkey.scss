@@ -172,8 +172,9 @@ p {
     }
 
     >a {
-      &:hover {
-        border-color: inherit;
+      &:hover,
+      &.active {
+          border-color: inherit;
         text-decoration: underline;
 
         @include respond-min(768px) {
@@ -345,33 +346,81 @@ p {
 }
 
 .footer {
-  border-top: 1px solid $grey-dk-100;
-  background-color: $grey-lt-300;
+  background-color: #1a2026;
   @include sans-serif;
   font-size: 1.4rem;
+  color: #fff;
+  padding: 2rem 0;
 
-  .links {
+  .icon-links {
     display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-evenly;
-    margin-bottom: 4em;
-  }
+    flex-direction: column;
+    gap: 15px;
 
-  nav {
-    font-size: 1.5rem;
-    font-weight: 600;
-
-    h4 {
-      font-weight: 400;
-      @include sans-serif;
-      font-size: 1.5rem;
+    @include respond-min(768px) {
+      flex-direction: row;
+      border: none;
     }
 
     a {
-      display: list-item;
-      list-style: none;
-      white-space: nowrap;
-      margin-bottom: 1em;
+      display: flex;
+      align-items: center;
+      color: #fff;
+
+      &:hover {
+        color: #fff;
+        text-decoration: underline;
+        opacity: 0.8;
+      }
+
+      img {
+        margin-right: 5px;
+      }
+    }
+
+  }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: flex-end;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 2rem;
+    padding-top: 2rem;
+
+    @include respond-min(768px) {
+      flex-direction: row;
+      border: none;
+      margin-top: 0;
+      padding-top: 0;
+      }
+
+    a {
+      color: #fff;
+      text-decoration: underline;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+
+  &_bottom {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 2rem;
+
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+
+    p {
+      max-width: 720px;
+      margin: 8px auto;
+    }
+
+    a {
+      color: #6983ff;
 
       &:hover {
         text-decoration: underline;
@@ -401,6 +450,128 @@ p {
   }
 }
 
+.left-aside {
+  display: flex;
+  width: 100%;
+  background-color: #e2e8f0;
+  flex-direction: column;
+
+  @include respond-min(768px) {
+    flex-direction: row-reverse;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.25rem 0;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+
+  }
+
+  main {
+    flex: 1;
+    padding: 2rem;
+  }
+
+  .main-inner {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 1rem 2rem 2rem;
+  }
+
+  aside {
+    background-color: #f1f0fa;
+    padding: 2rem;
+    width: 100%;
+    
+    @include respond-min(768px) {
+      max-width: 420px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 2rem 0;
+
+      li {
+
+        a {
+          display: block;
+          background-color: #d1d9ff;
+          padding: 1.2rem;
+          margin-bottom: 1rem;
+          color: #000;
+          text-transform: uppercase;
+          cursor: pointer;
+          font-weight: 600;
+
+          &:hover {
+            background-color: #b9c6ff;
+          }
+        }
+      }
+    }
+  }
+}
+
+.topic-description {
+  display: block;
+  text-transform: none;
+  font-size: 90%;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  margin: 0 -2rem 2rem;
+  padding: 0 2rem 1rem;
+  border-bottom: 1px solid rgb(104, 147, 238);
+
+  label {
+    margin-right: 10px;
+    font-size: 80%;
+  }
+
+  input {
+    flex: 1;
+    width: 100%;
+    min-width: 0px;
+    outline: none;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 50px;
+    font-size: 80%;
+
+    &:focus {
+      border-color: #6983ff;;
+    }
+  }
+}
+
+.no-results-message {
+  color: #30176e;
+  padding: 5rem 2rem 7rem;
+  text-align: center;
+
+  span {
+    font-size: 6rem;
+    font-weight: 800;
+  }
+  
+  h4 {
+    font-size: 1.75rem;
+    margin: 0.75rem 0;
+  }
+
+  p {
+    font-size: 1.75rem;
+    margin: 0;
+  }
+}
+
 .row {
   display: flex;
   margin: 0 auto;
@@ -410,28 +581,35 @@ p {
 
   .col {
     flex: 1 1 100%;
-    padding: 0 2rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 
   .col-10 {
-    flex: 1 1 83.33%;
+    @include respond-min(768px) {
+      flex: 1 1 83.33%;
+    }
   }
 
   .col-8 {
-    flex: 1 1 66.66%;
+    @include respond-min(768px) {
+      flex: 1 1 66.66%;
+    }
   }
 
   .col-6 {
-    flex: 1 1 50%;
+    @include respond-min(768px) {
+      flex: 1 1 50%;
+    }
   }
 
   .col-4 {
-    flex: 1 1 33.33%;
+    @include respond-min(768px) {
+      flex: 1 1 33.33%;
+    }
   }
 
   .col_3 {
-    flex: 1 1 100%;
-
     @include respond-min(768px) {
       flex: 1 1 25%;
     }
@@ -448,6 +626,25 @@ p {
   font-weight: 300;
   font-size: 4rem;
   @include sans-serif;
+}
+
+.styled-title {
+  padding-top: var(--chakra-space-16);
+  padding-bottom: var(--chakra-space-16);
+  color: var(--chakra-colors-white);
+  text-align: center;
+  background-image: linear-gradient(rgb(59, 42, 102), rgb(78, 81, 191));
+  padding: 80px;
+
+  h1 {
+    @include sans-serif;
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 #principles {
@@ -721,19 +918,28 @@ pre table {
 }
 
 .command-group {
-  .command-entry {
-    border-bottom: 1px dotted $line;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    padding-top: 1rem;
+  margin-bottom: 2rem;
+  
+  h2 {
+    border-bottom: 1px solid $line;
     padding-bottom: 1rem;
+    margin: 0;
+
+    span {
+      font-weight: 400;
+    }
+  }
+
+  .command-entry {
+    font-size: 1.5rem;
+    border-bottom: 1px solid $line;
+    padding: 1.25rem 0;
+
+    a {
+      text-decoration: underline;
+    }
     
   }
-  .command-entry, 
-  .command-group-meta {
-    margin-left: 1em;
-  }
-  
 }
 
 .index-entry {
@@ -741,8 +947,7 @@ pre table {
   margin-bottom: 0.5em;
 }
 
-.block-menu ul li,
-.index-entry {
+.block-menu ul li {
   border: 1px solid $line;
   border-radius: 3px;
   a {
@@ -1073,6 +1278,19 @@ pre table {
 
 .documentation-card-grid {
   margin-top: 4rem;
+
+  @media (max-width: 1100px) {
+    .col {
+      flex: 1 1 50%;
+      margin-bottom: 3rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .col {
+      flex: 1 1 100%;
+    }
+  }
 }
 
 .documentation-card {
@@ -1083,10 +1301,8 @@ pre table {
   border-radius: 20px;
   color: white;
   background: #2d2471;
-  margin-bottom: 3rem;
 
   @include respond-min(768px) {
-    margin-bottom: 0;
     min-height: 100%;
   }
 
@@ -1177,4 +1393,145 @@ pre table {
       margin: 2rem 0;
     }
   }
+}
+
+// Community Page Styles
+.community-hero {
+  background: linear-gradient(90deg, #4e3bbd 0%, #6983ff 100%);
+  padding: 3rem 0 2rem 0;
+  text-align: center;
+}
+
+.community-header {
+
+  h1 {
+    text-align: center;
+    background-image: linear-gradient(rgb(59, 42, 102), rgb(78, 81, 191));
+    padding: 80px;
+    margin: 0 0 5rem;
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+  }
+
+  h2 {
+    color: #30176e;
+    font-size: 3.25rem;
+    font-weight: 700;
+    margin-bottom: 0;
+  }
+
+  p {
+    color: #30176e;
+    margin: 0 0 0;
+
+  }
+}
+
+.community-title {
+  color: #fff;
+  font-size: 3.2rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.community-section {
+  background: #e9eef7;
+  text-align: center;
+  padding-bottom: 6rem;
+}
+
+.community-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  max-width: 1100px;
+  margin: 3rem auto 0;
+  @media (max-width: 1100px) {
+    padding: 0 3rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .community-card-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .community-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.community-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 rgba(105, 131, 255, 0.10);
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s;
+}
+.community-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(105, 131, 255, 0.18);
+}
+
+.community-card-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1.2rem;
+}
+
+.community-card h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d2471;
+  margin: 0 0 0.7rem 0;
+  text-align: center;
+}
+
+.community-card p {
+  color: #3a3a4d;
+  font-size: 1.75rem;
+  margin: 0 0 1.5rem 0;
+  text-align: left;
+}
+
+.community-card-actions {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  margin-top: auto;
+}
+
+.community-card .btn {
+  background: none;
+  color: #072150;
+  border: 1px solid #072150;
+  border-radius: 24px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+}
+
+.community-card .btn:hover {
+  background: #072150;
+  color: #fff;
+  border: 1px solid #072150;
+}
+
+.icon-social {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.3rem;
 }

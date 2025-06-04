@@ -1,9 +1,11 @@
-{% extends "right-aside.html" %}
+{% extends "left-aside.html" %}
 
 {% import "macros/docs.html" as docs %}
 
 {% block subhead_content %}
-<h1 class="page-title">Documentation by topic</h1>
+<div class="styled-title">
+    <h1>Documentation by Topic</h1>
+</div>
 {% endblock subhead_content %}
 
 {% block main_content %}
@@ -42,10 +44,15 @@
     {% set joined_list =  list | join(sep=",") %}
     {% set topic_list = load_data(literal= "[" ~ joined_list ~ "]", format="json") | sort(attribute="title") %} 
     
-    {% for topic in topic_list %}
-        <div class="index-entry">
-            <a href="{{ topic.path }}">{{ topic.title }}</a> {{ topic.description | safe }} <br />
-        </div>
-    {% endfor %}
+    <ul class="topic-list">
+        {% for topic in topic_list %}
+            <li>
+                <a href="{{ topic.path }}">
+                    {{ topic.title }}
+                    <span class="topic-description">{{ topic.description | safe }}</span>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
 
 {% endblock related_content %}
