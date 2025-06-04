@@ -4,12 +4,12 @@ title= "Unlock 1 Million RPS: Experience Triple the Speed with Valkey"
 # `date` is when your post will be published.
 # For the most part, you can leave this as the day you _started_ the post.
 # The maintainers will update this value before publishing
-# The time is generally irrelvant in how Valkey published, so '01:01:01' is a good placeholder
+# The time is generally irrelevant in how Valkey published, so '01:01:01' is a good placeholder
 date= 2024-08-05 01:01:01
 # 'description' is what is shown as a snippet/summary in various contexts.
 # You can make this the first few lines of the post or (better) a hook for readers.
 # Aim for 2 short sentences.
-description= "Learn about the new performnace improvements in Valkey 8 which reduces cost, improves latency and makes our environment greener."
+description= "Learn about the new performance improvements in Valkey 8 which reduces cost, improves latency and makes our environment greener."
 # 'authors' are the folks who wrote or contributed to the post.
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "dantouitou", "uriyagelnik"]
