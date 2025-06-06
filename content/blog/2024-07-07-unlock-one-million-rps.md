@@ -13,6 +13,9 @@ description= "Learn about the new performance improvements in Valkey 8 which red
 # 'authors' are the folks who wrote or contributed to the post.
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "dantouitou", "uriyagelnik"]
+[extra]
+featured = true
+featured_image = "/assets/media/featured/random-01.webp"
 +++
 Valkey 8.0, set for release in September 2024, will bring major performance enhancements through a variety of improvements including a new multi-threaded architecture.
 This update aims to significantly boost throughput and reduce latency across various hardware configurations.

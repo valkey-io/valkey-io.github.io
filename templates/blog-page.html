@@ -1,6 +1,10 @@
-{% extends "right-aside.html" %}
-
+{% extends "blog-single.html" %}
 {% block main_content %}
+
+{% if page.extra.featured_image %}
+  <img src="{{ page.extra.featured_image }}" alt="{{ page.title }}" class="feature-img">
+{% endif %}
+
 <h1>{{ page.title }}</h1>
 <div class="meta">
   {{ page.date | date(format="%Y-%m-%d") }}
@@ -13,11 +17,13 @@
     {% endfor %}
   {% endif %}
 </div>
-
 {{ page.content | safe }}
+{% endblock main_content%}
+
+{% block related_content %}
 <div class="blog-authors">
-  <h2>About the authors</h2>
   {% if page.authors %}
+    <h2>About the authors</h2>
     {% for author in page.authors %}
       {% set author_path = "authors/" ~ author ~ ".md" %}
       {% set author_page = get_page(path=author_path) %}
@@ -25,7 +31,7 @@
     {% endfor %}
   {% endif %}
 </div>
-<hr />
+
 {% include "includes/share-buttons.html" %}
 <div class="blog-nav">
   {% if page.higher and page.higher.title %}
@@ -35,4 +41,4 @@
   <a class="next" href="{{page.lower.permalink}}">{{page.lower.title}} &raquo; </a>
   {% endif %}
 </div>
-{% endblock main_content%}
+{% endblock related_content %}

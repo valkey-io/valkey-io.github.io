@@ -3,6 +3,11 @@ title= "Performance Optimization Methodology for Valkey - Part 1"
 date= 2025-05-27 00:00:00
 description= "Performance Optimization Methodology for Valkey"
 authors= ["lipzhu", "guowangy"]
+
+[extra]
+categories= "performance"
+featured = true
+featured_image = "/assets/media/featured/random-04.webp"
 +++
 
 Performance optimization is a multifaceted domain, particularly for high-performance systems like Valkey. While overall system performance depends on numerous factors including hardware specifications, OS configurations, network conditions, and deployment architectures, our work focuses specifically on optimizing Valkey's performance at the CPU level.

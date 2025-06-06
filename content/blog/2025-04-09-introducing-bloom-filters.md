@@ -3,6 +3,10 @@ title= "Introducing Bloom Filters for Valkey"
 description = "Learn how to use bloom filters to perform large-scale membership testing with significant memory savings."
 date= 2025-04-09 01:01:01
 authors= [ "karthiksubbarao"]
+
+[extra]
+featured = false
+featured_image = "/assets/media/featured/random-02.webp"
 +++
 
 The Valkey project is introducing Bloom Filters as a new data type via [valkey-bloom](https://github.com/valkey-io/valkey-bloom/) (BSD-3 licensed), an official Valkey Module which is compatible with Valkey versions >= 8.0. Bloom filters provide efficient, large-scale membership testing, improving performance and offering significant memory savings for high-volume applications.

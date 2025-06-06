@@ -3,6 +3,9 @@ title = "Pushing the limits of Valkey on a Raspberry Pi"
 description = "While most people won't go to production on a Raspberry Pi, we'll cover how to thoroughly performance test Valkey to understand how it works in production."
 date= 2024-11-21 01:01:01
 authors= ["dtaivpp"]
+[extra]
+featured = false
+featured_image = "/assets/media/featured/random-07.webp"
 +++
 
 While doing extensive performance testing on a Raspberry Pi is silly, it's made me realize the complexity of performance testing. For example, in some of the tests below I ended up managing to use all of the resources of the Raspberry Pi and achieved terrible performance. Every application has different performance characteristics so we'll walk through what factors to consider when it comes to deploying Valkey. 
