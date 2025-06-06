@@ -451,9 +451,11 @@ p {
 }
 
 .left-aside {
-  display: flex;
-  width: 100%;
   background-color: #e2e8f0;
+  display: flex;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
   flex-direction: column;
 
   @include respond-min(768px) {
