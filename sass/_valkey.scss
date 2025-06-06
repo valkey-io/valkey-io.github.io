@@ -454,6 +454,10 @@ p {
   width: 100%;
   background-color: #e2e8f0;
   flex-direction: column;
+  display: flex;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
 
   @include respond-min(1024px) {
     flex-direction: row-reverse;
@@ -857,6 +861,10 @@ aside {
   flex-wrap: wrap;
   width: 100%;
   background-color: #e2e8f0;
+  display: flex;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
 
   h2 {
     font-size: 1.5rem;
