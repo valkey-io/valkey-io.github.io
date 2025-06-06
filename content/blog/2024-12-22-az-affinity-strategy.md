@@ -29,9 +29,9 @@ Additionally, one of the most common use cases for caching is to store database 
 GLIDE provides flexible options tailored to your application’s needs:
 
 * ```PRIMARY```: Always read from the primary to ensure the freshness of data.
-* ```PREFER_REPLICA```: Distribute requests among all replicas in a round-robin manner. If no replica is available, fallback to the primary.
-* ```AZ_AFFINITY```: Prioritize replicas in the same AZ as the client. If no replicas are available in the zone, fallback to other replicas or the primary if needed.
-* ```AZ_AFFINITY_REPLICAS_AND_PRIMARY```: Prioritize replicas in the same AZ as the client. If no replicas are available in the zone, fallback to the primary in the same AZ. If neither are available, fallback to other replicas or the primary in other zones.
+* ```PREFER_REPLICA```: Distribute requests among all replicas in a round-robin manner. If no replica is available, fall back to the primary.
+* ```AZ_AFFINITY```: Prioritize replicas in the same AZ as the client. If no replicas are available in the zone, fall back to other replicas or the primary if needed.
+* ```AZ_AFFINITY_REPLICAS_AND_PRIMARY```: Prioritize replicas in the same AZ as the client. If no replicas are available in the zone, fall back to the primary in the same AZ. If neither are available, fall back to other replicas or the primary in other zones.
 
 In Valkey 8,  ```availability-zone``` configuration was introduced, allowing clients to specify the AZ for each Valkey server. GLIDE leverages this new configuration to empower its users with the ability to use AZ Affinity routing. At the time of writing, GLIDE is the only Valkey client library supporting the AZ Affinity strategies, offering a unique advantage.
 

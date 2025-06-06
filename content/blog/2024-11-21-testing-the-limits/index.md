@@ -14,7 +14,7 @@ While doing extensive performance testing on a Raspberry Pi is silly, it's made 
 
 ![Picture of the Compute Module 4 credit Raspberry Pi Ltd (CC BY-SA)](images/cm4.png)
 
-For hardware we are going to be using a Raspberry Pi [Compute Module 4 (CM4)](https://www.raspberrypi.com/products/compute-module-4/?variant=raspberry-pi-cm4001000). It's a single board computer (SBC) that comes with a tiny 1.5Ghz 4-core Broadcomm CPU and 8GB of system memory. This is hardly the first device someone would pick when deciding on a production system. Using the CM4 makes it easy to showcase how to optimize Valkey depending on your different hardware constraints.
+For hardware we are going to be using a Raspberry Pi [Compute Module 4 (CM4)](https://www.raspberrypi.com/products/compute-module-4/?variant=raspberry-pi-cm4001000). It's a single board computer (SBC) that comes with a tiny 1.5Ghz 4-core Broadcom CPU and 8GB of system memory. This is hardly the first device someone would pick when deciding on a production system. Using the CM4 makes it easy to showcase how to optimize Valkey depending on your different hardware constraints.
 
 Our operating system will be a 64-bit Debian based operating system (OS) called [Rasbian](https://www.raspbian.org/). This distribution is specifically modified to perform well on the CM4. Valkey will run in a docker container orchestrated with docker compose. I like deploying in containers as it simplifies operations. If you'd like to follow along here is [a guide for installing Docker](https://docs.docker.com/engine/install/debian/). Make sure to continue to the [second page of the installation process](https://docs.docker.com/engine/install/linux-postinstall/) as well. It's easy to miss and skipping it could make it harder to follow along. 
 
@@ -86,7 +86,7 @@ Since Valkey is a single threaded application, it makes sense that higher clock 
 
 **Note:** Clock speeds generally are only comparable between CPU's with a similar architecture. For example, you could reasonably compare clock speeds between an 12th generation Intel i5 and a 12th generation Intel i7. If the 12th gen i7 had a max clock speed of 5Ghz that doesn't necessarily mean it will be slower than a AMD Ryzen 9 9900X clocked at 5.6Ghz. 
 
-If you're following along on a Pi of your own I've outlined the steps to overclock your CM4 below. Otherwise you can skip to the results section below.
+If you're following along on a Pi of your own I've outlined the steps to overclock your CM4 below. Otherwise, you can skip to the results section below.
 
 **Warning** Just a reminder overclocking your device can cause damage to your device. Please use caution and do your own research for settings that are safe. 
 
@@ -108,7 +108,7 @@ SET: 394368.41 requests per second, p50=1.223 msec
 GET: 438058.53 requests per second, p50=1.135 msec 
 ```
 
-We're up to 416,000 requests per second (reminder this is the average between the two operations). The mathmaticians out there might notice that this speed up is a lot more than the expected 47% increase. It's a 73% increase in requests per second. What's happening?!
+We're up to 416,000 requests per second (reminder this is the average between the two operations). The mathematicians out there might notice that this speed up is a lot more than the expected 47% increase. It's a 73% increase in requests per second. What's happening?!
 
 ## Adding IO Threading
 
@@ -150,9 +150,9 @@ Much better! Now we are seeing around 565,000 requests per second. Thats a 35% i
 
 Right? Well believe it or not we can squeeze even more performance out of our little CM4! 
 
-![A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first core box is the Valkey process and in the next two there are IO Threads. The valkey process has a loop showing it communiacting with both of the IO threads. It also has a bracket showing it managing all the memory.](images/io_threading_arch.png)
+![A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first core box is the Valkey process and in the next two there are IO Threads. The valkey process has a loop showing it communicating with both of the IO threads. It also has a bracket showing it managing all the memory.](images/io_threading_arch.png)
 
-Above is a representitive outline of what's happening on the server. The Valkey process has to take up valuble cycles managing the IO Threads. Not only that it has to perform a lot of work to manage all the memory assigned to it. That's a lot of work for a single process.
+Above is a representative outline of what's happening on the server. The Valkey process has to take up valuable cycles managing the IO Threads. Not only that it has to perform a lot of work to manage all the memory assigned to it. That's a lot of work for a single process.
 
 Now there is actually one more optimization we can use to make single threaded Valkey even faster. Valkey recently has done a substantial amount of work to support speculative execution. This work allows Valkey to predict which values will be needed from memory in future processing steps. This way Valkey server doesn't have to wait for memory access which is an order of magnitude slower than L1 caches. While I won't go through the details of how this works as there's already a [great blog that describes how to take advantage of these optimizations](https://valkey.io/blog/unlock-one-million-rps-part2/). Here are the results: 
 
@@ -166,7 +166,7 @@ While these results are better they are a bit confusing. After talking with some
 
 ## Clustered Valkey
 
-![A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first three core boxs are Valkey processes. Each of them has a bracket around a portion of the memory.](images/valkey_clustered.png)
+![A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first three core boxes are Valkey processes. Each of them has a bracket around a portion of the memory.](images/valkey_clustered.png)
 
 For our last step we are going to spin up a Valkey cluster. This cluster will have individual instances of Valkey running that each will be responsible for managing their own keys. This way each instance can execute operations in parallel much more easily.  
 

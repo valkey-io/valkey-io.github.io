@@ -23,7 +23,6 @@
 {% block related_content %}
   <div class="blog-featured">
     <h2>Featured</h2>
-
     {% set blog_post_section = get_section(path="blog/_index.md") %}
       {% set featured_posts = blog_post_section.pages | filter(attribute="extra.featured", value=true) | slice(end=4) %}
         {% for post in featured_posts %}

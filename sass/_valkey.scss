@@ -172,8 +172,9 @@ p {
     }
 
     >a {
-      &:hover {
-        border-color: inherit;
+      &:hover,
+      &.active {
+          border-color: inherit;
         text-decoration: underline;
 
         @include respond-min(768px) {
@@ -450,9 +451,11 @@ p {
 }
 
 .left-aside {
-  display: flex;
-  width: 100%;
   background-color: #e2e8f0;
+  display: flex;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
   flex-direction: column;
   display: flex;
   max-width: var(--max-width);
@@ -498,6 +501,84 @@ p {
       max-width: 420px;
     }
 
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 2rem 0;
+
+      li {
+
+        a {
+          display: block;
+          background-color: #d1d9ff;
+          padding: 1.2rem;
+          margin-bottom: 1rem;
+          color: #000;
+          text-transform: uppercase;
+          cursor: pointer;
+          font-weight: 600;
+
+          &:hover {
+            background-color: #b9c6ff;
+          }
+        }
+      }
+    }
+  }
+}
+
+.right-styled {
+  display: flex;
+  width: 100%;
+  background-color: #e2e8f0;
+  flex-direction: row;
+
+  @media (max-width: 1100px) {
+    flex-direction: column-reverse;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin: 0 0 0.25rem 0;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+  }
+
+  main {
+    flex: 1;
+    padding: 2rem;
+
+    @media (max-width: 1100px) {
+      width: 100%;
+    }
+  }
+
+  .main-inner {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 1rem 2rem 2rem;
+  }
+
+  aside {
+    background-color: #f1f0fa;
+    background-image: url('/img/aside-banner.webp');
+    width: 33%;
+    max-width: 420px;
+    height: calc(0px + 100vh);
+    position: sticky;
+    padding: 2rem;
+    overflow-x: auto;
+    background-size: cover;
+    background-position: center bottom;
+    position: stiky;
+    top: 0px;
+
+    @media (max-width: 1100px) {
+      display: none;
+    }
+  
     ul {
       list-style: none;
       padding: 0;
@@ -649,19 +730,17 @@ p {
     font-weight: 700;
     line-height: 1;
     color: #fff;
-    margin: 0;
+    margin: 0 auto;
     padding: 0;
-
-    @include respond-min(768px) {
-    font-size: 4rem;
-    }
+    background: none;
+    border: none;
   }
 
   p {
-    line-height: 1.2;
+    margin: 20px auto;
+    max-width: 800px;
     color: #fff;
-    margin: 1rem 0 0;
-    padding: 0;
+    line-height: 1.4;
   }
 }
 
@@ -1060,17 +1139,19 @@ aside {
 
 .participants-container {
   @include sans-serif;
-  background-color: #4CAF50; /* Green background */
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 4px;
+  border-radius: 30px;
+  font-weight: 600;
+  height: auto;
+  font-size: 22px;
+  text-transform: uppercase;
+  padding-inline-start: var(--chakra-space-6);
+  padding-inline-end: var(--chakra-space-6);
+  color: rgb(105, 131, 255);
+  padding: 10px 30px;
+  background-image: linear-gradient(to right, rgb(255, 255, 255), rgb(183, 194, 247));
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 4px 10px;
+  transition: 0.3s ease-in-out;
 }
 
 #participants-buttons {
@@ -1081,14 +1162,11 @@ aside {
     content: 'Become a participant';
     display: block;
     clear: both;
+    text-wrap: nowrap;
   }
 
   > div {
     position: relative;
-    height: 24px;
-    width: 164px;
-    float: left;
-    text-align: center;
 
     > svg {
       height: 16px;
@@ -1105,23 +1183,51 @@ aside {
     margin-top: 9px;
   }
 }
-.width-limiter .participant-list > div {
-  margin-top: 1em;
-  border: none;
-  border-top: 1px solid $text-light;
-  padding-top: 1em;
-  h3 {
-    margin-bottom: 0;
-  }
-  h3 + p {
-    margin-top: 0;
-  }
-  .logo {
-    display: block;
-    width: 50%;
-    img{
-      width: auto;
-      max-width: 100%;
+
+.participant-list {
+  [class^="participant-"] {
+    background: white;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+    
+    .participant-brand {
+      width: 30%;
+      max-width: 220px;
+      padding: 1rem;
+
+      @media (max-width: 480px) {
+        width: 60%;
+        max-width: none;
+      }
+  
+      img {
+        max-width: 100%;
+      }
+    }
+
+    .participant-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      h3 {
+        color: #30176e;
+        font-weight: 700;
+        margin: 0 0 0.25rem;
+      }
+
+      p {
+        margin: 0 0 2rem;
+
+        &:last-child {
+          margin: 0;
+        }
+      }
     }
   }
 }
@@ -1617,4 +1723,145 @@ pre table {
       margin: 2rem 0;
     }
   }
+}
+
+// Community Page Styles
+.community-hero {
+  background: linear-gradient(90deg, #4e3bbd 0%, #6983ff 100%);
+  padding: 3rem 0 2rem 0;
+  text-align: center;
+}
+
+.community-header {
+
+  h1 {
+    text-align: center;
+    background-image: linear-gradient(rgb(59, 42, 102), rgb(78, 81, 191));
+    padding: 80px;
+    margin: 0 0 5rem;
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+  }
+
+  h2 {
+    color: #30176e;
+    font-size: 3.25rem;
+    font-weight: 700;
+    margin-bottom: 0;
+  }
+
+  p {
+    color: #30176e;
+    margin: 0 0 0;
+
+  }
+}
+
+.community-title {
+  color: #fff;
+  font-size: 3.2rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.community-section {
+  background: #e9eef7;
+  text-align: center;
+  padding-bottom: 6rem;
+}
+
+.community-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  max-width: 1100px;
+  margin: 3rem auto 0;
+  @media (max-width: 1100px) {
+    padding: 0 3rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .community-card-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .community-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.community-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px 0 rgba(105, 131, 255, 0.10);
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.2s;
+}
+.community-card:hover {
+  box-shadow: 0 8px 32px 0 rgba(105, 131, 255, 0.18);
+}
+
+.community-card-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1.2rem;
+}
+
+.community-card h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d2471;
+  margin: 0 0 0.7rem 0;
+  text-align: center;
+}
+
+.community-card p {
+  color: #3a3a4d;
+  font-size: 1.75rem;
+  margin: 0 0 1.5rem 0;
+  text-align: left;
+}
+
+.community-card-actions {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  margin-top: auto;
+}
+
+.community-card .btn {
+  background: none;
+  color: #072150;
+  border: 1px solid #072150;
+  border-radius: 24px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+}
+
+.community-card .btn:hover {
+  background: #072150;
+  color: #fff;
+  border: 1px solid #072150;
+}
+
+.icon-social {
+  width: 18px;
+  height: 18px;
+  margin-right: 0.3rem;
 }

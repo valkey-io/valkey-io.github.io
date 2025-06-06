@@ -4,7 +4,7 @@ title= "Unlock 1 Million RPS: Experience Triple the Speed with Valkey - part 2"
 # `date` is when your post will be published.
 # For the most part, you can leave this as the day you _started_ the post.
 # The maintainers will update this value before publishing
-# The time is generally irrelvant in how Valkey published, so '01:01:01' is a good placeholder
+# The time is generally irrelevant in how Valkey published, so '01:01:01' is a good placeholder
 date= 2024-09-13 01:01:01
 # 'description' is what is shown as a snippet/summary in various contexts.
 # You can make this the first few lines of the post or (better) a hook for readers.
@@ -18,7 +18,7 @@ featured = false
 featured_image = "/assets/media/featured/random-06.webp"
 +++
 
- In the [first part](/blog/unlock-one-million-rps/) of this blog, we described how we offloaded almost all I/O operations to I/O threads, thereby freeing more CPU cycles in the main thread to execute commands. When we profiled the execution of the main thread, we found that a considerable amount of time was spent waiting for external memory. This was not entirely surprising, as when accessing random keys, the probability of finding the key in one of the processor caches is relatively low.  Considering that external memory access latency is approximately 50 times higher than L1 cache, it became clear that despite showing 100% CPU utilization, the main process was mostly “waiting”. In this blog, we describe the technique we have been using to increase the number of parallel memory accesses, thereby reducing the impact that external memory latency has on performance.
+ In the [first part](/blog/unlock-one-million-rps/) of this blog, we described how we offloaded almost all I/O operations to I/O threads, thereby freeing more CPU cycles in the main thread to execute commands. When we profiled the execution of the main thread, we found that a considerable amount of time was spent waiting for external memory. This was not entirely surprising, as when accessing random keys, the probability of finding the key in one of the processor caches is relatively low.  Considering that external memory access latency is approximately 50 times greater than L1 cache, it became clear that despite showing 100% CPU utilization, the main process was mostly “waiting”. In this blog, we describe the technique we have been using to increase the number of parallel memory accesses, thereby reducing the impact that external memory latency has on performance.
 
 ### Speculative execution and linked lists 
 Speculative execution is a performance optimization technique used by modern processors, where the processor guesses the outcome of conditional operations and executes in parallel subsequent instructions ahead of time. Dynamic data structures, such as linked lists and search trees, have many advantages over static data structures: they are economical in memory consumption, provide fast insertion and deletion mechanisms, and can be resized efficiently. However, some dynamic data structures have a major drawback: they hinder the processor's ability to speculate on future memory load instructions that could be executed in parallel. This lack of concurrency is especially problematic in very large dynamic data structures, where most pointer accesses result in high-latency external memory access.
