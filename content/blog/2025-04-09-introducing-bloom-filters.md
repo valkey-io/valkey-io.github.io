@@ -149,7 +149,7 @@ valkey-bloom offers an efficient solution for high-volume membership testing thr
 This enhances Valkey's capability to handle various workloads including large-scale advertisement / event deduplication, fraud detection, and reducing disk / backend lookups more efficiently.
 
 To learn more about [valkey-bloom](https://github.com/valkey-io/valkey-bloom/), you can read about the [Bloom Filters data type](https://valkey.io/topics/bloomfilters/) and follow the [quick start guide](https://github.com/valkey-io/valkey-bloom/blob/1.0.0/QUICK_START.md) to try it yourself.
-Additionally, to use valkey-bloom on Docker (along with other official modules), you can check out the [Valkey Extensions Docker Image](https://hub.docker.com/r/valkey/valkey-extension).
+Additionally, to use valkey-bloom on Docker (along with other official modules), you can check out the [Valkey Extensions Docker Image](https://hub.docker.com/r/valkey/valkey-extensions).
 
 Thank you to all those who helped develop the module:
 * Karthik Subbarao ([KarthikSubbarao](https://github.com/KarthikSubbarao))
