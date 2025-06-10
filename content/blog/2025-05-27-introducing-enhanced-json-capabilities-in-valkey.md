@@ -25,7 +25,8 @@ Let’s now walk through a real-world example and see how simple, yet powerful V
 
 ### Installation and Setup
 
-Valkey-JSON is a module, so you’ll need to first build locally:
+Valkey-JSON is a module and at time of writing, you'll need to build the module locally.
+However, it is also available in the [valkey-extensions](https://hub.docker.com/r/valkey/valkey-extensions), a docker image with all the valkey modules built-in. 
 
 #### 1. Build Valkey-JSON locally
 
@@ -134,21 +135,21 @@ This would return an array of names matching the condition
 
 It makes it that simple to query and filter through JSON documents.
 
-### **Unlocking Real-World Potential with Valkey-JSON**
+### Unlocking Real-World Potential with Valkey-JSON
 
 Valkey-JSON is both powerful and easy to implement, making it an ideal solution for a wide range of real-world use cases. With native JSON support, developers can manage structured, nested data without complex serialization or parsing logic, enabling rapid, targeted updates and high-performance queries. Here are three impactful use cases that showcase how Valkey-JSON can drive real-world value:
 
-### **Per-User Event Counters for Ad or Notification Delivery**
+### Per-User Event Counters for Ad or Notification Delivery
 
 Valkey JSON excels in high-throughput systems that require tracking per-user counters for ad impressions, push notifications, or message deliveries. For example, an ad platform may store a JSON document per user with nested metadata for each campaign — including impression counts, last delivery timestamps, and click history. Instead of serializing and deserializing large blobs, Valkey JSON enables in-place updates using `JSON.NUMINCRBY` or `JSON.SET` on specific paths (e.g., `$.ad_campaigns.ad_123.count`). This reduces network I/O and latency while ensuring atomicity. Microservices can also retrieve only the required subfields using JSONPath queries, like `$.ad_campaigns.ad_123.lastSeen`, allowing for efficient real-time decisioning. Compared to alternatives like managing multiple hash keys or plain strings, this approach is both cleaner and faster — making it well-suited for ad tech and notification delivery platforms operating at millions of ops/sec under tight latency constraints.
 
 
-### **Shared Reference Metadata Store for Microservices**
+### Shared Reference Metadata Store for Microservices
 
 In distributed systems like games, e-commerce platforms, or internal developer tools, multiple microservices often need fast access to consistent, structured reference data. This can include things like product attributes, game character metadata, tax codes, or ID mappings — which are naturally stored as JSON documents. Valkey JSON provides an ideal solution for centralizing this reference data in-memory. Teams can store large JSON blobs (hundreds of KB or more) using `JSON.SET`, and services can retrieve targeted subfields using path expressions like `$.items[?(@.rarity=="epic")]` or `$.idToName["1234"]`. Updates happen in bulk during patch releases or deployment cycles, but reads are constant and latency-sensitive. By keeping this metadata in Valkey, services avoid making remote API calls or parsing local files, achieving very low lookup latency even under load. This pattern greatly simplifies infrastructure, improves cache coherency, and is especially powerful in cloud-native environments where rapid bootstrapping and shared context matter.
 
 
-### **Identity Graph and Profile Storage at Scale**
+### Identity Graph and Profile Storage at Scale
 
 For companies operating large-scale identity platforms — such as those in fintech, healthtech, or fraud detection — managing complex user or entity profiles is a core requirement. These profiles often include deeply nested data like names, contact info, document verification, scores, and historical activity. Valkey JSON allows each profile to be stored as a single JSON document and updated atomically as new data arrives, without needing to rewrite the entire object. Queries like `$.email`, `$.history[-1]`, or `$.risk.score` can be executed efficiently with sub-millisecond latency. When paired with Valkey Search, indexed queries on nested fields become possible — enabling real-time lookups like “find all profiles with unverified addresses in California.” This architecture supports hundreds of thousands of concurrent reads and writes per second and can scale to multi-terabyte datasets using hybrid RAM + Flash configurations. For workloads that demand both schema flexibility and ultra-low latency, Valkey JSON offers a compelling alternative to rigid relational databases or slower document stores.
 
@@ -157,7 +158,7 @@ For companies operating large-scale identity platforms — such as those in fint
 
 Ensuring smooth integration across data stores and libraries is vital for minimizing migration friction and maximizing developer productivity. Valkey-JSON is fully compatible with **Valkey 8.0 and above**, making it accessible to users on the latest Valkey versions without requiring additional configuration.
 
-It is also compliant with **RFC7159 and ECMA-404**, adhering to widely accepted JSON standards. This alignment enables consistent JSON handling across Valkey modules and supports integration with **Valkey-Search**, allowing full-text indexing and querying across JSON datasets for advanced analytics and data exploration. Additionally, Valkey-JSON integrates with **Valkey’s Access Control Lists (ACLs)**, providing fine-grained permissions for JSON commands alongside other data types like strings and hashes.
+It is also compliant with **RFC7159 and ECMA-404**, adhering to widely accepted JSON standards. This alignment enables consistent JSON handling across Valkey modules and supports integration with **Valkey-Search**, and querying across JSON datasets for advanced analytics and data exploration. Additionally, Valkey-JSON integrates with **Valkey’s Access Control Lists (ACLs)**, providing fine-grained permissions for JSON commands alongside other data types like strings and hashes.
 
 For users migrating from Redis, Valkey-JSON is designed as a **drop-in replacement for RedisJSON v2**, maintaining API and RDB compatibility. This ensures a smooth transition for RedisJSON users while leveraging Valkey’s optimized performance and scalability.
 
