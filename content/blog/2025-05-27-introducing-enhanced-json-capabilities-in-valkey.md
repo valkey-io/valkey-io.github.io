@@ -13,22 +13,22 @@ In this post, I’ll walk through installing the Valkey JSON module and demonstr
 
 ## Core Capabilities and Performance
 
-Valkey’s JSON support goes beyond basic storage and retrieval. It introduces powerful querying and filtering capabilities that streamline complex data operations. Tasks that once required extensive development time and multiple network requests can now be executed through a single JSON command, significantly enhancing developer productivity and reducing operational costs.
+Valkey’s JSON support goes beyond basic storage and retrieval. It introduces powerful querying and filtering capabilities that streamline complex data operations. Tasks that once required extensive development time and multiple network requests can now be executed through a single JSON command, significantly increasing developer productivity and reducing operational costs.
 
-Valkey-JSON supports six data types—**null, boolean, number, string, object, and array**—allowing developers to represent complex, nested data structures without the constraints of traditional string serialization. Unlike other composite types, JSON objects and arrays in Valkey can contain any combination of the six value types, enabling deeply nested and recursive data models to be stored natively.
+Valkey JSON supports six data types—**null, boolean, number, string, object, and array**—allowing developers to represent complex, nested data structures without the constraints of traditional string serialization. Unlike other composite types, JSON objects and arrays in Valkey can contain any combination of the six value types, enabling deeply nested and recursive data models to be stored natively.
 
-Internally, Valkey-JSON utilizes an optimized **binary tree-like format**, which enables rapid traversal and manipulation of substructures without requiring full document parsing. This structure not only minimizes memory usage but also ensures that operations on specific paths remain efficient. Path-based commands like `JSON.GET`, `JSON.SET`, and `JSON.DEL` allow targeted interactions with specific elements, supporting multiple paths within a single operation. Additionally, Valkey-JSON integrates with Valkey’s Access Control Lists (ACLs), introducing a `@json` command category to enforce granular permissions alongside existing data types.
+Internally, Valkey JSON utilizes an optimized **binary tree-like format**, which enables rapid traversal and manipulation of substructures without requiring full document parsing. This structure not only minimizes memory usage but also ensures that operations on specific paths remain efficient. Path-based commands like `JSON.GET`, `JSON.SET`, and `JSON.DEL` allow targeted interactions with specific elements, supporting multiple paths within a single operation. Additionally, Valkey JSON integrates with Valkey’s Access Control Lists (ACLs), introducing a `@json` command category to enforce granular permissions alongside existing data types.
 
-##  Getting Started with Valkey-JSON
+##  Getting Started with Valkey JSON
 
-Let’s now walk through a real-world example and see how simple, yet powerful Valkey-JSON is to use. 
+Let’s now walk through a real-world example and see how simple, yet powerful Valkey JSON is to use. 
 
 ### Installation and Setup
 
-Valkey-JSON is a module and at time of writing, you'll need to build the module locally.
+Valkey JSON is a module and at time of writing, you'll need to build the module locally.
 However, it is also available in the [valkey-extensions](https://hub.docker.com/r/valkey/valkey-extensions), a docker image with all the valkey modules built-in. 
 
-#### 1. Build Valkey-JSON locally
+#### 1. Build Valkey JSON locally
 
 ```
 git clone https://github.com/valkey-io/valkey-json.git
@@ -135,9 +135,9 @@ This would return an array of names matching the condition
 
 It makes it that simple to query and filter through JSON documents.
 
-### Unlocking Real-World Potential with Valkey-JSON
+### Unlocking Real-World Potential with Valkey JSON
 
-Valkey-JSON is both powerful and easy to implement, making it an ideal solution for a wide range of real-world use cases. With native JSON support, developers can manage structured, nested data without complex serialization or parsing logic, enabling rapid, targeted updates and high-performance queries. Here are three impactful use cases that showcase how Valkey-JSON can drive real-world value:
+Valkey JSON is both powerful and easy to implement, making it an ideal solution for a wide range of real-world use cases. With native JSON support, developers can manage structured, nested data without complex serialization or parsing logic, enabling rapid, targeted updates and high-performance queries. Here are three impactful use cases that showcase how Valkey JSON can drive real-world value:
 
 ### Per-User Event Counters for Ad or Notification Delivery
 
@@ -156,17 +156,17 @@ For companies operating large-scale identity platforms — such as those in fint
 
 ## Integration with the Valkey Ecosystem
 
-Ensuring smooth integration across data stores and libraries is vital for minimizing migration friction and maximizing developer productivity. Valkey-JSON is fully compatible with **Valkey 8.0 and above**, making it accessible to users on the latest Valkey versions without requiring additional configuration.
+Ensuring smooth integration across data stores and libraries is vital for minimizing migration friction and maximizing developer productivity. Valkey JSON is fully compatible with **Valkey 8.0 and above**, making it accessible to users on the latest Valkey versions without requiring additional configuration.
 
-It is also compliant with **RFC7159 and ECMA-404**, adhering to widely accepted JSON standards. This alignment enables consistent JSON handling across Valkey modules and supports integration with **Valkey-Search**, and querying across JSON datasets for advanced analytics and data exploration. Additionally, Valkey-JSON integrates with **Valkey’s Access Control Lists (ACLs)**, providing fine-grained permissions for JSON commands alongside other data types like strings and hashes.
+It is also compliant with **RFC7159 and ECMA-404**, adhering to widely accepted JSON standards. This alignment enables consistent JSON handling across Valkey modules and supports integration with **Valkey-Search**, and querying across JSON datasets for advanced analytics and data exploration. Additionally, Valkey JSON integrates with **Valkey’s Access Control Lists (ACLs)**, providing fine-grained permissions for JSON commands alongside other data types like strings and hashes.
 
-For users migrating from Redis, Valkey-JSON is designed as a **drop-in replacement for RedisJSON v2**, maintaining API and RDB compatibility. This ensures a smooth transition for RedisJSON users while leveraging Valkey’s optimized performance and scalability.
+For users migrating from Redis, Valkey JSON is designed as a **drop-in replacement for RedisJSON v2**, maintaining API and RDB compatibility. This ensures a smooth transition for RedisJSON users while leveraging Valkey’s optimized performance and scalability.
 
 ## Conclusion
 
 The introduction of the Valkey JSON module is a significant milestone for developers building modern, data-driven applications. By bringing native JSON support into Valkey’s high-performance in-memory engine, it bridges the gap between structured document modeling and real-time responsiveness. Whether you’re updating millions of ad counters per second, serving game metadata to distributed microservices, or powering identity search across terabytes of profiles, ValkeyJSON simplifies your architecture while boosting speed and scalability. With Valkey 8.0 and beyond, developers gain a powerful, intuitive, and production-grade toolset to manipulate JSON data at scale — all with the familiar simplicity and reliability of Valkey.
 
-Dive deeper into Valkey-JSON and see how easy it is to supercharge your JSON workloads with Valkey today!
+Dive deeper into Valkey JSON and see how easy it is to supercharge your JSON workloads with Valkey today!
 
 For further exploration, refer to:
 
