@@ -14,7 +14,6 @@
       <h2><a href="{{ page.permalink }}">{{ page.title  | safe}}</a></h2>
       <div class="meta">{{ page.date | date(format="%A %B %e, %Y") }}</div>
       <p>{{ page.description | safe }}</p>
-      <a class="link-readmore" href="{{ page.permalink  }}">Read More</a>
     </li>
     {% endfor %}
   </ul>
@@ -33,7 +32,6 @@
             <div class="info">
               <h4><a href="{{ post.permalink }}">{{ post.title }}</a></h4>
               <p>{{ post.description }}</p>
-              <a class="read-more" href="{{ post.permalink }}">Read More</a>
             </div>
           </div>
         {% endfor %}
