@@ -5,11 +5,11 @@ sort_by = "2025-06-03 01:01:01"
 authors= [ "roshkhatri"]
 +++
 
-On April 4, 2025 Valkey announced the GA release a powerful new upgrade—JSON support. With the introduction of native JSON data types, developers can now store, query, and manipulate structured data directly within Valkey without needing external serialization or complex parsing logic. This enhancement not only simplifies data handling for modern applications but also unlocks new capabilities for building real-time, data-driven experiences at scale. Whether you’re managing complex user profiles, caching API responses, or powering analytics dashboards, JSON support in Valkey streamlines data management while maintaining the speed and efficiency Valkey is known for.
+JSON is a ubiquitous universal format for semi-structured data, and modern developers expect to work with it natively across their stack, including in-memory stores like Valkey. Until now, using JSON in Valkey meant serializing entire objects into strings or flattening them into Hashes with limited nesting. These workarounds added complexity and made updates harder than they should be.
 
-JSON has become the universal format for data exchange, but effectively managing JSON data at scale remains a challenge in caching layers. The Valkey-JSON module addresses this by providing a dedicated JSON data type and a rich set of commands for inserting, updating, and retrieving JSON content using JSONPath queries. This approach reduces application complexity and accelerates performance, making it ideal for modern, data-driven applications.
+That changes with the general availability of native JSON support in Valkey. You can now store, query, and update JSON documents directly, without manual parsing or transformation. This brings a cleaner model to working with semi-structured data and makes your code easier to write and maintain.
 
-Let’s first cover the key capabilities and performance of Valkey-JSON. We will then dive into how to work with Valkey-JSON and demonstrate how to get started with a real world example. 
+In this post, I’ll walk through installing the Valkey JSON module and demonstrate how to use it for some common workloads.
 
 ## Core Capabilities and Performance
 
@@ -151,7 +151,7 @@ In distributed systems like games, e-commerce platforms, or internal developer t
 
 ### Identity Graph and Profile Storage at Scale
 
-For companies operating large-scale identity platforms — such as those in fintech, healthtech, or fraud detection — managing complex user or entity profiles is a core requirement. These profiles often include deeply nested data like names, contact info, document verification, scores, and historical activity. Valkey JSON allows each profile to be stored as a single JSON document and updated atomically as new data arrives, without needing to rewrite the entire object. Queries like `$.email`, `$.history[-1]`, or `$.risk.score` can be executed efficiently with sub-millisecond latency. When paired with Valkey Search, indexed queries on nested fields become possible — enabling real-time lookups like “find all profiles with unverified addresses in California.” This architecture supports hundreds of thousands of concurrent reads and writes per second and can scale to multi-terabyte datasets using hybrid RAM + Flash configurations. For workloads that demand both schema flexibility and ultra-low latency, Valkey JSON offers a compelling alternative to rigid relational databases or slower document stores.
+For companies operating large-scale identity platforms — such as those in fintech, healthtech, or fraud detection — managing complex user or entity profiles is a core requirement. These profiles often include deeply nested data like names, contact info, document verification, scores, and historical activity. Valkey JSON allows each profile to be stored as a single JSON document and updated atomically as new data arrives, without needing to rewrite the entire object. Queries like `$.email`, `$.history[-1]`, or `$.risk.score` can be executed efficiently with sub-millisecond latency. This architecture supports hundreds of thousands of concurrent reads and writes per second and can scale to multi-terabyte datasets using hybrid RAM + Flash configurations. For workloads that demand both schema flexibility and ultra-low latency, Valkey JSON offers a compelling alternative to rigid relational databases or slower document stores.
 
 
 ## Integration with the Valkey Ecosystem
