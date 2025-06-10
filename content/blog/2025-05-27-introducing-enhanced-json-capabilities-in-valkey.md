@@ -21,7 +21,7 @@ Internally, Valkey JSON utilizes an optimized **binary tree-like format**, which
 
 ##  Getting Started with Valkey JSON
 
-Let’s now walk through a real-world example and see how simple, yet powerful Valkey JSON is to use. 
+Let’s walk through a real-world example and see how simple, yet powerful Valkey JSON is to use. 
 
 ### Installation and Setup
 
@@ -44,20 +44,34 @@ This will produce `libjson.so` inside the `bin/` or `build/`
 valkey-server --loadmodule /path/to/libjson.so
 ```
 
-Check the server logs to confirm:
+Let's connect to the valkey-server with `valkey-cli` client for the following commands.
+
+We will not verify the module is loaded:
 
 ```
-Module 'json' loaded successfully.
+127.0.0.1:6379> MODULE LIST
+1) 1) "name"
+   2) "json"
+   3) "ver"
+   4) (integer) 10000
+   5) "path"
+   6) "/usr/lib/valkey/libjson.so"
+   7) "args"
+   8) (empty array)
 ```
 
-You’re ready to work with JSON in Valkey!
+You’re now ready to work with JSON in Valkey!
 
 ### Basic JSON Operations
 
 Let’s take a real world example where you want to store a **list of users** in a single key like this:
 
 ```
-> valkey-cli --raw -x json.set users $ <<EOF
+127.0.0.1:6379> JSON.SET users $ '[{"name":"Alice","email":"alice@example.com","city":"Seattle","state":"WA"},{"name":"Bob","email":"bob@example.com","city":"Bellevue","state":"WA"},{"name":"Charlie","email":"charlie@example.com","city":"Austin","state":"TX"}]'
+OK
+```
+This command stores a JSON array of user objects at the root path `$` under the key `users`. You can visualize it like this:
+```
  [
    {
      "name": "Alice",
@@ -78,8 +92,6 @@ Let’s take a real world example where you want to store a **list of users** in
      "state": "TX"
    }
  ]
- EOF
-> OK
 ```
 
 Next, let’s say you want to fetch all the users in this list. 
@@ -91,7 +103,7 @@ Next, let’s say you want to fetch all the users in this list.
 {\"name\":\"Charlie\",\"email\":\"charlie@example.com\",\"city\":\"Austin\",\"state\":\"TX\"}]"
 ```
 
-That was easy! But what if we wanted to only retrieve the cities associated with our list of users rather than pulling all user information:
+Now we will retrieve only the cities associated with each user:
 
 ```
 127.0.0.1:6379>JSON.GET users $[*].city
@@ -100,8 +112,8 @@ That was easy! But what if we wanted to only retrieve the cities associated with
 
 ##  Advanced JSON Queries
 
-Valkey JSON supports sophisticated JSONPath expressions
-Let us look at some powerful filtering using JSONPath expressions for in-database querying.
+Valkey JSON supports sophisticated [JSONPath](https://goessner.net/articles/JsonPath/) expressions
+Let us look at some powerful filtering using [JSONPath](https://goessner.net/articles/JsonPath/) expressions for in database querying.
 
 #### Retrieve all users from Washington State
 
@@ -113,9 +125,9 @@ Let us look at some powerful filtering using JSONPath expressions for in-databas
 
 This helps you find all users from the  `state`  of Washington - `"WA"`.
 
-### Atomic Multi-Path Updates
+### Multi-Path Queries
 
-Let's say you want to get names of users who are from WA and the ones not from WA?
+Below we retrieve the names of users from WA and those from other states:
 
 ```
 127.0.0.1:6379> JSON.GET users '$[?(@.state=="WA")].name'
@@ -133,25 +145,25 @@ This would return an array of names matching the condition
 "[\"alice@example.com\",\"charlie@example.com\"]"
 ```
 
-It makes it that simple to query and filter through JSON documents.
+This makes querying and filtering JSON documents straightforward.
 
-### Unlocking Real-World Potential with Valkey JSON
+### Key Use Cases for with Valkey JSON
 
-Valkey JSON is both powerful and easy to implement, making it an ideal solution for a wide range of real-world use cases. With native JSON support, developers can manage structured, nested data without complex serialization or parsing logic, enabling rapid, targeted updates and high-performance queries. Here are three impactful use cases that showcase how Valkey JSON can drive real-world value:
+Valkey JSON is both powerful and straightforward to implement, making it an ideal solution for a variety of scenarios. With native JSON support, developers can manage structured, nested data without complex serialization or parsing logic, enabling rapid, targeted updates and high-performance queries. Here are three impactful use cases that showcase how Valkey JSON can drive value:
 
 ### Per-User Event Counters for Ad or Notification Delivery
 
-Valkey JSON excels in high-throughput systems that require tracking per-user counters for ad impressions, push notifications, or message deliveries. For example, an ad platform may store a JSON document per user with nested metadata for each campaign — including impression counts, last delivery timestamps, and click history. Instead of serializing and deserializing large blobs, Valkey JSON enables in-place updates using `JSON.NUMINCRBY` or `JSON.SET` on specific paths (e.g., `$.ad_campaigns.ad_123.count`). This reduces network I/O and latency while ensuring atomicity. Microservices can also retrieve only the required subfields using JSONPath queries, like `$.ad_campaigns.ad_123.lastSeen`, allowing for efficient real-time decisioning. Compared to alternatives like managing multiple hash keys or plain strings, this approach is both cleaner and faster — making it well-suited for ad tech and notification delivery platforms operating at millions of ops/sec under tight latency constraints.
+Valkey JSON works well in high-throughput systems that require tracking per-user counters for ad impressions, push notifications, or message deliveries. For example, an ad platform may store a JSON document per user with nested metadata for each campaign — including impression counts, last delivery timestamps, and click history. Instead of serializing and deserializing large blobs, Valkey JSON enables in-place updates using `JSON.NUMINCRBY` or `JSON.SET` on specific paths (e.g., `$.ad_campaigns.ad_123.count`). This reduces network I/O and latency while ensuring atomicity. Microservices can also retrieve only the required subfields using JSONPath queries, like `$.ad_campaigns.ad_123.lastSeen`, allowing for efficient real-time decisioning. Compared to alternatives like managing multiple hash keys or plain strings, this approach is both cleaner and faster — making it well-suited for ad tech and notification delivery platforms operating at millions of ops/sec under tight latency constraints.
 
 
 ### Shared Reference Metadata Store for Microservices
 
-In distributed systems like games, e-commerce platforms, or internal developer tools, multiple microservices often need fast access to consistent, structured reference data. This can include things like product attributes, game character metadata, tax codes, or ID mappings — which are naturally stored as JSON documents. Valkey JSON provides an ideal solution for centralizing this reference data in-memory. Teams can store large JSON blobs (hundreds of KB or more) using `JSON.SET`, and services can retrieve targeted subfields using path expressions like `$.items[?(@.rarity=="epic")]` or `$.idToName["1234"]`. Updates happen in bulk during patch releases or deployment cycles, but reads are constant and latency-sensitive. By keeping this metadata in Valkey, services avoid making remote API calls or parsing local files, achieving very low lookup latency even under load. This pattern greatly simplifies infrastructure, improves cache coherency, and is especially powerful in cloud-native environments where rapid bootstrapping and shared context matter.
+Across games, e-commerce platforms, or internal developer tools, multiple microservices often need fast access to consistent, structured reference data. This can include things like product attributes, game character metadata, tax codes, or ID mappings — which are naturally stored as JSON documents. Valkey JSON provides an ideal solution for centralizing this reference data in-memory. Teams can store large JSON blobs (hundreds of KB or more) using `JSON.SET`, and services can retrieve targeted subfields using path expressions like `$.items[?(@.rarity=="epic")]` or `$.idToName["1234"]`. Updates happen in bulk during patch releases or deployment cycles, but reads are constant and latency-sensitive. By keeping this metadata in Valkey, services avoid making remote API calls or parsing local files, achieving very low lookup latency even under load. This pattern greatly simplifies infrastructure, improves cache coherency, and is especially powerful in cloud-native environments where rapid bootstrapping and shared context matter.
 
 
 ### Identity Graph and Profile Storage at Scale
 
-For companies operating large-scale identity platforms — such as those in fintech, healthtech, or fraud detection — managing complex user or entity profiles is a core requirement. These profiles often include deeply nested data like names, contact info, document verification, scores, and historical activity. Valkey JSON allows each profile to be stored as a single JSON document and updated atomically as new data arrives, without needing to rewrite the entire object. Queries like `$.email`, `$.history[-1]`, or `$.risk.score` can be executed efficiently with sub-millisecond latency. This architecture supports hundreds of thousands of concurrent reads and writes per second and can scale to multi-terabyte datasets using hybrid RAM + Flash configurations. For workloads that demand both schema flexibility and ultra-low latency, Valkey JSON offers a compelling alternative to rigid relational databases or slower document stores.
+For organization operating large-scale identity platforms — such as those in fintech, healthtech, or fraud detection — managing complex user or entity profiles is a core requirement. These profiles often include deeply nested data like names, contact info, document verification, scores, and historical activity. Valkey JSON allows each profile to be stored as a single JSON document and updated atomically as new data arrives, without needing to rewrite the entire object. Queries like `$.email`, `$.history[-1]`, or `$.risk.score` can be executed efficiently with sub-millisecond latency. This architecture supports hundreds of thousands of concurrent reads and writes per second and can scale to multi-terabyte datasets using a mix of memory and persistent storage. For workloads that demand both schema flexibility and ultra-low latency, Valkey JSON offers a compelling alternative to rigid relational databases or slower document stores.
 
 
 ## Integration with the Valkey Ecosystem
@@ -166,12 +178,13 @@ For users migrating from Redis, Valkey JSON is designed as a **drop-in replaceme
 
 The introduction of the Valkey JSON module is a significant milestone for developers building modern, data-driven applications. By bringing native JSON support into Valkey’s high-performance in-memory engine, it bridges the gap between structured document modeling and real-time responsiveness. Whether you’re updating millions of ad counters per second, serving game metadata to distributed microservices, or powering identity search across terabytes of profiles, ValkeyJSON simplifies your architecture while boosting speed and scalability. With Valkey 8.0 and beyond, developers gain a powerful, intuitive, and production-grade toolset to manipulate JSON data at scale — all with the familiar simplicity and reliability of Valkey.
 
-Dive deeper into Valkey JSON and see how easy it is to supercharge your JSON workloads with Valkey today!
+Explore Valkey JSON in more depth and start building with it today!
 
-For further exploration, refer to:
+Please refer to the 
 
-* [Valkey Official Documentation](https://valkey.io/topics/valkey-json/)
-* [Valkey JSON GitHub Repository](https://github.com/valkey-io/valkey-json)
+* [Valkey Official Documentation](https://valkey.io/topics/valkey-json/) to learn more.
+* [Valkey JSON GitHub Repository](https://github.com/valkey-io/valkey-json) if you have issues or for any feature requests.
+* [Valkey Extensions](https://hub.docker.com/r/valkey/valkey-extensions) to start build with Valkey JSON.
 
 Thank you to all those who helped develop the module:
 
