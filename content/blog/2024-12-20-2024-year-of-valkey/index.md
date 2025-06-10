@@ -4,6 +4,10 @@ title=  "2024: The Year of Valkey"
 description = "The end of the calendar year is a great time to reflect, but for Valkey this particular year-end holds special meaning."
 date= 2024-12-20 01:01:01
 authors= ["kyledvs"]
+[extra]
+featured = false
+featured_image = "/assets/media/featured/random-05.webp"
+
 +++
 
 The end of the calendar year is a great time to reflect, but for Valkey this particular year-end holds special meaning.

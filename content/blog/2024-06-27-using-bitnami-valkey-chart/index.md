@@ -6,6 +6,10 @@ aliases= [
     "/blog/2024/06/using-bitnami-valkey-chart/"
 ]
 authors=["rafariossaa"]
+[extra]
+featured = false
+featured_image = "/assets/media/featured/random-01.webp"
+
 +++
 
 Valkey is a high-performance key/value datastore that supports workloads such as caching, and message queues, supporting many data types including strings, numbers, hashes, bitmaps, and more. Valkey can run in standalone or cluster mode for replication and high availability.

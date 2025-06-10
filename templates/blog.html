@@ -1,13 +1,39 @@
-{% extends "fullwidth.html" %}
+{% extends "blog-aside.html" %}
+
+{% block subhead_content %}
+  <div class="styled-title">
+    <h1>{{ section.title }}</h1>
+    <p>{{ section.description }}</p>
+  </div>
+{% endblock subhead_content %}
 
 {% block main_content %}
-<ul class="bloglist">
-  {% for page in section.pages %}
-  <li>
-    <h2><a href="{{ page.permalink }}">{{ page.title  | safe}}</a></h2>
-    <div class="meta">{{ page.date | date(format="%A %B %e, %Y") }}</div>
-    <p>{{ page.description | safe }}</p>
-  </li>
-  {% endfor %}
-</ul>
+  <ul class="blog-list">
+    {% for page in section.pages %}
+    <li>
+      <h2><a href="{{ page.permalink }}">{{ page.title  | safe}}</a></h2>
+      <div class="meta">{{ page.date | date(format="%A %B %e, %Y") }}</div>
+      <p>{{ page.description | safe }}</p>
+    </li>
+    {% endfor %}
+  </ul>
 {% endblock main_content %}
+
+{% block related_content %}
+  <div class="blog-featured">
+    <h2>Featured</h2>
+    {% set blog_post_section = get_section(path="blog/_index.md") %}
+      {% set featured_posts = blog_post_section.pages | filter(attribute="extra.featured", value=true) | slice(end=4) %}
+        {% for post in featured_posts %}
+          <div class="blog-featured-card">
+            {% if post.extra.featured_image %}
+              <img src="{{ post.extra.featured_image }}" alt="{{ post.title }} featured image" class="blog-featured-image"/>
+            {% endif %}
+            <div class="info">
+              <h4><a href="{{ post.permalink }}">{{ post.title }}</a></h4>
+              <p>{{ post.description }}</p>
+            </div>
+          </div>
+        {% endfor %}
+  </div>
+{% endblock related_content %}

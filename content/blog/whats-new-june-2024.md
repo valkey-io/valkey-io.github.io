@@ -2,9 +2,12 @@
 title=  "What's new in Valkey for June 2024"
 date= 2024-06-27 01:01:01
 description= "What have people been saying about Valkey in June 2024? Read on to find out."
-[extra]
 authors= ["kyledvs"]
+
+[extra]
 categories= "roundup"
+featured = false
+featured_image = "/assets/media/featured/random-01.webp"
 +++
 
 What have people been saying since the [last what's new post](/blog/may-roundup/)? Read on to find out.

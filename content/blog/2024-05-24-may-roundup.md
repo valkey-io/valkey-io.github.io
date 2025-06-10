@@ -9,6 +9,8 @@ authors= ["kyledvs"]
 
 [extra]
 categories= "update"
+featured = false
+featured_image = "/assets/media/featured/random-02.webp"
 +++
 
 It's become clear that people want to talk about Valkey and have been publishing blog posts/articles fervently.
