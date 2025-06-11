@@ -1,7 +1,10 @@
 .DS_Store
 public
+build-bloom-command-json
 build-command-docs
 build-command-json
+build-json-command-json
+build-search-command-json
 build-topics
 build-clients
 content/commands/*
