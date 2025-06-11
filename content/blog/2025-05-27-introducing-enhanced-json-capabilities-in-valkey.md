@@ -46,7 +46,7 @@ valkey-server --loadmodule /path/to/libjson.so
 
 Let's connect to the valkey-server with `valkey-cli` client for the following commands.
 
-We will not verify the module is loaded:
+We will now verify the module is loaded:
 
 ```
 127.0.0.1:6379> MODULE LIST
@@ -112,8 +112,8 @@ Now we will retrieve only the cities associated with each user:
 
 ##  Advanced JSON Queries
 
-Valkey JSON supports sophisticated [JSONPath](https://goessner.net/articles/JsonPath/) expressions
-Let us look at some powerful filtering using [JSONPath](https://goessner.net/articles/JsonPath/) expressions for in database querying.
+Valkey JSON supports [JSONPath](https://goessner.net/articles/JsonPath/) expressions
+Let us look at some filtering using JSONPath.
 
 #### Retrieve all users from Washington State
 
@@ -123,7 +123,14 @@ Let us look at some powerful filtering using [JSONPath](https://goessner.net/art
 {\"name\":\"Bob\",\"email\":\"bob@example.com\",\"city\":\"Bellevue\",\"state\":\"WA\"}]"
 ```
 
-This helps you find all users from the  `state`  of Washington - `"WA"`.
+Here, JSONPath syntax is used to filter data from a JSON document.
+Let's break it down on how that works:
+- `$` represents the root of the JSON document
+- `[...]` indicates we're working with an array
+- `?()` is a filter expression that applies a condition
+- `@` refers to the current object being processed in the array
+- `.state` accesses the "state" property of the current object
+- `=="WA"` checks if that property equals the string "WA"
 
 ### Multi-Path Queries
 
@@ -136,8 +143,6 @@ Below we retrieve the names of users from WA and those from other states:
 "[\"Alice\",\"Bob\"]"
 ```
 
-This would return an array of names matching the condition
-
 #### We can also get the emails of users from Seattle or Austin
 
 ```
@@ -145,11 +150,9 @@ This would return an array of names matching the condition
 "[\"alice@example.com\",\"charlie@example.com\"]"
 ```
 
-This makes querying and filtering JSON documents straightforward.
-
 ### Key Use Cases for with Valkey JSON
 
-Valkey JSON is both powerful and straightforward to implement, making it an ideal solution for a variety of scenarios. With native JSON support, developers can manage structured, nested data without complex serialization or parsing logic, enabling rapid, targeted updates and high-performance queries. Here are three impactful use cases that showcase how Valkey JSON can drive value:
+With native JSON support, developers can manage structured, nested data without complex serialization or parsing logic, enabling rapid, targeted updates and high-performance queries. Here are three impactful use cases that showcase how Valkey JSON can drive value:
 
 ### Per-User Event Counters for Ad or Notification Delivery
 
@@ -158,7 +161,7 @@ Valkey JSON works well in high-throughput systems that require tracking per-user
 
 ### Shared Reference Metadata Store for Microservices
 
-Across games, e-commerce platforms, or internal developer tools, multiple microservices often need fast access to consistent, structured reference data. This can include things like product attributes, game character metadata, tax codes, or ID mappings — which are naturally stored as JSON documents. Valkey JSON provides an ideal solution for centralizing this reference data in-memory. Teams can store large JSON blobs (hundreds of KB or more) using `JSON.SET`, and services can retrieve targeted subfields using path expressions like `$.items[?(@.rarity=="epic")]` or `$.idToName["1234"]`. Updates happen in bulk during patch releases or deployment cycles, but reads are constant and latency-sensitive. By keeping this metadata in Valkey, services avoid making remote API calls or parsing local files, achieving very low lookup latency even under load. This pattern greatly simplifies infrastructure, improves cache coherency, and is especially powerful in cloud-native environments where rapid bootstrapping and shared context matter.
+Across games, e-commerce platforms, or internal developer tools, multiple microservices often need fast access to consistent, structured reference data. This can include things like product attributes, game character metadata, tax codes, or ID mappings — which are naturally stored as JSON documents. Valkey JSON provides an ideal solution for centralizing this reference data in-memory. Teams can store large JSON blobs (hundreds of KB or more) using `JSON.SET`, and services can retrieve targeted subfields using path expressions like `$.items[?(@.rarity=="epic")]` or `$.idToName["1234"]`. Updates happen in bulk during patch releases or deployment cycles, but reads are constant and latency-sensitive. By keeping this metadata in Valkey, services avoid making remote API calls or parsing local files, achieving very low lookup latency even under load. This pattern greatly simplifies infrastructure, improves cache coherency, and is especially in cloud-native environments where rapid bootstrapping and shared context matter.
 
 
 ### Identity Graph and Profile Storage at Scale
