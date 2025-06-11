@@ -5,11 +5,11 @@ sort_by = "2025-06-03 01:01:01"
 authors= [ "roshkhatri"]
 +++
 
-JSON is a ubiquitous universal format for semi-structured data, and modern developers expect to work with it natively across their stack, including in-memory stores like Valkey. Until now, using JSON in Valkey meant serializing entire objects into strings or flattening them into Hashes with limited nesting. These workarounds added complexity and made updates harder than they should be.
+JSON is a ubiquitous format for semi-structured data, and developers often expect native support across their technology stack, including in-memory stores like Valkey. Previously, working with JSON in Valkey required serializing entire objects as strings or flattening them into Hashes, limiting nesting. These workarounds added complexity and made updates harder than they should be.
 
 That changes with the general availability of native JSON support in Valkey. You can now store, query, and update JSON documents directly, without manual parsing or transformation. This brings a cleaner model to working with semi-structured data and makes your code easier to write and maintain.
 
-In this post, I’ll walk through installing the Valkey JSON module and demonstrate how to use it for some common workloads.
+In this post, we'll guide you through setting up the Valkey JSON module and demonstrate how to use it for some common workloads.
 
 ## Core Capabilities and Performance
 
@@ -21,7 +21,7 @@ Internally, Valkey JSON utilizes an optimized **binary tree-like format**, which
 
 ##  Getting Started with Valkey JSON
 
-Let’s walk through a real-world example and see how simple, yet powerful Valkey JSON is to use. 
+Let’s walk through a real-world example and see how Valkey JSON can be used. 
 
 ### Installation and Setup
 
@@ -173,7 +173,7 @@ For organization operating large-scale identity platforms — such as those in f
 
 Ensuring smooth integration across data stores and libraries is vital for minimizing migration friction and maximizing developer productivity. Valkey JSON is fully compatible with **Valkey 8.0 and above**, making it accessible to users on the latest Valkey versions without requiring additional configuration.
 
-It is also compliant with **RFC7159 and ECMA-404**, adhering to widely accepted JSON standards. This alignment enables consistent JSON handling across Valkey modules and supports integration with **Valkey-Search**, and querying across JSON datasets for advanced analytics and data exploration. Additionally, Valkey JSON integrates with **Valkey’s Access Control Lists (ACLs)**, providing fine-grained permissions for JSON commands alongside other data types like strings and hashes.
+It is also compliant with **RFC7159** and **ECMA-404**, adhering to widely accepted JSON standards which ensures consistent handling JSON data. Valkey JSON also integrates with **Valkey’s Access Control Lists (ACLs)**, providing fine-grained permissions for JSON commands alongside other data types like strings and hashes.
 
 For users migrating from Redis, Valkey JSON is designed as a **drop-in replacement for RedisJSON v2**, maintaining API and RDB compatibility. This ensures a smooth transition for RedisJSON users while leveraging Valkey’s optimized performance and scalability.
 
@@ -183,11 +183,11 @@ The introduction of the Valkey JSON module is a significant milestone for develo
 
 Explore Valkey JSON in more depth and start building with it today!
 
-Please refer to the 
+See the following resources for details and ways to contribute:
 
 * [Valkey Official Documentation](https://valkey.io/topics/valkey-json/) to learn more.
-* [Valkey JSON GitHub Repository](https://github.com/valkey-io/valkey-json) if you have issues or for any feature requests.
-* [Valkey Extensions](https://hub.docker.com/r/valkey/valkey-extensions) to start build with Valkey JSON.
+* [Valkey JSON GitHub Repository](https://github.com/valkey-io/valkey-json) for issues or feature requests.
+* [Valkey Extensions](https://hub.docker.com/r/valkey/valkey-extensions) to start building with Valkey JSON.
 
 Thank you to all those who helped develop the module:
 
@@ -196,4 +196,4 @@ Thank you to all those who helped develop the module:
 * Nikhil Manglore ([Nikhil-Manglore](https://github.com/Nikhil-Manglore))
 * Cameron Zack ([zackcam](https://github.com/zackcam))
 
-Happy coding
+Happy coding!
