@@ -1,7 +1,5 @@
 {% extends "fullwidth.html" %}
-{%- block head -%}
-    <title>Try Valkey</title>
-
+{% block main_content %}
     <!-- Scripts -->
     <script src="https://download.valkey.io/try-me-valkey/vos/v86/libv86.js"></script>
     <script src="https://download.valkey.io/try-me-valkey/vos/xterm/xterm.min.js"></script>
@@ -11,17 +9,17 @@
     <!-- Styles -->
     <link rel="stylesheet" href="https://download.valkey.io/try-me-valkey/vos/xterm/xterm.css" />
     <link rel="stylesheet" href="https://download.valkey.io/try-me-valkey/vos/valkey-try-me.css" />
-
-{%- endblock -%}
-{% block main_content %}
-    <p>This is an in-browser Valkey server and CLI that runs directly within your browser using a V86 emulator, requiring no external installations. </p>
+    
+    <!-- Body -->
+    <title>Try Valkey</title>
+    <p>This is an in-browser Valkey server and CLI that runs directly within your browser using a <a href="https://github.com/copy/v86">V86</a> emulator, requiring no external installations. </p>
     <p>Try it out below:</p>
     <div id="terminalWrapper" class="container" style="display: none;">
         <div id="terminal-container"></div>
     </div>
     <!-- Warning Section -->
     <div id="warningContainer" style="text-align: center; margin-top: 20px;">
-        <button id="startButton" style="padding: 10px 20px; font-size: 18px; margin-top: 10px;">Load Emulator</button>
+        <button id="startButton" style="padding: 10px 20px; font-size: 18px; margin-top: 10px; cursor: pointer;">Load Emulator</button>
         <p>This emulator will download approximately 50MB of data.</p>
     </div>
     <!-- Loading Section (Hidden at first) -->
@@ -29,8 +27,6 @@
         <p id="progressText">Preparing to load...</p>
         <progress id="progressBar" value="0" max="100"></progress>
     </div>
-    
-
 
     <script>
         "use strict";
