@@ -2,68 +2,74 @@
 {% import "macros/docs.html" as docs %}
 
 {% block main_content %}
-    <div class="markdown-content">
-        {% set content_parts = section.content | split(pat="<!-- split -->") %}
-        {{ content_parts[0] | markdown | safe }}
-    </div>
+    {% set client_path = section.extra.recommended_clients_paths | first %}
+    {% set client = load_data(path = docs::client_json_path(client_path=client_path), format="json", required = false) %}
+    {% if not client %}
+        <strong>Clients page not found.</strong> You likely need to build the client page. See "Building additional content" in the README.md file.
+    {% else %}
+        <div class="markdown-content">
+            {% set content_parts = section.content | split(pat="<!-- split -->") %}
+            {{ content_parts[0] | markdown | safe }}
+        </div>
 
-    <div class="client-list">
-        <h2>Table of Contents</h2>
-        <ul>              
-            {% set languages = [] %}
-            {% for path in section.extra.recommended_clients_paths %}
-                {% set language = path | split(pat="/") | nth(n=1) %}
-                {% if language not in languages %}
-                    {% set_global languages = languages | concat(with=language) %}
-                {% endif %}
-            {% endfor %}
-            {% for language in languages %}
-                <li><a href="#{{ language | slugify }}">{{ docs::format_language(language=language) }}</a></li>
-            {% endfor %}
-            <li><a href="#feature-comparison-table">Feature Comparison Table</a></li>
-        </ul>
-        {% for language in languages %}
-            <div class="language-clients">
-                <h2 id="{{ language | slugify }}">{{ docs::format_language(language=language) }}</h2>
+        <div class="client-list">
+            <h2>Table of Contents</h2>
+            <ul>              
+                {% set languages = [] %}
                 {% for path in section.extra.recommended_clients_paths %}
-                    {% set client = load_data(path = docs::client_json_path(client_path= path), format="json") %}
-                    {% if client.language == language %}
-                    <div class="client-item" >
-                        <h3 id="{{ client.name | slugify }}">{{ client.name }}</h3>
-                        <ul>
-                            <li><strong>Repo:</strong> <a href="{{ client.repo }}">{{ client.name }}</a></li>
-                            <li>
-                                <strong>Installation:</strong>
-                                {% if client.installation is iterable %}
-                                    <ul>
-                                        {% for installation_type in client.installation %}
-                                            <li>
-                                                {{ installation_type.type }}:
-                                                <pre>{{ installation_type.command }}</pre>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <code>{{ client.installation }}</code>
-                                {% endif %}
-                            </li>
-                            <li><strong>Version:</strong> {{ client.version }}</li>
-                            <li><strong>Version Released:</strong> {{ client.version_released }}</li>
-                            <li><strong>Description:</strong> {{ client.description }}</li>
-                            <li><strong>License:</strong> {{ client.license }}</li>
-                        </ul>
-                    </div>                    
+                    {% set language = path | split(pat="/") | nth(n=1) %}
+                    {% if language not in languages %}
+                        {% set_global languages = languages | concat(with=language) %}
                     {% endif %}
                 {% endfor %}
-            </div>
-        {% endfor %}
-    </div>
-    <div class="markdown-content">
-        {{ content_parts[1] | markdown | safe }}
-    </div>
-    <div  id="feature-comparison-table" class = "feature-comparison-table" >
-        {% set client_paths = section.extra.recommended_clients_paths %}
-        {% set client_fields = section.extra.client_fields %}
-        {% include "client-feature-table.html" %}
-    </div>
+                {% for language in languages %}
+                    <li><a href="#{{ language | slugify }}">{{ docs::format_language(language=language) }}</a></li>
+                {% endfor %}
+                <li><a href="#feature-comparison-table">Feature Comparison Table</a></li>
+            </ul>
+            {% for language in languages %}
+                <div class="language-clients">
+                    <h2 id="{{ language | slugify }}">{{ docs::format_language(language=language) }}</h2>
+                    {% for path in section.extra.recommended_clients_paths %}
+                        {% set client = load_data(path = docs::client_json_path(client_path= path), format="json") %}
+                        {% if client.language == language %}
+                        <div class="client-item" >
+                            <h3 id="{{ client.name | slugify }}">{{ client.name }}</h3>
+                            <ul>
+                                <li><strong>Repo:</strong> <a href="{{ client.repo }}">{{ client.name }}</a></li>
+                                <li>
+                                    <strong>Installation:</strong>
+                                    {% if client.installation is iterable %}
+                                        <ul>
+                                            {% for installation_type in client.installation %}
+                                                <li>
+                                                    {{ installation_type.type }}:
+                                                    <pre>{{ installation_type.command }}</pre>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <code>{{ client.installation }}</code>
+                                    {% endif %}
+                                </li>
+                                <li><strong>Version:</strong> {{ client.version }}</li>
+                                <li><strong>Version Released:</strong> {{ client.version_released }}</li>
+                                <li><strong>Description:</strong> {{ client.description }}</li>
+                                <li><strong>License:</strong> {{ client.license }}</li>
+                            </ul>
+                        </div>                    
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="markdown-content">
+            {{ content_parts[1] | markdown | safe }}
+        </div>
+        <div  id="feature-comparison-table" class = "feature-comparison-table" >
+            {% set client_paths = section.extra.recommended_clients_paths %}
+            {% set client_fields = section.extra.client_fields %}
+            {% include "client-feature-table.html" %}
+        </div>
+    {% endif %}
 {% endblock main_content %}
