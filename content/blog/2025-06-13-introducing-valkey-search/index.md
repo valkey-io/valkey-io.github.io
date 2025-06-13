@@ -149,7 +149,7 @@ Valkey-search is open source and ready for you to explore. Whether you're buildi
 
 We welcome contributions of all kinds - code, documentation, testing, and feedback. Join the community, file issues, open pull requests, or suggest improvements. Your involvement helps make valkey-search better for everyone.
 
-Ready to dive in? Clone the repo, fire up the dev container, and start building high-performance vector search with valkey-search.
+Ready to dive in? Clone the repo, fire up the [dev container](https://github.com/valkey-io/valkey-search?tab=readme-ov-file#development-environment), and start building high-performance vector search with valkey-search.
 
 
 ## About the Authors
