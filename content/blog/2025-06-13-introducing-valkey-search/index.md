@@ -6,7 +6,7 @@ authors= ["yairgott", "allenss-amazon"]
 
 [extra]
 featured = false
-featured_image = "/assets/media/featured/random-04.webp"
+featured_image = "/assets/media/featured/random-08.webp"
 +++
 
 The Valkey project is introducing vector similarity search capabilities through [valkey-search](https://github.com/valkey-io/valkey-search) (BSD-3-Clause licensed), an official Valkey module compatible with Valkey versions 8.1.1 and above. 
