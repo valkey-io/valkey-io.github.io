@@ -2,7 +2,7 @@
 title= "Introducing Vector Search To Valkey" 
 description = "Learn how to use valkey-search to search through billions of vectors with single-digit millisecond latencies and greater than 99% recall." 
 date= 2025-06-13 01:01:01 
-authors= ["yairgott", "allenss-amazon"] 
+authors= ["yairgott", "allenss"] 
 
 [extra]
 featured = false
