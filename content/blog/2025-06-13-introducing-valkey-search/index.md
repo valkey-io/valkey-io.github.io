@@ -150,37 +150,3 @@ Valkey-search is open source and ready for you to explore. Whether you're buildi
 We welcome contributions of all kinds - code, documentation, testing, and feedback. Join the community, file issues, open pull requests, or suggest improvements. Your involvement helps make valkey-search better for everyone.
 
 Ready to dive in? Clone the repo, fire up the [dev container](https://github.com/valkey-io/valkey-search?tab=readme-ov-file#development-environment), and start building high-performance vector search with valkey-search.
-
-
-## About the Authors
-
-
-<table>
-  <tr>
-   <td>
-
-<img src="images/yair.jpg" width="200" height="200" />
-
-
-   </td>
-   <td>
-
-### Yair Gottdenker
-
-Yair Gottdenker is a Senior Staff Software Engineer at Memorystore GCP. 
-   </td>
-  </tr>
-  <tr>
-   <td>
-
-<img src="images/allen.png" width="200" height="200" />
-
-   </td>
-   <td>
-     
-### Allen Samuels 
- 
-Allen Samuels is a Principal Engineer at AWS.
-   </td>
-  </tr>
-</table>
