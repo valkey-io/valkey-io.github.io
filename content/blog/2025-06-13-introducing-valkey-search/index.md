@@ -1,3 +1,14 @@
++++
+title= "Introducing Vector Search To Valkey" 
+description = "Learn how to use valkey-search to search through billions of vectors with single-digit millisecond latencies and greater than 99% recall." 
+date= 2025-06-13 01:01:01 
+authors= ["yairgott", "allenss-amazon"] 
+
+[extra]
+featured = false
+featured_image = "/assets/media/featured/random-04.webp"
++++
+
 The Valkey project is introducing vector similarity search capabilities through [valkey-search](https://github.com/valkey-io/valkey-search) (BSD-3-Clause licensed), an official Valkey module compatible with Valkey versions 8.1.1 and above. 
 
 With valkey-search you can search through billions of vectors with single-digit millisecond latencies and greater than 99% recall. Whether you're building semantic search, fraud detection systems, or conversational AI experiences, valkey-search offers a performant and flexible foundation.
@@ -146,8 +157,9 @@ Ready to dive in? Clone the repo, fire up the dev container, and start building 
 <table>
   <tr>
    <td>
-     
-![Yair Gottdenker](images/yair.png)
+
+<img src="images/yair.jpg" width="200" height="200" />
+
 
    </td>
    <td>
@@ -159,8 +171,8 @@ Yair Gottdenker is a Senior Staff Software Engineer at Memorystore GCP.
   </tr>
   <tr>
    <td>
-     
-![Allen Samuels](images/Allen.png)
+
+<img src="images/allen.png" width="200" height="200" />
 
    </td>
    <td>
