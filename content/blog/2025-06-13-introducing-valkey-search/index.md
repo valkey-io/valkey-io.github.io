@@ -121,7 +121,7 @@ valkey-search enhances Valkey snapshotting mechanism to include index definition
 
 **Fast Turn-up:** New nodes must become fully operational in minimal time. While rebuilding an index on startup is an option, ingesting a large volume of vectors can be prohibitively slow, delaying system readiness. A snapshot captures not only the index metadata but also the vector index content which significantly reduces downtime and operational burden.
 
-**Backward/Forward Compatibility:** Cluster upgrades or downgrades often result in a temporary mix of node versions. valkey-search seamlessly handles such scenarios with a serialization format based on Protocol Buffers (Protobuf), ensuring both backward and forward compatibility. This guarantees smooth version transitions without requiring costly re-indexing.
+**Backward/Forward Compatibility:** Cluster upgrades or downgrades often result in a temporary mix of node versions. valkey-search seamlessly handles such scenarios with a serialization format based on Protocol Buffers (Protobuf), ensuring both backward and forward compatibility. This simplifies version transitions and reduces the chance of costly re-indexing.
 
 
 ## RediSearch API Compatibility
