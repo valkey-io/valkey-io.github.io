@@ -95,9 +95,9 @@ Pre-filtering is particularly effective for high selectivity queries, i.e., the 
 
 ### High Availability
 
-Valkey-search is built on top of Valkey, leveraging its primary/replica-based architecture to provide high availability (HA). Diagram #2 shows a typical configuration of one primary and three replicas. In the event of a primary node failure, the system automatically promotes one of the replicas to become the new primary. Clients then automatically retry failing operations to the newly promoted primary, minimizing disruption.
+Valkey-search is built on top of Valkey, leveraging its primary/replica-based architecture to provide high availability (HA). Diagram #2 shows a typical configuration of one primary and three replicas. In the event of a primary node failure, the system automatically promotes one of the replicas to become the new primary.
 
-Clients must send data mutation (write) commands to the primary node which are executed and then asynchronously transmitted to each replica. Clients can send data read operations to any node in the cluster, recognizing that reading from a replica delivers a result reflecting a historical point in time.
+Clients must send data mutation (write) commands to the primary node which are executed and then automatically asynchronously transmitted to each replica. Clients can send data read operations to any node in the cluster, recognizing that reading from a replica delivers a result reflecting a historical point in time.
 
 When Valkey-search is used, each node, whether a primary or a replica, builds and maintains its own indexes. No additional traffic on the replication channel is generated for index maintenance. Search query operations sent to a replica will be executed against its indexes, reflecting the historical point in time of the data within that node.
 
