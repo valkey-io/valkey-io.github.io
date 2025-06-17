@@ -126,7 +126,7 @@ valkey-search enhances Valkey snapshotting mechanism to include index definition
 
 ## RediSearch API Compatibility
 
-Valkey-search implements a subset of RediSearch’s functionality, with strong compatibility across key vector search APIs. This enables integration with most existing RediSearch client libraries, allowing you to continue using familiar tools. Developers already experienced with RediSearch can adopt valkey-search with minimal changes, as the API remains largely consistent. This compatibility helps reduce adoption friction for teams and organizations building on Redis OSS-based solutions.
+Valkey-search implements a subset of RediSearch’s functionality, with compatibility across key vector search APIs. This enables integration with most existing RediSearch client libraries, allowing you to continue using familiar tools. Developers already experienced with RediSearch can adopt valkey-search with minimal changes, as the API remains largely consistent. This compatibility helps reduce adoption friction for teams and organizations building on Redis OSS-based solutions.
 
 
 ## Performance & Low Latency
