@@ -143,6 +143,7 @@ Valley-search’s HNSW implementation is based on the OSS project [HNSWLib](http
 This first release of valkey-search focuses on vector search, but it is designed as a general-purpose indexing subsystem. Future releases will extend both the available data types as well as provide post-query data processing facilities.
 
 
+
 ## Get Involved
 
 Valkey-search is open source and ready for you to explore. Whether you're building cutting-edge AI applications or integrating vector search into existing systems, we invite you to try it out. The easiest way to get started is by visiting the [GitHub repository](https://github.com/valkey-io/valkey-search), where you'll find setup instructions, documentation, and examples.
