@@ -119,7 +119,7 @@ Valkey’s point-in-time RDB snapshotting mechanism is a key component for maint
 
 valkey-search enhances Valkey snapshotting mechanism to include index definitions and vector indexes and is built for resilience and efficiency:
 
-**Instant Turn-up:** New nodes must become fully operational in minimal time. While rebuilding an index on startup is an option, ingesting a large volume of vectors can be prohibitively slow, delaying system readiness. A snapshot captures not only the index metadata but also the vector index content which significantly reduces downtime and operational burden.
+**Fast Turn-up:** New nodes must become fully operational in minimal time. While rebuilding an index on startup is an option, ingesting a large volume of vectors can be prohibitively slow, delaying system readiness. A snapshot captures not only the index metadata but also the vector index content which significantly reduces downtime and operational burden.
 
 **Backward/Forward Compatibility:** Cluster upgrades or downgrades often result in a temporary mix of node versions. valkey-search seamlessly handles such scenarios with a serialization format based on Protocol Buffers (Protobuf), ensuring both backward and forward compatibility. This guarantees smooth version transitions without requiring costly re-indexing.
 
