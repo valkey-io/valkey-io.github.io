@@ -5,20 +5,16 @@ date= 2025-05-08 01:01:01
 authors= [ "niharikabhavaraju", "jbrinkman"]
 +++
 
-Valkey GLIDE is pleased to announce the general availability (GA) release of the GLIDE(General Language Independent Driver for the Enterprise) Go client. This release brings the power and reliability of Valkey to Go developers with an API designed for performance and developer productivity.
+The Valkey GLIDE contributors are pleased to announce the general availability (GA) release of the GLIDE (General Language Independent Driver for the Enterprise) Go client. This release brings the power and reliability of Valkey to Go developers with an API designed for performance and developer productivity.
 
-Valkey GLIDE is a multi-language client for Valkey, designed for operational excellence and incorporating best practices refined through years of experience. GLIDE ensures a consistent and unified client experience across applications, regardless of the programming language.
-
-With support for Java, Node.js, Python, and now Golang moving from public preview to general availability, this announcement introduces the Valkey GLIDE support for Go, expanding support to Golang developers and providing new connectivity to Valkey servers, including both standalone and cluster deployments.
-
-## Why You Should Be Excited
+Vakey GLIDE 2.0 brings exciting new features for all of our language clients (Java, Node.js, Python, and now Go). These features include pipelines, OpenTelemetry support, MacOS x86 support, and improved performance and bug fixes.
 
 The Go client extends Valkey GLIDE to the Go community, offering a robust client that's built on the battle-tested Rust core. This client library is a thoughtfully designed experience for Go developers who need reliable, high-performance data access.
 
 ## What's new in GA?
 
-- The major addition in the GA release is comprehensive [batch support](#batch-support) that includes both transactions and pipelines..
-- Complete support for all Valkey commands encompassing scripting, functions, pubsub, server management, and all other operations in both standalone and cluster.
+- The major addition in the GA release is comprehensive [batch support](#batch-support) that includes both transactions and pipelines.
+- Complete support for all Valkey commands encompassing scripting, functions, pubsub, server management, and all other operations in both standalone and cluster modes.
 - Support for OpenTelemetry tracing which has been added to all language clients, including Go.
 
 ## Key Features
@@ -123,11 +119,11 @@ func performConcurrentOperations(client *glide.Client) {
 
 Under the hood, the client efficiently handles these concurrent requests by:
 
-1. Using a single multiplexed connection per node to pipeline concurrent commands, minimizing socket overhead and system resources
-2. Implementing thread-safe command execution
-3. Efficiently routing concurrent commands to the appropriate server nodes
+1. Using a single multiplexed connection per node to pipeline concurrent commands, minimizing socket overhead and system resources,
+2. Implementing thread-safe command execution,
+3. Efficiently routing concurrent commands to the appropriate server nodes.
 
-While the current API is synchronous, the implementation is specifically optimized for concurrent usage through Go's native goroutines. We would love feedback about whether to add async/channel-based APIs in future releases.
+While the current API is synchronous, the implementation is specifically optimized for concurrent usage through Go's native goroutines. We would love feedback about whether to add async/channel-based APIs in future releases, or anything else you think could help improve Valkey GLIDE. You can create an issue on our [GitHub repository](https://github.com/valkey-io/valkey-glide/issues) to request a feature or report a bug, or start a discussion in our [GitHub Discussions forum](https://github.com/valkey-io/valkey-glide/discussions) to share your thoughts.
 
 ## Getting Started
 
@@ -178,9 +174,7 @@ func main() {
 
 ### Cluster Mode Connection Setup
 
-Need to work with a Valkey cluster?
-
-Just as easy! The Go client automatically discovers your entire cluster topology from a single seed node. The following sample shows how to connect to a Valkey cluster through a node running locally on port 7001:
+Valkey GLIDE makes it just as easy to work with a Valkey cluster! The Go client automatically discovers your entire cluster topology from a single seed node. The following sample shows how to connect to a Valkey cluster through a node running locally on port 7010:
 
 ```go
 package main
@@ -193,9 +187,9 @@ import (
 
 func main() {
     // Specify the address of any single node in your cluster
-    // This example connects to a local cluster node on port 7001
+    // This example connects to a local cluster node on port 7010
     host := "localhost"
-    port := 7001
+    port := 7010
     
     // Connect to a Valkey cluster through any node
     cfg := config.NewClusterClientConfiguration().
@@ -299,11 +293,11 @@ The Go client now includes full batch support, including transactions and pipeli
 
 **Create Batch:**
 
-Define a new batch using `pipeline.NewStandaloneBatch(isAtomic)` or `pipeline.NewClusterBatch(isAtomic)` to begin the process of creating a batch. `isAtomic` is a boolean that determines whether the batch should be executed atomically using Valkey's transaction features, or executed non-atomically using the pipeline functionality.
+Define a new batch using `pipeline.NewStandaloneBatch(isAtomic)` or `pipeline.NewClusterBatch(isAtomic)` to begin the process of creating a batch. `isAtomic` is a boolean that determines whether the batch should be executed atomically using Valkey's transaction features, or executed non-atomically using the pipeline functionality. This pipeline feature is new for all languages in Valkey GLIDE 2.0 and provides even greater performance where atomicity is not required.
 
 ```go
     // Create a new transaction
-    batch := pipeline.NewStandaloneBatch(true) // Atomic batch
+    batch := pipeline.NewStandaloneBatch(true) // Atomic batch == transaction
 ```
 
 **Queue Commands:**
@@ -320,7 +314,7 @@ Define a new batch using `pipeline.NewStandaloneBatch(isAtomic)` or `pipeline.Ne
 
  Run all queued commands
  After queueing the commands, a batch can be executed with `client.Exec()`
- All the queued commands will be executed and return a response array which consists of the command results.
+ All the queued commands will be executed and return a response array which consists of the command results. Since the batch definition is separate from the execution, you can re-execute the same batch against different clients providing added flexibility.
 
 ## Standalone Mode Batch
 
@@ -359,7 +353,7 @@ Define a new batch using `pipeline.NewStandaloneBatch(isAtomic)` or `pipeline.Ne
 
 ## Cluster mode Batch
 
-Cluster batches are similar to standalone batches, but they are executed on a cluster client. They also may have specific routing options to control which node the commands are executed on. In a cluster batch, all commands are executed on the same node, unless the IsAtomic flag is set to false (i.e. is a pipeline and not a transaction), in which case the commands may be split based on the key slot.
+Cluster batches are similar to standalone batches, but they are executed on a cluster client. They may have specific routing options to control which node the commands are executed on. In a cluster batch, all commands are executed on the same node, unless the IsAtomic flag is set to false (i.e. is a pipeline and not a transaction), in which case the commands may be split based on the key slot. Once all commands have been executed, the results (including any errors) are returned to the client. For pipelines, the results are returned in the same order as the commands were queued, even when the commands are executed on different nodes.
 
 ```go
 	// Cluster BatchClient Example
@@ -403,15 +397,13 @@ Cluster batches are similar to standalone batches, but they are executed on a cl
 	}
 ```
 
-In cluster transactions, the routing option does not enable multi-node transaction execution. 
+## Batch design
 
-## Transaction design
-
-The transaction implementation in Valkey GLIDE was designed with several key goals, each achieved through specific implementation approaches:
+The batch implementation in Valkey GLIDE was designed with several key goals, each achieved through specific implementation approaches:
 
 ### Idiomatic Go API
 
-The design provides a natural, Go-like interface for transactions through:
+The design provides a natural, Go-like interface for batches through:
 
 - Clean command calling syntax (`tx.Set(...)`, `tx.Get(...)`)
 - Use of Go's embedding to inherit behavior from `BaseBatch`
@@ -421,7 +413,7 @@ The design provides a natural, Go-like interface for transactions through:
 
 ### Command Transparency
 
-A key design followed is that commands share almost identical APIs, with the primary difference being when they are executed:
+A important principle in the design of the client was transparently accessing the command, in both regular and batch contexts. While the server-side command execution is the same, the client-side result and error handling will differ since the batch results must account for multiple commands and potential errors. Go context is passed when the command is executed: with regular clients this occurs when the command is called, and in batches this occurs when the batch is executed. In batches, Cluster mode and standalone mode commands are the same with only a few exceptions for Select, Move, Scan, and PubSub commands. This is slightly different from regular contexts where some commands may have specific routing options that are available when using the ClusterClient.
 
 ```go
 // In regular client context
@@ -437,18 +429,14 @@ tx.Set("key1", "value1")
 results, err := client.Exec(context.Background(), *tx, false)
 ```
 
-- While the server-side command execution is the same, the client-side result and error handling may differ
-- Go context is passed when the command is executed
-- Cluster mode and standalone mode commands are the same with only a few exceptions for Select, Move, Scan, and PubSub commands.
-
 ### Optimistic Concurrency Support
 
 Valkey's optimistic locking mechanism is supported through:
 
-- Implementation of `Watch()` that monitors keys for changes
-- Implementation of `Unwatch()` that releases monitoring
-- Proper handling of transaction failure when watched keys change
-- Passing watch state through to the Valkey server during execution
+- Implementation of `Watch()` that monitors keys for changes,
+- Implementation of `Unwatch()` that releases monitoring,
+- Proper handling of transaction failure when watched keys change,
+- Passing watch state through to the Valkey server during execution.
 
 This enables patterns like:
 
@@ -473,7 +461,7 @@ You can join our development journey by:
 
 ## Looking Forward
 
-As we move forward, we'll continue enhancing performance, and adding even more features to make the Valkey GLIDE Go client a great choice for Go developers.
+As we move forward, we'll continue enhancing performance, and adding even more features to the Valkey GLIDE Go client to continue building on the great foundation provided by Valkey GLIDE 2.0.
 
 Checkout our [Valkey GLIDE go client](https://github.com/valkey-io/valkey-glide/tree/main/go) for the source code.
 For more details on how to get started with Valkey GLIDE Go client, please refer to the [README](https://github.com/valkey-io/valkey-glide/blob/main/go/README.md) for instructions on running the Standalone and Cluster examples.
@@ -482,7 +470,7 @@ For a complete reference of all available commands and their parameters, explore
 
 ## Contributors
 
-A huge thank you to all the contributors who have made this possible - your dedication and expertise have created something truly special for the Go community.
+A huge thank you to all the contributors and community members who have made this possible - your dedication and expertise have created something truly special for the Go community.
 
 [Janhavi Gupta](https://github.com/janhavigupta007) (Google Cloud Platform)
 
@@ -510,5 +498,4 @@ A huge thank you to all the contributors who have made this possible - your dedi
 
 [YiPin Chen](https://github.com/yipin-chen) (Improving)
 
-
-Kudos to [Aaron Congo](https://github.com/aaron-congo) who created the backbone of the client 🚀 and to [Umit Unal](https://github.com/umit), [Michael](https://github.com/MikeMwita) for their contributions!
+Kudos to [Aaron Congo](https://github.com/aaron-congo) who created the backbone of the client 🚀, and to [Umit Unal](https://github.com/umit), [Michael](https://github.com/MikeMwita) for their code contributions, and to [Marcin Dobosz](https://github.com/marcind) who provided invaluable feedback and suggestions that pushed the team to keep improving on a daily basis!
