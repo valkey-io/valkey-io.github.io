@@ -1,24 +1,25 @@
 +++
-title= "Valkey Glide Go Client: Now Generally Available!"
-description = "Valkey Glide Go client reaches general availability. Read to learn more about the go client designed for performance and developer productivity"
+title= "Valkey GLIDE Go Client: Now Generally Available!"
+description = "Valkey GLIDE Go client reaches general availability. Read to learn more about the go client designed for performance and developer productivity"
 date= 2025-05-08 01:01:01
-authors= [ "niharikabhavaraju"]
+authors= [ "niharikabhavaraju", "jbrinkman"]
 +++
 
-Valkey-Glide is pleased to announce the the general availability (GA) release of the GLIDE(General Language Independent Driver for the Enterprise) Go client. This release brings the power and reliability of Valkey to Go developers with an API designed for performance and developer productivity.
+Valkey GLIDE is pleased to announce the general availability (GA) release of the GLIDE(General Language Independent Driver for the Enterprise) Go client. This release brings the power and reliability of Valkey to Go developers with an API designed for performance and developer productivity.
 
 Valkey GLIDE is a multi-language client for Valkey, designed for operational excellence and incorporating best practices refined through years of experience. GLIDE ensures a consistent and unified client experience across applications, regardless of the programming language.
 
-With support for Java, Node.js, Python, and now Go moving from public preview to general availability, this announcement introduces the Valkey GLIDE support for Go, expanding support to Go developers and providing new connectivity to Valkey servers, including both standalone and cluster deployments.
+With support for Java, Node.js, Python, and now Golang moving from public preview to general availability, this announcement introduces the Valkey GLIDE support for Go, expanding support to Golang developers and providing new connectivity to Valkey servers, including both standalone and cluster deployments.
 
 ## Why You Should Be Excited
 
-The Go client extends Valkey GLIDE to the Go community, offering a robust, client that's built on the battle-tested Rust core. This client library is a thoughtfully designed experience for Go developers who need reliable, high-performance data access.
+The Go client extends Valkey GLIDE to the Go community, offering a robust client that's built on the battle-tested Rust core. This client library is a thoughtfully designed experience for Go developers who need reliable, high-performance data access.
 
 ## What's new in GA?
 
-- The major addition in the GA release is comprehensive [transaction support](#transaction-support).
+- The major addition in the GA release is comprehensive [batch support](#batch-support) that includes both transactions and pipelines..
 - Complete support for all Valkey commands encompassing scripting, functions, pubsub, server management, and all other operations in both standalone and cluster.
+- Support for OpenTelemetry tracing which has been added to all language clients, including Go.
 
 ## Key Features
 
@@ -27,10 +28,10 @@ The Go client extends Valkey GLIDE to the Go community, offering a robust, clien
 Connect to your Valkey cluster with minimal configuration. The client automatically detects the entire cluster topology and configures connection management based on industry best practices.
 
 ```go
-config := api.NewGlideClusterClientConfiguration().
-    WithAddress(&api.NodeAddress{Host: "localhost", Port: 6379})
+cfg := config.NewClusterClientConfiguration().
+    WithAddress(&config.NodeAddress{Host: "localhost", Port: 6379})
 
-client, err := api.NewGlideClusterClient(config)
+client, err := glide.NewClusterClient(cfg)
 ```
 
 The Go client provides advanced topology managements features such as:
@@ -41,7 +42,7 @@ GLIDE automatically discovers all cluster nodes from a single seed node, elimina
 
 #### Dynamic Topology Maintenance
 
-Cluster topology can change over time as nodes are added, removed, or when slot ownership changes. GLIDE implements several mechanisms to maintain an accurate view of the cluster:
+Cluster topology can change over time as nodes are added, removed, or when slot ownership changes. GLIDE implements several features to maintain an accurate view of the cluster:
 
 - **Proactive Topology Monitoring**: GLIDE performs periodic background checks for cluster topology changes. This approach ensures a comprehensive and up-to-date view of the cluster, improving availability and reducing tail latency.
 - **Consensus-Based Resolution**: GLIDE queries multiple nodes for their topology view and selects the one with the highest agreement, reducing the risk of stale or incorrect mappings and ensuring a more accurate and up-to-date cluster view, improving the overall availability of the cluster.
@@ -57,18 +58,18 @@ GLIDE implements a background monitoring system for connection states. By detect
 
 #### Connection Storm Prevention
 
-When network events occur, connection storms can overwhelm servers with simultaneous reconnection attempts. GLIDE mitigates this risk through backoff algorithm with jitter that distributes reconnection attempts over time, protecting servers from sudden connection surges.
+When network events occur, connection storms can overwhelm servers with simultaneous reconnection attempts. GLIDE mitigates this risk through a backoff algorithm with jitter that distributes reconnection attempts over time, protecting servers from sudden connection surges.
 
 Robust connection handling with automatic reconnection strategies ensures your application remains resilient even during network instability:
 
 ```go
 // Configure a custom reconnection strategy with exponential backoff
-config := api.NewGlideClientConfiguration().
-    WithAddress(&api.NodeAddress{Host: "localhost", Port: 6379}).
-    WithReconnectStrategy(api.NewBackoffStrategy(
-        5, // Initial delay in milliseconds
-        10, // Maximum attempts
-        50 // Maximum delay in milliseconds
+cfg := config.NewClientConfiguration().
+    WithAddress(&config.NodeAddress{Host: "localhost", Port: 6379}).
+    WithReconnectStrategy(config.NewBackoffStrategy(
+        5, // Number of retry attempts, with increasing backoff between attempts.
+        10, // Multiplier that will be applied to the delay between attempts.
+        2 // Exponent base configured for the backoff strategy.
     ))
 ```
 
@@ -84,11 +85,11 @@ Rather than maintaining connection pools, GLIDE establishes a single multiplexed
 ### Built for Performance
 
 The Go client is designed from the ground up with performance in mind while still being simple to use.
-The Go client provides a synchronous API for simplicity and compatibility with existing Go key-value store clients. While each individual command is blocking (following the familiar patterns in the ecosystem), the client is fully thread-safe and designed for concurrent usage:
+The Go client provides a synchronous API for simplicity and compatibility with existing Golang key-value store clients. While each individual command is blocking (following the familiar patterns in the ecosystem), the client is fully thread-safe and designed for concurrent usage:
 
 ```go
 // Example of concurrent execution using goroutines
-func performConcurrentOperations(client *api.GlideClient) {
+func performConcurrentOperations(client *glide.Client) {
     var wg sync.WaitGroup
     
     // Launch 10 concurrent operations
@@ -100,13 +101,13 @@ func performConcurrentOperations(client *api.GlideClient) {
             value := fmt.Sprintf("value:%d", idx)
             
             // Each command blocks within its goroutine, but all 10 run concurrently
-            _, err := client.Set(key, value)
+            _, err := client.Set(context.Background(), key, value)
             if err != nil {
                 fmt.Printf("Error setting %s: %v\n", key, err)
                 return
             }
             
-            result, err := client.Get(key)
+            result, err := client.Get(context.Background(), key)
             if err != nil {
                 fmt.Printf("Error getting %s: %v\n", key, err)
                 return
@@ -133,26 +134,27 @@ While the current API is synchronous, the implementation is specifically optimiz
 You can add Valkey GLIDE to your project with the following two commands:
 
 ```bash
-go get github.com/valkey-io/valkey-glide/go
+go get github.com/valkey-io/valkey-glide/go/v2
 go mod tidy
 ```
 
-Then, you can get started connecting to a Valkey standalone server, running locally on port 6379, with the following sample applications:
+Then, you can get started connecting to a Valkey standalone server, running locally on port 6379, with the following sample code:
 
 ```go
 package main
 
 import (
     "fmt"
-    "github.com/valkey-io/valkey-glide/go/api"
+    glide "github.com/valkey-io/valkey-glide/go/v2"
+    "github.com/valkey-io/valkey-glide/go/v2/config"
 )
 
 func main() {
     // Connect to a standalone Valkey server
-    config := api.NewGlideClientConfiguration().
-        WithAddress(&api.NodeAddress{Host: "localhost", Port: 6379})
+    cfg := config.NewClientConfiguration().
+        WithAddress(&config.NodeAddress{Host: "localhost", Port: 6379})
     
-    client, err := api.NewGlideClient(config)
+    client, err := glide.NewClient(cfg)
     if err != nil {
         fmt.Println("Error:", err)
         return
@@ -160,7 +162,7 @@ func main() {
     defer client.Close()
     
     // Test the connection
-    result, err := client.Ping()
+    result, err := client.Ping(context.Background())
     if err != nil {
         fmt.Println("Error:", err)
         return
@@ -168,8 +170,8 @@ func main() {
     fmt.Println(result) // PONG
     
     // Store and retrieve a value
-    client.Set("hello", "valkey")
-    value, _ := client.Get("hello")
+    client.Set(context.Background(), "hello", "valkey")
+    value, _ := client.Get(context.Background(), "hello")
     fmt.Println(value) // valkey
 }
 ```
@@ -185,7 +187,8 @@ package main
 
 import (
     "fmt"
-    "github.com/valkey-io/valkey-glide/go/api"
+    glide "github.com/valkey-io/valkey-glide/go/v2"
+    "github.com/valkey-io/valkey-glide/go/v2/config"
 )
 
 func main() {
@@ -195,16 +198,16 @@ func main() {
     port := 7001
     
     // Connect to a Valkey cluster through any node
-    config := api.NewGlideClusterClientConfiguration().
-        WithAddress(&api.NodeAddress{Host: host, Port: port})
+    cfg := config.NewClusterClientConfiguration().
+        WithAddress(&config.NodeAddress{Host: host, Port: port})
     
-    client, err := api.NewGlideClusterClient(config)
+    client, err := glide.NewClusterClient(cfg)
     if err != nil {
         fmt.Println("There was an error: ", err)
         return
     }
     
-    res, err := client.Ping()
+    res, err := client.Ping(context.Background())
     if err != nil {
         fmt.Println("There was an error: ", err)
         return
@@ -222,27 +225,25 @@ Balance consistency and throughput with flexible read strategies:
 
 ```go
 // Configure to prefer replicas for read operations
-config := api.NewGlideClusterClientConfiguration().
-    WithAddress(&api.NodeAddress{Host: "cluster.example.com", Port: 6379}).
-    WithReadFrom(api.PreferReplica)
+cfg := config.NewClusterClientConfiguration().
+    WithAddress(&config.NodeAddress{Host: "cluster.example.com", Port: 6379}).
+    WithReadFrom(config.PreferReplica)
 
-client, err := api.NewGlideClusterClient(config)
+client, err := glide.NewClusterClient(cfg)
 
 // Write to primary
-client.Set("key1", "value1")
+client.Set(context.Background(), "key1", "value1")
 
 // Automatically reads from a replica (round-robin)
-result, err := client.Get("key1")
+result, err := client.Get(context.Background(), "key1")
 ```
 
 Available strategies:
 
-- **PRIMARY**: Always read from primary nodes for the freshest data
-- **PREFER_REPLICA**: Distribute reads across replicas in round-robin fashion, falling back to primary when needed
-
-Planned for future release:
-
-- **AZ_AFFINITY**: (Coming soon) Prefer replicas in the same availability zone as the client
+- **Primary**: Always read from primary nodes for the freshest data
+- **PreferReplica**: Distribute reads across replicas in round-robin fashion, falling back to primary when needed
+- **AzAffinity**: Prefer replicas in the same availability zone as the client
+- **AzAffinityReplicaAndPrimary**: Spread the read requests among nodes within the client's availability zone in a round-robin manner
 
 ### Authentication and TLS
 
@@ -250,9 +251,9 @@ Secure your connections with built-in authentication and TLS support:
 
 ```go
 // Configure with authentication
-config := api.NewGlideClientConfiguration().
-    WithAddress(&api.NodeAddress{Host: "localhost", Port: 6379}).
-    WithCredentials(api.NewServerCredentials("username", "password")).
+cfg := config.NewClientConfiguration().
+    WithAddress(&config.NodeAddress{Host: "localhost", Port: 6379}).
+    WithCredentials(config.NewServerCredentials("username", "password")).
     WithUseTLS(true) // Enable TLS for encrypted connections
 ```
 
@@ -262,8 +263,8 @@ Fine-tune timeout settings for different workloads:
 
 ```go
 // Set a longer timeout for operations that may take more time
-config := api.NewGlideClientConfiguration().
-    WithAddress(&api.NodeAddress{Host: "localhost", Port: 6379}).
+cfg := config.NewClientConfiguration().
+    WithAddress(&config.NodeAddress{Host: "localhost", Port: 6379}).
     WithRequestTimeout(500) // 500ms timeout
 ```
 
@@ -274,136 +275,135 @@ The Valkey GLIDE Go client is built on top of the Valkey GLIDE core. The core fr
 ### Component details
 
 ```text
-+------------+      +------+      +------------+      +------------+      +------------+
-|            |      |      |      |            |      |            |      |            |
-|    Go      |----->|      |----->|  C Header  |----->|    Rust    |----->|   Valkey   |
-|  Client    |      |  CGO |      |  cbindgen  |      |    Core    |      |   Server   |
-|            |<-----|      |<-----|            |<-----|            |<-----|            |
-|            |      |      |      |            |      |            |      |            |
-+------------+      +------+      +------------+      +------------+      +------------+
++------------+      +------+      +------------+      +------------+      +------------+      +------------+
+|            |      |      |      |            |      |            |      |            |      |            |
+|    Go      |----->|      |----->|  C Header  |----->|    FFI     |----->|    Rust    |----->|   Valkey   |
+|  Client    |      |  CGO |      |  cbindgen  |      |  Library   |      |    Core    |      |   Server   |
+|            |<-----|      |<-----|            |<-----|            |<-----|            |<-----|            |
+|            |      |      |      |            |      |            |      |            |      |            |
++------------+      +------+      +------------+      +------------+      +------------+      +------------+
 ```
 
 - **Go Client**: The language-specific interface for Go developers
 - **CGO**: Allows Go code to call C functions
-- **Cbindgen**: Automates the generation of C header files from Rust public APIs
-- **Rust Core**: High-performance framework that connects to and communicates with Valkey servers
+- **Cbindgen**: Automates the generation of C header files from Rust FFI Library
 - **Rust FFI Library**: Enables cross-language function calls between Rust and other languages
+- **Rust Core**: High-performance framework that connects to and communicates with Valkey servers
 
-## Transaction Support
 
-The Go client now includes full transaction support, enabling atomic operations across multiple commands.
+## Batch Support
 
-### Transaction Lifecycle
+The Go client now includes full batch support, including transactions and pipelines, enabling atomic and non-atomic operations across multiple commands.
 
-**Create Transaction:**
+### Batch Lifecycle
 
- Initialize a transaction object.
-Use `api.NewTransaction(client)` to create a new transaction with established client as an argument
-`cmd := tx.GlideClient` grants access to a transaction-scoped commands interface, allowing you to construct a sequence of operations to be executed. We can access transaction commands via the embedded client.
+**Create Batch:**
+
+Define a new batch using `pipeline.NewStandaloneBatch(isAtomic)` or `pipeline.NewClusterBatch(isAtomic)` to begin the process of creating a batch. `isAtomic` is a boolean that determines whether the batch should be executed atomically using Valkey's transaction features, or executed non-atomically using the pipeline functionality.
+
+```go
+    // Create a new transaction
+    batch := pipeline.NewStandaloneBatch(true) // Atomic batch
+```
 
 **Queue Commands:**
 
- Queue commands in the order they should be executed.
-Each queued command is added to the transaction but not immediately executed..
-`cmd.CommandName` allows you to queue multiple transactions.
+ Queue commands in the order they should be executed. The batch API supports chaining commands together to build a sequence of operations. This sequence definition is added to the batch but not immediately executed.
 
 **Example:**
 
 ```go
-cmd.Set("key1","val1")
-cmd.Get("key1")
+    batch.Set("key1","val1").Get("key1")
 ```
 
-**Execute Transaction:**
+**Execute Batch:**
 
- Run all queued commands atomically
- After queueing the commands, transaction can be executed with `tx.Exec()`
- All the queued commands will be executed and returns an response array which consists of the commands result.
+ Run all queued commands
+ After queueing the commands, a batch can be executed with `client.Exec()`
+ All the queued commands will be executed and return a response array which consists of the command results.
 
-## Standalone Mode Transaction
+## Standalone Mode Batch
 
 ```go
-    // Standalone Client Transaction
-    config := api.NewGlideClientConfiguration().
-        WithAddress(&api.NodeAddress{Host: "localhost", Port: 6379})
+    // Standalone BatchClient Example
+	cfg := config.NewClientConfiguration().
+		WithAddress(&config.NodeAddress{Host: "localhost", Port: 6379})
 
-    client, err := api.NewGlideClient(config)
-    if err != nil {
-        log.Fatal("error connecting to database: ", err)
-    }
-    defer client.Close()
+	client, err := NewClient(cfg)
+	if err != nil {
+		log.Fatal("error connecting to database: ", err)
+	}
+	defer client.Close()
 
-    tx := api.NewTransaction(client)
-    cmd := tx.GlideClient
+	// Create new transaction
+	tx := pipeline.NewStandaloneBatch(true).
+		Set("user:profile", "John Doe").
+		Set("user:email", "john@example.com").
+		SAdd("users", []string{"john"})
 
-    // Queue multiple commands
-    cmd.Set("user:profile", "John Doe")
-    cmd.Set("user:email", "john@example.com")
-    cmd.SAdd("users", "john")
+	// Command sequence
+	txs := []string{"Set - user:profile", "Set - user:email", "SAdd - users"}
 
-    // Execute transaction
-    results, err := tx.Exec()
-    if err != nil {
-        log.Printf("Transaction failed: %v", err)
-        return
-    }
+	// Execute transaction
+	results, err := client.Exec(context.Background(), *tx, false) // false = process all commands and include errors as part of the response array
+	if err != nil {
+		log.Printf("Transaction failed: %v", err)
+		return
+	}
 
-    // Process results
-    for _, result := range results {
-        fmt.Println(result)
-    }
+	// Process results
+	for i, result := range results {
+		fmt.Printf("Command %s results: %v\n", txs[i], result)
+	}
 ```
 
-## Cluster mode Transaction
+## Cluster mode Batch
 
-To create a cluster transaction, initialize the cluster transaction object using `api.NewClusterTransaction(clusterClient)` to create a new cluster transaction with an established cluster client as an argument.
-`cmd := tx.GlideClusterClient` grants access to a transaction-scoped cluster commands interface, allowing you to construct a sequence of operations to be executed.
+Cluster batches are similar to standalone batches, but they are executed on a cluster client. They also may have specific routing options to control which node the commands are executed on. In a cluster batch, all commands are executed on the same node, unless the IsAtomic flag is set to false (i.e. is a pipeline and not a transaction), in which case the commands may be split based on the key slot.
 
 ```go
-    // Cluster Client Transaction
-    clusterConfig := api.NewGlideClusterClientConfiguration().
-        WithAddress(&api.NodeAddress{Host: "cluster1", Port: 7007}).
-        WithAddress(&api.NodeAddress{Host: "cluster2", Port: 7008}).
-        WithAddress(&api.NodeAddress{Host: "cluster3", Port: 7009})
+	// Cluster BatchClient Example
+    // Only a single node is required to connect to the Cluster
+	cfg := config.NewClusterClientConfiguration().
+		WithAddress(&config.NodeAddress{Host: "localhost", Port: 7010})
 
-    clusterClient, err := api.NewGlideClusterClient(clusterConfig)
-    if err != nil {
-        log.Fatal("error connecting to cluster: ", err)
-    }
-    defer clusterClient.Close()
+	clusterClient, err := NewClusterClient(cfg)
+	if err != nil {
+		log.Fatal("error connecting to cluster: ", err)
+	}
+	defer clusterClient.Close()
 
-    clusterTx := api.NewClusterTransaction(clusterClient)
-    cmd := clusterTx.GlideClusterClient
+	// Create new transaction
+	clusterTx := pipeline.NewClusterBatch(true)
 
-    // Define routing option
-    var simpleRoute config.Route = config.RandomRoute
+	// Create ping options with specific routing
+	pingOpts := options.PingOptions{
+		Message: "Hello Valkey Cluster",
+	}
 
-    // Create ping options with specific routing
-    pingOpts := options.ClusterPingOptions{
-        PingOptions: &options.PingOptions{
-            Message: "Hello Valkey Cluster",
-        },
-        RouteOption: &options.RouteOption{
-            Route: simpleRoute,
-        },
-    }
+	// Queue commands with routing
+	clusterTx.PingWithOptions(pingOpts)
 
-    // Queue commands with routing
-    cmd.PingWithOptions(pingOpts)
-    // Execute transaction
-    results, err := clusterTx.Exec()
-    if err != nil {
-        log.Printf("Cluster transaction failed: %v", err)
-        return
-    }
+	// Command sequence
+	txs := []string{"Ping - 'Hello Valkey Cluster'"}
 
-    // Process results
-    for _, result := range results {
-        fmt.Println(result)
-    }
+	opts := pipeline.NewClusterBatchOptions().
+		WithRoute(config.RandomRoute)
+
+	// Execute transaction
+	results, err := clusterClient.ExecWithOptions(context.Background(), *clusterTx, false, *opts)
+	if err != nil {
+		log.Printf("Cluster transaction failed: %v", err)
+		return
+	}
+
+	// Process results
+	for i, result := range results {
+		fmt.Printf("Command %s results: %v\n", txs[i], result)
+	}
 ```
 
-In cluster transactions, the routing option does not enable multi-node transaction execution.
+In cluster transactions, the routing option does not enable multi-node transaction execution. 
 
 ## Transaction design
 
@@ -413,28 +413,33 @@ The transaction implementation in Valkey GLIDE was designed with several key goa
 
 The design provides a natural, Go-like interface for transactions through:
 
-- Clean command calling syntax (`cmd.Set(...)`, `cmd.Get(...)`)
-- Use of Go's embedding to inherit behavior from `baseClient`
-- Explicit error handling that follows Go conventions (`result, err := tx.Exec()`)
+- Clean command calling syntax (`tx.Set(...)`, `tx.Get(...)`)
+- Use of Go's embedding to inherit behavior from `BaseBatch`
+- Explicit error handling that follows Go conventions (`result, err := pipeline.Exec()`)
+- Use of method chaining to efficiently build command sequences (e.g. `tx.Set(...).Set(...).SAdd(...)`)
+- Use of Go context for timeout and cancellation support 
 
 ### Command Transparency
 
-A key design followed is that commands can be used the same way in both regular and transaction contexts:
+A key design followed is that commands share almost identical APIs, with the primary difference being when they are executed:
 
 ```go
-// In regular client context - executes immediately
-client.Set("key1", "value1")
+// In regular client context
+client := glide.NewClient(...)
+// Executes immediately with context
+client.Set(context.Background(), "key1", "value1")
 
-// In transaction context - identical syntax, but queued instead
-tx := NewTransaction(client)
-cmd := tx.GlideClient
-cmd.Set("key1", "value1")  // Queued for later execution
+// In transaction context 
+tx := pipeline.NewStandaloneBatch(true)
+// Queued for later execution
+tx.Set("key1", "value1")
+// Execute transaction with context
+results, err := client.Exec(context.Background(), *tx, false)
 ```
 
-- Regular clients and transactions both implement a common interface
-- When creating a transaction, it sets itself as the command executor
-- In transaction mode, commands are queued instead of executed
-- The code detects transaction context and handles results appropriately
+- While the server-side command execution is the same, the client-side result and error handling may differ
+- Go context is passed when the command is executed
+- Cluster mode and standalone mode commands are the same with only a few exceptions for Select, Move, Scan, and PubSub commands.
 
 ### Optimistic Concurrency Support
 
@@ -448,24 +453,15 @@ Valkey's optimistic locking mechanism is supported through:
 This enables patterns like:
 
 ```go
-cmd.Watch([]string{"key1"})
-// Check current value
-val, _ := cmd.Get("key1")
-// Only update if no one else modified since Watch
-cmd.Set("key1", "new-value")
+client.Watch(context.Background(), []string{"key1"})
+tx := pipeline.NewStandaloneBatch(true).
+    Get("key1").
+    Set("key1", "new-value")
+
 // Will fail if key1 changed between Watch and Exec
-result, err := tx.Exec()
+raiseOnError := true
+results, err := client.Exec(context.Background(), *tx, raiseOnError)
 ```
-
-### Discard Operation
-
- The `tx.Discard()` method can be used to explicitly cancel a transaction before execution.
-
-This mechanism serves to:
-
-- Release server-side resources associated with the transaction when the client decides not to proceed. - Clean up client-side state, such as the command queue within the `TransactionExecutor`.
-- Prevent the execution of unintended commands.
- This functionality is achieved by sending the `DISCARD` command to the Valkey server, which then clears the server-side command queue for the transaction. The `tx.Discard()` method will return an error if communication with the server fails during this process.
 
 ## Join the Journey
 
@@ -477,12 +473,12 @@ You can join our development journey by:
 
 ## Looking Forward
 
-As we move toward general availability, we'll be expanding command support, enhancing performance, and adding even more features to make the Valkey GLIDE Go client a great choice for Go developers.
+As we move forward, we'll continue enhancing performance, and adding even more features to make the Valkey GLIDE Go client a great choice for Go developers.
 
 Checkout our [Valkey GLIDE go client](https://github.com/valkey-io/valkey-glide/tree/main/go) for the source code.
-For implementation examples, please refer to the [README of the Go examples](https://github.com/valkey-io/valkey-glide/blob/main/go/README.md) for instructions on running the Standalone and Cluster examples.
+For more details on how to get started with Valkey GLIDE Go client, please refer to the [README](https://github.com/valkey-io/valkey-glide/blob/main/go/README.md) for instructions on running the Standalone and Cluster examples.
 
-For a complete reference of all available commands and their parameters, explore the [Go API documentation on pkg.go.dev](https://pkg.go.dev/github.com/valkey-io/valkey-glide/go/api), which provides detailed information on method signatures, parameters, and return types.
+For a complete reference of all available commands and their parameters, explore the [Go API documentation on pkg.go.dev](https://pkg.go.dev/github.com/valkey-io/valkey-glide/go/v2), which provides detailed information on method signatures, parameters, and return types.
 
 ## Contributors
 
@@ -499,5 +495,20 @@ A huge thank you to all the contributors who have made this possible - your dedi
 [Yury Fridlyand](https://github.com/Yury-Fridlyand) (Improving)
 
 [Prateek Kumar](https://github.com/prateek-kumar-improving) (Improving)
+
+[James Xin](https://github.com/jamesx-improving) (Improving)
+
+[Jonathan Louie](https://github.com/jonathanl-bq) (Improving)
+
+[TJ Zhang](https://github.com/tjzhang-BQ) (Improving)
+
+[Joe Brinkman](https://github.com/jbrinkman) (Improving)
+
+[Edward Liang](https://github.com/edlng) (Improving)
+
+[Chloe Yip](https://github.com/cyip10) (Improving)
+
+[YiPin Chen](https://github.com/yipin-chen) (Improving)
+
 
 Kudos to [Aaron Congo](https://github.com/aaron-congo) who created the backbone of the client 🚀 and to [Umit Unal](https://github.com/umit), [Michael](https://github.com/MikeMwita) for their contributions!
