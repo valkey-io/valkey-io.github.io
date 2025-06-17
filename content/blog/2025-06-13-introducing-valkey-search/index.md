@@ -135,7 +135,8 @@ Valkey-search is designed as an in-memory secondary index, achieving exceptional
 
 At its core, valkey-search’s threading architecture follows a common design pattern: a worker thread pool combined with task queues. It employs advanced synchronization mechanisms to maintain index consistency while minimizing contention among worker threads. By time-slicing CPU access between read and write operations, the system enables an almost lock-free read path, delivering high performance and consistently low search latency. 
 
-Valley-search’s HNSW implementation is based on the OSS project [HNSWLib](https://github.com/nmslib/hnswlib). While HNSWLib is well-regarded for its speed, we have enhanced its performance, resiliency and its production maturity. These improvements include better `SIMD` utilization, promotion of CPU cache efficiency, memory utilization and more.
+Valley-search’s HNSW implementation is based on the OSS project [HNSWLib](https://github.com/nmslib/hnswlib). While HNSWLib is well-regarded for its speed, we have enhanced its performance and efficiency for our use case. These improvements include better `SIMD` utilization, promotion of CPU cache efficiency, memory utilization and more.
+
 
 
 ## Future Enhancements
