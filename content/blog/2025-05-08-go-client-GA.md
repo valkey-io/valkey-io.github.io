@@ -7,7 +7,7 @@ authors= [ "niharikabhavaraju", "jbrinkman"]
 
 The Valkey GLIDE contributors are pleased to announce the general availability (GA) release of the Valkey GLIDE Go client. This release brings the power and reliability of Valkey to Go developers with an API designed for performance and developer productivity.
 
-Vakey GLIDE 2.0 brings exciting new features for all of our language clients (Java, Node.js, Python, and now Go). These features include pipelines, OpenTelemetry support, MacOS x86 support, and improved performance and bug fixes.
+Vakey GLIDE 2.0 brings exciting new features for all of our language clients (Java, Node.js, Python, and now Go). These features include pipelines, OpenTelemetry support, MacOS x86 support, improved performance, and bug fixes.
 
 The Go client extends Valkey GLIDE to the Go community, offering a robust client that's built on the battle-tested Rust core. This client library is a thoughtfully designed experience for Go developers who need reliable, high-performance data access.
 
