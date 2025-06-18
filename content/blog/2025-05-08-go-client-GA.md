@@ -510,6 +510,10 @@ A huge thank you to all the contributors and community members who have made thi
 
 [YiPin Chen](https://github.com/yipin-chen) (Improving)
 
-[Andrew](https://github.com/andrew)
+[San H](https://github.com/SanHalacogluImproving) (Improving)
 
-Kudos to [Aaron Congo](https://github.com/aaron-congo) who created the backbone of the client 🚀, to [Umit Unal](https://github.com/umit) and [Michael](https://github.com/MikeMwita) for their early code contributions, and finally to [Marcin Dobosz](https://github.com/marcind) who provided invaluable community feedback and suggestions that pushed the team to keep improving on a daily basis!
+[Aaron Congo](https://github.com/aaron-congo) (Improving)
+
+[Andrew](https://github.com/andrew) (Improving)
+
+Kudos to our community members: [Umit Unal](https://github.com/umit) and [Mike Mwita](https://github.com/MikeMwita) for their code contributions, and [Marcin Dobosz](https://github.com/marcind) who provided invaluable community feedback and suggestions that pushed the team to keep improving on a daily basis!
