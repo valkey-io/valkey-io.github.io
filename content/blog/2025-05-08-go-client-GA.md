@@ -490,7 +490,7 @@ A huge thank you to all the contributors and community members who have made thi
 
 [Omkar Mestry](https://github.com/omanges) (Google Cloud Platform)
 
-[Vikas Pandey](https://github.com/vikas) (Google Cloud Platform)
+[Vikas Pandey](https://github.com/vikaskpandey) (Google Cloud Platform)
 
 [Yury Fridlyand](https://github.com/Yury-Fridlyand) (Improving)
 
