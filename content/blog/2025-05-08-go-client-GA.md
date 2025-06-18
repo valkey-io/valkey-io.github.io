@@ -488,7 +488,7 @@ A huge thank you to all the contributors and community members who have made thi
 
 [Edric Cuartero](https://github.com/EdricCua) (Google Cloud Platform)
 
-[Omkar Mestry](https://github.com/omangesg) (Google Cloud Platform)
+[Omkar Mestry](https://github.com/omanges) (Google Cloud Platform)
 
 [Vikas Pandey](https://github.com/vikas) (Google Cloud Platform)
 
@@ -514,6 +514,6 @@ A huge thank you to all the contributors and community members who have made thi
 
 [Aaron Congo](https://github.com/aaron-congo) (Improving)
 
-[Andrew](https://github.com/andrew) (Improving)
+[Andrew Carbonetto](https://github.com/acarbonetto) (Improving)
 
 Kudos to our community members: [Umit Unal](https://github.com/umit) and [Mike Mwita](https://github.com/MikeMwita) for their code contributions, and [Marcin Dobosz](https://github.com/marcind) who provided invaluable community feedback and suggestions that pushed the team to keep improving on a daily basis!
