@@ -353,7 +353,7 @@ Define a new batch using `pipeline.NewStandaloneBatch(isAtomic)` or `pipeline.Ne
 
 ## Cluster mode Batch
 
-Cluster batches are similar to standalone batches, but they are executed on a cluster client. They may have specific routing options to control which node the commands are executed on. In a cluster batch, all commands are executed on the same node, unless the IsAtomic flag is set to false (i.e. is a pipeline and not a transaction), in which case the commands may be split based on the key slot. Once all commands have been executed, the results (including any errors) are returned to the client. For pipelines, the results are returned in the same order as the commands were queued, even when the commands are executed on different nodes.
+Cluster batches are similar to standalone batches, but they are executed on a cluster client. They may have specific routing options to control which node the commands are executed on. In a cluster batch, all commands are executed on the same node, unless the `IsAtomic` flag is set to `false` (i.e. is a pipeline and not a transaction), in which case the commands may be split based on the key slot. Once all commands have been executed, the results (including any errors) are returned to the client. For pipelines, the results are returned in the same order as the commands were queued, even when the commands are executed on different nodes.
 
 ```go
 	// Cluster BatchClient Example
