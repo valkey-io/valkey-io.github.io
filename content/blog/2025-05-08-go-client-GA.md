@@ -508,7 +508,7 @@ A huge thank you to all the contributors and community members who have made thi
 
 [Chloe Yip](https://github.com/cyip10) (Improving)
 
-[YiPin Chen](https://github.com/yipin-chen) (Improving)
+[Yi-Pin Chen](https://github.com/yipin-chen) (Improving)
 
 [San H](https://github.com/SanHalacogluImproving) (Improving)
 
