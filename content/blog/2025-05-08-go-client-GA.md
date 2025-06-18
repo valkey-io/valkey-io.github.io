@@ -16,6 +16,7 @@ The Go client extends Valkey GLIDE to the Go community, offering a robust client
 - The major addition in the GA release is comprehensive [batch support](#batch-support) that includes both transactions and pipelines.
 - Complete support for all Valkey commands encompassing scripting, functions, pubsub, server management, and all other operations in both standalone and cluster modes.
 - Support for OpenTelemetry tracing which has been added to all language clients, including Go.
+- Go context support for all commands and batch operations.
 
 ## Key Features
 
@@ -269,18 +270,17 @@ The Valkey GLIDE Go client is built on top of the Valkey GLIDE core. The core fr
 ### Component details
 
 ```text
-+------------+      +------+      +------------+      +------------+      +------------+      +------------+
-|            |      |      |      |            |      |            |      |            |      |            |
-|    Go      |----->|      |----->|  C Header  |----->|    FFI     |----->|    Rust    |----->|   Valkey   |
-|  Client    |      |  CGO |      |  cbindgen  |      |  Library   |      |    Core    |      |   Server   |
-|            |<-----|      |<-----|            |<-----|            |<-----|            |<-----|            |
-|            |      |      |      |            |      |            |      |            |      |            |
-+------------+      +------+      +------------+      +------------+      +------------+      +------------+
++------------+      +------+      +------------+      +------------+      +------------+
+|            |      |      |      |            |      |            |      |            |
+|    Go      |----->|      |----->|    FFI     |----->|    Rust    |----->|   Valkey   |
+|  Client    |      |  CGO |      |  Library   |      |    Core    |      |   Server   |
+|            |<-----|      |<-----|            |<-----|            |<-----|            |
+|            |      |      |      |            |      |            |      |            |
++------------+      +------+      +------------+      +------------+      +------------+
 ```
 
 - **Go Client**: The language-specific interface for Go developers
 - **CGO**: Allows Go code to call C functions
-- **Cbindgen**: Automates the generation of C header files from Rust FFI Library
 - **Rust FFI Library**: Enables cross-language function calls between Rust and other languages
 - **Rust Core**: High-performance framework that connects to and communicates with Valkey servers
 
@@ -472,6 +472,16 @@ For a complete reference of all available commands and their parameters, explore
 
 A huge thank you to all the contributors and community members who have made this possible - your dedication and expertise have created something truly special for the Go community.
 
+[Bar Shaul](https://github.com/barshaul) (Amazon Web Services)
+
+[Shoham Elias](https://github.com/shohamazon) (Amazon Web Services)
+
+[Adar Ovadia](https://github.com/adarovadya) (Amazon Web Services)
+
+[Meital Krasikow](https://github.com/meitalkra) (Amazon Web Services)
+
+[Asaf Porat Stoler](https://github.com/asafpamzn) (Amazon Web Services)
+
 [Janhavi Gupta](https://github.com/janhavigupta007) (Google Cloud Platform)
 
 [Niharika Bhavaraju](https://github.com/niharikabhavaraju) (Google Cloud Platform)
@@ -479,6 +489,8 @@ A huge thank you to all the contributors and community members who have made thi
 [Edric Cuartero](https://github.com/EdricCua) (Google Cloud Platform)
 
 [Omkar Mestry](https://github.com/omangesg) (Google Cloud Platform)
+
+[Vikas Pandey](https://github.com/vikas) (Google Cloud Platform)
 
 [Yury Fridlyand](https://github.com/Yury-Fridlyand) (Improving)
 
@@ -498,4 +510,6 @@ A huge thank you to all the contributors and community members who have made thi
 
 [YiPin Chen](https://github.com/yipin-chen) (Improving)
 
-Kudos to [Aaron Congo](https://github.com/aaron-congo) who created the backbone of the client 🚀, and to [Umit Unal](https://github.com/umit), [Michael](https://github.com/MikeMwita) for their code contributions, and to [Marcin Dobosz](https://github.com/marcind) who provided invaluable feedback and suggestions that pushed the team to keep improving on a daily basis!
+[Andrew](https://github.com/andrew)
+
+Kudos to [Aaron Congo](https://github.com/aaron-congo) who created the backbone of the client 🚀, to [Umit Unal](https://github.com/umit) and [Michael](https://github.com/MikeMwita) for their early code contributions, and finally to [Marcin Dobosz](https://github.com/marcind) who provided invaluable community feedback and suggestions that pushed the team to keep improving on a daily basis!
