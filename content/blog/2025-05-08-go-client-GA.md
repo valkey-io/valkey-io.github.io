@@ -5,7 +5,7 @@ date= 2025-05-08 01:01:01
 authors= [ "niharikabhavaraju", "jbrinkman"]
 +++
 
-The Valkey GLIDE contributors are pleased to announce the general availability (GA) release of the GLIDE (General Language Independent Driver for the Enterprise) Go client. This release brings the power and reliability of Valkey to Go developers with an API designed for performance and developer productivity.
+The Valkey GLIDE contributors are pleased to announce the general availability (GA) release of the Valkey GLIDE Go client. This release brings the power and reliability of Valkey to Go developers with an API designed for performance and developer productivity.
 
 Vakey GLIDE 2.0 brings exciting new features for all of our language clients (Java, Node.js, Python, and now Go). These features include pipelines, OpenTelemetry support, MacOS x86 support, and improved performance and bug fixes.
 
