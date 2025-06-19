@@ -89,3 +89,11 @@
     The [Instaclustr Platform](https://www.instaclustr.com/platform/) offers a unified approach to optimizing every facet of your data infrastructure, streamlining the process and enhancing your data ecosystem using open source software.
   offering: >
     [NetApp® Instaclustr for Valkey™](https://www.instaclustr.com/platform/managed-valkey/) gives you a powerful combination of automated features within our platform, 24x7 expert support, and enterprise-grade processes that can handle the most demanding customer requirements.
+
+- name: ByteDance
+  link: https://www.bytedance.com
+  image:
+    path: /img/bytedance.svg
+    alt: ByteDance logo
+  company: >
+    Founded in 2012, ByteDance's mission is to inspire creativity and enrich life. With a suite of more than a dozen products, including TikTok, CapCut, Lark, and Pico, as well as platforms specific to the China market, including Toutiao, Douyin, Fanqie Novel and Xigua Video, ByteDance has made it easier and more fun for people to connect with, consume, and create content.
