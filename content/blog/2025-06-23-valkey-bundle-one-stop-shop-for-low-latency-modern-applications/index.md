@@ -1,6 +1,6 @@
 +++
-title= "valkey-bundle: One stop shop for low latency modern applications" 
-description = "Learn how to use valkey-search to search through billions of vectors with single-digit millisecond latencies and greater than 99% recall." 
+title= "valkey-bundle: One stop shop for real-time applications" 
+description = "Introducing valkey-bundle a single-container solution that combines Valkey with JSON, Bloom filters, Vector Similarity Search, and LDAP authentication capabilities to power development of real-time applications" 
 date= 2025-06-23 00:00:01 
 authors= ["rlunar"] 
 
@@ -9,7 +9,7 @@ featured = false
 featured_image = "/assets/media/featured/random-02.webp"
 +++
 
-[Image: valkey-bundle.png]
+![valkey-bundle](images/valkey-bundle.png)
 
 Are you looking to build low-latency, high-performance, feature-rich applications without the hassle of managing multiple dependencies? Meet *valkey-bundle* your new best friend in the world of modern application development!
 
