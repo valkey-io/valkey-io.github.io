@@ -19,13 +19,13 @@ Are you looking to build low-latency, high-performance, feature-rich application
 
 From a security perspective, *valkey-bundle* integrates enterprise grade authentication through Valkey LDAP, enabling cohesive integration with existing identity providers while maintaining strict access controls. This built-in security layer on top of existing Valkey Access Control Lists ([ACL](https://valkey.io/topics/acl/)) ensures that your data remains protected without sacrificing performance or adding complexity to your architecture.
 
-Besides the technical capabilities that *valkey-bundle* provides my favorite thing about this new solution is to see the Valkey community working together releasing modules catering to different use cases driven by Valkey users requests in an open forum in the discussions section of the project.
+Besides the technical capabilities that *valkey-bundle* provides my favorite thing about this new solution is to see the Valkey community working together releasing modules catering to different use cases driven by Valkey users requests in an open forum in the discussions section of the project for example: [Implement JSON and search](https://github.com/orgs/valkey-io/discussions/212), [FEATURE: JSON/ReJSON](https://github.com/orgs/valkey-io/discussions/119), [Modules](https://github.com/orgs/valkey-io/discussions/108), and [FEATURE: Bloom Filters](https://github.com/orgs/valkey-io/discussions/215).
 
 In this blog post, we go over on how to get started with the new single container to deploy *valkey-bundle*, understand the different modules included within, and we will dive into a real-life use case with a simple Ad Platform.
 
 ## Getting Started with *valkey-bundle*
 
-*valkey-bundle* is generally available as version 8.1.1 includes Valkey 8.1.1, valkey-json 1.0.0, valkey-bloom 1.0.0, valkey-search 1.0.1 and valkey-ldap 1.0.0 out of the box in a single container, you have the ability to deploy the container as standalone valkey or in cluster mode.
+*valkey-bundle* is generally available as version 8.1 includes Valkey 8.1, valkey-json 1.0, valkey-bloom 1.0, valkey-search 1.0 and valkey-ldap 1.0 out of the box in a single container, you have the ability to deploy the container as standalone valkey or in cluster mode.
 
 Start your *valkey-bundle* instance:
 
@@ -61,7 +61,7 @@ module:name=json,ver=10010,api=1,filters=0,usedby=[],using=[],options=[handle-io
 
 ## *valkey-bundle* Features and CLI Examples
 
-Each module in *valkey-bundle* addresses specific challenges for modern applications with low latency requirements that currently use Valkey and would like to add the functionality of JSON, VSS Search, Bloom fliters, and LDAP. In this section, we explore each module currently included in *valkey-bundle* 8.1.1, understand the technical capabilities and constraints by CLI examples.
+Each module in *valkey-bundle* addresses specific challenges for modern applications with low latency requirements that currently use Valkey and would like to add the functionality of JSON, VSS Search, Bloom filters, and LDAP. In this section, we explore each module currently included in *valkey-bundle* 8.1.1, understand the technical capabilities and constraints by CLI examples.
 
 ### JSON Document Storage and Querying
 
@@ -147,7 +147,7 @@ Create a non-scaling (fixed memory) filter with specific parameters with [`BF.RE
 OK
 ```
 
-Create a scaling filter with custom expansion using `[BF.INSERT](https://valkey.io/commands/bf.insert/)`:
+Create a scaling filter with custom expansion using [`BF.INSERT`](https://valkey.io/commands/bf.insert/):
 
 ```
 > BF.INSERT scaling_filter EXPANSION 4 ITEMS item1 item2
@@ -155,7 +155,7 @@ Create a scaling filter with custom expansion using `[BF.INSERT](https://valkey.
 2) (integer) 1
 ```
 
-Check filter capacity and stats using `[BF.INFO](https://valkey.io/commands/bf.info/)` for fixed filter
+Check filter capacity and stats using [`BF.INFO`](https://valkey.io/commands/bf.info/) for fixed filter
 
 ```
 > BF.INFO non_scaling_filter CAPACITY
@@ -169,7 +169,7 @@ Check filter capacity and stats for scaling filter
 (integer) 34952500
 ```
 
-Bulk operations, use `[BF.MADD](https://valkey.io/commands/bf.madd/)` to track multiple elements at once:
+Bulk operations, use [`BF.MADD`](https://valkey.io/commands/bf.madd/) to track multiple elements at once:
 
 ```
 > BF.MADD non_scaling_filter item1 item2 item3
@@ -178,7 +178,7 @@ Bulk operations, use `[BF.MADD](https://valkey.io/commands/bf.madd/)` to track m
 3) (integer) 1
 ```
 
-Check for multiple items in a single roundtrip using [BF.MEXISTS](https://valkey.io/commands/bf.mexists/), if we try to get an item that does not exist (item4), we get a Zero as response.
+Check for multiple items in a single roundtrip using [`BF.MEXISTS`](https://valkey.io/commands/bf.mexists/), if we try to get an item that does not exist (item4), we get a Zero as response.
 
 ```
 > BF.MEXISTS non_scaling_filter item1 item2 item4
@@ -262,25 +262,39 @@ Perform Hybrid query combining vector similarity with filters using [`FT.SEARCH`
 
 **Basic configuration**
 
+Simple bind mode setup to our imaginary LDAP server:
 ```
-# Simple bind mode setup to our imaginary LDAP server 
-CONFIG SET ldap.servers "ldap://ldap.valkey.io:389"
-CONFIG SET ldap.bind_dn_prefix "cn="
-CONFIG SET ldap.bind_dn_suffix ",ou=users,dc=valkey,dc=io"
+> CONFIG SET ldap.servers "ldap://ldap.valkey.io:389"
+OK
 
-# Enable TLS
-CONFIG SET ldap.use_starttls yes
-CONFIG SET ldap.tls_ca_cert_path "/path/to/ca.crt"
+> CONFIG SET ldap.bind_dn_prefix "cn="
+OK
+
+> CONFIG SET ldap.bind_dn_suffix ",ou=users,dc=valkey,dc=io"
+OK
+```
+
+Enable TLS:
+```
+> CONFIG SET ldap.use_starttls yes
+OK
+
+> CONFIG SET ldap.tls_ca_cert_path "/path/to/ca.crt"
+OK
 ```
 
 **User Management**
 
+Create LDAP-authenticated user
 ```
-# Create LDAP-authenticated user
-ACL SETUSER valkey on resetpass +@all
+> ACL SETUSER valkey on resetpass +@all
+OK
+```
 
-# Authenticate
-AUTH valkey "ldap_password"
+Authenticate
+```
+> AUTH valkey "ldap_password"
+OK
 ```
 
 **Performance Tips:**
@@ -289,13 +303,15 @@ AUTH valkey "ldap_password"
 * Adjust connection pool size for high traffic:
 
 ```
-CONFIG SET ldap.connection_pool_size 5
+> CONFIG SET ldap.connection_pool_size 5
+OK
 ```
 
 * Configure multiple LDAP servers for reliability
 
 ```
-CONFIG SET ldap.servers "ldap://main:389,ldap://backup:389"
+> CONFIG SET ldap.servers "ldap://main:389,ldap://backup:389"
+OK
 ```
 
 [Valkey LDAP](https://github.com/valkey-io/valkey-ldap) version [1.0.0](https://github.com/valkey-io/valkey-ldap/releases/tag/1.0.0) included in *valkey-bundle* was released on Sunday June 13th 2025. If you would like to learn more details about the capabilities read the [LDAP Authentication Documentation](https://valkey.io/topics/ldap/).
@@ -304,7 +320,7 @@ CONFIG SET ldap.servers "ldap://main:389,ldap://backup:389"
 
 Deploying *valkey-bundle* in production requires careful consideration of persistence, configuration, monitoring, and security. These foundational elements ensure your application maintains data integrity, performs optimally, and scales reliably under production workloads.
 
-Enable data persistence:
+For example:
 
 ```bash
 docker run --name my-valkey-bundle \
@@ -416,9 +432,9 @@ docker run -v /valkey/my-valkey-bundle.conf:/usr/local/etc/valkey \
 
 ## Real-World Example: Personalized Ad Platform
 
-Consider a typical scenario: you're building a recommendation engine for ad platform that needs to process JSON data, perform similarity searches, and efficiently track user interactions. Traditionally, this would require integrating and maintaining multiple services, each with its own configuration, deployment, and scaling considerations. With *valkey-bundle*, these capabilities are available out-of-the-box, all through a unified interface.
+Consider a typical scenario: you're building a recommendation engine for an ad platform that needs to process JSON data, perform similarity searches, and efficiently track user interactions. Traditionally, this would require integrating and maintaining multiple services, each with its own configuration, deployment, and scaling considerations. With *valkey-bundle*, these capabilities are available out-of-the-box, all through a unified interface.
 
-Let's explore how we would go about create a system that could handle complex user profiles, deliver personalized recommendations, prevent ad fatigue, and maintain enterprise grade security.
+Let's explore how we would go about creating a system that could handle complex user profiles, deliver personalized recommendations, prevent ad fatigue, and maintain enterprise grade security.
 
 ### Managing Rich User Profiles with Valkey JSON
 
