@@ -11,7 +11,8 @@ featured_image = "/assets/media/featured/random-08.webp"
 
 The Valkey project is introducing vector similarity search capabilities through [valkey-search](https://github.com/valkey-io/valkey-search) (BSD-3-Clause licensed), an official Valkey module compatible with Valkey versions 8.1.1 and above. 
 
-With valkey-search you can search through billions of vectors with single-digit millisecond latencies and greater than 99% recall. Whether you're building semantic search, fraud detection systems, or conversational AI experiences, valkey-search offers a performant and flexible foundation.
+With valkey-search you can easily create indexes to search through billions of vectors stored within your Valkey instances. Whether you're building semantic search, fraud detection systems, or conversational AI experiences, valkey-search offers a flexible foundation for your application.
+
 
 In this blog, you'll learn how valkey-search works, explore key use cases it supports, understand its architecture and indexing model, and see how to integrate it into your own applications. You'll also gain insight into how it scales, ensures high availability, and supports hybrid queries that combine vector similarity with structured filtering.
 
