@@ -21,7 +21,7 @@ From a security perspective, *valkey-bundle* integrates enterprise grade authent
 
 Besides the technical capabilities that *valkey-bundle* provides my favorite thing about this new solution is to see the Valkey community working together releasing modules catering to different use cases driven by Valkey users requests in an open forum in the discussions section of the project for example: [Implement JSON and search](https://github.com/orgs/valkey-io/discussions/212), [FEATURE: JSON/ReJSON](https://github.com/orgs/valkey-io/discussions/119), [Modules](https://github.com/orgs/valkey-io/discussions/108), and [FEATURE: Bloom Filters](https://github.com/orgs/valkey-io/discussions/215).
 
-In this blog post, we go over on how to get started with the new single container to deploy *valkey-bundle*, understand the different modules included within, and we will dive into a real-life use case with a simple Ad Platform.
+In this blog post, we go over how to get started with the new single container to deploy *valkey-bundle*, understand the different modules included within, and we will dive into a real-life use case with a simple Ad Platform.
 
 ## Getting Started with *valkey-bundle*
 
@@ -126,7 +126,7 @@ Perform *Array* operations by inserting an item to the orders list using [`JSON.
 
 * **Memory Efficiency**
     * Default memory limit of 128MB per filter (configurable via [`BF.BLOOM-MEMORY-USAGE-LIMIT`](https://valkey.io/topics/bloomfilters/))
-    * Example: With 0.01 (1%) error rate, can probabilistic-ally track 112M items within 128MB.
+    * Example: With 0.01 (1%) false positive rate can probabilistic-ally track 112M items within 128MB.
     * Achieves 93-98% memory savings compared to the `SET` data structure for items using UUIDs for uniqueness.
 * **Scaling Options**
     * **Non-scaling filters**: Fixed capacity for better performance.
@@ -136,7 +136,7 @@ Perform *Array* operations by inserting an item to the orders list using [`JSON.
 * **Performance Tip:** Start with larger initial capacities to avoid scaling.
 * **Accuracy Control**
     * Configurable false positive rate (default: 0.01 or 1%) a tradeoff between time and space for accuracy.
-    * No false negatives guaranteed.
+    * Guaranteed zero false negatives.
     * Tightening ratio for maintaining accuracy during scale-out.
 
 Create a non-scaling (fixed memory) filter with specific parameters with [`BF.RESERVE`](https://valkey.io/commands/bf.reserve/):
@@ -490,7 +490,7 @@ This setup allows us to find similar products while applying business rules like
 
 Here's how we can fetch similar products based on user preferences:
 
-Get user's preference vector
+Get the preference vector from the user with Id u123456
 ```console
 > SET user_vector `JSON.GET user:u123456 $.embedding`
 OK
