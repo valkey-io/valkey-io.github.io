@@ -1,0 +1,232 @@
+{% extends "fullwidth.html" %}
+{% block main_content %}
+    <!-- Scripts -->
+    <script src="https://download.valkey.io/try-me-valkey/vos/v86/libv86.js"></script>
+    <script src="https://download.valkey.io/try-me-valkey/vos/xterm/xterm.min.js"></script>
+    <script src="https://download.valkey.io/try-me-valkey/vos/pako/pako.min.js"></script>
+    <script src="https://download.valkey.io/try-me-valkey/vos/v86/serial_xterm.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="https://download.valkey.io/try-me-valkey/vos/xterm/xterm.css" />
+    <link rel="stylesheet" href="https://download.valkey.io/try-me-valkey/vos/valkey-try-me.css" />
+    
+    <!-- Body -->
+    <title>Try Valkey</title>
+    <p>This is an in-browser Valkey server and CLI that runs directly within your browser using a <a href="https://github.com/copy/v86">V86</a> emulator, requiring no external installations. </p>
+    <p>Try it out below:</p>
+    <div id="terminalWrapper" class="container" style="display: none;">
+        <div id="terminal-container"></div>
+    </div>
+    <!-- Warning Section -->
+    <div id="warningContainer" style="text-align: center; margin-top: 20px;">
+        <button id="startButton" style="padding: 10px 20px; font-size: 18px; margin-top: 10px; cursor: pointer;">Load Emulator</button>
+        <p>This emulator will download approximately 50MB of data.</p>
+    </div>
+    <!-- Loading Section (Hidden at first) -->
+    <div id="loadingContainer" style="display: none;">
+        <p id="progressText">Preparing to load...</p>
+        <progress id="progressBar" value="0" max="100"></progress>
+    </div>
+
+    <script>
+        "use strict";
+        const FILE_URL = "https://download.valkey.io/try-me-valkey/8.1.0/states/state.bin.gz";  // Path to the .gz file
+        const CACHE_KEY = "valkey_binary_cache";
+        const LAST_MODIFIED_KEY = "valkey_last_modified";
+        let emulator;
+
+        // Open or create IndexedDB
+        async function openIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open("binaryCacheDB", 1);
+
+                request.onerror = () => reject("Error opening IndexedDB");
+                request.onsuccess = () => resolve(request.result);
+
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    db.createObjectStore("cache", { keyPath: "key" });
+                };
+            });
+        }
+
+        // Retrieve binary from cache
+        async function getCachedBinary(db) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(["cache"], "readonly");
+                const objectStore = transaction.objectStore("cache");
+                const request = objectStore.get(CACHE_KEY);
+
+                request.onerror = () => reject("Error retrieving cached binary");
+                request.onsuccess = () => resolve(request.result ? request.result.data : null);
+            });
+        }
+
+        // Save binary to cache
+        async function saveBinaryToCache(db, data) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(["cache"], "readwrite");
+                const objectStore = transaction.objectStore("cache");
+                const request = objectStore.put({ key: CACHE_KEY, data });
+
+                request.onerror = () => reject("Error saving binary to cache");
+                request.onsuccess = () => resolve();
+            });
+        }
+
+        // Check if binary is updated
+        async function checkIfUpdated() {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open("HEAD", FILE_URL, true);
+
+                xhr.onload = () => {
+                    const serverLastModified = xhr.getResponseHeader("Last-Modified");
+                    const cachedLastModified = localStorage.getItem(LAST_MODIFIED_KEY);
+
+                    if (!serverLastModified || serverLastModified !== cachedLastModified) {
+                        localStorage.setItem(LAST_MODIFIED_KEY, serverLastModified);
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }
+                };
+
+                xhr.onerror = () => reject("Error checking file version");
+                xhr.send();
+            });
+        }
+
+        // Download and decompress binary
+        function downloadAndDecompressBinary(callback) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", FILE_URL, true);
+            xhr.responseType = "arraybuffer";
+
+            xhr.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    document.getElementById("progressBar").value = percentComplete;
+                }
+            };
+
+            xhr.onload = () => {
+                if (xhr.status === 200) {
+                    document.getElementById("progressText").innerText = "Decompressing image...";
+                    const decompressedData = pako.ungzip(new Uint8Array(xhr.response));
+                    callback(decompressedData);
+                }
+            };
+
+            xhr.onerror = () => {
+                document.getElementById("progressText").innerText = "Download failed!";
+            };
+
+            xhr.send();
+        }
+
+        async function loadEmulator(decompressedData) {
+            const progressText = document.getElementById("progressText");
+
+            const blob = new Blob([decompressedData], { type: "application/octet-stream" });
+            const imgUrl = URL.createObjectURL(blob);
+
+            progressText.innerText = "Starting emulator...";
+
+            emulator = new V86({
+                wasm_path: "https://download.valkey.io/try-me-valkey/vos/v86/v86.wasm",
+                memory_size: 512 * 1024 * 1024,
+                bios: { url: "https://download.valkey.io/try-me-valkey/vos/v86/bios/seabios.bin" },
+                filesystem: {
+                    baseurl: "https://download.valkey.io/try-me-valkey/8.1.0/fs/alpine-rootfs-flat",
+                    basefs: "https://download.valkey.io/try-me-valkey/8.1.0/fs/alpine-fs.json",
+                },
+                autostart: true,
+                bzimage_initrd_from_filesystem: true,
+                cmdline: "rw root=host9p rootfstype=9p rootflags=trans=virtio,cache=loose modules=virtio_pci tsc=reliable",
+                initial_state: { url: imgUrl },
+                disable_mouse: true,
+                disable_keyboard: true,
+                disable_speaker: true,
+            });
+
+            await new Promise(resolve => emulator.add_listener("emulator-ready", resolve));
+
+            const serialAdapter = new SerialAdapterXtermJS(document.getElementById('terminal-container'), emulator.bus);
+            serialAdapter.show();
+
+            document.getElementById("loadingContainer").style.display = "none";
+            document.getElementById("terminalWrapper").style.display = "flex";
+
+            if (emulator) {
+                resetInactivityTimer();
+                ["mousemove", "keydown", "touchstart"].forEach(event => {
+                    window.addEventListener(event, resetInactivityTimer);
+                });
+                
+                serialAdapter.term.onKey(() => resetInactivityTimer()); // Typing
+                serialAdapter.term.onData(() => resetInactivityTimer()); // Sending data
+                serialAdapter.term.onCursorMove(() => resetInactivityTimer()); // Mouse activity
+            };
+        }
+
+        let inactivityTimeout;
+        const INACTIVITY_LIMIT = 60*1000*10 //inactivity limit is 10 minutes
+
+        function resetInactivityTimer() {
+            if (!emulator) {
+                console.warn("Emulator is not initialized yet.");
+                return;
+            }
+
+            clearTimeout(inactivityTimeout);
+
+            inactivityTimeout = setTimeout(() => {
+                if (emulator.is_running()) {
+                        console.log("VM paused due to inactivity.");
+                        emulator.stop();
+                    }
+            }, INACTIVITY_LIMIT);
+
+            if (!emulator.is_running()) {
+                console.log("VM resumed");
+                emulator.run();
+            }
+        }
+
+        window.onload = function () {
+            const startButton = document.getElementById("startButton");
+            startButton.addEventListener("click", async () => {
+                document.getElementById("warningContainer").style.display = "none";
+                document.getElementById("loadingContainer").style.display = "block";
+                document.getElementById("progressText").innerText = "Preparing to load..."; 
+
+                const db = await openIndexedDB();
+
+                try {
+                    const needsDownload = await checkIfUpdated();
+
+                    if (needsDownload) {
+                        downloadAndDecompressBinary(async (decompressedData) => {
+                            await saveBinaryToCache(db, decompressedData);
+                            loadEmulator(decompressedData);
+                        });
+                    } else {
+                        const cachedBinary = await getCachedBinary(db);
+                        if (cachedBinary) {
+                            loadEmulator(cachedBinary);
+                        } else {
+                            downloadAndDecompressBinary(async (decompressedData) => {
+                                await saveBinaryToCache(db, decompressedData);
+                                loadEmulator(decompressedData);
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error loading binary: ", error);
+                    document.getElementById("progressText").innerText = "Failed to load binary.";
+                }
+            });
+        };
+    </script>
+{% endblock main_content %}
