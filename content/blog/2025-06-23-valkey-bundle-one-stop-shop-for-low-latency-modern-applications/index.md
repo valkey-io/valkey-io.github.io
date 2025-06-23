@@ -190,7 +190,7 @@ Check for multiple items in a single roundtrip using [`BF.MEXISTS`](https://valk
 
 ### High-Performance Vector Similarity Search
 
-[Valkey Search](https://github.com/valkey-io/valkey-search) provides your application with high performance vector similarity search capabilities, essential for modern AI-driven applications. It delivers millisecond latency even with billions of vectors through optimized implementations of Approximate Nearest Neighbor ([ANN](https://en.wikipedia.org/wiki/Nearest_neighbor_search#Approximation_methods)) search with Hierarchical navigable small world ([HNSW](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world)) and exact matching using K-Nearest Neighbors ([KNN](https://en.wikipedia.org/wiki/Nearest_neighbor_search#Approximation_methods)) algorithms.
+[Valkey Search](https://github.com/valkey-io/valkey-search) provides your application with high performance vector similarity search capabilities, essential for modern AI-driven applications. It delivers single digit millisecond latency at 99% recall even with billions of vectors through optimized implementations of Approximate Nearest Neighbor ([ANN](https://en.wikipedia.org/wiki/Nearest_neighbor_search#Approximation_methods)) search with Hierarchical navigable small world ([HNSW](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world)) and exact matching using K-Nearest Neighbors ([KNN](https://en.wikipedia.org/wiki/Nearest_neighbor_search#Approximation_methods)) algorithms.
 
 **Key Capabilities and Constraints**
 
