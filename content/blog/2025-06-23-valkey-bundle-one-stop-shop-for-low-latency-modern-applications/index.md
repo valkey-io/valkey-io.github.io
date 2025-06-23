@@ -450,7 +450,7 @@ First, we needed a flexible way to store user profiles. Valkey JSON proved perfe
     "categories": ["electronics", "sports"],
     "brands": ["nike", "apple"]
   },
-  "embedding": [0.23, 0.45, 0.67, ...] // user preference vector
+  "embedding": [0.23, 0.45, 0.67]
 }
 ```
 
