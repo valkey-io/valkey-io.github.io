@@ -490,12 +490,15 @@ This setup allows us to find similar products while applying business rules like
 
 Here's how we can fetch similar products based on user preferences:
 
+Get user's preference vector
+```console
+> SET user_vector `JSON.GET user:u123456 $.embedding`
+OK
 ```
-# Get user's preference vector
-SET user_vector `JSON.GET user:u123456 $.embedding`
 
-# Find similar products in the same category
-FT.SEARCH product_idx "*=>[KNN 5 @embedding $user_vector] @category:{electronics}" 
+Find similar products in the same category
+```console
+> FT.SEARCH product_idx "*=>[KNN 5 @embedding $user_vector] @category:{electronics}" 
     PARAMS 2 user_vector "$user_vector"
 ```
 
@@ -505,13 +508,25 @@ This query combines vector similarity search with category filtering, ensuring r
 
 Nobody likes seeing the same ad repeatedly. We use Valkey Bloom to efficiently track which user each ad has been shown. The beauty of Bloom filters is their space efficiency, we can track millions of impressions using minimal memory.
 
-```
-# Track ad impressions
-BF.RESERVE ad:a789012 0.01 10000000
-BF.ADD ad:a789012 "user:u123456"
+Track ad impressions by the Ad Id
+```console
+> BF.RESERVE ad:a789012 0.01 10000000
+OK
 
-# Quick check before showing an ad
-BF.EXISTS ad:a789012 "user:u123456"
+> BF.ADD ad:a789012 "user:u123456"
+(integer) 1
+```
+
+Quick check before showing an ad
+```console
+> BF.EXISTS ad:a789012 "user:u123456"
+(integer) 1
+```
+
+Try a different user for the same Ad Id.
+```console
+> BF.EXISTS ad:a789012 "user:u234567"
+(integer) 0
 ```
 
 With a false positive rate of just 1%, we maintain accuracy while using about 93% less memory compared to the `SET` data structure.
@@ -524,42 +539,64 @@ Our Ad Platform needs to support multiple teams with different access levels - f
 
 First, let's set up our LDAP integration to map organizational roles:
 
-```
-# Configure LDAP connection with out imaginary Valkey LDAP
-CONFIG SET ldap.servers "ldaps://ldap.valkey.io:636"
-CONFIG SET ldap.search_base "ou=employees,dc=valkey,dc=io"
-CONFIG SET ldap.search_filter "(objectClass=user)"
-CONFIG SET ldap.search_attribute "uid"
+Configure LDAP connection with out imaginary Valkey LDAP
+```console
+> CONFIG SET ldap.servers "ldaps://ldap.valkey.io:636"
+OK
 
-# Enable TLS for secure communication
-CONFIG SET ldap.use_starttls yes
-CONFIG SET ldap.tls_ca_cert_path "/etc/valkey/certs/ca.crt"
+> CONFIG SET ldap.search_base "ou=employees,dc=valkey,dc=io"
+OK
+
+> CONFIG SET ldap.search_filter "(objectClass=user)"
+OK
+
+> CONFIG SET ldap.search_attribute "uid"
+OK
+```
+
+Enable TLS for secure communication
+```console
+> CONFIG SET ldap.use_starttls yes
+OK
+
+> CONFIG SET ldap.tls_ca_cert_path "/etc/valkey/certs/ca.crt"
+OK
 ```
 
 #### Role-Based Access Control
 
 We'll create different access levels using Valkey ACLs that map to LDAP groups:
 
-```
-# Account Managers - Can view and modify client campaigns
-ACL SETUSER account_manager on resetpass +@read +@write -@admin >client_secret
+Account Managers - Can view and modify client campaigns
+```console 
+> ACL SETUSER account_manager on resetpass +@read +@write -@admin >client_secret
     ~campaign:* 
     ~client:* 
     ~analytics:*
+OK
+```
 
-# Content Creators - Can manage ad content and view basic analytics
-ACL SETUSER content_creator on resetpass +@read +@write -@admin >content_secret
+Content Creators - Can manage ad content and view basic analytics
+```console
+> ACL SETUSER content_creator on resetpass +@read +@write -@admin >content_secret
     ~ad:* 
     ~content:* 
     &analytics:basic:*
+OK
+```
 
-# Data Analysts - Read-only access to all analytics data
-ACL SETUSER data_analyst on resetpass +@read -@write -@admin >analyst_secret
+Data Analysts - Read-only access to all analytics data
+```console
+> ACL SETUSER data_analyst on resetpass +@read -@write -@admin >analyst_secret
     ~analytics:* 
     &campaign:*
+OK
+```
 
-# System Administrators - Full access
-ACL SETUSER admin on resetpass +@all >admin_secret
+System Administrators - Full access
+```console
+> ACL SETUSER admin on resetpass +@all >admin_secret
+OK
 ```
 
 ## Conclusion
