@@ -29,22 +29,21 @@ In this blog post, we go over on how to get started with the new single containe
 
 Start your *valkey-bundle* instance:
 
+1. Get the latest version of the container image
 ```bash
-# Get the latest version of the container image
-docker pull valkey/valkey-bundle
+> docker pull valkey/valkey-bundle
+```
 
-# Run a standalone valkey using the default port
-docker run --name my-valkey-bundle \
+2. Run a standalone valkey using the default port
+```bash
+> docker run --name my-valkey-bundle \
     -p 6379:6379 \
     -d valkey/valkey-bundle
 ```
 
-Connect via `valkey-cli`:
-
+3. Connect to the same container we have previously created using the built-in `valkey-cli`:
 ```bash
-# Connect to the same container we have previously created
-# using the built-in valkey cli
-docker exec -it my-valkey-bundle \
+> docker exec -it my-valkey-bundle \
     valkey-cli -h localhost -p 6379 -3
 ```
 
@@ -54,9 +53,9 @@ List the available modules using the [`INFO`](https://valkey.io/commands/info/) 
 my-valkey-bundle:6379> INFO modules
 # Modules
 module:name=bf,ver=10000,api=1,filters=0,usedby=[],using=[],options=[]
-module:name=ldap,ver=16777471,api=1,filters=0,usedby=[],using=[],options=[]
 module:name=search,ver=10000,api=1,filters=0,usedby=[],using=[],options=[handle-io-errors|handle-repl-async-load|no-implicit-signal-modified]
 module:name=json,ver=10010,api=1,filters=0,usedby=[],using=[],options=[handle-io-errors]
+module:name=ldap,ver=16777471,api=1,filters=0,usedby=[],using=[],options=[]
 ```
 
 ## *valkey-bundle* Features and CLI Examples
