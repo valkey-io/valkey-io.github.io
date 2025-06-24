@@ -9,9 +9,7 @@ featured = false
 featured_image = "/assets/media/featured/random-08.webp"
 +++
 
-The Valkey project is introducing vector similarity search capabilities through [valkey-search](https://github.com/valkey-io/valkey-search) (BSD-3-Clause licensed), an official Valkey module compatible with Valkey versions 8.1.1 and above. 
-
-With valkey-search you can easily create indexes to search through billions of vectors stored within your Valkey instances. Whether you're building semantic search, fraud detection systems, or conversational AI experiences, valkey-search offers a flexible foundation for your application.
+[Valkey-search](https://github.com/valkey-io/valkey-search) is an official Valkey module that introduces native vector similarity search capabilities. It allows you to efficiently create indexes and search through billions of vectors stored in your Valkey instances. Whether you're building semantic search, fraud detection systems, or conversational AI experiences, Valkey-Search provides a flexible and high-performance foundation for your application. It is compatible with Valkey versions 8.1.1 and above and is BSD-3-Clause licensed.
 
 
 In this blog, you'll learn how valkey-search works, explore key use cases it supports, understand its architecture and indexing model, and see how to integrate it into your own applications. You'll also gain insight into how it scales, ensures high availability, and supports hybrid queries that combine vector similarity with structured filtering.
@@ -19,7 +17,7 @@ In this blog, you'll learn how valkey-search works, explore key use cases it sup
 
 ## Semantic Search
 
-The ability of AI models to extract semantic meaning enables new classes of searching algorithms, collectively known as semantic search. An AI model can process an input and convert it into a single high-dimension numeric vector – known as an embedding. Inputs with similar meaning will have similar embeddings. Semantic search is the process of converting a query into its embedding and searching a database of embeddings to find the embeddings that are most alike. 
+The ability of AI models to extract semantic meaning enables new classes of search algorithms, collectively known as semantic search. An AI model can process an input and convert it into a single high-dimension numeric vector – known as an embedding. Inputs with similar meaning will have similar embeddings. Semantic search is the process of converting a query into its embedding and searching a database of embeddings to find the most similar results. 
 
 The semantic search process can be divided into three phases:
 
@@ -58,10 +56,7 @@ In cluster mode, the `FT.CREATE` command can be sent to any primary shard of the
 ## Valkey-search Capabilities
 
 
-### Query Pipeline
-
-
-#### Vector Search Algorithms
+### Vector Search Algorithms
 
 Valkey-search supports K Nearest Neighbor (KNN) searching. Applications provide a reference vector and request that the system locate the K vectors which are closest to a supplied reference vector using the selected distance function (L2, IP or cosine). KNN searching is a classic problem which lacks an efficient exact ideal solution. Valkey-search addresses this problem by providing two different algorithms that the developer can select from:
 
@@ -72,7 +67,7 @@ The second algorithm addresses this problem by compromising on accuracy in excha
 Valkey-search supports the [Hierarchical Navigable Small Worlds](https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world) (HNSW) ANN algorithm as it provides the best performance at the highest levels of recall demanded by real-time applications. The HNSW algorithm has O(log N) time complexity and offers three parameters to which provide the developer some control over the CPU and memory consumption vs recall. The relationship between these parameters and the resulting operation latency and recall is complex and data dependent. It is recommended that developers test with data that closely approximates production environments.
 
 
-#### Hybrid Query Support
+### Hybrid Query Support
 
 Valkey-search query operations are not limited to just vector searching. Documents can contain additional metadata that can be used to enhance searches. Two types of metadata are currently supported: Numeric and Tag. Numeric metadata supports range queries, i.e., you can include or exclude documents with metadata in the particular range. Tag metadata is an enumerated list of words. Tag searches can be done with an exact word match or a prefix match (trailing wild card).
 
@@ -81,7 +76,7 @@ Hybrid queries are vector query operations which have been augmented with a filt
 Hybrid queries are particularly powerful for real-world applications, where a mix of vector and non-vector attributes defines the relevance of results. For example, a numeric field could be used as a timestamp, meaning that search operations could be automatically confined to a particular period of time. Another example would be to use a tag field to indicate a language.
 
 
-##### Query Execution
+#### Query Execution
 
 There are multiple strategies for executing hybrid queries, each suited to different use cases. Valkey-search automatically selects from two strategies as part of the query execution planning phase. This is done by breaking down the query filter into predicates and estimating the selectivity of each predicate to estimate the least expensive execution strategy. 
 
@@ -100,7 +95,7 @@ Valkey-search is built on top of Valkey, leveraging its primary/replica-based ar
 
 Clients must send data mutation (write) commands to the primary node which are executed and then automatically asynchronously transmitted to each replica. Clients can send data read operations to any node in the cluster, recognizing that reading from a replica delivers a result reflecting a historical point in time.
 
-When Valkey-search is used, each node, whether a primary or a replica, builds and maintains its own indexes. No additional traffic on the replication channel is generated for index maintenance. Search query operations sent to a replica will be executed against its indexes, reflecting the historical point in time of the data within that node.
+When valkey-search is used, each node, whether a primary or a replica, builds and maintains its own indexes. No additional traffic on the replication channel is generated for index maintenance. Search query operations sent to a replica will be executed against its indexes, reflecting the historical point in time of the data within that node.
 
 ![High availability](images/ha.png)
 
@@ -132,12 +127,11 @@ Valkey-search implements a subset of RediSearch’s functionality, with compatib
 
 ## Performance & Low Latency
 
-Valkey-search is designed as an in-memory secondary index, achieving exceptional performance. A multi-threaded architecture optimizes query and mutation processing with minimal thread contention, enabling near-linear vertical scalability.
+Valkey-search was designed from the group up as an in-memory secondary index. A multi-threaded architecture optimizes query and mutation processing with minimal thread contention, enabling near-linear vertical scalability.
 
-At its core, valkey-search’s threading architecture follows a common design pattern: a worker thread pool combined with task queues. It employs advanced synchronization mechanisms to maintain index consistency while minimizing contention among worker threads. By time-slicing CPU access between read and write operations, the system enables an almost lock-free read path, delivering high performance and consistently low search latency. 
+At its core, valkey-search’s threading architecture follows a common design pattern: a worker thread pool combined with task queues. It employs advanced synchronization mechanisms to maintain index consistency while minimizing contention among worker threads. By time-slicing CPU access between read and write operations, the system minimizes locks on the read path, delivering high performance and consistently low search latency. 
 
-Valley-search’s HNSW implementation is based on the OSS project [HNSWLib](https://github.com/nmslib/hnswlib). While HNSWLib is well-regarded for its speed, we have enhanced its performance and efficiency for our use case. These improvements include better `SIMD` utilization, promotion of CPU cache efficiency, memory utilization and more.
-
+Valkey-search’s HNSW implementation is based on the OSS project [HNSWLib](https://github.com/nmslib/hnswlib). While HNSWLib is well-regarded for its speed, we have enhanced its performance and efficiency for our use case. These improvements include better SIMD utilization, promotion of CPU cache efficiency, memory utilization and more.
 
 
 ## Future Enhancements
@@ -152,4 +146,4 @@ Valkey-search is open source and ready for you to explore. Whether you're buildi
 
 We welcome contributions of all kinds - code, documentation, testing, and feedback. Join the community, file issues, open pull requests, or suggest improvements. Your involvement helps make valkey-search better for everyone.
 
-Ready to dive in? Clone the repo, fire up the [dev container](https://hub.docker.com/r/valkey/valkey-extensions), and start building high-performance vector search with valkey-search.
+Ready to dive in? Clone the repo, fire up the [valkey-bundle](https://hub.docker.com/r/valkey/valkey-extensions), and start building high-performance vector search with valkey-search.
