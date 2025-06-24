@@ -52,5 +52,5 @@ publish_hold = [
     "/topics/rdd/"
 ]
 
-banner = "Valkey 8.1 is generally available! [Check it out](https://valkey.io/download/releases/v8-1-0/)"
+banner = "Valkey Bundle adds JSON, Bloom, Vector Search and LDAP! [Check it out](https://valkey.io/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/)"
 
