@@ -109,7 +109,9 @@ Now we will retrieve only the cities associated with each user:
 
 ##  Advanced JSON Queries
 
-Valkey JSON supports [JSONPath](https://goessner.net/articles/JsonPath/) expressions
+Valkey JSON supports [JSONPath](https://goessner.net/articles/JsonPath/) expressions.
+JSONPath is a query language for JSON documents, similar to XPath for XML. It allows users to select and extract specific data from a JSON document using a path-like expression.
+
 Let us look at some filtering using JSONPath.
 
 #### Retrieve all users from Washington State
