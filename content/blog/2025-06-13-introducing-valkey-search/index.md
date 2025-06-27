@@ -79,8 +79,6 @@ When executing hybrid queries, valkey-search automatically selects from one of t
 
 **Pre-filtering:** This algorithm has two sequential steps: first, a temporary dataset is created using only the documents which pass the filter expression, then a linear KNN similarity search of is performed on the temporary dataset. Pre-filtering is particularly effective for high selectivity queries, i.e., the filter significantly narrows down the dataset.
 
-Pre-filtering is particularly effective for high selectivity queries, i.e., the filter significantly narrows down the dataset
-
 **Inline-filtering:** In this algorithm, filtering is done *during* the vector search itself. As the HNSW search graph is traversed, each candidate document is tested against the filter criteria before being added to the result set. This method is best suited for cases where the filter isn’t highly selective, i.e., the filter matches a large amount of the dataset. 
 
 
