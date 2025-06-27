@@ -19,45 +19,42 @@ Valkey JSON supports six data types—**null, boolean, number, string, object, a
 
 Internally, Valkey JSON utilizes an optimized **binary tree-like format**, which enables rapid traversal and manipulation of substructures without requiring full document parsing. This structure not only minimizes memory usage but also ensures that operations on specific paths remain efficient. Path-based commands like `JSON.GET`, `JSON.SET`, and `JSON.DEL` allow targeted interactions with specific elements, supporting multiple paths within a single operation. Additionally, Valkey JSON integrates with Valkey’s Access Control Lists (ACLs), introducing a `@json` command category to enforce granular permissions alongside existing data types.
 
-##  Getting Started with Valkey JSON
+## Getting Started with Valkey JSON
 
-Let’s walk through a real-world example and see how Valkey JSON can be used. 
+Let’s walk through a practical example using Valkey JSON with the [`valkey-bundle`](https://hub.docker.com/r/valkey/valkey-bundle) Docker image.
 
 ### Installation and Setup
 
-Valkey JSON is a module and at time of writing, you'll need to build the module locally.
-However, it is also available in the [valkey-bundle](https://hub.docker.com/r/valkey/valkey-bundle), a docker image with all the valkey modules built-in. 
+Valkey JSON comes pre-loaded in the `valkey-bundle`, which includes other modules such as Valkey Bloomfilters, Valkey search and Valkey LDAP loaded on Valkey.
 
-#### 1. Build Valkey JSON locally
-
+#### Start a Valkey bundle instance
 ```
-git clone https://github.com/valkey-io/valkey-json.git
-cd valkey-json
-./build.sh
+docker run --name my-valkey-bundle -d valkey/valkey-bundle
 ```
+This will start a docker container of Valkey with JSON module already loaded.
 
-This will produce `libjson.so` inside the `bin/` or `build/` 
-
-#### 2. Start Valkey with the JSON module
-
+#### Connect with valkey-cli
+To connect to your running instance using the built-in valkey-cli:
 ```
-valkey-server --loadmodule /path/to/libjson.so
+docker run -it --network container:my-valkey-bundle --rm valkey/valkey-bundle valkey-cli
+127.0.0.1:6379>
 ```
+Tip: --network container:my-valkey-bundle allows the CLI to communicate directly with the same container.
 
-Let's connect to the valkey-server with `valkey-cli` client for the following commands.
-
-We will now verify the module is loaded:
-
+We will now verify the modules are loaded and Valkey JSON is one of them:
 ```
 127.0.0.1:6379> MODULE LIST
-1) 1) "name"
+.
+.
+3) 1) "name"
    2) "json"
    3) "ver"
-   4) (integer) 10000
+   4) (integer) 10010
    5) "path"
    6) "/usr/lib/valkey/libjson.so"
    7) "args"
    8) (empty array)
+.
 ```
 
 You’re now ready to work with JSON in Valkey!
