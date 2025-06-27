@@ -25,7 +25,7 @@ Let’s walk through a practical example using Valkey JSON with the [`valkey-bun
 
 ### Installation and Setup
 
-Valkey JSON comes pre-loaded in the `valkey-bundle`, which includes other modules such as Valkey Bloomfilters, Valkey search and Valkey LDAP loaded on Valkey.
+Valkey JSON comes pre-loaded in the `valkey-bundle`, which also includes other modules such as Valkey Bloomfilters, Valkey search and Valkey LDAP loaded on Valkey.
 
 #### Start a Valkey bundle instance
 ```
