@@ -1,7 +1,7 @@
 +++
 title = "Introducing Enhanced JSON Capabilities in Valkey"
 description = "Learn more about the new Valkey JSON module with some real-world examples and application."
-sort_by = "2025-06-03 01:01:01"
+sort_by = "2025-06-30 01:01:01"
 authors= [ "roshkhatri"]
 +++
 
@@ -26,7 +26,7 @@ Let’s walk through a real-world example and see how Valkey JSON can be used.
 ### Installation and Setup
 
 Valkey JSON is a module and at time of writing, you'll need to build the module locally.
-However, it is also available in the [valkey-extensions](https://hub.docker.com/r/valkey/valkey-extensions), a docker image with all the valkey modules built-in. 
+However, it is also available in the [valkey-bundle](https://hub.docker.com/r/valkey/valkey-bundle), a docker image with all the valkey modules built-in. 
 
 #### 1. Build Valkey JSON locally
 
@@ -179,7 +179,7 @@ For users migrating from Redis, Valkey JSON is designed as a **drop-in replaceme
 
 ## Conclusion
 
-The introduction of the Valkey JSON module is a significant milestone for developers building modern, data-driven applications. By bringing native JSON support into Valkey’s high-performance in-memory engine, it bridges the gap between structured document modeling and real-time responsiveness. Whether you’re updating millions of ad counters per second, serving game metadata to distributed microservices, or powering identity search across terabytes of profiles, ValkeyJSON simplifies your architecture while boosting speed and scalability. With Valkey 8.0 and beyond, developers gain a powerful, intuitive, and production-grade toolset to manipulate JSON data at scale — all with the familiar simplicity and reliability of Valkey.
+Before Valkey JSON, developers often had to write extra serialization code, split JSON documents across keys, make additional round trips, or rely on external document stores alongside Valkey. Now, with native JSON commands, you can store, query, and update rich, nested structures directly in-memory and in real time. This removes architectural complexity, reduces latency, and extends Valkey’s high-performance design to modern, document-centric use cases.
 
 Explore Valkey JSON in more depth and start building with it today!
 
@@ -187,13 +187,6 @@ See the following resources for details and ways to contribute:
 
 * [Valkey Official Documentation](https://valkey.io/topics/valkey-json/) to learn more.
 * [Valkey JSON GitHub Repository](https://github.com/valkey-io/valkey-json) for issues or feature requests.
-* [Valkey Extensions](https://hub.docker.com/r/valkey/valkey-extensions) to start building with Valkey JSON.
-
-Thank you to all those who helped develop the module:
-
-* Roshan Khatri ([roshkhatri](https://github.com/roshkhatri))
-* Joe Hu ([joehu21](https://github.com/joehu21))
-* Nikhil Manglore ([Nikhil-Manglore](https://github.com/Nikhil-Manglore))
-* Cameron Zack ([zackcam](https://github.com/zackcam))
+* [Valkey Bundle](https://hub.docker.com/r/valkey/valkey-bundle) to start building with Valkey JSON.
 
 Happy coding!
