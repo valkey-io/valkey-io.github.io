@@ -1271,6 +1271,12 @@ pre table {
   border-collapse: collapse;
 }
 
+.replaced-by {
+  display: inline;
+  p {
+    display: inline;
+  }
+}
 .command-group {
   margin-bottom: 2rem;
   

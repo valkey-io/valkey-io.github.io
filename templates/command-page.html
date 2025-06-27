@@ -151,7 +151,11 @@
 {% else %}
 <code>ERROR. Command description not loaded</code><br />
 {% endif %}
+{% if command_data_obj.replaced_by %}
+<h3>Deprecation advice</h3>
+Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{{ command_data_obj.replaced_by | markdown | safe  }}</div>
 
+{% endif %}
 {% set_global resp2_replies = load_data(path="../_data/resp2_replies.json", required=false) -%}
 {% set_global resp3_replies = load_data(path="../_data/resp3_replies.json", required=false) -%}
 {% if resp2_replies and resp3_replies -%}
