@@ -170,7 +170,7 @@ For organization operating large-scale identity platforms — such as those in f
 
 ## Integration with the Valkey Ecosystem
 
-Ensuring smooth integration across data stores and libraries is vital for minimizing migration friction and maximizing developer productivity. Valkey JSON is fully compatible with **Valkey 8.0 and above**, making it accessible to users on the latest Valkey versions without requiring additional configuration.
+Valkey JSON is fully compatible with **Valkey 8.0 and above**.
 
 It is also compliant with **RFC7159** and **ECMA-404**, adhering to widely accepted JSON standards which ensures consistent handling JSON data. Valkey JSON also integrates with **Valkey’s Access Control Lists (ACLs)**, providing fine-grained permissions for JSON commands alongside other data types like strings and hashes.
 
