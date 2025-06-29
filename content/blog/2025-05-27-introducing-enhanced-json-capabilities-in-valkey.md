@@ -153,7 +153,7 @@ Below we retrieve the names of users from WA and those from other states:
 
 With native JSON support, developers can manage structured, nested data without complex serialization or parsing logic, enabling rapid, targeted updates and high-performance queries. Here are three impactful use cases that showcase how Valkey JSON can drive value:
 
-### Per-User Event Counters for Ad or Notification Delivery
+#### Per-User Event Counters for Ad or Notification Delivery
 
 Valkey JSON works well in high-throughput systems that require tracking per-user counters for ad impressions, push notifications, or message deliveries. For example, an ad platform may store a JSON document per user with nested metadata for each campaign — including impression counts, last delivery timestamps, and click history. Instead of serializing and deserializing large blobs, Valkey JSON enables in-place updates using `JSON.NUMINCRBY` or `JSON.SET` on specific paths (e.g., `$.ad_campaigns.ad_123.count`). This reduces network I/O and latency while ensuring atomicity. Microservices can also retrieve only the required subfields using JSONPath queries, like `$.ad_campaigns.ad_123.lastSeen`, allowing for efficient real-time decisioning. Compared to alternatives like managing multiple hash keys or plain strings, this approach is both cleaner and faster — making it well-suited for ad tech and notification delivery platforms operating at millions of ops/sec under tight latency constraints.
 
