@@ -1,7 +1,7 @@
 +++
 title = "Introducing Enhanced JSON Capabilities in Valkey"
 description = "Learn about the new Valkey JSON with some real-world examples and application."
-sort_by = "2025-06-30 01:01:01"
+date = "2025-06-30 01:01:01"
 authors= [ "roshkhatri"]
 +++
 
