@@ -40,19 +40,10 @@ Valkey stood out because it naturally fits agent workloads:
 
 ---
 
-## The Real Story of Our Development Journey
+## Running on GPU
+We've invested time creating a self-contained EC2 launch path—a one-liner that provisions everything from scratch: Docker, NVIDIA drivers, cached models, and the full Valkey agentic stack. But getting that to work wasn’t trivial. The default Amazon Linux 2 AMIs lacked modern GPU drivers, and HF Transformers would fail silently if their cache wasn’t pre-warmed. We fixed this with a layered Dockerfile split: a DEPS stage builds the model cache offline, while the final runtime image stays minimal. Add in shell script automation, metadata tagging, and manage.py to orchestrate runs—and now the EC2 path works reliably, GPU or not.
 
-Like all real-world projects, we hit some bumps and learned plenty along the way.
-
-We faced a puzzling issue dubbed the "Slinky backlog." When bursts of news came in, the fan-out queues formed a staircase pattern, causing delays. The fix? We moved trimming logic into Valkey itself using Lua scripting. Suddenly, bursts became smooth streams, and our backlogs flattened.
-
-Another challenge was duplicate articles popping into user feeds. Annoying, right? We solved this by introducing a deduplication step with a simple Redis set (`feed_seen`). This tiny adjustment cut duplicates from an annoying 3% down to a negligible 0.05%.
-
-Early on, our user interface had a quirky bug—it showed only a single message initially, with everything else piling up in a confusing "Refresh" bucket. After tweaking our React hooks with a short idle timer, the backlog smoothly appeared in the timeline, making our UI feel responsive and intuitive.
-
-We also discovered issues with missing modules during CI testing. By adding automated checks that confirm Valkey modules load properly in GitHub Actions, we caught configuration mishaps early, saving us headaches down the line.
-
-Finally, our Grafana dashboard initially looked like a complicated airplane cockpit with over 40 panels! To tame this complexity, we auto-generated simpler layouts, color-coding each pipeline stage to highlight anomalies immediately. Now, spotting problems is effortless.
+That setup now lets anyone launch the full demo on a fresh AWS box with GPU acceleration and working ports in ~5 minutes. 
 
 ---
 
