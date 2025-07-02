@@ -120,7 +120,7 @@ Valkey-search implements a subset of RediSearch’s functionality, with compatib
 
 ## Performance & Low Latency
 
-Valkey-search was designed from the group up as an in-memory secondary index. A multi-threaded architecture optimizes query and mutation processing with minimal thread contention, enabling near-linear vertical scalability.
+Valkey-search was designed from the ground up as an in-memory secondary index. A multi-threaded architecture optimizes query and mutation processing with minimal thread contention, enabling near-linear vertical scalability.
 
 At its core, valkey-search’s threading architecture follows a common design pattern: a worker thread pool combined with task queues. It employs advanced synchronization mechanisms to maintain index consistency while minimizing contention among worker threads. By time-slicing CPU access between read and write operations, the system minimizes locks on the read path, delivering high performance and consistently low search latency. 
 
