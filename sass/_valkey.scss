@@ -1880,3 +1880,31 @@ pre table {
   height: 18px;
   margin-right: 0.3rem;
 }
+
+.breadcrumbs {
+  border-radius: 20px;
+  background: #fff;
+  margin-bottom: 2rem;
+  
+  .breadcrumb-list {
+    display: flex;
+    align-self: center;
+    padding: 10px 20px;
+    list-style: none;
+    margin: 0;
+    gap: 5px;
+
+    .breadcrumb-item {
+      align-items: center;
+      display: flex;
+          
+      img {
+        margin-right: 5px;
+      }
+
+      .breadcrumb-link {
+        color: #2054B2;
+      }
+    }
+  }
+}
