@@ -213,6 +213,36 @@ p {
         }
       }
     }
+
+    .github-button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem !important;
+      background-color: #f8f9fa;
+      border: 1px solid #dfe1e4;
+      border-radius: 6px;
+      color: #444;
+      text-decoration: none;
+      transition: all 0.2s ease;
+
+      img {
+        filter: brightness(0) saturate(100%) invert(27%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
+      }
+
+      &:hover {
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+        text-decoration: none;
+        border-bottom-color: #e9ecef;
+      }
+
+      @media (max-width: 768px) {
+        padding: 0.75rem 1rem !important;
+        margin-top: 0.5rem;
+        justify-content: center;
+      }
+    }
   }
   .btn-menu {
     display: none;
