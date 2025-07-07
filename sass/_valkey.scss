@@ -643,6 +643,30 @@ p {
   }
 }
 
+.sb-search-container {
+  display: flex;
+  align-items: center;
+  margin: 0 -2rem 2rem;
+  padding: 0 2rem 2rem;
+  border-bottom: 1px solid rgb(104, 147, 238);
+
+  input {
+    flex: 1;
+    width: 100%;
+    min-width: 0px;
+    outline: none;
+    padding: 1.15rem;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 50px;
+    font-size: 16px;
+
+    &:focus {
+      border-color: #6983ff;;
+    }
+  }
+}
+
 .no-results-message {
   color: #30176e;
   padding: 5rem 2rem 7rem;
@@ -1889,7 +1913,7 @@ pre table {
   .breadcrumb-list {
     display: flex;
     align-self: center;
-    padding: 10px 20px;
+    padding: 1rem 2rem;
     list-style: none;
     margin: 0;
     gap: 5px;

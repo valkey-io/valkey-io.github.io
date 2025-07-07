@@ -255,11 +255,49 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 {% endfor %}
 {% set_global grouped = commands_entries | sort(attribute="3") | group_by(attribute="3") %}
 
-<h2>Alphabetical Command List</h2>
-<ul>
+<div class="sb-search-container">
+    <input type="text" id="sidebar-search-box" placeholder="Search within documents" onkeyup="searchSidebarCommands()" />
+</div>
+
+<!-- No results message for sidebar search -->
+<div id="sidebar-no-results-message" class="no-results-message" style="display: none;">
+    <span>&lt;/&gt;</span>
+    <h4>No commands found</h4>
+    <p>Check your spelling or try different keywords</p>
+</div>
+
+<h2 id="command-list-title">Alphabetical Command List</h2>
+<ul id="command-list">
 {% set alpha_entries = commands_entries | sort(attribute="0")  %}
 {% for entry in alpha_entries  %}
-    <li><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code></li>
+    <li class="command-list-item"><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code></li>
 {% endfor %}
 </ul>
+
+<script>
+function searchSidebarCommands() {
+    var input = document.getElementById("sidebar-search-box").value.toLowerCase();
+    var commandList = document.getElementById("command-list");
+    var commandListTitle = document.getElementById("command-list-title");
+    var items = commandList.querySelectorAll(".command-list-item");
+    var noResultsMessage = document.getElementById("sidebar-no-results-message");
+    var totalVisible = 0;
+
+    items.forEach(function (item) {
+        var text = item.querySelector("a").innerText.toLowerCase();
+        if (text.includes(input)) {
+            item.style.display = "";
+            totalVisible++;
+        } else {
+            item.style.display = "none";
+        }
+    });
+
+    // Show/hide no results message and title based on search results
+    var hasResults = totalVisible > 0;
+    noResultsMessage.style.display = hasResults ? "none" : "block";
+    commandListTitle.style.display = hasResults ? "" : "none";
+    commandList.style.display = hasResults ? "" : "none";
+}
+</script>
 {% endblock related_content %}
