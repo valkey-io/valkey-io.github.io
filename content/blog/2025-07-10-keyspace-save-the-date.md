@@ -3,6 +3,9 @@ title = "Save the Date August 28, 2025: Keyspace"
 description = "Join the Valkey crew on August 28, 2025 in Amsterdam for the first ever Valkey conference: Keyspace!"
 date = "2025-07-10 01:01:01"
 authors= [ "kyledvs"]
+[extra]
+featured = true
+featured_image = "/assets/media/featured/random-05.webp"
 +++
 
 Join the Valkey crew on August 28, 2025 in Amsterdam for the first ever Valkey conference: Keyspace!
