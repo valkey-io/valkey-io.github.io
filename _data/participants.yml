@@ -97,3 +97,16 @@
     alt: ByteDance logo
   company: >
     Founded in 2012, ByteDance's mission is to inspire creativity and enrich life. With a suite of more than a dozen products, including TikTok, CapCut, Lark, and Pico, as well as platforms specific to the China market, including Toutiao, Douyin, Fanqie Novel and Xigua Video, ByteDance has made it easier and more fun for people to connect with, consume, and create content.
+
+- name: k0rdent
+  link: https://k0rdent.io
+  company: > 
+    k0rdent provides a way to manage distributed infrastructure at massive scale leveraging kubernetes.
+    The goal of the k0rdent project is to provide platform engineers with the means to deliver a distributed container management environment (DCME) and enable them to compose unique internal developer platforms (IDP) to support a diverse range of complex modern application workloads.
+  offering: >
+    Valkey is now available as a [service template on the k0rdent application catalog](https://catalog.k0rdent.io/latest/apps/valkey/).
+    The application catalog features a selection of best-in-class solutions designed to enhance k0rdent managed clusters.
+    These services have been validated on k0rdents clusters and have existing templates for easy deployment.
+  image:
+    path: /img/k0rdent.svg
+    alt: K0rdent Logo
