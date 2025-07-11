@@ -270,7 +270,7 @@ config := api.NewGlideClientConfiguration().
 The Valkey GLIDE Go client is built on top of the Valkey GLIDE core. The core framework is written in Rust (lib.rs), which exposes public functions. These functions are converted to a C header file using Cbindgen. The Go client then uses CGO to call these C functions, providing Go developers with an idiomatic interface while leveraging Rust's performance advantages. This architecture ensures consistent behavior across all Valkey GLIDE language implementations (Java, Python, Node.js, and Go) while maintaining performance and reliability.
 
 ### Component details
-```text
+```txt
 +------------+      +------+      +------------+      +------------+      +------------+
 |            |      |      |      |            |      |            |      |            |
 |    Go      |----->|      |----->|  C Header  |----->|    Rust    |----->|   Valkey   |
