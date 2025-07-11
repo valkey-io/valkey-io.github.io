@@ -120,7 +120,7 @@ p {
     padding: 10px;
     padding: 0 20px;
 
-    @include respond-min(768px) {
+    @include respond-min(1024px) {
       padding: 0 20px;
     }
   }
@@ -164,7 +164,7 @@ p {
       padding: .5rem 0;
       border-bottom: none;
 
-      @include respond-min(768px) {
+      @include respond-min(1024px) {
         border-bottom: 3px solid;
         padding: 1rem 0;
         border-color: transparent;
@@ -174,16 +174,16 @@ p {
     >a {
       &:hover,
       &.active {
-          border-color: inherit;
+        border-color: inherit;
         text-decoration: underline;
 
-        @include respond-min(768px) {
+        @include respond-min(1024px) {
           text-decoration: none;
         }
       }
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       display: none;
       gap: 1rem;
 
@@ -237,7 +237,7 @@ p {
         border-bottom-color: #e9ecef;
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: 1024px) {
         padding: 0.75rem 1rem !important;
         margin-top: 0.5rem;
         justify-content: center;
@@ -271,7 +271,7 @@ p {
       transition-duration: .2s;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1024px) {
       display: flex;
     }
   }
@@ -282,7 +282,7 @@ p {
   display: block;
   align-items: center;
 
-  @include respond-min(768px) {
+  @include respond-min(1024px) {
     display: flex;
   }
 
@@ -304,7 +304,7 @@ p {
     &:hover {
       text-decoration: underline;
 
-      @include respond-min(768px) {
+      @include respond-min(1024px) {
         text-decoration: none;
       }
     }
@@ -321,7 +321,7 @@ p {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     padding: .25rem 0;
 
-    @include respond-min(768px) {
+    @include respond-min(1024px) {
       display: none;
     }
 
