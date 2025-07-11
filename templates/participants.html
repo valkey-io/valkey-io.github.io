@@ -7,7 +7,7 @@
 
 {% block main_content %}
 
-{% set participants = load_data(path="/_data/participants.yml") %}
+{% set participants = load_data(path="/_data/participants.yml") | sort(attribute="name" ) %}
 <div class="participant-list">
   {% for participant in participants %}
     <div class="participant-{{participant.name | lower() }}">
