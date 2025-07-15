@@ -118,7 +118,6 @@ p {
     color: #6983ff;
     width: 100%;
     padding: 10px;
-    padding: 0 20px;
 
     @include respond-min(768px) {
       padding: 0 20px;
@@ -1185,23 +1184,29 @@ aside {
 }
 
 .participant-list {
-  [class^="participant-"] {
+  > [class^="participant-"] {
     background: white;
-    padding: 2rem;
+    padding: 2rem 2rem 4rem;
     margin-bottom: 2rem;
     display: flex;
+    border-bottom: 2px solid #E2E8F0;
+
+    &:last-child {
+      border-bottom: none;
+    }
 
     @media (max-width: 768px) {
       flex-direction: column;
+      margin-bottom: 0;
     }
     
     .participant-brand {
       width: 30%;
       max-width: 220px;
-      padding: 1rem;
+      padding: 2rem;
 
-      @media (max-width: 480px) {
-        width: 60%;
+      @media (max-width: 768px) {
+        width: 100%;
         max-width: none;
       }
   
