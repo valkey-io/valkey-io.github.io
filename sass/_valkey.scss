@@ -935,6 +935,50 @@ aside {
   }
 }
 
+.styled-title.event-title {
+  img {
+    width: 33%;
+  }
+}
+.event-single {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  display: flex;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+
+  main {
+    flex: 1;
+    padding: 2rem;
+    width: 100%;
+  }
+}
+
+.keyspace-2025 {
+  .styled-title {
+    background-image: url("/events/keyspace-2025/nebula-3.jpg");
+    background-size: cover;
+  }
+  .body {
+    background-color: black;
+  }
+  .event-single main {
+    color: white;
+  }
+
+  th {
+    background-color: inherit;
+  }
+  tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  td {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+}
+
 .blog-single {
   display: flex;
   flex-wrap: wrap;
