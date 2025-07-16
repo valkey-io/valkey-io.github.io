@@ -1,0 +1,20 @@
+{% extends "default.html" %}
+
+{% block content %}
+<div class="styled-title event-title">
+    <h1>{% if page.extra and page.extra.event_logo %}
+            <img src="{{page.extra.event_logo}}" alt="{{page.title}}" />
+        {% else %}
+            {{ page.title }}
+        {% endif %}
+        
+        </h1>
+</div>
+<div class="event-single">
+    <main>
+       
+        {% block main_content %}{{ page.content | safe }}{% endblock main_content %}
+
+    </main>
+</div>
+{% endblock%}
