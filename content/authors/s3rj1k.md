@@ -1,7 +1,7 @@
 ---
 title: Serhii Ivanov
 extra:
-    photo: '/assets/media/authors/s3rj1k.jpeg'
+    photo: '/assets/media/authors/s3rj1k.jpg'
     github: s3rj1k
 ---
 
