@@ -24,4 +24,4 @@ Please replace everything in `[]` before submitting.
 
 **Is this blog post dependent on something else?**
 
-(Examples: the blog post needs to be published before an event, the blog post publishing date depends on a software release date, etc.)
+[Examples: the blog post needs to be published before an event, the blog post publishing date depends on a software release date, etc.]
