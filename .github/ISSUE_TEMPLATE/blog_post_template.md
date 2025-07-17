@@ -12,7 +12,7 @@ This is an issue created to propose a blog post. Make sure to fill out all the f
 Please replace everything in `[]` before submitting. 
 
 **What is your proposed topic?**
-
+[Please include a 1-2 sentence description of the content of the blog].
 
 **Who is writing this blog post?**
 
