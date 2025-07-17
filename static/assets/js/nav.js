@@ -6,6 +6,35 @@ window.toggleHeaderMenu = function() {
     }
 };
 
+// Banner close functionality
+function initBannerClose() {
+    const banner = document.querySelector('.banner');
+    const closeButton = document.querySelector('.close-banner');
+    
+    if (!banner || !closeButton) return;
+    
+    // Check if banner was previously closed within 24s
+    const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+    const now = Date.now();
+    if (bannerClosedTime) {
+        const closedTime = parseInt(bannerClosedTime, 10);
+        const twentyFourHours = 24 * 60* 60 *1000; // 24 hours in ms
+        if (now - closedTime < twentyFourHours) {
+            banner.style.display = 'none';
+            return;
+        } else {
+            // Clear expired timestamp
+            localStorage.removeItem('bannerClosedTime');
+        }
+    }
+    // Add click event to close button
+    closeButton.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent navigation to home page
+        banner.style.display = 'none';
+        localStorage.setItem('bannerClosedTime', Date.now().toString());
+    });
+}
+
 // Set active menu item based on current URL
 function setActiveMenuItem() {
     const nav = document.querySelector('.header nav');
@@ -30,7 +59,10 @@ function setActiveMenuItem() {
 }
 
 // Run when DOM is loaded
-document.addEventListener('DOMContentLoaded', setActiveMenuItem);
+document.addEventListener('DOMContentLoaded', function() {
+    setActiveMenuItem();
+    initBannerClose();
+});
 
 // Class detection function that checks if an element with a given class name exists
 // This provides backwards compatibility for older browsers (IE6-8) that don't support getElementsByClassName
