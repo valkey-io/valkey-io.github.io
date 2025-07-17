@@ -15,13 +15,10 @@ Please replace everything in `[]` before submitting.
 [Please include a 1-2 sentence description of the content of the blog].
 
 **Who is writing this blog post?**
-
+[Github alias of who will be creating and responsible for addressing updates on the blog.]
 
 **What is your ideal publishing date?**
-
-
-(Please provide an actual date; 'ASAP' is not a date. Due to other pending blog posts, review time, and project events, publish dates are best effort, typically allow for 5 business days of review between making a PR and publishing.)
+[Please list a date that is at least 5 business days from today. Due to other pending blog posts, review time, and project events, publish dates are best effort.]
 
 **Is this blog post dependent on something else?**
-
 [Examples: the blog post needs to be published before an event, the blog post publishing date depends on a software release date, etc.]
