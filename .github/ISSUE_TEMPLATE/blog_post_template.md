@@ -9,6 +9,7 @@ assignees: ''
 **New Blog Post**
 
 This is an issue created to propose a blog post. Make sure to fill out all the fields so the team can best plan to sequence, edit, and publish your post in a timely manner.
+Please replace everything in `[]` before submitting. 
 
 **What is your proposed topic?**
 
