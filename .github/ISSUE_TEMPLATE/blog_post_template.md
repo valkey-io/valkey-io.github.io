@@ -1,7 +1,7 @@
 ---
 name: 🏢 New Blog post
 about: Create a blog post 
-title: "[BLOG POST]"
+title: "[BLOG POST] <Put your tentative blog post title here>"
 labels: 'blog-post, untriaged'
 assignees: ''
 ---
