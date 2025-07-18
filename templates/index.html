@@ -10,7 +10,12 @@
         <p class="hero-subtitle">
             {{ section.extra.hero.subtitle }}
         </p>
-        <a href="{{ section.extra.hero.button_url }}" class="hero-button">{{ section.extra.hero.button_text }}</a>
+        <div class="hero-buttons">
+            {% if section.extra.hero.second_button_text and section.extra.hero.second_button_url %}
+            <a href="{{ section.extra.hero.second_button_url }}" class="hero-button-sec">{{ section.extra.hero.second_button_text }}</a>
+            {% endif %}
+            <a href="{{ section.extra.hero.button_url }}" class="hero-button">{{ section.extra.hero.button_text }}</a>
+        </div>
     </div>
 </div>
 {% endif %}
