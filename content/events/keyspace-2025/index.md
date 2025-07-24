@@ -23,7 +23,11 @@ Keyspace is a co-located event with [Open Source Summit Europe](https://events.l
 
 ## Register
 
-Reserve your ticket today!
+To register, you will need to sign in with your Linux Foundation ID.
+
+If you don't yet have an ID, you can create one by clicking "Create an account" on the reservation link below.
+
+[Reserve your ticket today!](https://register.linuxfoundation.org/keyspace-2025)
 
 ## Tentative Schedule
 
