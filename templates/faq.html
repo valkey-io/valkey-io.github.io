@@ -45,4 +45,23 @@
         </div>
     </main>
 </div>
-{% endblock content %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.faq-question').forEach(function(question) {
+    question.style.cursor = 'pointer';
+    question.addEventListener('click', function() {
+      var answer = question.nextElementSibling;
+      if (answer && answer.classList.contains('faq-answer')) {
+        answer.style.display = (answer.style.display === 'none' || !answer.style.display) ? 'block' : 'none';
+        question.parentElement.classList.toggle('open');
+      }
+    });
+    // Optionally start collapsed:
+    var answer = question.nextElementSibling;
+    if (answer && answer.classList.contains('faq-answer')) {
+      answer.style.display = 'none';
+    }
+  });
+});
+</script>
+{% endblock content %} 
