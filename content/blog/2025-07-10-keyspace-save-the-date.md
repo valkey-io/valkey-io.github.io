@@ -19,7 +19,7 @@ Breakfast, lunch, happy hour, and exclusive Valkey swag is included.
 Keyspace is being held in conjunction with the [Linux Foundation Open Source Summit Europe](https://events.linuxfoundation.org/open-source-summit-europe/) at the [RAI Amsterdam Convention Centre](https://www.rai.nl/en).
 Tickets for Open Source Summit are not required to attend Keyspace.
 
-**Want to share _your_ Valkey story?** [Submit your talk by July 24](https://sessionize.com/keyspace/)!
+**Want to share _your_ Valkey story?** Date extended! [Submit your talk by July ~24~ 28](https://sessionize.com/keyspace/)! 
 
 
 Tickets available soon.
