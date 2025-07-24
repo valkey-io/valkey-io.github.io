@@ -52,5 +52,5 @@ publish_hold = [
     "/topics/rdd/"
 ]
 
-banner = "Valkey Bundle adds JSON, Bloom, Vector Search and LDAP! [Check it out](https://valkey.io/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/)"
+banner = "Join us in Amsterdam on August 28 for the Valkey User Conference: [Keyspace](/events/keyspace-2025)"
 
