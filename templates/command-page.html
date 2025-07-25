@@ -1,4 +1,4 @@
-{% extends "right-aside.html" %}
+{% extends "left-aside.html" %}
 
 {% import "macros/command.html" as commands %}
 
@@ -34,8 +34,27 @@
 {%- endblock -%}
 
 {% block subhead_content%}
-{% if command_title%}<h1 class="page-title">{{ command_title }} {% if deprecated %}<small> {{ deprecated }}</small>{% endif %}</h1>{% endif %}
+    {% if command_title%}
+        <div class="styled-title">
+            <h1 class="page-title">{{ command_title }} {% if deprecated %}<small> {{ deprecated }}</small>{% endif %}</h1>
+        </div>
+    {% endif %}
 {% endblock subhead_content%}
+
+{% block breadcrumbs %}
+{# Breadcrumbs section #}
+<nav class="breadcrumbs">
+    <ul class="breadcrumb-list">
+        <li class="breadcrumb-item">
+            <a href="/commands/" class="breadcrumb-link">Commands</a>
+        </li>
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            <img src="/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
+            {% if command_title %}{{ command_title }}{% else %}{{ page.slug | upper }}{% endif %}
+        </li>
+    </ul>
+</nav>
+{% endblock breadcrumbs %}
 
 {% block main_content %}
 {% if command_data_obj %}
@@ -205,8 +224,80 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 {% endblock main_content %}
 
 {% block related_content %}
-<div class="edit_box">
-    See an error?
-    <a href="https://github.com/valkey-io/valkey-doc/edit/main/commands/{{ page.slug }}.md">Update this Page on GitHub!</a>
+{# Set up variables for sidebar, similar to commands.html #}
+{% set_global group_descriptions = load_data(path= "../_data/groups.json", required= false) %}
+{% set commands_entries = [] %}
+{% set commands_section = get_section(path="commands/_index.md") %}
+{% for page in commands_section.pages %}
+    {% for json_path in [
+        commands::command_json_path(slug=page.slug),
+        commands::command_bloom_json_path(slug=page.slug),
+        commands::command_json_json_path(slug=page.slug),
+        commands::command_search_json_path(slug=page.slug)
+    ] %}
+        {% set command_data = load_data(path= json_path, required= false) %}
+        {% if command_data %}
+            {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
+            {% set command_data_obj = command_data[command_obj_name] %}
+            {% set command_display = command_obj_name %}
+            {% if command_data_obj.container %}
+                {% set command_display = command_data_obj.container ~ " " ~ command_display %}
+            {% endif %}
+            {% set command_entry = [
+                command_display,
+                page.permalink | safe,
+                command_data_obj.summary,
+                command_data_obj.group
+            ] %}
+            {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+{% set_global grouped = commands_entries | sort(attribute="3") | group_by(attribute="3") %}
+
+<div class="sb-search-container">
+    <input type="text" id="sidebar-search-box" placeholder="Search within documents" onkeyup="searchSidebarCommands()" />
 </div>
+
+<!-- No results message for sidebar search -->
+<div id="sidebar-no-results-message" class="no-results-message" style="display: none;">
+    <span>&lt;/&gt;</span>
+    <h4>No commands found</h4>
+    <p>Check your spelling or try different keywords</p>
+</div>
+
+<h2 id="command-list-title">Alphabetical Command List</h2>
+<ul id="command-list">
+{% set alpha_entries = commands_entries | sort(attribute="0")  %}
+{% for entry in alpha_entries  %}
+    <li class="command-list-item"><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code></li>
+{% endfor %}
+</ul>
+
+<script>
+function searchSidebarCommands() {
+    var input = document.getElementById("sidebar-search-box").value.toLowerCase();
+    var commandList = document.getElementById("command-list");
+    var commandListTitle = document.getElementById("command-list-title");
+    var items = commandList.querySelectorAll(".command-list-item");
+    var noResultsMessage = document.getElementById("sidebar-no-results-message");
+    var totalVisible = 0;
+
+    items.forEach(function (item) {
+        var text = item.querySelector("a").innerText.toLowerCase();
+        if (text.includes(input)) {
+            item.style.display = "";
+            totalVisible++;
+        } else {
+            item.style.display = "none";
+        }
+    });
+
+    // Show/hide no results message and title based on search results
+    var hasResults = totalVisible > 0;
+    noResultsMessage.style.display = hasResults ? "none" : "block";
+    commandListTitle.style.display = hasResults ? "" : "none";
+    commandList.style.display = hasResults ? "" : "none";
+}
+</script>
 {% endblock related_content %}
