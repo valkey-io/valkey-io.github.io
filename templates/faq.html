@@ -8,46 +8,56 @@
     <h1 class="faq-title">Frequently Asked Questions</h1>
 </div>
 
-<div class="left-aside faq-aside">    
-    <aside>
-        <h2>CATEGORIES</h2>
-        <ul class="category-nav">
-            <li><a href="#general" class="category-link">General</a></li>
-            <li><a href="#memory-performance" class="category-link">Memory & Performance</a></li>
-            <li><a href="#technical" class="category-link">Technical</a></li>
-            <li><a href="#limitations" class="category-link">Limitations</a></li>
-        </ul>
-    
-        <div class="edit-box">
-            <span>Found an Issue?</span>
-            <a href="https://github.com/valkey-io/valkey-io.github.io/edit/main/content/topics/faq.md" class="edit-link" target="_blank">
-                Edit this page on GitHub
-            </a>
-        </div>
-    </aside>
-
-    <main class="container">
-        {% if config.extra.review_list is containing(page.path) %}
-            <div class="review-notice">
-                <p><strong>This page is under review.</strong> The page is likely incorrect, contains invalid links, and/or needs technical review. 
-                In the future it may change substantially or be removed entirely.</p>
+<div class="left-aside-bg">   
+    <div class="left-aside faq-aside">    
+        <aside>
+            <h2>CATEGORIES</h2>
+            <ul class="category-nav">
+                <li><a href="#general" class="category-link">General</a></li>
+                <li><a href="#memory-performance" class="category-link">Memory & Performance</a></li>
+                <li><a href="#technical" class="category-link">Technical</a></li>
+                <li><a href="#limitations" class="category-link">Limitations</a></li>
+            </ul>
+        
+            <div class="edit-box">
+                <span>Found an Issue?</span>
+                <a href="https://github.com/valkey-io/valkey-io.github.io/edit/main/content/topics/faq.md" class="edit-link" target="_blank">
+                    Edit this page on GitHub
+                </a>
             </div>
-        {% endif %}
+        </aside>
 
-        <div class="faq-content">
-            {% if config.extra.publish_hold is containing(page.path) %}
-                <p><code>{{ page.path }}</code> may be available after revisions.</p>
-            {% else %}
-                <div class="faq-container">
-                    {{ page.content | safe }}
+        <main class="container">
+            {% if config.extra.review_list is containing(page.path) %}
+                <div class="review-notice">
+                    <p><strong>This page is under review.</strong> The page is likely incorrect, contains invalid links, and/or needs technical review. 
+                    In the future it may change substantially or be removed entirely.</p>
                 </div>
             {% endif %}
-        </div>
-    </main>
+
+            <div class="faq-content">
+                {% if config.extra.publish_hold is containing(page.path) %}
+                    <p><code>{{ page.path }}</code> may be available after revisions.</p>
+                {% else %}
+                    <div class="faq-container">
+                        {{ page.content | safe }}
+                    </div>
+                {% endif %}
+            </div>
+        </main>
+    </div>
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.faq-question').forEach(function(question) {
+    // Add caret icon to each question
+    var caret = document.createElement('img');
+    caret.src = '/img/icon-caret-down.svg';
+    caret.className = 'faq-caret';
+    caret.alt = 'Toggle answer';
+    question.insertBefore(caret, question.firstChild);
+    
     question.style.cursor = 'pointer';
     question.addEventListener('click', function() {
       var answer = question.nextElementSibling;
@@ -56,10 +66,12 @@ document.addEventListener('DOMContentLoaded', function() {
         question.parentElement.classList.toggle('open');
       }
     });
-    // Optionally start collapsed:
+    // Start collapsed and ensure caret shows correct state:
     var answer = question.nextElementSibling;
     if (answer && answer.classList.contains('faq-answer')) {
       answer.style.display = 'none';
+      // Ensure the parent doesn't have 'open' class initially
+      question.parentElement.classList.remove('open');
     }
   });
 });

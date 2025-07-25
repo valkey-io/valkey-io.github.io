@@ -1974,7 +1974,21 @@ pre table {
 
     &:hover {
       background:rgba(58, 67, 88, 0.1);
+    }
 
+    .faq-caret {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      transition: transform 0.2s ease;
+      opacity: 0.7;
+      
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 
@@ -1988,6 +2002,10 @@ pre table {
     h3,
     .faq-answer {
       background: #fff;
+    }
+
+    h3 .faq-caret {
+      transform: translateY(-50%) rotate(180deg);
     }
   }
 
