@@ -40,6 +40,11 @@ do
     base=${fname##*/}
     topic=${base%.*}
 
+    # Skip faq.md so it is never overwritten
+    if [[ "$topic" == "faq" ]]; then
+        continue
+    fi
+
     if [[ "$topic" != "index" ]]; then
         if [ -f "./build/custom-frontmatter/topics/$topic.toml" ]; then
             echo "+++" >> "./content/topics/$topic.md"

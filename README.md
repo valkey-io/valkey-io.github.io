@@ -61,6 +61,8 @@ Point your browser at `http://127.0.0.1:1111/topics/` and you should see the ful
 All files created in this process are ignored by git.
 Commit your changes to your local copy of `valkey-io/valkey-doc`.
 
+**Note:** `content/topics/faq.md` is managed locally in this repo and will not be overwritten by the build script.
+
 ### Building the command reference
 
 The command reference (i.e. `/commands/set/`, `/commands/get/`, `/commands/lolwut/`) sources information from `valkey-io/valkey`, `valkey-io/valkey-bloom`, and `valkey-io/valkey-doc`.

@@ -11,6 +11,7 @@ content/commands/*
 !content/commands/_index.md
 content/topics/*
 !content/topics/_index.md
+!content/topics/faq.md
 _site
 _data/groups.json
 _data/resp2_replies.json
