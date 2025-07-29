@@ -11,11 +11,11 @@ We are excited to introduce the public preview of [valkey-swift](https://github.
 
 ## The Client
 
-Valkey-swift is a modern swift client built with Swift concurrency in mind. The API uses structured concurrency; a paradigm designed to bring clarity to concurrent programming by using the structure of your code to define the lifetimes of tasks. Using Valkey from Swift lets you take advantage of a strongly typed API, Swift's memory and data race safety guarantees, as well as maintaining a very light memory footprint. The client includes the following features –
+Valkey-swift is a modern swift client built with Swift concurrency in mind. Using Valkey from Swift lets you take advantage of a strongly typed API, Swift's memory and data race safety guarantees, as well as maintaining a very light memory footprint. The API uses structured concurrency; a paradigm designed to bring clarity to concurrent programming by using the structure of your code to define the lifetimes of tasks. The client includes the following features –
 
 ### Connection Pool
 
-The client includes a persistent connection pool. Instead of establishing a new connection for every request, it leases a connection from a pool of existing connections. This minimizes the time and resources required to setup a new connection. 
+The client includes a persistent connection pool. Instead of establishing a new connection for every request, it leases a connection from a pool of existing connections. This minimizes the time and resources required to get a connection to your Valkey server. 
 
 ### Commands
 
@@ -26,7 +26,7 @@ try await valkeyClient.set("Key1", value: "Test")
 let value = try await valkeyClient.get("Key1")
 ```
 
-Each call to a command using `ValkeyClient` leases a connection from the connection pool to run that single command, so we provide an alternative where you can lease a connection to run multiple commands as follows:
+Each call to a command using `ValkeyClient` leases a connection from the connection pool to run that single command, so we provide an alternative where you can lease a single connection to run multiple commands as follows:
 
 ```swift
 valkeyClient.withConnection { connection in
@@ -39,12 +39,12 @@ valkeyClient.withConnection { connection in
 
 Valkey Pipelining is a technique for improving performance. It sends multiple commands at the same time without waiting for the response of each individual command. It avoids the round trip time between each command, and removes the relation between receiving the response from a request and sending the next request.
 
-![An image that shows non-pipelined commands waiting for each response, and pipelined commands that send a burst of commands, a technique which shows the advantage of pipelining by submitting sets of commands quickly.](https://hackmd.io/_uploads/S112EsDLgl.png)
+![An image that shows non-pipelined commands waiting for each response, and pipelined commands that send a burst of commands, a technique which shows the advantage of pipelining by submitting sets of commands quickly.](images/valkey-pipelining.png)
 
-Valkey-swift provides support for pipelining in a couple of different ways. First, you can do this using the `pipeline(_:)` function available from both `ValkeyClient` and `ValkeyConnection`. This sends all the commands off at the same time and receives an array of responses. The function is supplied with a parameter pack of Valkey commands and returns a parameter pack of the responses.
+Valkey-swift provides support for pipelining in a couple of different ways. First, you can do this using the `execute(_:)` function available from both `ValkeyClient` and `ValkeyConnection`. This sends all the commands off at the same time and receives an array of responses. The function is supplied with a parameter pack of Valkey commands and returns a parameter pack of the responses.
 
 ```swift
-let (lpushResult, rpopResult) = await valkeyClient.pipeline(
+let (lpushResult, rpopResult) = await valkeyClient.execute(
     LPUSH("Key2", elements: ["entry1", "entry2"]),
     RPOP("Key2")
 )
@@ -52,11 +52,12 @@ let count = try lpushResult.get()  // 2
 let value = try rpopResult.get()  // ByteBuffer containing "entry1" string
 ```
 
-The second way to take advantage of pipelining is to use Swift Concurrency. A single connection can be used across multiple Tasks. Unlike the `pipeline(_:)` function the commands will be sent individually but the sending of a command is not dependent on a previous command returning a response.
+The second way to take advantage of pipelining is to use Swift Concurrency. A single connection can be used across multiple Tasks. Unlike the `execute(_:)` function the commands will be sent individually but the sending of a command is not dependent on a previous command returning a response.
 
 ```swift
 try await valkeyClient.withConnection { connection in
     try await withThrowingTaskGroup(of: Void.self) { group in
+        // run LPUSH and RPUSH concurrently 
         group.addTask {
             try await connection.lpush(key: "foo1", element: ["bar"])
         }
@@ -70,7 +71,7 @@ try await valkeyClient.withConnection { connection in
 
 ### Subscriptions
 
-Valkey can be used as a message broker using its publish/subscribe messaging model. A subscription is a stream of messages from a channel, so the easiest way to model this is with a Swift `AsyncSequence`. The valkey-swift subscription API provides a simple way to manage subscriptions with a single function call that automatically subscribes and unsubscribes from channels as needed. You provide it with a closure, it calls `SUBSCRIBE` on the channels you specified, and provides an `AsyncSequence` of messages from those channels. When you exit the closure, the connection sends relevant `UNSUBSCRIBE` commands.
+Valkey can be used as a message broker using its publish/subscribe messaging model. A subscription is a stream of messages from a channel. The easiest way to model this is with a Swift `AsyncSequence`. The valkey-swift subscription API provides a simple way to manage subscriptions with a single function call that automatically subscribes and unsubscribes from channels as needed. You provide it with a closure, it calls `SUBSCRIBE` on the channels you specified, and provides an `AsyncSequence` of messages from those channels. When you exit the closure, the connection sends the relevant `UNSUBSCRIBE` commands.
 
 ```swift
 try await valkeyClient.subscribe(channels: ["channel1"]) { subscription in
@@ -80,11 +81,11 @@ try await valkeyClient.subscribe(channels: ["channel1"]) { subscription in
 }
 ```
 
-### Clusters
+### Valkey Cluster
 
 Valkey scales horizontally with a deployment called Valkey Cluster. Data is sharded across multiple Valkey servers based on the hash of the key being accessed. It also provides a level of availability, using replicas. You can continue operations even when a node fails or is unable to communicate.
 
-The swift-valkey cluster client `ValkeyClusterClient` supports:
+Swift-valkey includes a cluster client `ValkeyClusterClient`. This includes support for:
 1. Automatic cluster topology discovery and maintenance.
 2. Command routing to the appropriate node based on key hashslots.
 3. Handling of MOVED errors for proper cluster resharding.
@@ -143,6 +144,7 @@ let logger = Logger(label: "Valkey")
 let valkeyClient = ValkeyClient(.hostname("127.0.0.1", port: 6379), logger: logger)
 try await withThrowingTaskGroup { group in
     group.addTask {
+        // run connection manager background process
         await valkeyClient.run()
     }
     group.addTask {
@@ -152,6 +154,7 @@ try await withThrowingTaskGroup { group in
     group.cancelAll()
 }
 
+/// Lets test valkey-swift.
 func testValkey(_ valkeyClient: ValkeyClient, logger: Logger) async throws {
     try await valkeyClient.set("foo", value: "bar")
     let foo = try await valkeyClient.get("foo")
