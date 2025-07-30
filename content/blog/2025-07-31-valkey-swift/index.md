@@ -41,7 +41,7 @@ Valkey Pipelining is a technique for improving performance. It sends multiple co
 
 ![An image that shows non-pipelined commands waiting for each response, and pipelined commands that send a burst of commands, a technique which shows the advantage of pipelining by submitting sets of commands quickly.](images/valkey-pipelining.png)
 
-Valkey-swift provides support for pipelining in a couple of different ways. First, you can do this using the `execute(_:)` function available from both `ValkeyClient` and `ValkeyConnection`. This sends all the commands off at the same time and receives an array of responses. The function is supplied with a parameter pack of Valkey commands and returns a parameter pack of the responses.
+Valkey-swift provides support for pipelining in a couple of different ways. First, you can do this using the `execute(_:)` function available from both `ValkeyClient` and `ValkeyConnection`. This sends all the commands off at the same time and receives a tuple of responses. Using Swift parameter packs we create a strongly typed API where each responses is its intended type.
 
 ```swift
 let (lpushResult, rpopResult) = await valkeyClient.execute(
@@ -52,7 +52,9 @@ let count = try lpushResult.get()  // 2
 let value = try rpopResult.get()  // ByteBuffer containing "entry1" string
 ```
 
-The second way to take advantage of pipelining is to use [Swift Concurrency](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/). A single connection can be used across multiple Tasks. Unlike the `execute(_:)` function the commands will be sent individually but the sending of a command is not dependent on a previous command returning a response.
+The second way to take advantage of pipelining is to use [Swift Concurrency](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/). Because the `ValkeyConnection` type is a Swift [actor](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency#Actors) it can be used across concurrent tasks without concern for data race issues. 
+
+Unlike the `execute(_:)` function the commands will be sent individually but the sending of a command is not dependent on a previous command returning a response.
 
 ```swift
 try await valkeyClient.withConnection { connection in
