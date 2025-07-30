@@ -5,13 +5,13 @@ date= 2025-08-04 12:00:00
 authors= [ "adamfowler"]
 
 [extra]
-featured = false
+featured = true
 +++
-We are excited to introduce the public preview of [valkey-swift](https://github.com/valkey-io/valkey-swift), a new Swift based client library for Valkey.
+We are excited to introduce the public preview of [valkey-swift](https://github.com/valkey-io/valkey-swift), a new [Swift](https://swift.org) based client library for Valkey.
 
 ## The Client
 
-Valkey-swift is a modern swift client built with Swift concurrency in mind. Using Valkey from Swift lets you take advantage of a strongly typed API, Swift's memory and data race safety guarantees, as well as maintaining a very light memory footprint. The API uses structured concurrency; a paradigm designed to bring clarity to concurrent programming by using the structure of your code to define the lifetimes of tasks. The client includes the following features –
+Valkey-swift is a modern swift client built with Swift concurrency in mind. Using Valkey from Swift lets you take advantage of a strongly typed API, Swift's memory and data race safety guarantees, as well as maintaining a very light memory footprint. The API uses structured concurrency; a paradigm designed to bring clarity to concurrent programming by using the structure of your code to define the lifetimes of tasks. The client includes the following features:
 
 ### Connection Pool
 
@@ -19,7 +19,7 @@ The client includes a persistent connection pool. Instead of establishing a new 
 
 ### Commands
 
-The project uses code generation to generate all of Valkey's command set. This ensures that all of Valkey's features are available, and includes the string, list, set, sorted set, stream, hash, geospatial, hyperloglog, and subscription commands. Using code generation has the added bonus of allowing us to easily keep up to date with the latest Valkey command changes. All the Valkey commands are available directly from `ValkeyClient`. 
+The project uses code generation to generate all of Valkey's command set. This ensures that all of Valkey's features are available, and includes the string, list, set, sorted set, stream, hash, geospatial, hyperloglog, and pub/sub commands. Using code generation has the added bonus of allowing us to easily keep up to date with the latest Valkey command changes. All the Valkey commands are available directly from `ValkeyClient`. 
 
 ```swift
 try await valkeyClient.set("Key1", value: "Test")
@@ -52,7 +52,7 @@ let count = try lpushResult.get()  // 2
 let value = try rpopResult.get()  // ByteBuffer containing "entry1" string
 ```
 
-The second way to take advantage of pipelining is to use Swift Concurrency. A single connection can be used across multiple Tasks. Unlike the `execute(_:)` function the commands will be sent individually but the sending of a command is not dependent on a previous command returning a response.
+The second way to take advantage of pipelining is to use [Swift Concurrency](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/). A single connection can be used across multiple Tasks. Unlike the `execute(_:)` function the commands will be sent individually but the sending of a command is not dependent on a previous command returning a response.
 
 ```swift
 try await valkeyClient.withConnection { connection in
@@ -69,7 +69,7 @@ try await valkeyClient.withConnection { connection in
 }
 ```
 
-### Subscriptions
+### Pub/Sub
 
 Valkey can be used as a message broker using its publish/subscribe messaging model. A subscription is a stream of messages from a channel. The easiest way to model this is with a Swift `AsyncSequence`. The valkey-swift subscription API provides a simple way to manage subscriptions with a single function call that automatically subscribes and unsubscribes from channels as needed. You provide it with a closure, it calls `SUBSCRIBE` on the channels you specified, and provides an `AsyncSequence` of messages from those channels. When you exit the closure, the connection sends the relevant `UNSUBSCRIBE` commands.
 
@@ -118,7 +118,7 @@ If you don't already have Swift installed you can find install instructions on t
 
 Start a new project...
 
-```
+```bash
 mkdir try-valkey-swift
 cd try-valkey-swift
 swift package init --type executable
@@ -178,7 +178,7 @@ swift run
 We'd love you to try the client out and get your feedback.
 1. How does the public API work for you?
 2. We know some features are not yet available, for example reading from replicas and Sentinel, but what other features do you think are needed?
-3. Performance has been a major focus during development, but how is the client working out in your producation environment?
+3. Performance has been a major focus during development, but how is the client working out in your production environment?
 
 ### Connect with us
 
