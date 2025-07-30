@@ -29,7 +29,7 @@ let value = try await valkeyClient.get("Key1")
 Each call to a command using `ValkeyClient` leases a connection from the connection pool to run that single command, so we provide an alternative where you can lease a single connection to run multiple commands as follows:
 
 ```swift
-valkeyClient.withConnection { connection in
+try await valkeyClient.withConnection { connection in
     try await connection.set("Key1", value: "Test")
     let value = try await connection.get("Key1")
 }
@@ -66,7 +66,6 @@ try await valkeyClient.withConnection { connection in
         group.addTask {
             try await connection.rpush(key: "foo2", element: ["baz"])
         }
-        try await group.waitForAll()
     }
 }
 ```
@@ -149,10 +148,7 @@ try await withThrowingTaskGroup { group in
         // run connection manager background process
         await valkeyClient.run()
     }
-    group.addTask {
-        try await testValkey(valkeyClient, logger: logger)
-    }
-    try await group.next()
+    try await testValkey(valkeyClient, logger: logger)
     group.cancelAll()
 }
 
@@ -170,7 +166,7 @@ func testValkey(_ valkeyClient: ValkeyClient, logger: Logger) async throws {
 
 The code above creates a client. The client needs a background process to manage its connection pool so it sets up a `TaskGroup` which runs the connection pool background process concurrently with the `testValkey` function. The code in the `testValkey` function sets the value of key "foo" to "bar" and then gets the value of key "foo". If it returns a value it is printed to the log.
 
-To run your code use:
+To run your code use on the command line:
 ```
 swift run
 ```
