@@ -35,13 +35,15 @@ try await valkeyClient.withConnection { connection in
 }
 ```
 
+When exiting the closure the connection is auto-released, avoiding the potential user error of forgetting to return the connection to the connection pool.
+
 ### Pipelining
 
 Valkey Pipelining is a technique for improving performance. It sends multiple commands at the same time without waiting for the response of each individual command. It avoids the round trip time between each command, and removes the relation between receiving the response from a request and sending the next request.
 
 ![An image that shows non-pipelined commands waiting for each response, and pipelined commands that send a burst of commands, a technique which shows the advantage of pipelining by submitting sets of commands quickly.](images/valkey-pipelining.png)
 
-Valkey-swift provides support for pipelining in a couple of different ways. First, you can do this using the `execute(_:)` function available from both `ValkeyClient` and `ValkeyConnection`. This sends all the commands off at the same time and receives a tuple of responses. Using Swift parameter packs we create a strongly typed API where each responses is its intended type.
+Valkey-swift provides support for pipelining in a couple of different ways. First, you can do this using the `execute(_:)` function available from both `ValkeyClient` and `ValkeyConnection`. This sends all the commands off at the same time and receives a tuple of responses. Using Swift parameter packs we create a strongly typed API where each response is its intended type.
 
 ```swift
 let (lpushResult, rpopResult) = await valkeyClient.execute(
@@ -72,7 +74,7 @@ try await valkeyClient.withConnection { connection in
 
 ### Pub/Sub
 
-Valkey can be used as a message broker using its publish/subscribe messaging model. A subscription is a stream of messages from a channel. The easiest way to model this is with a Swift `AsyncSequence`. The valkey-swift subscription API provides a simple way to manage subscriptions with a single function call that automatically subscribes and unsubscribes from channels as needed. You provide it with a closure, it calls `SUBSCRIBE` on the channels you specified, and provides an `AsyncSequence` of messages from those channels. When you exit the closure, the connection sends the relevant `UNSUBSCRIBE` commands.
+Valkey can be used as a message broker using its publish/subscribe messaging model. A subscription is a stream of messages from a channel. The easiest way to model this is with a Swift `AsyncSequence`. The valkey-swift subscription API provides a simple way to manage subscriptions with a single function call that automatically subscribes and unsubscribes from channels as needed. You provide it with a closure, it calls `SUBSCRIBE` on the channels you specified, and provides an `AsyncSequence` of messages from those channels. When you exit the closure, the connection sends the relevant `UNSUBSCRIBE` commands. This avoids the common user error of forgetting to unsubscribe from a channel once it is no longer needed.
 
 ```swift
 try await valkeyClient.subscribe(channels: ["channel1"]) { subscription in
@@ -87,7 +89,7 @@ try await valkeyClient.subscribe(channels: ["channel1"]) { subscription in
 Valkey scales horizontally with a deployment called Valkey Cluster. Data is sharded across multiple Valkey servers based on the hash of the key being accessed. It also provides a level of availability, using replicas. You can continue operations even when a node fails or is unable to communicate.
 
 Swift-valkey includes a cluster client `ValkeyClusterClient`. This includes support for:
-1. Automatic cluster topology discovery and maintenance.
+1. Election based cluster topology discovery and maintenance.
 2. Command routing to the appropriate node based on key hashslots.
 3. Handling of MOVED errors for proper cluster resharding.
 4. Connection pooling and failover.
