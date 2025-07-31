@@ -1,13 +1,14 @@
 +++
 title= "Introducing valkey-swift, the Swift client for Valkey"
-description = "The new Swift client for Valkey is now in public preview. Learn about its features and how it brings the performance of Valkey to the Swift language."
+description = "The new Swift client for Valkey is now in preview. Learn about its features and how it brings the performance of Valkey to the Swift language."
 date= 2025-08-04 12:00:00
 authors= [ "adamfowler"]
 
 [extra]
 featured = true
+featured_image = "/assets/media/featured/random-04.webp"
 +++
-We are excited to introduce the public preview of [valkey-swift](https://github.com/valkey-io/valkey-swift), a new [Swift](https://swift.org) based client library for Valkey.
+We are excited to introduce the preview release of [valkey-swift](https://github.com/valkey-io/valkey-swift), a new [Swift](https://swift.org) based client library for Valkey.
 
 ## The Client
 
