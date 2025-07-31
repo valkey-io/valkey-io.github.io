@@ -43,7 +43,10 @@ Valkey Pipelining is a technique for improving performance. It sends multiple co
 
 ![An image that shows non-pipelined commands waiting for each response, and pipelined commands that send a burst of commands, a technique which shows the advantage of pipelining by submitting sets of commands quickly.](images/valkey-pipelining.png)
 
-Valkey-swift provides support for pipelining in a couple of different ways. First, you can do this using the `execute(_:)` function available from both `ValkeyClient` and `ValkeyConnection`. This sends all the commands off at the same time and receives a tuple of responses. Using Swift parameter packs we create a strongly typed API where each response is its intended type.
+Valkey-swift provides support for pipelining in a couple of different ways.
+First, you can do this using the `execute(_:)` function available from both `ValkeyClient` and `ValkeyConnection`.
+This sends all the commands off at the same time and receives a tuple of responses.
+Swift allows this client to present a strongly typed API, ensuring it both accepts the correct types for multiple commands and returns the correct types for responses.
 
 ```swift
 let (lpushResult, rpopResult) = await valkeyClient.execute(
