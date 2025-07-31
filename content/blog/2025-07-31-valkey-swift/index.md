@@ -126,11 +126,22 @@ If you don't already have Swift installed you can find install instructions on t
 Start a new project...
 
 ```bash
-mkdir try-valkey-swift
-cd try-valkey-swift
-swift package init --type executable
-swift package add-dependency https://github.com/valkey-io/valkey-swift --branch main
-swift package add-target-dependency Valkey try-valkey-swift --package valkey-swift
+$ mkdir try-valkey-swift
+$ cd try-valkey-swift
+$ swift package init --type executable
+Creating executable package: try-valkey-swift
+Creating Package.swift
+Creating .gitignore
+Creating Sources/
+Creating Sources/main.swift
+```
+
+Add the valkey-swift package to the project and executable target
+```bash
+$ swift package add-dependency https://github.com/valkey-io/valkey-swift --branch main
+Updating package manifest at Package.swift... done.
+$ swift package add-target-dependency Valkey try-valkey-swift --package valkey-swift
+Updating package manifest at Package.swift... done.
 ```
 
 If you are running on macOS, edit the generated `Package.swift` to add a minimum required platform
