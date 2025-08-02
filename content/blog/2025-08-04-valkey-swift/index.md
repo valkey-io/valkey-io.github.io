@@ -1,7 +1,7 @@
 +++
 title= "Introducing valkey-swift, the Swift client for Valkey"
 description = "The new Swift client for Valkey is now in preview. Learn about its features and how it brings the performance of Valkey to the Swift language."
-date= 2025-08-04 12:00:00
+date= 2025-08-04 9:00:00
 authors= [ "adamfowler"]
 
 [extra]
