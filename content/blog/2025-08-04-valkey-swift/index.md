@@ -81,9 +81,11 @@ try await valkeyClient.withConnection { connection in
 Valkey can be used as a message broker using its publish/subscribe messaging model. A subscription is a stream of messages from a channel. The easiest way to model this is with a Swift `AsyncSequence`. The valkey-swift subscription API provides a simple way to manage subscriptions with a single function call that automatically subscribes and unsubscribes from channels as needed. You provide it with a closure, it calls `SUBSCRIBE` on the channels you specified, and provides an `AsyncSequence` of messages from those channels. When you exit the closure, the connection sends the relevant `UNSUBSCRIBE` commands. This avoids the common user error of forgetting to unsubscribe from a channel once it is no longer needed.
 
 ```swift
-try await valkeyClient.subscribe(channels: ["channel1"]) { subscription in
-    for try await message in subscription {
-        print(String(buffer: message.message))
+try await valkeyClient.withConnection { connection in
+    try await connection.subscribe(channels: ["channel1"]) { subscription in
+        for try await message in subscription {
+            print(String(buffer: message.message))
+        }
     }
 }
 ```
