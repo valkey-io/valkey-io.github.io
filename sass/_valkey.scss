@@ -1358,6 +1358,10 @@ pre table {
     }
   }
 }
+
+html.banner-hidden .banner {
+  display: none;
+}
   
 .banner {
   position: relative;

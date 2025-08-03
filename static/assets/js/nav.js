@@ -13,24 +13,10 @@ function initBannerClose() {
     
     if (!banner || !closeButton) return;
     
-    // Check if banner was previously closed within 24s
-    const bannerClosedTime = localStorage.getItem('bannerClosedTime');
-    const now = Date.now();
-    if (bannerClosedTime) {
-        const closedTime = parseInt(bannerClosedTime, 10);
-        const twentyFourHours = 24 * 60* 60 *1000; // 24 hours in ms
-        if (now - closedTime < twentyFourHours) {
-            banner.style.display = 'none';
-            return;
-        } else {
-            // Clear expired timestamp
-            localStorage.removeItem('bannerClosedTime');
-        }
-    }
     // Add click event to close button
     closeButton.addEventListener('click', function(e) {
         e.preventDefault(); // Prevent navigation to home page
-        banner.style.display = 'none';
+        document.documentElement.classList.add('banner-hidden');
         localStorage.setItem('bannerClosedTime', Date.now().toString());
     });
 }
