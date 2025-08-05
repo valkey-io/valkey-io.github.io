@@ -21,7 +21,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+          ref: >-
+            ${{ github.event_name == 'pull_request' &&
+                github.head_ref || 'main' }}
           path: website
 
       - name: Checkout valkey-doc
@@ -39,26 +41,29 @@ jobs:
       - name: Checkout valkey-bloom
         uses: actions/checkout@v4
         with:
-            repository: valkey-io/valkey-bloom
-            path: valkey-bloom
+          repository: valkey-io/valkey-bloom
+          path: valkey-bloom
 
       - name: Checkout valkey-search
         uses: actions/checkout@v4
         with:
-            repository: valkey-io/valkey-search
-            path: valkey-search
+          repository: valkey-io/valkey-search
+          path: valkey-search
 
       - name: Checkout valkey-json
         uses: actions/checkout@v4
         with:
-            repository: valkey-io/valkey-json
-            path: valkey-json
+          repository: valkey-io/valkey-json
+          path: valkey-json
 
       - name: Init commands, topics and clients
         run: |
           cd website
-          ./build/init-topics-and-clients.sh ../valkey-doc/topics ../valkey-doc/clients
-          ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands ../valkey-bloom/src/commands ../valkey-json/src/commands ../valkey-search/src/commands
+          ./build/init-topics-and-clients.sh ../valkey-doc/topics \
+            ../valkey-doc/clients
+          ./build/init-commands.sh ../valkey-doc/commands \
+            ../valkey/src/commands ../valkey-bloom/src/commands \
+            ../valkey-json/src/commands ../valkey-search/src/commands
 
       - name: Build only
         uses: shalzz/zola-deploy-action@v0.19.1
@@ -66,13 +71,13 @@ jobs:
           BUILD_DIR: website
           BUILD_ONLY: true
           BUILD_THEMES: false
-          
+
       - name: Upload artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./website/public
-          
+
   deploy:
     if: github.event_name != 'pull_request'
     environment:
