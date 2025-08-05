@@ -224,41 +224,35 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 {% endblock main_content %}
 
 {% block related_content %}
-{# Load pre-generated commands sidebar data for optimal performance #}
-{% set pregenerated_commands = load_data(path= "../_data/commands_sidebar.json", required= false) %}
-{% if pregenerated_commands %}
-    {# Use pre-generated data - fastest approach #}
-    {% set commands_entries = pregenerated_commands %}
-{% else %}
-    {# Fallback: Generate commands entries if pre-generated data not available #}
-    {% set commands_entries = [] %}
-    {% set commands_section = get_section(path="commands/_index.md") %}
-    {% for page in commands_section.pages %}
-        {% for json_path in [
-            commands::command_json_path(slug=page.slug),
-            commands::command_bloom_json_path(slug=page.slug),
-            commands::command_json_json_path(slug=page.slug),
-            commands::command_search_json_path(slug=page.slug)
-        ] %}
-            {% set command_data = load_data(path= json_path, required= false) %}
-            {% if command_data %}
-                {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
-                {% set list_command_data_obj = command_data[command_obj_name] %}
-                {% set command_display = command_obj_name %}
-                {% if list_command_data_obj.container %}
-                    {% set command_display = list_command_data_obj.container ~ " " ~ command_display %}
-                {% endif %}
-                {% set command_entry = [
-                    command_display,
-                    page.permalink | safe,
-                    list_command_data_obj.summary,
-                    list_command_data_obj.group
-                ] %}
-                {% set commands_entries = commands_entries | concat(with=[command_entry]) %}
+{# Set up variables for sidebar, similar to commands.html #}
+{% set_global group_descriptions = load_data(path= "../_data/groups.json", required= false) %}
+{% set commands_entries = [] %}
+{% set commands_section = get_section(path="commands/_index.md") %}
+{% for page in commands_section.pages %}
+    {% for json_path in [
+        commands::command_json_path(slug=page.slug),
+        commands::command_bloom_json_path(slug=page.slug),
+        commands::command_json_json_path(slug=page.slug),
+        commands::command_search_json_path(slug=page.slug)
+    ] %}
+        {% set command_data = load_data(path= json_path, required= false) %}
+        {% if command_data %}
+            {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
+            {% set list_command_data_obj = command_data[command_obj_name] %}
+            {% set command_display = command_obj_name %}
+            {% if list_command_data_obj.container %}
+                {% set command_display = list_command_data_obj.container ~ " " ~ command_display %}
             {% endif %}
-        {% endfor %}
+            {% set command_entry = [
+                command_display,
+                page.permalink | safe,
+                list_command_data_obj.summary,
+                list_command_data_obj.group
+            ] %}
+            {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
+        {% endif %}
     {% endfor %}
-{% endif %}
+{% endfor %}
 
 <div class="sb-search-container">
     <input type="text" id="sidebar-search-box" placeholder="Search within documents" onkeyup="searchSidebarCommands()" />
@@ -273,22 +267,10 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 
 <h2 id="command-list-title">Alphabetical Command List</h2>
 <ul id="command-list">
-{% if commands_entries %}
-    {% set first_entry = commands_entries | first %}
-    {% if first_entry.display %}
-        {# Pre-generated data format: array of objects with display, permalink, summary, group #}
-        {% set alpha_entries = commands_entries | sort(attribute="display") %}
-        {% for entry in alpha_entries %}
-            <li class="command-list-item"><code><a href="{{ entry.permalink }}">{{ entry.display }}</a></code></li>
-        {% endfor %}
-    {% else %}
-        {# Fallback format: array of arrays [display, permalink, summary, group] #}
-        {% set alpha_entries = commands_entries | sort(attribute="0") %}
-        {% for entry in alpha_entries %}
-            <li class="command-list-item"><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code></li>
-        {% endfor %}
-    {% endif %}
-{% endif %}
+{% set alpha_entries = commands_entries | sort(attribute="0")  %}
+{% for entry in alpha_entries  %}
+    <li class="command-list-item"><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code></li>
+{% endfor %}
 </ul>
 
 <script>
