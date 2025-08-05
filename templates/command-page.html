@@ -238,22 +238,21 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
         {% set command_data = load_data(path= json_path, required= false) %}
         {% if command_data %}
             {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
-            {% set command_data_obj = command_data[command_obj_name] %}
+            {% set list_command_data_obj = command_data[command_obj_name] %}
             {% set command_display = command_obj_name %}
-            {% if command_data_obj.container %}
-                {% set command_display = command_data_obj.container ~ " " ~ command_display %}
+            {% if list_command_data_obj.container %}
+                {% set command_display = list_command_data_obj.container ~ " " ~ command_display %}
             {% endif %}
             {% set command_entry = [
                 command_display,
                 page.permalink | safe,
-                command_data_obj.summary,
-                command_data_obj.group
+                list_command_data_obj.summary,
+                list_command_data_obj.group
             ] %}
             {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
         {% endif %}
     {% endfor %}
 {% endfor %}
-{% set_global grouped = commands_entries | sort(attribute="3") | group_by(attribute="3") %}
 
 <div class="sb-search-container">
     <input type="text" id="sidebar-search-box" placeholder="Search within documents" onkeyup="searchSidebarCommands()" />
