@@ -88,15 +88,6 @@ From the root directory of this repo run:
     ../valkey-bloom/src/commands ../valkey-json/src/commands ../valkey-search/src/commands
 ```
 
-After setting up the command files, generate the command sidebar data for optimal build performance:
-
-```shell
-# Run this after init-commands.sh or when command metadata changes
-./build/generate-sidebar-data.sh
-```
-
-This script pre-processes all command JSON files into a single `_data/commands_sidebar.json` file, which dramatically improves build times by avoiding redundant file operations across hundreds of command pages.
-
 Then, restart Zola.
 Point your browser at `http://127.0.0.1:1111/commands/` and you should see the fully populated list of topics.
 All files created in this process are ignored by git.

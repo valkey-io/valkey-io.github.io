@@ -224,12 +224,11 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 {% endblock main_content %}
 
 {% block related_content %}
-{# Load pre-generated command sidebar data instead of processing individual files #}
-{% set commands_entries = load_data(path="../_data/commands_sidebar.json", required=false) %}
-{% if not commands_entries %}
-    {# Fallback to the old method if sidebar data is not available #}
+{# Use cached global variable if available to avoid recomputing command sidebar data on every page #}
+{% if not cached_commands_entries %}
+    {# Compute commands entries once and cache globally #}
+    {% set_global cached_commands_entries = [] %}
     {% set_global group_descriptions = load_data(path= "../_data/groups.json", required= false) %}
-    {% set commands_entries = [] %}
     {% set commands_section = get_section(path="commands/_index.md") %}
     {% for page in commands_section.pages %}
         {% for json_path in [
@@ -252,11 +251,12 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
                     list_command_data_obj.summary,
                     list_command_data_obj.group
                 ] %}
-                {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
+                {% set_global cached_commands_entries = cached_commands_entries | concat(with= [ command_entry ]) %}
             {% endif %}
         {% endfor %}
     {% endfor %}
 {% endif %}
+{% set commands_entries = cached_commands_entries %}
 
 <div class="sb-search-container">
     <input type="text" id="sidebar-search-box" placeholder="Search within documents" onkeyup="searchSidebarCommands()" />
