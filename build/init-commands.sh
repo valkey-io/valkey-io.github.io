@@ -73,6 +73,10 @@ done
 
 echo "Command stub files created."
 
+# Generate optimized commands sidebar data for fast builds
+echo "Generating commands sidebar data..."
+python3 ./build/generate-commands-sidebar.py
+
 for datafile in groups.json resp2_replies.json resp3_replies.json modules.json; do
     ln -s "../${1}/../${datafile}" "./_data/${datafile}"
 
