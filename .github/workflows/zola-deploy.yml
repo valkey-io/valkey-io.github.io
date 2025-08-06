@@ -24,6 +24,9 @@ jobs:
           ref: >-
             ${{ github.event_name == 'pull_request' &&
                 github.head_ref || 'main' }}
+          repository: >-
+            ${{ github.event_name == 'pull_request' &&
+                github.event.pull_request.head.repo.full_name || 'main' }}
           path: website
 
       - name: Checkout valkey-doc
