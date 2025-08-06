@@ -1426,16 +1426,37 @@ pre table {
     }
   }
 }
+
+html.banner-hidden .banner {
+  display: none;
+}
   
 .banner {
+  position: relative;
+  background-color:  #2D2471;
+  color: white;
+
   .width-limiter {
     padding-bottom: 10px;
   }
 
-  background-color:  $grey-lt-300;
-  color: $text;
-  
-  border-top: 1px solid $grey-dk-100;
+  a {
+    color: white;
+    text-decoration: underline;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+
+  .close-banner {
+    position: absolute;
+    top: 50%;
+    right: 2rem;
+    margin-top: -12px;
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .client-list {

@@ -6,6 +6,21 @@ window.toggleHeaderMenu = function() {
     }
 };
 
+// Banner close functionality
+function initBannerClose() {
+    const banner = document.querySelector('.banner');
+    const closeButton = document.querySelector('.close-banner');
+    
+    if (!banner || !closeButton) return;
+    
+    // Add click event to close button
+    closeButton.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent navigation to home page
+        document.documentElement.classList.add('banner-hidden');
+        localStorage.setItem('bannerClosedTime', Date.now().toString());
+    });
+}
+
 // Set active menu item based on current URL
 function setActiveMenuItem() {
     const nav = document.querySelector('.header nav');
@@ -30,7 +45,10 @@ function setActiveMenuItem() {
 }
 
 // Run when DOM is loaded
-document.addEventListener('DOMContentLoaded', setActiveMenuItem);
+document.addEventListener('DOMContentLoaded', function() {
+    setActiveMenuItem();
+    initBannerClose();
+});
 
 // Class detection function that checks if an element with a given class name exists
 // This provides backwards compatibility for older browsers (IE6-8) that don't support getElementsByClassName

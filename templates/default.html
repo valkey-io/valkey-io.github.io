@@ -1,6 +1,23 @@
 {%- block head -%}{%- endblock -%}<!DOCTYPE html>
 <html lang="{{ page.lang | default(value=config.default_language) }}">
 {% include "includes/head.html" %}
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
 <body 
   {%- if page.extra.sectionid -%} id="{{ page.extra.sectionid }}"{%- endif -%}
   {% if page.extra.body_class %} class="{{ page.extra.body_class }}"{% endif %}
@@ -11,6 +28,9 @@
     <div class="width-limiter">
       {{ config.extra.banner | markdown | safe}}
     </div>
+    <a href="/" class="close-banner">
+      <img src="/img/icon-outline-close.svg" alt="Icon Close" width="16" height="16"/>
+    </a>
   </div>
   {%- endif -%}
   <div class="header">
