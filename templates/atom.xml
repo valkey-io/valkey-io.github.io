@@ -52,6 +52,6 @@
         <content type="html" xml:base="{{ page.permalink | escape_xml | safe }}">{{ page.content }}</content>
         {% endif %}
     </entry>
-{%- endif -%}
+    {%- endif -%}
     {%- endfor %}
 </feed>
