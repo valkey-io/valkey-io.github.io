@@ -1,0 +1,12 @@
+{% extends "right-aside.html" %}
+
+{% block subhead_content%}
+<h1 class="page-title">Events</h1>
+{% endblock subhead_content%}
+{% block main_content %}
+<ul>
+  {% for page in section.pages %}
+  <li><a href="{{ page.permalink | safe }}">{{ page.title }}</a> {{ page.date | date(format="%Y-%m-%d ", timezone="Europe/Paris") }} </li>
+  {% endfor %}
+</ul>
+{% endblock main_content %}

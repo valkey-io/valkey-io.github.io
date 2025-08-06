@@ -31,25 +31,25 @@ Start your *valkey-bundle* instance:
 
 1. Get the latest version of the container image
 ```bash
-> docker pull valkey/valkey-bundle
+$ docker pull valkey/valkey-bundle
 ```
 
 2. Run a standalone valkey using the default port
 ```bash
-> docker run --name my-valkey-bundle \
+$ docker run --name my-valkey-bundle \
     -p 6379:6379 \
     -d valkey/valkey-bundle
 ```
 
 3. Connect to the same container we have previously created using the built-in `valkey-cli`:
 ```bash
-> docker exec -it my-valkey-bundle \
+$ docker exec -it my-valkey-bundle \
     valkey-cli -h localhost -p 6379 -3
 ```
 
 List the available modules using the [`INFO`](https://valkey.io/commands/info/) command.
 
-```
+```txt
 my-valkey-bundle:6379> INFO modules
 # Modules
 module:name=bf,ver=10000,api=1,filters=0,usedby=[],using=[],options=[]
@@ -97,21 +97,21 @@ Sample document for key `user:6379`
 
 Store and retrieve JSON document with nested elements and arrays using `valkey-cli` with the [`JSON.SET`](https://valkey.io/commands/json.set/) command.
 
-```
+```txt
 > JSON.SET user:6379 $ '{"name": "Val Key","address": {"city": "New York","zip": "10001"},"orders": [{"id": "ord1", "total": 99.99},{"id": "ord2", "total": 150.50}]}'
 OK
 ```
 
 Complex query with filters to retrieve orders where total is over 100 from within the array in the document for the given user, we'll use [`JSON.GET`](https://valkey.io/commands/json.get/) command.
 
-```
+```txt
 > JSON.GET user:6379 '$.orders[?(@.total > 100)]'
 "[{\"id\":\"ord2\",\"total\":150.50}]"
 ```
 
 Perform *Array* operations by inserting an item to the orders list using [`JSON.ARRAPPEND`](https://valkey.io/commands/json.arrappend/) command.
 
-```
+```txt
 > JSON.ARRAPPEND user:6379 $.orders '{"id": "ord3","total": 75.25}'
 1) (integer) 3
 ```
@@ -141,14 +141,14 @@ Perform *Array* operations by inserting an item to the orders list using [`JSON.
 
 Create a non-scaling (fixed memory) filter with specific parameters with [`BF.RESERVE`](https://valkey.io/commands/bf.reserve/):
 
-```
+```txt
 > BF.RESERVE non_scaling_filter 0.001 1000000 NONSCALING
 OK
 ```
 
 Create a scaling filter with custom expansion using [`BF.INSERT`](https://valkey.io/commands/bf.insert/):
 
-```
+```txt
 > BF.INSERT scaling_filter EXPANSION 4 ITEMS item1 item2
 1) (integer) 1
 2) (integer) 1
@@ -156,21 +156,21 @@ Create a scaling filter with custom expansion using [`BF.INSERT`](https://valkey
 
 Check filter capacity and stats using [`BF.INFO`](https://valkey.io/commands/bf.info/) for fixed filter
 
-```
+```txt
 > BF.INFO non_scaling_filter CAPACITY
 (integer) 1000000
 ```
 
 Check filter capacity and stats for scaling filter
 
-```
+```txt
 > BF.INFO scaling_filter MAXSCALEDCAPACITY
 (integer) 34952500
 ```
 
 Bulk operations, use [`BF.MADD`](https://valkey.io/commands/bf.madd/) to track multiple elements at once:
 
-```
+```txt
 > BF.MADD non_scaling_filter item1 item2 item3
 1) (integer) 1
 2) (integer) 1
@@ -179,7 +179,7 @@ Bulk operations, use [`BF.MADD`](https://valkey.io/commands/bf.madd/) to track m
 
 Check for multiple items in a single roundtrip using [`BF.MEXISTS`](https://valkey.io/commands/bf.mexists/), if we try to get an item that does not exist (item4), we get a Zero as response.
 
-```
+```txt
 > BF.MEXISTS non_scaling_filter item1 item2 item4
 1) (integer) 1
 2) (integer) 1
@@ -220,7 +220,7 @@ Check for multiple items in a single roundtrip using [`BF.MEXISTS`](https://valk
 
 Create an index with HNSW configuration with [`FT.CREATE`](https://valkey.io/commands/ft.create/):
 
-```
+```txt
 > FT.CREATE productIndex \
     ON JSON PREFIX 1 product: \
     SCHEMA $.vector AS vector \
@@ -237,7 +237,7 @@ OK
 
 Perform Hybrid query combining vector similarity with filters using [`FT.SEARCH`](https://valkey.io/commands/ft.search/)` index query`:
 
-```
+```txt
 > FT.SEARCH productIndex "*=>[KNN 5 @vector $query_vector] @category:{electronics} @price:[100 500]" \
     PARAMS 2 query_vector "$encoded_vector"
 ```
@@ -262,7 +262,7 @@ Perform Hybrid query combining vector similarity with filters using [`FT.SEARCH`
 **Basic configuration**
 
 Simple bind mode setup to our imaginary LDAP server:
-```
+```txt
 > CONFIG SET ldap.servers "ldap://ldap.valkey.io:389"
 OK
 
@@ -274,7 +274,7 @@ OK
 ```
 
 Enable TLS:
-```
+```txt
 > CONFIG SET ldap.use_starttls yes
 OK
 
@@ -285,13 +285,13 @@ OK
 **User Management**
 
 Create LDAP-authenticated user
-```
+```txt
 > ACL SETUSER valkey on resetpass +@all
 OK
 ```
 
 Authenticate
-```
+```txt
 > AUTH valkey "ldap_password"
 OK
 ```
@@ -301,14 +301,14 @@ OK
 * Use bind mode when possible (faster)
 * Adjust connection pool size for high traffic:
 
-```
+```txt
 > CONFIG SET ldap.connection_pool_size 5
 OK
 ```
 
 * Configure multiple LDAP servers for reliability
 
-```
+```txt
 > CONFIG SET ldap.servers "ldap://main:389,ldap://backup:389"
 OK
 ```
@@ -322,7 +322,7 @@ Deploying *valkey-bundle* in production requires careful consideration of persis
 For example:
 
 ```bash
-docker run --name my-valkey-bundle \
+$ docker run --name my-valkey-bundle \
     -d valkey/valkey-bundle \
     valkey-server --save 60 1
 ```
@@ -341,7 +341,7 @@ This sample configuration file includes optimized settings for:
 
 Note: This is not an official nor recommended configuration is only for demonstration purposes of the module settings.
 
-```
+```conf
 # Valkey settings
 port 6379
 bind 127.0.0.1
@@ -424,7 +424,7 @@ logfile "/var/log/valkey/valkey.log"
 Load the file as follows:
 
 ```bash
-docker run -v /valkey/my-valkey-bundle.conf:/usr/local/etc/valkey \
+$ docker run -v /valkey/my-valkey-bundle.conf:/usr/local/etc/valkey \
     --name my-valkey-bundle \
     valkey/valkey-bundle
 ```
@@ -456,14 +456,14 @@ First, we needed a flexible way to store user profiles. Valkey JSON proved perfe
 
 The beauty of using Valkey JSON is how easily we can update specific fields for user with id `u123456`.
 
-```
+```txt
 > JSON.SET user:u123456 . '{"user_id": "u123456","personal": {"name": "Val Key","email": "valkey@valkey.io"},"preferences": {"categories": ["electronics", "sports"],"brands": ["nike", "apple"]},"embedding": [0.23, 0.45, 0.67]}'
 OK 
 ```
 
 Update user preferences by adding the automotive category.
 
-```
+```txt
 > JSON.ARRAPPEND user:u123456 $.preferences.categories '"automotive"'
 1) (integer) 3
 ```
@@ -474,7 +474,7 @@ Here's where things get interesting. We use Valkey Search to implement vector si
 
 Create a vector similarity index.
 
-```
+```txt
 > FT.CREATE product_idx ON JSON 
   PREFIX 1 product: 
   SCHEMA 
@@ -491,13 +491,13 @@ This setup allows us to find similar products while applying business rules like
 Here's how we can fetch similar products based on user preferences:
 
 Get the preference vector from the user with Id u123456
-```console
+```txt
 > SET user_vector `JSON.GET user:u123456 $.embedding`
 OK
 ```
 
 Find similar products in the same category
-```console
+```txt
 > FT.SEARCH product_idx "*=>[KNN 5 @embedding $user_vector] @category:{electronics}" 
     PARAMS 2 user_vector "$user_vector"
 ```
@@ -509,7 +509,7 @@ This query combines vector similarity search with category filtering, ensuring r
 Nobody likes seeing the same ad repeatedly. We use Valkey Bloom to efficiently track which user each ad has been shown. The beauty of Bloom filters is their space efficiency, we can track millions of impressions using minimal memory.
 
 Track ad impressions by the Ad Id
-```console
+```txt
 > BF.RESERVE ad:a789012 0.01 10000000
 OK
 
@@ -518,13 +518,13 @@ OK
 ```
 
 Quick check before showing an ad
-```console
+```txt
 > BF.EXISTS ad:a789012 "user:u123456"
 (integer) 1
 ```
 
 Try a different user for the same Ad Id.
-```console
+```txt
 > BF.EXISTS ad:a789012 "user:u234567"
 (integer) 0
 ```
@@ -540,7 +540,7 @@ Our Ad Platform needs to support multiple teams with different access levels - f
 First, let's set up our LDAP integration to map organizational roles:
 
 Configure LDAP connection with out imaginary Valkey LDAP
-```console
+```txt
 > CONFIG SET ldap.servers "ldaps://ldap.valkey.io:636"
 OK
 
@@ -555,7 +555,7 @@ OK
 ```
 
 Enable TLS for secure communication
-```console
+```txt
 > CONFIG SET ldap.use_starttls yes
 OK
 
@@ -568,7 +568,7 @@ OK
 We'll create different access levels using Valkey ACLs that map to LDAP groups:
 
 Account Managers - Can view and modify client campaigns
-```console 
+```txt 
 > ACL SETUSER account_manager on resetpass +@read +@write -@admin >client_secret
     ~campaign:* 
     ~client:* 
@@ -577,7 +577,7 @@ OK
 ```
 
 Content Creators - Can manage ad content and view basic analytics
-```console
+```txt
 > ACL SETUSER content_creator on resetpass +@read +@write -@admin >content_secret
     ~ad:* 
     ~content:* 
@@ -586,7 +586,7 @@ OK
 ```
 
 Data Analysts - Read-only access to all analytics data
-```console
+```txt
 > ACL SETUSER data_analyst on resetpass +@read -@write -@admin >analyst_secret
     ~analytics:* 
     &campaign:*
@@ -594,7 +594,7 @@ OK
 ```
 
 System Administrators - Full access
-```console
+```txt
 > ACL SETUSER admin on resetpass +@all >admin_secret
 OK
 ```

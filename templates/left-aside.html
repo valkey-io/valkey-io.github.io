@@ -2,14 +2,16 @@
 
 {% block content %}
 {% block subhead_content %}{% endblock subhead_content %}
-<div class="left-aside">
-    <main>
-        <div class="main-inner">
-            {% block main_content %}{% endblock main_content %}
-        </div>
-    </main>
-    <aside>
-        {% block related_content %}{% endblock related_content %}
-    </aside>
+<div class="left-aside-bg">
+    <div class="left-aside">
+        <main>
+            <div class="main-inner">
+                {% block main_content %}{% endblock main_content %}
+            </div>
+        </main>
+        <aside>
+            {% block related_content %}{% endblock related_content %}
+        </aside>
+    </div>
 </div>
-{% endblock content %}
+{% endblock content %} 

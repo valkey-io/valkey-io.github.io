@@ -118,7 +118,6 @@ p {
     color: #6983ff;
     width: 100%;
     padding: 10px;
-    padding: 0 20px;
 
     @include respond-min(1024px) {
       padding: 0 20px;
@@ -494,6 +493,10 @@ p {
   }
 }
 
+.left-aside-bg {
+  background: linear-gradient(to left, #e2e8f0 49%, #f1f0fa 50%);
+}
+
 .left-aside {
   background-color: #e2e8f0;
   display: flex;
@@ -677,6 +680,30 @@ p {
     background: #fff;
     border-radius: 50px;
     font-size: 80%;
+
+    &:focus {
+      border-color: #6983ff;;
+    }
+  }
+}
+
+.sb-search-container {
+  display: flex;
+  align-items: center;
+  margin: 0 -2rem 2rem;
+  padding: 0 2rem 2rem;
+  border-bottom: 1px solid rgb(104, 147, 238);
+
+  input {
+    flex: 1;
+    width: 100%;
+    min-width: 0px;
+    outline: none;
+    padding: 1.15rem;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 50px;
+    font-size: 16px;
 
     &:focus {
       border-color: #6983ff;;
@@ -979,6 +1006,50 @@ aside {
   }
 }
 
+.styled-title.event-title {
+  img {
+    width: 33%;
+  }
+}
+.event-single {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  display: flex;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+
+  main {
+    flex: 1;
+    padding: 2rem;
+    width: 100%;
+  }
+}
+
+.keyspace-2025 {
+  .styled-title {
+    background-image: url("/events/keyspace-2025/keyspace-nebula-new.jpg");
+    background-size: cover;
+  }
+  .body {
+    background-color: black;
+  }
+  .event-single main {
+    color: white;
+  }
+
+  th {
+    background-color: inherit;
+  }
+  tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  td {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+}
+
 .blog-single {
   display: flex;
   flex-wrap: wrap;
@@ -1229,23 +1300,29 @@ aside {
 }
 
 .participant-list {
-  [class^="participant-"] {
+  > [class^="participant-"] {
     background: white;
-    padding: 2rem;
+    padding: 2rem 2rem 4rem;
     margin-bottom: 2rem;
     display: flex;
+    border-bottom: 2px solid #E2E8F0;
+
+    &:last-child {
+      border-bottom: none;
+    }
 
     @media (max-width: 768px) {
       flex-direction: column;
+      margin-bottom: 0;
     }
     
     .participant-brand {
       width: 30%;
       max-width: 220px;
-      padding: 1rem;
+      padding: 2rem;
 
-      @media (max-width: 480px) {
-        width: 60%;
+      @media (max-width: 768px) {
+        width: 100%;
         max-width: none;
       }
   
@@ -1393,16 +1470,37 @@ pre table {
     }
   }
 }
+
+html.banner-hidden .banner {
+  display: none;
+}
   
 .banner {
+  position: relative;
+  background-color:  #2D2471;
+  color: white;
+
   .width-limiter {
     padding-bottom: 10px;
   }
 
-  background-color:  $grey-lt-300;
-  color: $text;
-  
-  border-top: 1px solid $grey-dk-100;
+  a {
+    color: white;
+    text-decoration: underline;
+
+    &:hover {
+      opacity: 0.75;
+    }
+  }
+
+  .close-banner {
+    position: absolute;
+    top: 50%;
+    right: 2rem;
+    margin-top: -12px;
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .client-list {
@@ -1914,4 +2012,32 @@ pre table {
   width: 18px;
   height: 18px;
   margin-right: 0.3rem;
+}
+
+.breadcrumbs {
+  border-radius: 20px;
+  background: #fff;
+  margin-bottom: 2rem;
+  
+  .breadcrumb-list {
+    display: flex;
+    align-self: center;
+    padding: 1rem 2rem;
+    list-style: none;
+    margin: 0;
+    gap: 5px;
+
+    .breadcrumb-item {
+      align-items: center;
+      display: flex;
+          
+      img {
+        margin-right: 5px;
+      }
+
+      .breadcrumb-link {
+        color: #2054B2;
+      }
+    }
+  }
 }
