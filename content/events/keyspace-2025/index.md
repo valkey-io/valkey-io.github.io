@@ -33,26 +33,6 @@ If you don't yet have an ID, you can create one by clicking "Create an account" 
 
 The conference has two orbits: **Orbit A** for those who already know Valkey and are looking to deepen their understanding and **Orbit B** for those who are just starting to get to know Valkey. You're not locked into either orbit, so you can select the right talks for your needs.
 
-<!-- <table>
-    <thead>
-        <tr><th>Time</th><th>Orbit A</th><th>Orbit B</th></tr>
-    </thead>
-    <tbody>
-        <tr><td>0900</td><td colspan="2">Breakfast & Registration (Provided)</td></tr>
-        <tr><td>1000</td><td colspan="2">Opening Remarks</td></tr>
-        <tr><td>1015</td><td colspan="2">What's new in Valkey 9</td></tr>
-        <tr><td>1100</td><td>Session 1</td><td>Session 2</td></tr>
-        <tr><td>1145</td><td colspan="2">Lunch (Provided)</td></tr>
-        <tr><td>1300</td><td>Session 3</td><td rowspan="2">Workshop</td></tr>
-        <tr><td>1345</td><td>Session 4</td></tr>
-        <tr><td>1430</td><td>Session 5</td><td>Session 6</td></tr>
-        <tr><td>1515</td><td colspan="2">Lightning Talk 1</td></tr>
-        <tr><td>1530</td><td colspan="2">Lightning Talk 2</td></tr>
-        <tr><td>1545</td><td colspan="2">Lightning Talk 3</td></tr>
-        <tr><td>1600</td><td colspan="2">Closing Remarks</td></tr>
-        <tr><td>1615</td><td colspan="2">Happy Hour (Provided)</td></tr>
-    </tbody>
-</table>-->
 <script type="text/javascript" src="https://sessionize.com/api/v2/qv5dn29l/view/GridSmart"></script>
 
 _Header image: [The Horsehead Nebula and its surroundings. The reflection nebula NGC 2023 in the bottom left corner.](https://en.wikipedia.org/wiki/Horsehead_Nebula#/media/File:Horsehead_and_flame_Nebulea_384mm_scope_Ha-RGB.jpg) License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)_
