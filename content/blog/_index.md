@@ -4,4 +4,5 @@ description = "Stay up to date with the latest news, tutorials, and updates from
 sort_by = "date"
 template = "blog.html"
 page_template = "blog-page.html"
+generate_feeds = true
 +++
