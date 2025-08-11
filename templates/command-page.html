@@ -25,9 +25,6 @@
         {% set command_title =  command_obj_name %}
     {% endif %}
     {% set command_title = command_title | upper %}
-    {% if command_data_obj.deprecated_since %}
-        {% set deprecated = "Deprecated" %}
-    {% endif %}
 {% else %}
     {% set command_data_error = "ERROR. Command JSON Not loaded." %}
 {% endif %}
@@ -36,7 +33,7 @@
 {% block subhead_content%}
     {% if command_title%}
         <div class="styled-title">
-            <h1 class="page-title">{{ command_title }} {% if deprecated %}<small> {{ deprecated }}</small>{% endif %}</h1>
+            <h1 class="page-title">{{ command_title }}</h1>
         </div>
     {% endif %}
 {% endblock subhead_content%}
