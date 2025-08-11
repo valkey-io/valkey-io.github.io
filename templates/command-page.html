@@ -25,7 +25,7 @@
         {% set command_title =  command_obj_name %}
     {% endif %}
     {% set command_title = command_title | upper %}
-    {% if command_data_obj.deprecated_since %}
+    {% if command_data_obj.deprecated_since and (command_title == "SLAVEOF" or command_title == "CLUSTER SLAVES") %}
         {% set deprecated = "Deprecated" %}
     {% endif %}
 {% else %}
