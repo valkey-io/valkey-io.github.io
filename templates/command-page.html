@@ -25,6 +25,9 @@
         {% set command_title =  command_obj_name %}
     {% endif %}
     {% set command_title = command_title | upper %}
+    {% if command_data_obj.deprecated_since and ("MASTER" in command_title or "SLAVE" in command_title) %}
+        {% set deprecated = "Deprecated" %}
+    {% endif %}
 {% else %}
     {% set command_data_error = "ERROR. Command JSON Not loaded." %}
 {% endif %}
@@ -33,7 +36,7 @@
 {% block subhead_content%}
     {% if command_title%}
         <div class="styled-title">
-            <h1 class="page-title">{{ command_title }}</h1>
+            <h1 class="page-title">{{ command_title }} {% if deprecated %}<small> {{ deprecated }}</small>{% endif %}</h1>
         </div>
     {% endif %}
 {% endblock subhead_content%}
@@ -168,7 +171,7 @@
 <code>ERROR. Command description not loaded</code><br />
 {% endif %}
 {% if command_data_obj.replaced_by %}
-<h3>Deprecation advice</h3>
+<h3>{% if deprecated %}Deprecation advice{% else %}Similar command{% endif %}</h3>
 Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{{ command_data_obj.replaced_by | markdown | safe  }}</div>
 
 {% endif %}
