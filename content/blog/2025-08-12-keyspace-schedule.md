@@ -1,7 +1,7 @@
 +++
 title = "What you'll see at Keyspace 2025"
 description = "I sat on the selection committee for Keyspace and was floored by the number and quality of submissions we received. It's truly amazing to see the talent and depth of experience that is present in the Valkey community manifest in a slate of presentations aimed to interest both experienced and new Valkey users."
-date = "2025-08-11 01:01:01"
+date = "2025-08-12 01:01:01"
 authors= [ "kyledvs" ]
 +++
 
