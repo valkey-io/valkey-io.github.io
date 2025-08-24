@@ -1,0 +1,34 @@
+{% import "macros/docs.html" as docs %}
+
+{% set topics_entries = [] %}
+{% set topics_section = get_section(path="topics/_index.md") %}
+
+{% for topic_page in topics_section.pages %}
+    {% set docs_file_contents = docs::load(slug= topic_page.slug) %}
+    {% set frontmatter = docs::extract_frontmatter(content= docs_file_contents) %}
+    {% set frontmatter_length = frontmatter | length() %}
+
+    {% if frontmatter_length > 0 %}
+        {% set frontmatter_data = load_data(literal= frontmatter, format="yaml") %}
+        {% if frontmatter_data.title %}
+            {% set topic_entry = [
+                frontmatter_data.title,
+                topic_page.permalink | safe,
+                frontmatter_data.description | default(value="")
+            ] %}
+            {% set_global topics_entries = topics_entries | concat(with= [ topic_entry ]) %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{% set alpha_entries = topics_entries | sort(attribute="0") %}
+{% for entry in alpha_entries %}
+    <li class="topic-list-item">
+        <a href="{{ entry[1] }}">
+            {{ entry[0] }}
+            {% if entry[2] %}
+                <span class="topic-description">{{ entry[2] | safe }}</span>
+            {% endif %}
+        </a>
+    </li>
+{% endfor %}

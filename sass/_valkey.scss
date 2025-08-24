@@ -575,7 +575,7 @@ p {
     overflow-x: auto;
     background-size: cover;
     background-position: center bottom;
-    position: stiky;
+    position: sticky;
     top: 0px;
 
     @media (max-width: 1100px) {
@@ -1979,13 +1979,16 @@ blockquote {
     .breadcrumb-item {
       align-items: center;
       display: flex;
-          
+      font-size: 14px;
+
       img {
         margin-right: 5px;
       }
 
       .breadcrumb-link {
         color: #2054B2;
+        text-decoration: underline;
+        font-weight: 600;
       }
     }
   }
