@@ -6,6 +6,45 @@ window.toggleHeaderMenu = function() {
     }
 };
 
+// Fetch and display GitHub stars count
+async function fetchGitHubStars() {
+    try {
+        const response = await fetch('https://api.github.com/repos/valkey-io/valkey');
+        if (response.ok) {
+            const data = await response.json();
+            const starCount = data.stargazers_count;
+            
+            // Find the GitHub button and add star count
+            const githubButton = document.querySelector('.github-button');
+            if (githubButton) {
+                // Create star count element if it doesn't exist
+                let starCountElement = githubButton.querySelector('.star-count');
+                if (!starCountElement) {
+                    starCountElement = document.createElement('span');
+                    starCountElement.className = 'star-count';
+                    starCountElement.style.cssText = `
+                        background: #f1f5f9;
+                        color: #64748b;
+                        font-size: 12px;
+                        padding: 2px 6px;
+                        border-radius: 10px;
+                        margin-left: 6px;
+                        font-weight: 500;
+                        white-space: nowrap;
+                    `;
+                    githubButton.appendChild(starCountElement);
+                }
+                
+                // Format the number with K for thousands
+                const formattedCount = starCount >=100? (starCount / 1000).toFixed(1) + 'k' : starCount.toString();
+                starCountElement.textContent = `${formattedCount} ★`;
+            }
+        }
+    } catch (error) {
+        console.log('Could not fetch GitHub stars:', error);
+    }
+}
+
 // Banner close functionality
 function initBannerClose() {
     const banner = document.querySelector('.banner');
@@ -47,6 +86,7 @@ function setActiveMenuItem() {
 // Run when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     setActiveMenuItem();
+    fetchGitHubStars();
     initBannerClose();
 });
 
