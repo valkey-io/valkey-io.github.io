@@ -1,0 +1,61 @@
+{% set participants = load_data(path="_data/participants.yml") %}
+
+<section class="homepage-participants-section">
+    <div class="homepage-participants-container">
+        <div class="homepage-participants-header">
+            <h2 class="homepage-participants-title">Participants</h2>
+            <p class="homepage-participants-description">
+                The Valkey project participants are a diverse group of organizations that have come together to maintain and contribute to the project. Valkey participants are more than vendors, they are dedicated to continuously strengthening the long-term health and viability of this project so that everyone can benefit from it. Since its inception Valkey has enjoyed steady adoption demonstrating the industry's desire for an open, community-driven database solution. We look forward to seeing our list of participants grow as more companies work on our project.
+            </p>
+        </div>
+        
+        {% if participants and participants | length > 0 %}
+        
+        <div class="homepage-participants-carousel-container">
+            <div class="homepage-participants-carousel" id="homepageParticipantsCarousel">
+                <div class="homepage-participants-track" id="homepageParticipantsTrack">
+                    {% for participant in participants %}
+                    {% if participant.name and participant.link %}
+                    <div class="homepage-participant-card" onclick="window.open('{{ participant.link }}', '_blank')" role="button" tabindex="0" aria-label="Visit {{ participant.name }} website">
+                        <div class="homepage-participant-image-container">
+                            {% if participant.image and participant.image.path %}
+                            <img src="{{ participant.image.path }}" alt="{{ participant.image.alt | default(value=participant.name ~ ' logo') }}" class="homepage-participant-image" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="homepage-participant-image-placeholder" style="display: none;">{{ participant.name | truncate(length=2) }}</div>
+                            {% else %}
+                            <div class="homepage-participant-image-placeholder">{{ participant.name | truncate(length=2) }}</div>
+                            {% endif %}
+                        </div>
+                        <h3 class="homepage-participant-name">{{ participant.name }}</h3>
+                        {% if participant.offering %}
+                        <div class="homepage-participant-offering">{{ participant.offering | markdown | safe }}</div>
+                        {% elif participant.company %}
+                        <div class="homepage-participant-offering">{{ participant.company | markdown | safe }}</div>
+                        {% else %}
+                        <div class="homepage-participant-offering">Valkey participant</div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+        </div>
+        <div class="homepage-participants-navigation" aria-label="Participant carousel navigation">
+            <div class="homepage-participants-dots" id="homepageParticipantsDots">
+                {% set total_participants = participants | length %}
+                {% set total_slides = (total_participants / 3) | round(method="ceil") | int %}
+                                    {% if total_slides > 1 %}
+                        {% for i in range(start=1, end=total_slides + 1) %}
+                        <button class="homepage-participant-dot" data-slide="{{ i - 1 }}" aria-label="Go to slide {{ i }}" aria-current="false"></button>
+                        {% endfor %}
+                    {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="homepage-participants-error">
+            <p>Unable to load participant information at this time. Please try again later.</p>
+        </div>
+        {% endif %}
+    </div>
+
+</section>
