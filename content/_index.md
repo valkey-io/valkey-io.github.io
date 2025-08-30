@@ -48,11 +48,7 @@ url=  "/download/"
 url= "/docs/"
 title= "Read the docs"
 
-[[extra.sidebar]]
-title= "Founding documents"
-[[extra.sidebar.links]]
-title= 'Linux Foundation Launches Open Source Valkey Community'
-url= "https://www.linuxfoundation.org/press/linux-foundation-launches-open-source-valkey-community"
+
 
 +++
 

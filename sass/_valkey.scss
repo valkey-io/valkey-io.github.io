@@ -1776,7 +1776,7 @@ html.banner-hidden .banner {
   background-image: linear-gradient(rgb(48, 23, 110), rgb(105, 131, 255));
 
   @include respond-min(768px) {
-    padding: 8rem 0;
+    padding: 0 0 8rem;
   }
 
   h2 {
