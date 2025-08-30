@@ -1672,8 +1672,8 @@ html.banner-hidden .banner {
 
 // Documentation Section Styles
 .documentation-section {
-  padding-bottom: 4rem;
-  background-image: linear-gradient(rgb(48, 23, 110), rgb(105, 131, 255));
+  padding: 4rem 2rem;
+  background-image: linear-gradient(rgb(105, 131, 255), rgb(48, 23, 110));
   position: relative;
   text-align: center;
   color: white;
@@ -1772,8 +1772,8 @@ html.banner-hidden .banner {
 
 // What's New Section Styles
 .whats-new-section {
-  padding: 4rem 2rem;
-  background-image: linear-gradient(rgb(105, 131, 255), rgb(48, 23, 110));
+  padding-bottom: 4rem;
+  background-image: linear-gradient(rgb(48, 23, 110), rgb(105, 131, 255));
 
   @include respond-min(768px) {
     padding: 8rem 0;
@@ -1995,5 +1995,121 @@ html.banner-hidden .banner {
         color: #2054B2;
       }
     }
+  }
+}
+
+// Homepage Blog Cards with Featured Images
+.homepage-blog-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.homepage-blog-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.homepage-blog-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.homepage-blog-card-image {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.homepage-blog-card-image-placeholder {
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.homepage-blog-card-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.homepage-blog-card-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  font-weight: 700;
+
+  a {
+    color: #002a3a;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: #667eea;
+  }
+}
+
+.homepage-blog-card-description {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.4rem;
+  line-height: 1.4;
+  color: #4a5568;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.homepage-blog-card-readmore {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  font-weight: 600;
+  font-size: 1.4rem;
+  padding: 0.8rem 1.6rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 50px;
+  color: #2d3748;
+  text-decoration: none;
+  align-self: flex-start;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+.homepage-blog-card-readmore:hover {
+  background: #667eea;
+  color: #fff;
+  border-color: #667eea;
+}
+
+// Responsive adjustments for homepage blog cards
+@media (max-width: 768px) {
+  .homepage-blog-card-image,
+  .homepage-blog-card-image-placeholder {
+    height: 140px;
+  }
+
+  .homepage-blog-card-content {
+    padding: 1.2rem;
+  }
+
+  .homepage-blog-card-title {
+    font-size: 1.5rem;
+  }
+
+  .homepage-blog-card-description {
+    font-size: 1.3rem;
   }
 }

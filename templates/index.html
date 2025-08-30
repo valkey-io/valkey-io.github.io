@@ -15,34 +15,6 @@
 </div>
 {% endif %}
 
-<div class="documentation-section">
-    <div class="row">
-        <div class="col">
-            {{ section.content | safe }}
-        </div>
-    </div>
-    <div class="row documentation-card-grid">
-        {% if section.extra and section.extra.documentation_cards %}
-            {% for card in section.extra.documentation_cards %}
-            <div class="col col_3">
-                <div class="documentation-card">
-                    <h3>{{ card.title }}</h3>
-                    <p>{{ card.description }}</p>
-                    {% if card.features %}
-                    <ul>
-                        {% for feature in card.features %}
-                        <li>{{ feature }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    <a class="btn" href="{{ card.button_url }}">{{ card.button_text }}</a>
-                </div>
-            </div>
-            {% endfor %}
-        {% endif %}
-    </div>
-</div>
-
 <div class="whats-new-section">
     <h2>What's New?</h2>
 
@@ -95,12 +67,22 @@
         
         <div class="col col-4">   
             <h3>Latest From Our Blog</h3>
-            <div class="inner-card">
+            <div class="homepage-blog-section">
                 {% set blog_post_section = get_section(path="blog/_index.md") %}
                 {% set blog_posts = blog_post_section.pages | slice(end=2) %}
                 {% for post in blog_posts %}
-                    <h4><a href="{{ post.permalink }}">{{ post.title }}</a></h4>
-                    <p>{{ post.description }}</p>
+                    <div class="homepage-blog-card">
+                        {% if post.extra.featured_image %}
+                            <img src="{{ post.extra.featured_image }}" alt="{{ post.title }} featured image" class="homepage-blog-card-image"/>
+                        {% else %}
+                            <div class="homepage-blog-card-image-placeholder"></div>
+                        {% endif %}
+                        <div class="homepage-blog-card-content">
+                            <h4 class="homepage-blog-card-title"><a href="{{ post.permalink }}">{{ post.title }}</a></h4>
+                            <p class="homepage-blog-card-description">{{ post.description }}</p>
+                            <a href="{{ post.permalink }}" class="homepage-blog-card-readmore">Read More</a>
+                        </div>
+                    </div>
                 {% endfor %}
             </div>
 
@@ -139,6 +121,34 @@
                 {% endfor %}
             {% endif %}
         </div>        
+    </div>
+</div>
+
+<div class="documentation-section">
+    <div class="row">
+        <div class="col">
+            {{ section.content | safe }}
+        </div>
+    </div>
+    <div class="row documentation-card-grid">
+        {% if section.extra and section.extra.documentation_cards %}
+            {% for card in section.extra.documentation_cards %}
+            <div class="col col_3">
+                <div class="documentation-card">
+                    <h3>{{ card.title }}</h3>
+                    <p>{{ card.description }}</p>
+                    {% if card.features %}
+                    <ul>
+                        {% for feature in card.features %}
+                        <li>{{ feature }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    <a class="btn" href="{{ card.button_url }}">{{ card.button_text }}</a>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
 
