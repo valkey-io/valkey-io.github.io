@@ -74,9 +74,7 @@ The investment in open source and choosing to employ contributors to the project
 
 On August 15, Valkey dropped the [first release candidate for 9.0](https://github.com/valkey-io/valkey/releases/tag/9.0.0-rc1). This testing release previews the new capabilities around atomic slot migrations, hash field expirations, and numbered databases in cluster mode alongside scads of performance enhancements and bug fixes. Additional release candidates are to follow with general availability of 9.0 in early autumn 2025\.
 
-Parallel to the testing phase for 9.0 are two events this month in Amsterdam:
+Parallel to the testing phase for 9.0, two events happened this month in Amsterdam:
 
-* [Open Source Summit Europe \- Aug 25–27, 2025](https://events.linuxfoundation.org/open-source-summit-europe/):  Three-day conference bringing together open source developers, technologists, and leaders for keynotes, sessions, and community networking. Be sure and check out the Valkey booth.  
-* [Valkey User Conference: Keyspace \- August 28, 2025](https://valkey.io/events/keyspace-2025/): A one-day conference for developers, SREs, and DevOps teams with sessions, lightning talks, and workshops. Registration is available until the 28th.
-
-Both events are at the RAI Amsterdam Convention Centre. 
+* [Open Source Summit Europe \- Aug 25–27, 2025](https://events.linuxfoundation.org/open-source-summit-europe/):  Three-day conference for open source developers, technologists, and leaders featuring keynotes, sessions, and community networking.   
+* [Valkey User Conference: Keyspace \- August 28, 2025](https://valkey.io/events/keyspace-2025/): A one-day conference for developers, SREs, and DevOps teams with sessions, lightning talks, and workshops. 
