@@ -1,14 +1,13 @@
 +++
 title= "Valkey: An Investment in Open Source"
 description = "The new Swift client for Valkey is now in preview. Learn about its features and how it brings the performance of Valkey to the Swift language."
-date= 2025-08-25 9:00:00
+date= 2025-09-09 09:00:00
 authors= [ "lorilorusso"]
 
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"
 +++
-# Valkey: An Investment in Open Source
 
 Valkey was founded just over a year ago to keep high-performance key/value storage in the open source community: free from vendor lock-in and restrictive licenses. Backed by contributors from AWS, Google Cloud, Ericsson, Oracle, Alibaba, Huawei, Tencent, Percona, Aiven, Heroku, Verizon, Chainguard, and Canonical, the project shows how “free” in open source depends on investment: time, talent, and ongoing financial support.
 
@@ -64,7 +63,7 @@ LDAP integration brings centralized authentication and access control to Valkey,
 
 #### Rust Module
 
-Oracle is contributing a Rust-based module to Valkey, aimed at improving safety and performance for low-level extensions. By adopting Rust’s strong guarantees around memory and concurrency, the project opens the door to safer, more maintainable systems integration, especially for production environments under load.
+Oracle is contributing a Rust-based module SDK to Valkey, aimed at improving safety and performance for low-level extensions. By adopting Rust’s strong guarantees around memory and concurrency, the project opens the door to safer, more maintainable systems integration, especially for production environments under load.
 
 ### The Real Investment Behind Open Source Success
 
@@ -74,7 +73,7 @@ The investment in open source and choosing to employ contributors to the project
 
 On August 15, Valkey dropped the [first release candidate for 9.0](https://github.com/valkey-io/valkey/releases/tag/9.0.0-rc1). This testing release previews the new capabilities around atomic slot migrations, hash field expirations, and numbered databases in cluster mode alongside scads of performance enhancements and bug fixes. Additional release candidates are to follow with general availability of 9.0 in early autumn 2025\.
 
-Parallel to the testing phase for 9.0, two events happened this month in Amsterdam:
+Parallel to the testing phase for 9.0, two events happened last month in Amsterdam:
 
 * [Open Source Summit Europe \- Aug 25–27, 2025](https://events.linuxfoundation.org/open-source-summit-europe/):  Three-day conference for open source developers, technologists, and leaders featuring keynotes, sessions, and community networking.   
 * [Valkey User Conference: Keyspace \- August 28, 2025](https://valkey.io/events/keyspace-2025/): A one-day conference for developers, SREs, and DevOps teams with sessions, lightning talks, and workshops. 

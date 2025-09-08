@@ -1,7 +1,7 @@
 ---
 title: Lori Lorusso
 extra:
-    photo: '/assets/media/authors/lorilorusso.jpg'
+    photo: '/assets/media/authors/lorilorusso.jpeg'
     github: LoriLorusso
 ---
 
