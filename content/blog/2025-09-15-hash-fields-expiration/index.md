@@ -121,7 +121,7 @@ When many buckets are used, the memory overhead can be high and we might end up 
 the 'vset' also uses different bucket encoding based on the number of items in the bucket.
 A bucket with only a single element would require just a single pointer size of bytes.
 A bucket of small amount of items would be encoded as a vector of item pointers, and when the bucket contains many items we will use 
-the [Valkey hashtable](content/blog/2025-03-28-new-hash-table) structure to map the relevant items.
+the [Valkey hashtable](/blog/new-hash-table) structure to map the relevant items.
 By leveraging data structures we already know how to optimize, we can further improve memory usage and performance with techniques like SIMD acceleration and memory prefetching.
 
 A hash object that contains volatile fields now also carries a secondary vset index. 
