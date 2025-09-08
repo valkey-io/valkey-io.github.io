@@ -108,7 +108,7 @@ Each field’s timestamp is mapped into a time bucket, represented by a shared �
 
 This solution introduces a semi-sorted data structure which we named 'vset' (stands for "volatile set").
 The vset manages buckets in different time window resolutions and alternating encodings. 
-Buckets can split if too many expirations cluster in one interval, or merge when expirations naturally align. 
+Buckets can split if too many expirations cluster in one interval. 
 This adaptability keeps the number of buckets small while ensuring they’re fine-grained enough for efficient cleanup.
 
 When a new field with TTL is added, the vset either places it into an existing bucket or creates a new one. 
