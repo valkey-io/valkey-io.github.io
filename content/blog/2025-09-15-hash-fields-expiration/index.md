@@ -61,7 +61,8 @@ The challenge is balancing three conflicting goals:
 
 * Reclaim memory efficiently. The active expiration job is time-bounded, so we need to minimize wasted CPU cycles spent scanning unexpired fields.
 
-## Alternatives We Considered
+#### Alternatives We Considered
+-------------------------------
 
 We explored several approaches:
 
@@ -132,7 +133,6 @@ On the storage side, expiration metadata is stored compactly, inlined alongside 
 If an expired field is accessed before the cron job has removed it, Valkey treats it as if it doesn’t exist (with a few well-documented exceptions).
 
 #### Known limitations
-----------------------
 
 To deliver hash field expirations in a way that is simple, performant, and memory-efficient, we made some deliberate trade-offs in the initial implementation.
 As a result, there are a few limitations today that we plan to revisit in future releases:
