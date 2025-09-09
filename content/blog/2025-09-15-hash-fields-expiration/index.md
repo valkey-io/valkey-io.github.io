@@ -98,7 +98,7 @@ Each field’s timestamp is mapped into a time bucket, represented by a shared �
 ![illustration](hfe-coarse-buckets.png)
 
 This solution introduces a semi-sorted data structure which we named 'vset' (stands for "volatile set").
-The volatile set manages buckets in different time window resolutions and alternating encodings.
+The volatile set manages buckets in different time window resolutions and adaptive encodings.
 Buckets can split if too many expirations cluster in one interval.
 This adaptability keeps the number of buckets small while ensuring they’re fine-grained enough for efficient cleanup.
 
@@ -112,15 +112,12 @@ When many buckets are used, the memory overhead can be high and we might end up 
 The volatile set also uses different bucket encoding based on the number of items in the bucket.
 A bucket with only a single element would require just a single pointer size of bytes.
 A bucket of small amount of items would be encoded as a vector of item pointers, and when the bucket contains many items we will use the [Valkey hashtable](/blog/new-hash-table) structure to map the relevant items.
-By leveraging data structures we already know how to optimize, we can further improve memory usage and performance with techniques like SIMD acceleration and memory prefetching.
+This way, we are leveraging existing data structures which are highly optimized for modern CPUs. 
 
 A hash object that contains volatile fields now also carries a secondary volatile set index.
 At the database level, we maintain a global map of hashes with volatile fields.
 The active expiration cron job scans both regular keys and these hashes, but only iterates over volatile set buckets whose end time has passed.
 This ensures that CPU time is spent only on fields that are truly ready to expire.
-
-On the storage side, expiration metadata is stored compactly, inlined alongside the hash’s key-value entries.
-If an expired field is accessed before the cron job has removed it, Valkey treats it as if it doesn’t exist (with a few well-documented exceptions).
 
 ## Benchmarking our solution
 
@@ -209,6 +206,6 @@ is able to keep up with load and prevent memory from spiking unexpectedly.
 
 ## Conclusion
 
-The benchmarks demonstrate that field-level expirations can be added to Valkey without compromising performance or stability.
+The benchmarks demonstrate that field-level expirations can be added to Valkey without compromising memory efficiency, or latency.
 The memory overhead remains modest and predictable, command throughput is unaffected, and the shared active expiration job efficiently reclaims memory even under heavy ingestion workloads.
 Together, these results validate that the coarse-bucket design with adaptive encoding delivers the right balance of efficiency, scalability, and correctness, while preserving Valkey’s reputation for high performance and low latency.
