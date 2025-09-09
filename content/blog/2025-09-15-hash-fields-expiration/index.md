@@ -63,7 +63,7 @@ We explored several approaches:
 
 This seemed simple: build a secondary hashtable in each Hash object which maps only volatile fields.
 
-![illustration](hfe-alternative-hashtable.png)
+![Diagram illustrating optional solution using a secondary hashtable index](hfe-alternative-hashtable.png)
 
 This is actually the way volatile generic keys are being tracked. Per each database, Valkey manage a secondary map mapping volatile keys.
 During active expiration process the existing job scan the secondary map and each key found to pass it's assigned TTL is expired and it's memory is reclaimed.
@@ -73,7 +73,7 @@ The problem with this design option is the potential inefficiency introduced whi
 
 Using a radix tree to hold field names plus expirations provides sorted access for free.
 
-![illustration](hfe-alternative-radixtree.png)
+![Diagram illustrating optional solution using a secondary radix-tree index](hfe-alternative-radixtree.png)
 
 This is also not a new concept in Valkey. In fact this exact structure is being used to manage client connections blocked on key operations
 like [`BLPOP`](/commands/blpop/) and [`XREAD`](/commands/xread/).
@@ -86,7 +86,7 @@ We wanted to have the ability to efficiently scan over fields which are already 
 Using a radix tree was possible, but the memory overhead was high. Instead we could use a more lightweight data structure like a skip list, which memory consumption is more bounded
 and is not governed by the data atrophy.
 
-![illustration](hfe-alternative-skiplist.png)
+![Diagram illustrating optional solution using a secondary skiplist index](hfe-alternative-skiplist.png)
 
 However, This would give `O(log N)` access to the index which did not work well with our target to keep hash operations constant time complexity.
 
@@ -95,7 +95,7 @@ However, This would give `O(log N)` access to the index which did not work well 
 Instead of tracking every field’s expiration individually, we designed a coarse bucket system.
 Each field’s timestamp is mapped into a time bucket, represented by a shared “end timestamp.”
 
-![illustration](hfe-coarse-buckets.png)
+![Diagram illustrating our selected coarse buckets solution](hfe-coarse-buckets.png)
 
 This solution introduces a semi-sorted data structure which we named 'vset' (stands for "volatile set").
 The volatile set manages buckets in different time window resolutions and adaptive encodings.
@@ -134,7 +134,7 @@ The actual overhead depends on both how many fields have expirations and how spr
 This is because the bucket encoding chosen by the volatile set adapts to the data distribution.
 In practice, the overhead ranged between 16 and 29 bytes per field.
 
-![illustration](hfe-benchmark-memory.png)
+![Chart indicating the per field memory overhead for different hash object encoding types](hfe-benchmark-memory.png)
 
 The higher end of this range primarily affects small hashes, where compact encodings
 like listpack are avoided when volatile fields are present.
@@ -144,11 +144,11 @@ like listpack are avoided when volatile fields are present.
 Next, we benchmarked common hash commands both with and without field expirations.
 The results showed no measurable performance regression and throughput remained stable when expirations were added.
 
-![illustration](hfe-benchmark-hash-commands.png)
+![Chart comparing the throughput of common hash commands both with and without field expirations](hfe-benchmark-hash-commands.png)
 
 We also benchmarked the new expiration-aware commands (e.g., `HSETEX`), confirming that their performance is on par with traditional hash operations.
 
-![illustration](hfe-benchmark-new-commands.png)
+![Chart showing the throughput of the new expiration-aware commands](hfe-benchmark-new-commands.png)
 
 ### Active Expiration Efficiency
 
@@ -159,7 +159,7 @@ During the load phase, we disabled the expiration job using the [`DEBUG`](/comma
 
 The following chart shows the time it took the expiration cron job complete the full deletion of all the 10M fields.
 
-![illustration](hfe-benchmark-reclaim-time.png)
+![Chart showing the time it took the expiration cron job complete the full deletion of all the 10M fields](hfe-benchmark-reclaim-time.png)
 
 The results revealed that expiration time depends not just on the number of fields, but also on how they are distributed across objects.
 Smaller hashes tend to fit into CPU caches, so random field deletions remain cache-friendly.
@@ -177,7 +177,7 @@ inserted 10 million fields with 10-second TTLs, while the active expiration job 
 This setup maintained a constant pool of fields at different stages of their lifecycle — some fresh, some nearing expiration, some ready to be reclaimed.
 We then tracked memory usage over a 5-minute period.
 
-![illustration](hfe-benchmark-active-expiry.png)
+![Chart presenting the ability of active expiration job to reclaim memory during constant data ingestion](hfe-benchmark-active-expiry.png)
 
 The results aligned with our theoretical expectation:
 
