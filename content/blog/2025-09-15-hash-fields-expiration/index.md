@@ -35,7 +35,7 @@ In order to understand the problem, it’s important to understand how expiratio
 
 Valkey uses two complementary mechanisms to reclaim expired keys:
 
-* **Lazy expiration:** A key is deleted only when accessed. If you try to read or write an expired key, Valkey notices it has passed its TTL and deletes it immediately. This is cheap, but untouched keys can linger indefinitely and waste memory.
+* **Lazy expiration:** A key is deleted only when accessed. If you try to read or write an expired key, Valkey notices it has passed its TTL and deletes it immediately. This is cheap, but untouched keys would linger indefinitely and waste memory.
 
 * **Active expiration:** A background cron job runs 10 times per second, sampling a small set of keys with expiration. Expired keys are deleted until a time budget is reached, ensuring memory is reclaimed proactively without introducing latency spikes.
 
