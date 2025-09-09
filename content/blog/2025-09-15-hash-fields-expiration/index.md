@@ -122,22 +122,6 @@ This ensures that CPU time is spent only on fields that are truly ready to expir
 On the storage side, expiration metadata is stored compactly, inlined alongside the hash’s key-value entries.
 If an expired field is accessed before the cron job has removed it, Valkey treats it as if it doesn’t exist (with a few well-documented exceptions).
 
-### Known limitations
-
-To deliver hash field expirations in a way that is simple, performant, and memory-efficient, we made some deliberate trade-offs in the initial implementation.
-As a result, there are a few limitations today that we plan to revisit in future releases:
-
-1. Expired fields are treated as if they don’t exist when accessed through commands like [`HGET`](/commands/hget/) or [`HGETALL`](/commands/hgetall/).
-   However, [`HLEN`](/commands/hlen/) provides an exception for this logic.
-   Because [`HLEN`](/commands/hlen/) is optimized to read only the metadata tracking the total number of fields in a hash, it may still count expired fields that haven’t yet been cleaned up by the background expiration job.
-   This means that until cleanup occurs, [`HLEN`](/commands/hlen/) might temporarily report a higher count than the number of “live” fields.
-2. The [`HRANDFIELD`](/commands/hrandfield/) command selects fields at random from the underlying hash object.
-   If a hash contains many expired fields awaiting deletion, the selection process may frequently land on those expired entries.
-   In practice, this can result in [`HRANDFIELD`](/commands/hrandfield/) returning an empty reply more often than expected, and it reduces the fairness of field sampling.
-3. Valkey normally uses a highly compact representation for small hashes, which saves significant memory.
-   To simplify the expiration design in Valkey 9.0, we chose to disable this compact encoding when a hash contains volatile fields (i.e., fields with TTLs).
-   The impact is limited: only small hashes with field expirations are affected, but in those cases memory usage will be slightly higher than the fully compacted representation.
-
 ## Benchmarking our solution
 
 Validating the new design meant benchmarking across several dimensions: memory overhead, command performance, and expiration efficiency.
