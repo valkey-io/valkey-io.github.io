@@ -35,20 +35,21 @@ RAI Amsterdam Convention Centre [Europaplein 24, 1078 GZ Amsterdam, Netherlands]
 
 ## Related
 
-Keyspace is a co-located event with [Open Source Summit Europe](https://events.linuxfoundation.org/open-source-summit-europe/). You do not need to purchase a ticket for Open Source Summit Europe to attend Keyspace.
+Keyspace is a co-located event with [Open Source Summit Europe](https://events.linuxfoundation.org/open-source-summit-europe/).
 
-## Register
+## Recorded Talks & Video
 
-To register, you will need to sign in with your Linux Foundation ID.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=muYle3gZPUUM1vbA&amp;list=PLAV1X7hxH2HtZWc2YNQRMQe9FT9XTWemE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-If you don't yet have an ID, you can create one by clicking "Create an account" on the reservation link below.
+## Presentation Slides
 
-[Reserve your ticket today!](https://register.linuxfoundation.org/keyspace-2025)
-
-## Tentative Schedule
-
-The conference has two orbits: **Orbit A** for those who already know Valkey and are looking to deepen their understanding and **Orbit B** for those who are just starting to get to know Valkey. You're not locked into either orbit, so you can select the right talks for your needs.
-
-<script type="text/javascript" src="https://sessionize.com/api/v2/qv5dn29l/view/GridSmart"></script>
-
-_Header image: [The Horsehead Nebula and its surroundings. The reflection nebula NGC 2023 in the bottom left corner.](https://en.wikipedia.org/wiki/Horsehead_Nebula#/media/File:Horsehead_and_flame_Nebulea_384mm_scope_Ha-RGB.jpg) License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)_
+* [What's New in Valkey 9?](./slides/whats-new-in-valkey.pdf)
+* [Demystifying Valkey Clustering: Architecture, Fault Tolerance, and Scalability](./slides/demystifying-valkey-clustering.pdf)
+* [valkey-bundle: One Stop Shop for Real-Time Applications](./slides/keyspace-valkey-bundle.pdf)
+* [Customizing Valkey with Rust: Building High-Performance Modules](./slides/valkey-modules-in-rust.pdf)
+* [Deploying Valkey at Enterprise level with LDAP Authentication and Auditing](./slides/keyspace-25-ldap-audit.pdf)
+* _(Slides pending)_ Harder, Better, Faster, Stronger - Building Valkey-Timeseries
+* _(Slides pending)_ Effortless Platform Engineering: Multi-Cluster Valkey Deployments with k0rdent
+* [Connection Storms: Detecting and Defusing Outages Before Valkey Crashes](./slides/connection-storms.pdf)
+* [Migrating 15k Redis servers to Valkey](./slides/migrating-15k-redis-servers-to-valkey.pdf)
+* [Redis to Valkey: Upgrade and Downgrade Compatibility](./slides/redis-to-valkey-upgrade-and-downgrade.pdf)
