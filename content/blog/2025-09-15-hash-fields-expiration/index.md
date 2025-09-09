@@ -162,11 +162,16 @@ During the load phase, we disabled the expiration job using the [`DEBUG`](/comma
 
 The following chart shows the time it took the expiration cron job complete the full deletion of all the 10M fields.
 
-![illustration](hfe-benchmark-new-commands.png)
+![illustration](hfe-benchmark-reclaim-time.png)
 
 The results revealed that expiration time depends not just on the number of fields, but also on how they are distributed across objects.
 Smaller hashes tend to fit into CPU caches, so random field deletions remain cache-friendly.
 Very large hashes, however, cannot fit entirely in cache, which means more expensive memory lookups during expiration.
+
+Another important factor is CPU utilization.
+The active expiration job is deliberately CPU-bounded and designed to use no more than ~25% of available CPU time (unless configured to work more aggressively), 
+preventing it from overwhelming the system.
+The chart above shows that average CPU usage was consistently kept under this cap, even when expiring millions of fields, ensuring predictable tail latency.
 
 We also simulated a more realistic scenario: *expiring data during continuous ingestion.*
 Using the 'valkey-benchmark' executing the new [`HSETEX`](/commands/hsetex) command, we continuously
