@@ -98,25 +98,25 @@ Each field’s timestamp is mapped into a time bucket, represented by a shared �
 ![illustration](hfe-coarse-buckets.png)
 
 This solution introduces a semi-sorted data structure which we named 'vset' (stands for "volatile set").
-The vset manages buckets in different time window resolutions and alternating encodings.
+The volatile set manages buckets in different time window resolutions and alternating encodings.
 Buckets can split if too many expirations cluster in one interval.
 This adaptability keeps the number of buckets small while ensuring they’re fine-grained enough for efficient cleanup.
 
-When a new field with TTL is added, the vset either places it into an existing bucket or creates a new one.
+When a new field with TTL is added, the volatile set either places it into an existing bucket or creates a new one.
 If a bucket grows too large, it is narrowed into smaller time windows to keep expiration scans efficient.
 For example: scanning 1,000 items in a single 10-second bucket may result in mostly misses, while spreading them across 10 smaller buckets avoids wasted work.
 Why not always use a very small time window (e.g few milliseconds) for each bucket? The reason is memory.
 Recall that the buckets are managed in a Radix-Tree which introduces a high overhead per each item.
 When many buckets are used, the memory overhead can be high and we might end up with the same memory overhead introduced by using a Radix-Tree index.
 
-The 'vset' also uses different bucket encoding based on the number of items in the bucket.
+The volatile set also uses different bucket encoding based on the number of items in the bucket.
 A bucket with only a single element would require just a single pointer size of bytes.
 A bucket of small amount of items would be encoded as a vector of item pointers, and when the bucket contains many items we will use the [Valkey hashtable](/blog/new-hash-table) structure to map the relevant items.
 By leveraging data structures we already know how to optimize, we can further improve memory usage and performance with techniques like SIMD acceleration and memory prefetching.
 
-A hash object that contains volatile fields now also carries a secondary vset index.
+A hash object that contains volatile fields now also carries a secondary volatile set index.
 At the database level, we maintain a global map of hashes with volatile fields.
-The active expiration cron job scans both regular keys and these hashes, but only iterates over vset buckets whose end time has passed.
+The active expiration cron job scans both regular keys and these hashes, but only iterates over volatile set buckets whose end time has passed.
 This ensures that CPU time is spent only on fields that are truly ready to expire.
 
 On the storage side, expiration metadata is stored compactly, inlined alongside the hash’s key-value entries.
@@ -147,10 +147,10 @@ Validating the new design meant benchmarking across several dimensions: memory o
 We first measured the per-field memory overhead when setting TTLs.
 The raw expiration time itself requires a constant 8 bytes (though this could be reduced in the future
 by storing only a delta relative to a reference timestamp, such as server start time).
-On top of that, extra memory is needed for tracking within the vset.
+On top of that, extra memory is needed for tracking within the volatile set.
 
 The actual overhead depends on both how many fields have expirations and how spread out their expiration times are.
-This is because the bucket encoding chosen by the vset adapts to the data distribution.
+This is because the bucket encoding chosen by the volatile set adapts to the data distribution.
 In practice, the overhead ranged between 16 and 29 bytes per field.
 
 ![illustration](hfe-benchmark-memory.png)
@@ -171,7 +171,7 @@ We also benchmarked the new expiration-aware commands (e.g., `HSETEX`), confirmi
 
 ### Active Expiration Efficiency
 
-The design goal of the vset was to enable efficient background deletion of expired fields.
+The design goal of the volatile set was to enable efficient background deletion of expired fields.
 To test this, we preloaded 10 million fields with TTLs.
 We distributed these fields across varying numbers of hash objects to see how object size influences expiration.
 During the load phase, we disabled the expiration job using the [`DEBUG`](/commands/debug/), then re-enabled it once all fields had expired.
