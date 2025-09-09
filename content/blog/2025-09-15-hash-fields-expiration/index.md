@@ -28,7 +28,7 @@ hurting memory efficiency and increasing overhead for operations.
 
 The inability to set different TTLs per field meant developers either built complex cleanup processes outside of Valkey, or gave up flexibility in how expirations were handled.
 
-## Technical Challenges and Design Alternatives
+## Finding the Right Expiration Model
 
 At first glance, adding field expirations might sound like a simple matter of storing timestamps per field.
 In order to understand the problem, it’s important to understand how expiration is normally handled in Valkey today.
@@ -55,11 +55,11 @@ The challenge is balancing three conflicting goals:
 
 * **Reclaim memory efficiently.** The active expiration job is time-bounded, so we need to minimize wasted CPU cycles spent scanning unexpired fields.
 
-## Alternatives Considered
+### Alternatives Considered
 
 We explored several approaches:
 
-### 1. Secondary hashtable per field expiration
+#### 1. Secondary hashtable per field expiration
 
 This seemed simple: build a secondary hashtable in each Hash object which maps only volatile fields.
 
@@ -69,7 +69,7 @@ This is actually the way volatile generic keys are being tracked. Per each datab
 During active expiration process the existing job scan the secondary map and each key found to pass it's assigned TTL is expired and it's memory is reclaimed.
 The problem with this design option is the potential inefficiency introduced while scanning many items which should not expire.
 
-### 2. Radix Tree-based index
+#### 2. Radix Tree-based index
 
 Using a radix tree to hold field names plus expirations provides sorted access for free.
 
@@ -80,7 +80,7 @@ like [`BLPOP`](/commands/blpop/) and [`XREAD`](/commands/xread/).
 
 But the memory overhead per node was high. During experiments we measured more than 54 bytes overhead per each hash field when using this type of index.
 
-### 3. Global sorted structure
+#### 3. Global sorted structure
 
 We wanted to have the ability to efficiently scan over fields which are already expired. A good way to achieve this is by using a sorted index.
 Using a radix tree was possible, but the memory overhead was high. Instead we could use a more lightweight data structure like a skip list, which memory consumption is more bounded
@@ -90,7 +90,7 @@ and is not governed by the data atrophy.
 
 However, This would give `O(log N)` access to the index which did not work well with our target to keep hash operations constant time complexity.
 
-## Coarse Buckets with Adaptive Encoding
+### Coarse Buckets with Adaptive Encoding
 
 Instead of tracking every field’s expiration individually, we designed a coarse bucket system.
 Each field’s timestamp is mapped into a time bucket, represented by a shared “end timestamp.”
