@@ -209,3 +209,120 @@ is able to keep up with load and prevent memory from spiking unexpectedly.
 The benchmarks demonstrate that field-level expirations can be added to Valkey without compromising memory efficiency, or latency.
 The memory overhead remains modest and predictable, command throughput is unaffected, and the shared active expiration job efficiently reclaims memory even under heavy ingestion workloads.
 Together, these results validate that the coarse-bucket design with adaptive encoding delivers the right balance of efficiency, scalability, and correctness, while preserving Valkey’s reputation for high performance and low latency.
+
+## Using Hash Field Expiration in Valkey
+
+Valkey 9.0 introduces a new API for hash field expirations, fully compatible with the Redis 8.0 API. 
+Any existing client library supporting this API can be used. 
+In this example, we will use the latest [valkey-glide](https://github.com/valkey-io/valkey-glide/) 2.1.0 release, which also supports the new hash field expiration commands.
+
+Let's start with a simple example.
+
+First, we create a client connecting to a local Valkey server:
+
+```python
+ from glide_sync import GlideClientConfiguration, NodeAddress, GlideClient
+ addresses = [NodeAddress("localhost", 6379)]
+ config = GlideClientConfiguration(addresses, request_timeout=500)  # 500ms timeout
+ client = GlideClient.create(config)
+```
+
+Next, let's create a new hash object to store some random user data:
+
+```python
+ client.hset("User1", {"name": "Ran", "age": 'old', "password": "1234"})
+ > 3
+```
+
+Suppose we want the user’s password to be available only for a specific timeframe (e.g., 60 seconds). 
+With the new hash field expiration feature, we can now do that:
+
+```python
+ client.hexpire("User1", 60, ["password"])
+ > [1]
+```
+
+Note that in this example, we only set a TTL for a single field, but the command can accept multiple fields at once.
+
+We can check the remaining TTL for the password field:
+
+```python
+ client.httl("User1", ["password"])
+ > [46]
+```
+
+The reply shows the remaining time in seconds for the field to live. We can also query the absolute expiration time:
+
+```python
+ client.hexpiretime("User1", ["password"])
+ > [1757499351]
+```
+
+This is a Unix timestamp (seconds since January 1, 1970, 00:00:00 UTC). To convert it to human-readable time:
+
+```bash
+date -d @1757499351
+ > Wed Sep 10 10:15:51 UTC 2025
+```
+
+After 60 seconds, if we read the hash:
+
+```python
+ client.hgetall("User1")
+ > {b'name': b'Ran', b'age': b'old'}
+```
+
+Notice that the password field is no longer present, since it has expired.
+
+Another practical use case is managing a collection of links where each field represents a URL along with its metadata:
+```
+links:valkey:blogs -> {
+    "https://valkey.io/blog/valkey-is-a-key-value-store" ->
+                                    {votes: 15, category: "tech"},
+    "https://valkey.io/blog/valkey-supports-different-ai-workloads" ->
+                                    {votes: 42, category: "ai"},
+    "https://myblog.com/blog/how-to-write-good-valkey-blog" ->
+                                    {votes: 7, category: "blog"}
+}
+```
+
+Here’s how hash field expirations help:
+
+* Each link can have a TTL representing its “relevance window.” If a link hasn’t been accessed within a certain period, it automatically expires.
+* Every time a user queries or updates a link, its TTL can be refreshed, keeping active links alive while letting inactive ones naturally fall off.
+* Expired links are removed automatically, so you don’t need extra cleanup logic and can focus on active links.
+
+Using Valkey’s [HSETEX](/commands/hsetex) and [HGETEX]((/commands/hgetex)), we can update a field’s TTL whenever it’s accessed or modified:
+
+```python
+# Set or update link metadata with a 30-day TTL
+client.hsetex(
+     'links:user:42',
+     {
+      'https://valkey.io/blog/valkey-is-a-key-value-store':
+      '{"clicks":15,"category":"tech"}'
+     },
+     expiry=ExpirySet(ExpiryType.MILLSEC, 30*24*3600))
+
+# Retrieve a link and refresh its TTL
+link_data = client.hgetex(
+      'links:user:42',
+      {'https://valkey.io/blog/valkey-is-a-key-value-store'},
+      expiry=ExpirySet(ExpiryType.MILLSEC, 30*24*3600)
+)
+```
+
+For a complete list of commands, check out the [Valkey Commands Reference](https://valkey.io/commands/)
+
+## What’s Next?
+
+What we’ve shipped so far is just the first step: the ability to set and control time-to-live at the hash field level. But we’re not stopping here.
+Future work will focus on two main areas: reducing memory overhead and improving performance. 
+For example, we plan to support compressed encodings for hashes with volatile fields, and to leverage modern CPU features such as memory prefetching and SIMD instructions to speed up operations.
+
+Another critical area for improvement is the active expiration job. 
+Today, all volatile data in Valkey is tracked in unsorted maps (hashtables). The background job must repeatedly scan these unordered sets, which means wasting CPU cycles on entries that aren’t close to expiration. 
+By introducing structured tracking—through the volatile set or even alternative approaches like [Hierarchal Time Wheels](https://www.cs.columbia.edu/~nahum/w6998/papers/sosp87-timing-wheels.pdf) —we can significantly 
+reduce wasted work and make expiration more efficient at scale.
+
+
