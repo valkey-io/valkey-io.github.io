@@ -1614,8 +1614,7 @@ html.banner-hidden .banner {
   padding: 8rem 2rem;
 
   @include respond-min(768px) {
-    padding: 8rem 2rem;
-    min-height: 75vh;
+    padding: 10rem 2rem;
 
   }
 }
@@ -1636,7 +1635,7 @@ html.banner-hidden .banner {
   color: white;
 
   @include respond-min(768px) {
-    font-size: 8rem;
+    font-size: 7rem;
   }
 }
 
@@ -1655,9 +1654,9 @@ html.banner-hidden .banner {
   border-radius: 30px;
   font-weight: 600;
   height: auto;
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   color: #6983FF;
-  padding: 10px 20px;
+  padding: 8px 15px;
   background-image: linear-gradient(to right, #ffffff, #B7C2F7);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease-in-out;
