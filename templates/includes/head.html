@@ -41,9 +41,17 @@
     <!-- Nav JS -->
     <script src="/assets/js/nav.js"></script>
 
-    <!-- Fathom - beautiful, simple website analytics -->
-    <script src="https://cdn.usefathom.com/script.js" data-site="FRZJYDAH" defer></script>
-    <!-- / Fathom -->
+    <!-- cookie banner, LF standard -->
+    <script src="https://cmp.osano.com/16A0DbT9yDNIaQkvZ/31b1b91a-e0b6-47ea-bde2-7f2bd13dbe5c/osano.js?variant=one"></script>
+
+    <!-- google analytics, LF standard -->
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MFFCB7SR');</script>
+    <!-- End Google Tag Manager -->
 
     {% if page and page.extra and page.extra.head_extra %}{{ page.extra.head_extra }}{% endif %}
 </head>
