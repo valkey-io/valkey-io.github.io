@@ -48,8 +48,8 @@ Keyspace is a co-located event with [Open Source Summit Europe](https://events.l
 * [valkey-bundle: One Stop Shop for Real-Time Applications](./slides/keyspace-valkey-bundle.pdf)
 * [Customizing Valkey with Rust: Building High-Performance Modules](./slides/valkey-modules-in-rust.pdf)
 * [Deploying Valkey at Enterprise level with LDAP Authentication and Auditing](./slides/keyspace-25-ldap-audit.pdf)
-* _(Slides pending)_ Harder, Better, Faster, Stronger - Building Valkey-Timeseries
-* _(Slides pending)_ Effortless Platform Engineering: Multi-Cluster Valkey Deployments with k0rdent
+* [Harder, Better, Faster, Stronger - Building Valkey-Timeseries](./slides/timeseries-keyspace-2025.pdf)
+* [Effortless Platform Engineering: Multi-Cluster Valkey Deployments with k0rdent](./slides/keyspace-k0rdent.pdf)
 * [Connection Storms: Detecting and Defusing Outages Before Valkey Crashes](./slides/connection-storms.pdf)
 * [Migrating 15k Redis servers to Valkey](./slides/migrating-15k-redis-servers-to-valkey.pdf)
 * [Redis to Valkey: Upgrade and Downgrade Compatibility](./slides/redis-to-valkey-upgrade-and-downgrade.pdf)
