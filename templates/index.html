@@ -63,11 +63,6 @@
                 {% set blog_posts = blog_post_section.pages | slice(end=2) %}
                 {% for post in blog_posts %}
                     <div class="homepage-blog-card">
-                        {% if post.extra.featured_image %}
-                            <img src="{{ post.extra.featured_image }}" alt="{{ post.title }} featured image" class="homepage-blog-card-image"/>
-                        {% else %}
-                            <div class="homepage-blog-card-image-placeholder"></div>
-                        {% endif %}
                         <div class="homepage-blog-card-content">
                             <h4 class="homepage-blog-card-title"><a href="{{ post.permalink }}">{{ post.title }}</a></h4>
                             <p class="homepage-blog-card-description">{{ post.description }}</p>

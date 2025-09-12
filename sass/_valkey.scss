@@ -1602,9 +1602,8 @@ html.banner-hidden .banner {
 // Hero Section Styles
 .hero-section {
   position: relative;
-  min-height: none;
   background-size: cover;
-  background-position: center bottom;
+  background-position: right center;
   background-color: #30186e;
   background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0.15), rgba(48, 24, 110, 0.75)), url('/img/hero-bg.webp');
   display: flex;
