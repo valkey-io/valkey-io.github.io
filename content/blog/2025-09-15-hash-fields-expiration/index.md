@@ -1,7 +1,14 @@
 +++
 title= "Introducing Hash Field Expirations"
 date= 2025-09-15 00:00:00
-description= "Support for volatile fields in Valkey hash objects"
+description= """ 
+    One of Valkey’s greatest strengths has always been its built-in ability to expire keys.
+    This simple but powerful feature helps developers keep datasets fresh, automatically clear caches, and enforce session lifetimes — all without extra application logic.
+    But until now, expiration worked only at the level of entire keys.  
+    In this post, we’ll explore how Valkey 9.0 introduces per-field expiration for hash objects, 
+    the challenges we faced designing it, the tradeoffs we considered, and the benchmarks that guided our final implementation.  
+    We’ll also walk through practical examples to show how you can start using this feature today.
+    """
 authors= ["ranshid"]
 [extra]
 featured = true
@@ -55,9 +62,9 @@ The challenge is balancing three conflicting goals:
 
 * **Reclaim memory efficiently.** The active expiration job is time-bounded, so we need to minimize wasted CPU cycles spent scanning unexpired fields.
 
-### Alternatives Considered
+### Approaches Considered
 
-We explored several approaches:
+"We explored several ways to solve this problem:
 
 #### 1. Secondary hashtable per field expiration
 
@@ -157,7 +164,7 @@ To test this, we preloaded 10 million fields with TTLs.
 We distributed these fields across varying numbers of hash objects to see how object size influences expiration.
 During the load phase, we disabled the expiration job using the [`DEBUG`](/commands/debug/), then re-enabled it once all fields had expired.
 
-The following chart shows the time it took the expiration cron job complete the full deletion of all the 10M fields.
+The following chart shows the time it took the expiration cron job to complete the full deletion of all the 10M fields.
 
 ![Chart showing the time it took the expiration cron job complete the full deletion of all the 10M fields](hfe-benchmark-reclaim-time.png)
 
@@ -258,7 +265,7 @@ The reply shows the remaining time in seconds for the field to live. We can also
  > [1757499351]
 ```
 
-This is a Unix timestamp (seconds since January 1, 1970, 00:00:00 UTC). To convert it to human-readable time:
+This is a Unix timestamp, which we can easily convert to human-readable time:
 
 ```bash
 date -d @1757499351
@@ -311,8 +318,6 @@ link_data = client.hgetex(
       expiry=ExpirySet(ExpiryType.MILLSEC, 30*24*3600)
 )
 ```
-
-For a complete list of commands, check out the [Valkey Commands Reference](https://valkey.io/commands/)
 
 ## What’s Next?
 
