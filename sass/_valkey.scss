@@ -1954,6 +1954,11 @@ html.banner-hidden .banner {
   border: 1px solid #072150;
 }
 
+blockquote {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+}
 .icon-social {
   width: 18px;
   height: 18px;
