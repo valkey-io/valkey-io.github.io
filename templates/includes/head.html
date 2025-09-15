@@ -34,6 +34,17 @@
     Valkey
     {%- endif -%}
     </title>
+    <meta name="title" property="og:title" content="{%- if command_title -%}
+    Valkey Command: {{ command_title }}
+    {%- elif frontmatter_title -%}
+    Valkey Documentation: {{ frontmatter_title }}
+    {%- elif page.title -%}
+    Valkey: {{ page.title }}
+    {%- elif section.title -%}
+    Valkey: {{ section.title }}
+    {%- else -%}
+    Valkey
+    {%- endif -%}">
 
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="alternate" type="application/atom+xml" title="Atom feed" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" />
