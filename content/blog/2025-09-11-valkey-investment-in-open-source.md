@@ -1,7 +1,7 @@
 +++
 title= "Valkey: An Investment in Open Source"
-description = "The new Swift client for Valkey is now in preview. Learn about its features and how it brings the performance of Valkey to the Swift language."
-date= 2025-09-12 00:00:00
+description = "Valkey was founded just over a year ago to keep high-performance key/value storage in the open source community: free from vendor lock-in and restrictive licenses."
+date= 2025-09-16 00:00:00
 authors= [ "lorilorusso"]
 
 [extra]
