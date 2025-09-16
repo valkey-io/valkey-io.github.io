@@ -9,7 +9,7 @@ featured = true
 featured_image = "/assets/media/featured/random-04.webp"
 +++
 
-Valkey was founded just over a year ago to keep high-performance key/value storage in the open source community: free from vendor lock-in and restrictive licenses. Backed by contributors from AWS, Google Cloud, Ericsson, Oracle, Alibaba, Huawei, Tencent, Percona, Aiven, Heroku, Verizon, Chainguard, and Canonical, the project shows how “free” in open source depends on investment: time, talent, and ongoing financial support.
+Valkey was founded just over a year ago to keep high-performance key/value storage in the open source community: free from vendor lock-in and restrictive licenses. Backed by contributors like AWS, Google Cloud, Ericsson, Oracle, Alibaba, Huawei, Tencent, Percona, Aiven, Heroku, Verizon, Chainguard, and Canonical, the project shows how “free” in open source depends on investment: time, talent, and ongoing financial support.
 
 ### Built by Builders, Backed by the Linux Foundation
 
