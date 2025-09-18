@@ -1,6 +1,6 @@
 +++
 title= "Numbered “Databases” in Valkey 9.0"
-description = "If you explore Valkey’s documentation you might run across a tantalizing feature called ‘numbered databases’ which allows you to separate the keyspace into (by default) 16 different databases. "
+description = "Valkey 9.0 brings new namespacing abilities to cluster mode. In this blog you'll learn about numbered databases, how they've changed in the recent release, limitations, and how you can use them to efficiently solve a variety of otherwise challenging problems."
 date= 2025-09-10 00:00:00
 authors= [ "kyledvs"]
 
@@ -12,7 +12,7 @@ featured_image = "/blog/numbered-databases/images/move-db.drawio.png"
 
 If you explore Valkey’s documentation you might run across a tantalizing feature called ‘numbered databases’ which allows you to separate the keyspace into (by default) 16 different databases. This has been around for more than 15 years in the preceding project. But, also, if you’ve done more research on numbered databases in the past you might have heard a advice like “don’t use them,” “they don’t scale,” and “they’re a bad idea.” Well, the forthcoming Valkey 9.0 changes many things with numbered databases and you’ll see in this post that advice definitely needs some updating.
 
-Today, a common way to conceptualize Valkey is that your keys represent a unique name for pointers to data in memory across a cluster of nodes. So, key `foo`  is unique and deterministically linked to a specific node and on that node there is a memory address where the value resides. However, this misses one important detail: the database number. The reality is that key names belong to a specific numbered database and *aren’t unique* on a given instance of Valkey. To put this another way, if you have 16 numbered databases, Valkey can have the key `foo` as many times as there are numbered databases with each one pointing to different data.
+Today, a common way to conceptualize Valkey is that your keys represent a unique name for pointers to data in memory across a cluster of nodes. So, key `foo`  is unique and deterministically linked to a specific node and on that node there is a memory address where the value resides. However, this misses one important detail: the database number. The reality is that key names belong to a specific numbered database and *aren’t unique* on a given instance of Valkey. To put this another way, Valkey can have the key `foo` as many times as there are numbered databases with each one pointing to different data.
 
 ![one key, many databases](./images/numbered-db.drawio.png)
 
@@ -85,7 +85,7 @@ Aside from the aforementioned lack of resource isolation, numbered databases in 
 Finally, while numbered databases are well supported in client libraries there are rough edges:
 
 * Some client libraries artificially restrict usage to a single database in cluster mode,
-* Pooled clients may naively manage the selected database, so a client returned to the pool after running SELECT might retain the database number in subsequent usage. A similar situation is possible for multiplexed clients.
+* Pooled clients may naively manage the selected database, so a client returned to the pool after running `SELECT` might retain the database number in subsequent usage. A similar sitauation is possible for multiplexed clients.
 
 In general, watch out for three assumptions: 1) the selected database is always 0, 2) their is only one database in cluster mode, and 3) if there is multiple databases in use it isn’t in cluster mode. None of these are true in Valkey 9.0.
 
