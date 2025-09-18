@@ -80,7 +80,7 @@ This is really a form of temporal namespacing: you're taking advantage of the na
 
 ## Gotchas and future work
 
-Aside from the aforementioned lack of resource isolation, numbered databases in clustered Valkey have a few places that you need to look out for today. First, right now numbered databases don’t have dedicated metrics, so it can be hard to gain insights into per-database resource usage. Second, the ACL system doesn’t currently address numbered databases, so you can’t meaningfully restrict access to databases (at time of writing, there is an [open pull request that addresses this](https://github.com/valkey-io/valkey/pull/2309)). Unlike in the previous project, databases are an active area of work for the Valkey project and the database abstraction holds potential as a way to implement new features.
+Aside from the aforementioned lack of resource isolation, numbered databases in clustered Valkey have a few places that you need to look out for today. First, right now numbered databases don’t have a lot of dedicated metrics, so it can be hard to gain insights into per-database resource usage. Second, the ACL system doesn’t currently address numbered databases, so you can’t meaningfully restrict access to databases (at time of writing, there is an [open pull request that addresses this](https://github.com/valkey-io/valkey/pull/2309)). Unlike in the previous project, databases are an active area of work for the Valkey project and the database abstraction holds potential as a way to implement new features.
 
 Finally, while numbered databases are well supported in client libraries there are rough edges:
 
