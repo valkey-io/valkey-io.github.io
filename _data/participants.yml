@@ -13,6 +13,13 @@
     From day-to-day operational support to hands-on assistance for complex projects, Percona can meet your Valkey database needs. 
     We’ll soon be offering support, managed services, and project-based consulting, so together, we can tackle any challenge and continue to keep open source, open.
 
+- name: Alibaba Cloud
+  link: https://www.alibabacloud.com/
+  image:
+    path: /img/alibaba.png
+    alt: Alibaba Cloud Logo
+  company: >
+    Established in 2009, Alibaba Cloud offers a complete suite of cloud services to customers worldwide, including elastic computing, database, storage, machine learning and artificial intelligence (AI) services, etc. Alibaba has been recognized as the leading public cloud IaaS provider in Asia-Pacific (Gartner) and globally (IDC) since 2018.
 
 - name: Aiven
   link: https://aiven.io/valkey
