@@ -45,7 +45,7 @@ Here the key `somekey` was set to two different values: ‘hi’ on database 0, 
 
 ## What are numbered databases and limits
 
-If you take away one thing from this blog it should be this: **numbered databases are a form of namespacing**. Consequently, they do not provide any form of resource isolation. It's tempting to point a bunch of applications to a single Valkey cluster with each application taking it's own database. While this certainly *can* work, it works without resource isolation and this setup can suffer from classic noisy neighbour problems: busy applications will affect the others using the same cluster. If you're worried about resources, most of the time you'll be better off just having distinct clusters for each application instead of numbered databases.
+If you take away one thing from this blog it should be this: **numbered databases are a form of namespacing**. Consequently, they do not provide any form of resource isolation. It's tempting to point a bunch of applications to a single Valkey cluster with each application taking it's own database. While this certainly *can* work, it works without resource isolation and this setup can suffer from classic noisy neighbour problems: busy applications will affect the others using the same cluster. If you're worried about resource sharing, most of the time you'll be better off just having distinct clusters for each application instead of numbered databases.
 
 Likewise, numbered databases also do not change the properties of how a Valkey cluster works. The keyspace of each database is still split amongst all the nodes. As a consequence, operations that need to span the entire keyspace will to be run on each node:
 
