@@ -16,7 +16,7 @@ Today, a common way to conceptualize Valkey is that your keys represent a unique
 
 ![one key, many databases](./images/numbered-db.drawio.png)
 
-Historically, before Valkey’s preceding project had the ability to cluster (before version 3.0.0), using multiple numbered databases was fully supported. However, when clustering was implemented numbered databases weren’t included: a cluster had one database (DB 0) that spanned across the entire cluster. In a world where using numbered databases in your application locked you into never going beyond a single node, the early advice made sense, however Valkey 9.0 adds the ability to have numbered databases on a cluster, changing everything about that advice.
+Historically, before Valkey’s preceding project had the ability to cluster (before version 3.0.0), using multiple numbered databases was fully supported. However, when clustering was implemented numbered databases weren’t included: a cluster had one database (DB 0) that spanned across the entire cluster. In a world where using numbered databases in your application locked you into never going to a cluster, the early advice made sense, however Valkey 9.0 adds the ability to have numbered databases on a cluster, changing everything about that advice.
 
 Why bring this feature to cluster mode in Valkey 9.0? In the intervening years since numbered databases were left out of the cluster spec, users have found a number of very handy patterns that were unfortunately limited without numbered databases. However, numbered databases aren't a panacea: read on to find out when you should stick to DB 0 and when to go for a numbered database.
 
