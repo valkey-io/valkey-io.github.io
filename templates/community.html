@@ -4,11 +4,23 @@
   
   <div class="community-section">
     <div class="community-header">
+      {% if section %}
+      {{ section.content | markdown | safe }}
+      {% else %}
       {{ page.content | markdown | safe }}
+      {% endif %}
     </div>
-    {% if page.extra.cards %}
+    {% set cards_meta = get_section(path="community/_index.md", metadata_only=true) %}
+    {% if (page and page.extra and page.extra.cards)  %} 
+      {% set page_cards = page.extra.cards %}
+    {% else %}
+      {% set page_cards = [] %}
+    {% endif %}
+    {% set cards = page_cards | concat(with= cards_meta.extra.cards) %}
+    
+    {% if cards %}
       <div class="community-card-grid">
-        {% for card in page.extra.cards %}
+        {% for card in cards%}
           <div class="community-card">
             <img src="/img/{{ card.icon }}" alt="{{ card.title }}" class="community-card-icon" />
             <h3>{{ card.title }}</h3>

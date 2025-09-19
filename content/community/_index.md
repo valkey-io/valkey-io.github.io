@@ -2,7 +2,7 @@
 title = "Community"
 description = "Join the Valkey community"
 template = "community.html"
-
+page_template = "community.html"
 [extra]
 cards = [
   { icon = "icon-question.svg", title = "Ask Questions", description = "If you have any inquiries about Valkey, feel free to join the conversation on our GitHub discussions or chat with us on Slack.", links = [
