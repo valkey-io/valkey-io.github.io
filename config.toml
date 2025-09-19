@@ -52,5 +52,3 @@ publish_hold = [
     "/topics/rdd/"
 ]
 
-banner = "Join us in Amsterdam on August 28 for the Valkey User Conference: [Keyspace](/events/keyspace-2025)"
-

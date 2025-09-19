@@ -69,7 +69,9 @@
     | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md#(?P<hash>.*?)\)`, rep=`](/topics/$fname#$hash)`)
     | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md\)`, rep=`](/topics/$fname)`)
     | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+\.\./topics/(?P<fname>.*?).md`, rep=`[$token]: /topics/$fname`)
-    | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+(?P<fname>.*?).md`, rep=`[$token]: $fname`)
+    | regex_replace(pattern=`\]\((?P<fname>[\w\.-]*?)\.md#(?P<hash>.*?)\)`, rep=`](/commands/$fname#$hash)`)
+    | regex_replace(pattern=`\]\((?P<fname>[\w\.-]*?)\.md\)`, rep=`](/commands/$fname)`)
+    | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+(?P<fname>[\w\.-]*?).md`, rep=`[$token]: /commands/$fname`)
     | safe
     }}
 {%- endmacro fix_links -%}
