@@ -4,11 +4,11 @@
   
   <div class="community-section">
     <div class="community-header">
-      {{ page.content | markdown | safe }}
+      {{ section.content | markdown | safe }}
     </div>
-    {% if page.extra.cards %}
+    {% if section.extra.cards %}
       <div class="community-card-grid">
-        {% for card in page.extra.cards %}
+        {% for card in section.extra.cards %}
           <div class="community-card">
             <img src="/img/{{ card.icon }}" alt="{{ card.title }}" class="community-card-icon" />
             <h3>{{ card.title }}</h3>
