@@ -211,7 +211,7 @@ This yields an expected memory footprint of ~230MB:
 The observed memory matched this estimate closely, demonstrating that the active expiration mechanism
 is able to keep up with load and prevent memory from spiking unexpectedly.
 
-## Conclusion
+## Benchmark Takeaways
 
 The benchmarks demonstrate that field-level expirations can be added to Valkey without compromising memory efficiency, or latency.
 The memory overhead remains modest and predictable, command throughput is unaffected, and the shared active expiration job efficiently reclaims memory even under heavy ingestion workloads.
