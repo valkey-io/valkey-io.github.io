@@ -19,9 +19,6 @@ highlight_code = true
 "valkey-conf" = "valkey.conf"
 
 [extra]
-# Centralized Slack URL - all references should use https://valkey.io/slack
-# which redirects to the current invitation URL configured in content/slack.md
-slack_url = "https://valkey.io/slack"
 command_description_path = "../build-command-docs/"
 command_json_path = "../build-command-json/"
 command_bloom_json_path = "../build-bloom-command-json/"
