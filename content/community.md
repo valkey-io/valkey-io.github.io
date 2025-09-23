@@ -7,7 +7,7 @@ template = "community.html"
 cards = [
   { icon = "icon-question.svg", title = "Ask Questions", description = "If you have any inquiries about Valkey, feel free to join the conversation on our GitHub discussions or chat with us on Slack.", links = [
     { url = "https://github.com/orgs/valkey-io/discussions", text = "GitHub Repository" },
-    { url = "https://valkey-oss-developer.slack.com/join/shared_invite/zt-2nxs51chx-EB9hu9Qdch3GMfRcztTSkQ#/shared-invite/email", text = "Slack" }
+    { url = "https://valkey.io/slack", text = "Slack" }
   ] },
   { icon = "icon-bug.svg", title = "Report Bugs", description = "If you encounter any issues while using Valkey, please help us improve the project by filing a bug report at our GitHub repository.", links = [
     { url = "https://github.com/valkey-io/valkey/issues/new?assignees=&labels=&projects=&template=bug_report.md&title=%5BBUG%5D", text = "GitHub Repository" }
