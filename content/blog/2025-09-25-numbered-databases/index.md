@@ -1,7 +1,7 @@
 +++
-title= "Numbered “Databases” in Valkey 9.0"
+title= "Numbered Databases in Valkey 9.0"
 description = "Valkey 9.0 brings new namespacing abilities to cluster mode. In this blog you'll learn about numbered databases, how they've changed in the recent release, limitations, and how you can use them to efficiently solve a variety of otherwise challenging problems."
-date= 2025-09-10 00:00:00
+date= 2025-09-25 00:00:00
 authors= [ "kyledvs"]
 
 [extra]
@@ -10,7 +10,7 @@ featured_image = "/blog/numbered-databases/images/move-db.drawio.png"
 +++
 
 
-If you explore Valkey’s documentation you might run across a feature called ‘numbered databases’ which allows you to separate the keyspace into (by default) 16 different databases. Digging into this feature reveals tantalizing ways to avoid key prefixing, house different workloads together on Valkey, and even perform patterns that are otherwise clunky. However, if you’ve done more research outside of the documentation on numbered databases you might run across a advice like “don’t use them,” “they don’t scale,” and “they’re a bad idea.” Well, the forthcoming Valkey 9.0 changes many things with numbered databases and you’ll see in this post that advice definitely needs some updating.
+If you explore Valkey’s documentation you might run across a feature called ‘numbered databases’ which allows you to separate the keyspace into (by default) 16 different databases. Digging into this feature reveals tantalizing ways to avoid key prefixing, house different workloads together on Valkey, and even perform patterns that are otherwise clunky. However, if you’ve done more research outside of the documentation on numbered databases you find advice like “don’t use them,” “they don’t scale,” and “they’re a bad idea.” Well, the forthcoming Valkey 9.0 changes many things with numbered databases and you’ll see in this post that advice definitely needs some updating.
 
 Today, a common way to conceptualize Valkey is that your keys represent a unique name for pointers to data in memory across a cluster of nodes. So, key `foo`  is unique and deterministically linked to a specific node and on that node there is a memory address where the value resides. However, this misses one important detail: the database number. The reality is that key names belong to a specific numbered database and *aren’t unique* on a given instance of Valkey. To put this another way, Valkey can have the key `foo` as many times as there are numbered databases with each one pointing to different data.
 
@@ -43,11 +43,9 @@ OK
 
 Here the key `somekey` was set to two different values: ‘hi’ on database 0, and ‘hello’ on database 5, with `SELECT` altering the selected database. `CLUSTER KEYSLOT` was called twice: each one yielding the same slot number meaning this key will be assigned to the same node in the cluster, no matter which database is selected.
 
-## What are numbered databases and limits
+## Limitations
 
-If you take away one thing from this blog it should be this: **numbered databases are a form of namespacing**. Consequently, they do not provide any form of resource isolation. It's tempting to point a bunch of applications to a single Valkey cluster with each application taking it's own database. While this certainly *can* work, it works without resource isolation and this setup can suffer from classic noisy neighbour problems: busy applications will affect the others using the same cluster. If you're worried about resource sharing, most of the time you'll be better off just having distinct clusters for each application instead of numbered databases.
-
-Likewise, numbered databases also do not change the properties of how a Valkey cluster works. The keyspace of each database is still split amongst all the nodes. As a consequence, operations that need to span the entire keyspace will to be run on each node:
+Numbered databases do not change the properties of how a Valkey cluster works. The keyspace of each database is still split amongst all the nodes. As a consequence, operations that need to span the entire keyspace will to be run on each node:
 
 * [`FLUSHDB`](https://valkey.io/commands/flushdb/) will flush the keys in the current database *on the connected node*
 * [`SCAN`](https://valkey.io/commands/scan/) will iteratively return keys in the current database *on the connected node.*
@@ -55,7 +53,11 @@ Likewise, numbered databases also do not change the properties of how a Valkey c
 
 You get the picture: if a command previously said it did something for the entire database, in cluster mode it really means for the connected node’s portion of the database. These are especially important to understand if you're planning to move an application built for non-clustered, numbered databases to a cluster.
 
+Additionally, numbered databases do not provide any form of resource isolation. It's tempting to point a bunch of applications to a single Valkey cluster with each application taking its own database. While this certainly *can* work, it works without resource isolation and this setup can suffer from classic noisy neighbour problems: busy applications will affect the others using the same cluster. If you're worried about resource sharing, most of the time you'll be better off just having distinct clusters for each application instead of numbered databases.
+
 ## Where to use numbered databases
+
+If you take away one thing from this blog it should be this: **numbered databases are a form of namespacing**.
 
 The most straight forward use case of numbered databases is when you need to separate your data logically and you can tolerate the effects of resource sharing (see above). This might be something like keeping customer data separated from one another or combining applications on to a single cluster when resources are unlikely to be an issue. In a similar manner, multiple databases are a useful debugging tool. When you’re building an application it can be difficult to see what happens inside Valkey when you make a change. If you have multiple databases you can run your original code on one database and the changed version on a different database then you can more easily see changes in how data looks in Valkey by just the connection swapping between databases. This is also a useful pattern during a migration when you want your old data to stick around while your new data is populated.
 
@@ -83,7 +85,7 @@ Aside from the aforementioned lack of resource isolation, numbered databases in 
 Finally, while numbered databases are well supported in client libraries there are rough edges:
 
 * Some client libraries artificially restrict usage to a single database in cluster mode,
-* Pooled clients may naively manage the selected database, so a client returned to the pool after running `SELECT` might retain the database number in subsequent usage. A similar situation is possible for multiplexed clients.
+* Pooled clients may naïvely manage the selected database, so a client returned to the pool after running `SELECT` might retain the database number in subsequent usage. A similar situation is possible for multiplexed clients.
 
 In general, watch out for three assumptions: 1) the selected database is always 0, 2) their is only one database in cluster mode, and 3) if there is multiple databases in use it isn’t in cluster mode. None of these are true in Valkey 9.0.
 
