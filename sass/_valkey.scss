@@ -1069,16 +1069,6 @@ aside {
       color: #718096;
     }
 
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 2rem 0;
-
-      li {
-        a {}
-      }
-    }
-
     img {
       display: block;
       width: 100%;
@@ -1959,6 +1949,14 @@ html.banner-hidden .banner {
   border: 1px solid #072150;
 }
 
+blockquote {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-left: 0;
+  padding-left: 1.5em;
+  border-left: 3px solid $lf-light-blue;
+}
 .icon-social {
   width: 18px;
   height: 18px;
