@@ -87,6 +87,6 @@ Finally, while numbered databases are well supported in client libraries there a
 * Some client libraries artificially restrict usage to a single database in cluster mode,
 * Pooled clients may naïvely manage the selected database, so a client returned to the pool after running `SELECT` might retain the database number in subsequent usage. A similar situation is possible for multiplexed clients.
 
-In general, watch out for three assumptions: 1) the selected database is always 0, 2) their is only one database in cluster mode, and 3) if there is multiple databases in use it isn’t in cluster mode. None of these are true in Valkey 9.0.
+In general, watch out for three assumptions: 1) the selected database is always 0, 2) there is only one database in cluster mode, and 3) if there are multiple databases in use it isn’t in cluster mode. None of these are true in Valkey 9.0.
 
 With this in mind, Valkey 9.0 gives you the ability to divvy up that keyspace into nice neat numbered databases and spread them out over a whatever cluster you have. So, get rid of that old, outdated advice and start using them, seeing how they scale, and what a good idea number databases actually are for Valkey 9.0.
