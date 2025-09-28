@@ -1,6 +1,6 @@
 +++
 title= "Introducing Hash Field Expirations"
-date= 2025-09-15 00:00:00
+date= 2025-09-30 00:00:00
 description= """ 
     One of Valkey’s greatest strengths has always been its built-in ability to expire keys.
     This simple but powerful feature helps developers keep datasets fresh, automatically clear caches, and enforce session lifetimes — all without extra application logic.
