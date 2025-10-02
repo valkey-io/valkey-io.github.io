@@ -10,7 +10,7 @@ featured = true
 featured_image = "/assets/media/featured/random-08.webp"
 +++
 
-When you run infrastructure at scale, the smallest efficiencies compound into massive savings. Sorted sets (ZSETs) are the backing data structure for far more than leaderboards. They're used for time‑ordered feeds, priority queues, recommendation rankings and more. Each entry carries per‑key overhead; when you're inserting tens of millions of items, those bytes accumulate into gigabytes. The latest Valkey 8.1 release introduces a [redesigned hash table](https://valkey.io/blog/valkey-8-1-0-ga/) and other optimizations that promise lower memory usage and higher throughput. In this post, we put Valkey 8.1 under pressure by benchmarking it against Valkey 8.0, inserting 50 million members into a sorted set and measuring memory consumption and throughput along the way.
+When you run infrastructure at scale, the smallest efficiencies compound into massive savings. Sorted sets (ZSETs) are the backing data structure for far more than leaderboards. They're used for time‑ordered feeds, priority queues, recommendation rankings and more. Each entry carries per‑item overhead; when you're inserting tens of millions of items, those bytes accumulate into gigabytes. The latest Valkey 8.1 release introduces a [redesigned hash table](https://valkey.io/blog/valkey-8-1-0-ga/) and other optimizations that promise lower memory usage and higher throughput. In this post, we put Valkey 8.1 under pressure by benchmarking it against Valkey 8.0, inserting 50 million members into a sorted set and measuring memory consumption and throughput along the way.
 
 ## About Momento and Raider.IO
 
