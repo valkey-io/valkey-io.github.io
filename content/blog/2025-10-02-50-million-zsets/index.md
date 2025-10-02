@@ -2,12 +2,12 @@
 title="How Valkey 8.1 Handles 50 Million Sorted Set Inserts"
 date=2025-10-02 00:00:01
 description= """ 
-    hi
+The latest Valkey 8.1 release introduces a redesigned hash table and other optimizations that promise lower memory usage and higher throughput. In this post, we put Valkey 8.1 under pressure by benchmarking it against Valkey 8.0, inserting 50 million members into a sorted set and measuring memory consumption and throughput along the way.
     """
 authors= ["khawaja"]
 [extra]
 featured = true
-featured_image = "/assets/media/featured/random-08.webp"
+featured_image = "/blog/50-million-zsets/used-memory-vs-inserts.png"
 +++
 
 When you run infrastructure at scale, the smallest efficiencies compound into massive savings. Sorted sets (ZSETs) are the backing data structure for far more than leaderboards. They're used for time‑ordered feeds, priority queues, recommendation rankings and more. Each entry carries per‑item overhead; when you're inserting tens of millions of items, those bytes accumulate into gigabytes. The latest Valkey 8.1 release introduces a [redesigned hash table](https://valkey.io/blog/valkey-8-1-0-ga/) and other optimizations that promise lower memory usage and higher throughput. In this post, we put Valkey 8.1 under pressure by benchmarking it against Valkey 8.0, inserting 50 million members into a sorted set and measuring memory consumption and throughput along the way.
@@ -28,7 +28,7 @@ To provide a fair comparison, both Valkey 8.0 and Valkey 8.1.1 were run on the
 * 250,000 item batch size per pipeline
 * Metrics collected every 1,000,000 inserts (flush between runs)
 
-The benchmark code is open sourced and straightforward to reproduce: it connects to both servers, flushes the test key, performs batched inserts, and records `used_memory`, `used_memory_rss`, total elapsed time, and throughput after each million inserts. This repeatability mirrors the ethos of Valkey's community - every optimization is measurable, and anyone can verify the results.
+The [benchmark code is open sourced](https://github.com/momentohq/sorted-set-benchmark) and straightforward to reproduce: it connects to both servers, flushes the test key, performs batched inserts, and records `used_memory`, `used_memory_rss`, total elapsed time, and throughput after each million inserts. This repeatability mirrors the ethos of Valkey's community - every optimization is measurable, and anyone can verify the results.
 
 ## Memory Usage – 8.1 vs 8.0
 
@@ -38,7 +38,7 @@ Valkey 8.1's redesigned dictionary structure cuts [roughly 20–30 bytes per k
 
 At 1 million inserts, Valkey 8.0 used ~95 MB while Valkey 8.1 used ~81 MB. As the ZSET grew, the gap widened. By 10 million inserts, 8.0 consumed 1.06 GB versus 0.77 GB for 8.1 - **a 27% reduction**. At the end of the run (50 million inserts), 8.1 used 3.77 GB compared to 4.83 GB on 8.0, saving 1.06 GB (≈22 %).
 
-These numbers align with the release notes. Valkey's 8.1 announcement highlights lower per‑key overheads and improved data structure handling; Linuxiac notes that 8.1's architectural changes can reduce memory footprints by [approximately 20 bytes per KV pair](https://linuxiac.com/valkey-8-1-in-memory-data-store-unleashes-10-faster-throughput), with each pair normally consuming 100 bytes (a 20% reduction!). Our results confirm those claims on a large ZSET workload.
+These numbers align with the release notes. Valkey's 8.1 announcement highlights lower per‑key overheads and improved data structure handling; Linuxiac notes that 8.1's architectural changes can reduce memory footprints by [approximately 20 bytes per KV pair](https://linuxiac.com/valkey-8-1-in-memory-data-store-unleashes-10-faster-throughput), with each pair normally consuming 100 bytes (a 20% reduction!). Our results also confirm a similar improvement on large ZSET workloads.
 
 ## Throughput and Total Time
 
@@ -60,6 +60,6 @@ These benefits don't just apply to leaderboards. Time‑ordered feeds (such as a
 
 As an operator who lives and breathes real‑time data systems, I'm continually amazed by the pace of innovation in the Valkey community. We didn't tune any configuration knobs to achieve these results - Valkey 8.1's efficiency is built in, and the improvements materialized instantly once we upgraded. On a 50 million‑entry benchmark, the new release used 27% less memory while delivering about 8% higher throughput, and completed the workload seven seconds faster than its predecessor. Those deltas may seem small in isolation, but at hyperscale they compound into transformative savings and more resilient services.
 
-If you're running sorted set heavy workloads - whether leaderboards, feeds, queues or scoring engines - I encourage you to upgrade to Valkey 8.1 and run this benchmark yourself. Interested in how Valkey 8.1 stacked up to its competitors? [So were we](#)!
+If you're running sorted set heavy workloads - whether leaderboards, feeds, queues or scoring engines - I encourage you to upgrade to Valkey 8.1 and run this benchmark yourself. Interested in how Valkey 8.1 stacked up to its competitors? [So were we](https://www.gomomento.com/blog/valkey-vs-redis-memory-efficiency-at-hyperscale/)!
 
 Our code is [open source](https://github.com/momentohq/sorted-set-benchmark) and available to run on your own hardware. I think you'll be pleasantly surprised by how much headroom you gain and how effortlessly Valkey handles pressure. The power of open source and community‑driven engineering continues to shine through in every release.
