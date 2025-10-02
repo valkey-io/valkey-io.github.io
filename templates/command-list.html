@@ -1,0 +1,35 @@
+{% import "macros/command.html" as commands %}
+
+{% set commands_entries = [] %}
+{% set commands_section = get_section(path="commands/_index.md") %}
+{% for page in commands_section.pages %}
+
+    {% for json_path in [
+        commands::command_json_path(slug=page.slug),
+        commands::command_bloom_json_path(slug=page.slug),
+        commands::command_json_json_path(slug=page.slug),
+        commands::command_search_json_path(slug=page.slug)
+    ] %}
+        {% set command_data = load_data(path= json_path, required= false) %}
+        {% if command_data %}
+            {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
+            {% set list_command_data_obj = command_data[command_obj_name] %}
+            {% set command_display = command_obj_name %}
+            {% if list_command_data_obj.container %}
+                {% set command_display = list_command_data_obj.container ~ " " ~ command_display %}
+            {% endif %}
+            {% set command_entry = [
+                command_display,
+                page.permalink | safe,
+                list_command_data_obj.summary,
+                list_command_data_obj.group
+            ] %}
+            {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
+        {% endif %} 
+    {% endfor %}
+{% endfor %}
+
+{% set alpha_entries = commands_entries | sort(attribute="0")  %}
+{% for entry in alpha_entries  %}
+    <li class="command-list-item"><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code></li>
+{% endfor %}

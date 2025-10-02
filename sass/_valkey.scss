@@ -964,8 +964,6 @@ aside {
 
       h4 {
         margin: 0 0 1.25rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
 
@@ -1113,16 +1111,6 @@ aside {
       display: block;
       margin: 0 0 2rem;
       color: #718096;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 2rem 0;
-
-      li {
-        a {}
-      }
     }
 
     img {
@@ -1648,9 +1636,8 @@ html.banner-hidden .banner {
 // Hero Section Styles
 .hero-section {
   position: relative;
-  min-height: none;
   background-size: cover;
-  background-position: center bottom;
+  background-position: right center;
   background-color: #30186e;
   background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0.15), rgba(48, 24, 110, 0.75)), url('/img/hero-bg.webp');
   display: flex;
@@ -1660,8 +1647,7 @@ html.banner-hidden .banner {
   padding: 8rem 2rem;
 
   @include respond-min(768px) {
-    padding: 8rem 2rem;
-    min-height: 75vh;
+    padding: 10rem 2rem;
 
   }
 }
@@ -1682,7 +1668,7 @@ html.banner-hidden .banner {
   color: white;
 
   @include respond-min(768px) {
-    font-size: 8rem;
+    font-size: 7rem;
   }
 }
 
@@ -1701,9 +1687,9 @@ html.banner-hidden .banner {
   border-radius: 30px;
   font-weight: 600;
   height: auto;
-  font-size: 2.4rem;
+  font-size: 2.2rem;
   color: #6983FF;
-  padding: 10px 20px;
+  padding: 8px 15px;
   background-image: linear-gradient(to right, #ffffff, #B7C2F7);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease-in-out;
@@ -1716,8 +1702,8 @@ html.banner-hidden .banner {
 
 // Documentation Section Styles
 .documentation-section {
-  padding-bottom: 4rem;
-  background-image: linear-gradient(rgb(48, 23, 110), rgb(105, 131, 255));
+  padding: 4rem 2rem;
+  background: #6983FF;
   position: relative;
   text-align: center;
   color: white;
@@ -1816,11 +1802,11 @@ html.banner-hidden .banner {
 
 // What's New Section Styles
 .whats-new-section {
-  padding: 4rem 2rem;
-  background-image: linear-gradient(rgb(105, 131, 255), rgb(48, 23, 110));
+  padding-bottom: 4rem;
+  background-image: linear-gradient(rgb(48, 23, 110), rgb(105, 131, 255));
 
   @include respond-min(768px) {
-    padding: 8rem 0;
+    padding: 0 0 8rem;
   }
 
   h2 {
@@ -1881,10 +1867,9 @@ html.banner-hidden .banner {
 }
 
 .community-header {
-
   h1 {
     text-align: center;
-    background-image: linear-gradient(rgb(59, 42, 102), rgb(78, 81, 191));
+    background-image: linear-gradient(#382270, #4e51bf);
     padding: 80px;
     margin: 0 0 5rem;
     font-size: 4rem;
@@ -2008,6 +1993,14 @@ html.banner-hidden .banner {
   border: 1px solid #072150;
 }
 
+blockquote {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-left: 0;
+  padding-left: 1.5em;
+  border-left: 3px solid $lf-light-blue;
+}
 .icon-social {
   width: 18px;
   height: 18px;
@@ -2037,6 +2030,382 @@ html.banner-hidden .banner {
 
       .breadcrumb-link {
         color: #2054B2;
+      }
+    }
+  }
+}
+
+// Homepage Blog Cards with Featured Images
+.homepage-blog-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.homepage-blog-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.homepage-blog-card-image {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.homepage-blog-card-image-placeholder {
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.homepage-blog-card-content {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.homepage-blog-card-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  font-weight: 700;
+
+  a {
+    color: #002a3a;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  a:hover {
+    color: #667eea;
+  }
+}
+
+.homepage-blog-card-description {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.4rem;
+  line-height: 1.4;
+  color: #4a5568;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.homepage-blog-card-readmore {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  font-weight: 600;
+  font-size: 1.4rem;
+  padding: 0.8rem 1.6rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 50px;
+  color: #2d3748;
+  text-decoration: none;
+  align-self: flex-start;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+.homepage-blog-card-readmore:hover {
+  background: #667eea;
+  color: #fff;
+  border-color: #667eea;
+}
+
+// Responsive adjustments for homepage blog cards
+@media (max-width: 768px) {
+  .homepage-blog-card-image,
+  .homepage-blog-card-image-placeholder {
+    height: 140px;
+  }
+
+  .homepage-blog-card-content {
+    padding: 1.2rem;
+  }
+
+  .homepage-blog-card-title {
+    font-size: 1.5rem;
+  }
+
+  .homepage-blog-card-description {
+    font-size: 1.3rem;
+  }
+}
+
+// Homepage Participant Carousel Styles
+.homepage-participants-section {
+  background: linear-gradient(180deg, #6983FF 0%, #BCB5E7 100%);
+  padding: 8rem 0;
+  
+  .homepage-participants-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+  
+  .homepage-participants-header {
+    text-align: center;
+    margin-bottom: 6rem;
+  }
+  
+  .homepage-participants-title {
+    color: $white;
+    font-size: 4.8rem;
+    font-weight: 700;
+    margin: 0 0 2rem 0;
+    letter-spacing: -1px;
+  }
+  
+  .homepage-participants-description {
+    color: $white;
+    font-size: 1.8rem;
+    line-height: 1.6;
+    max-width: 80rem;
+    margin: 0 auto;
+    opacity: 0.95;
+  }
+  
+  .homepage-participants-error {
+    background: $white;
+    border-radius: 2rem;
+    padding: 4rem;
+    text-align: center;
+    
+    p {
+      color: $text-light;
+      font-size: 1.6rem;
+      margin: 0;
+    }
+  }
+  
+  .homepage-participants-carousel-container {
+    background: $white;
+    border-radius: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .homepage-participants-carousel {
+    overflow: hidden;
+    position: relative;
+    
+    .homepage-participants-track {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      width: 100%;
+    }
+    
+    .homepage-participant-card {
+      flex: 0 0 33.33%;
+      min-width: 0;
+      min-height: 100%;
+      border-radius: 1.2rem;
+      padding: 4rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      
+      .homepage-participant-image-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+      }
+      
+      .homepage-participant-image {
+        object-fit: contain;
+        max-height: 40px;
+        margin-inline: auto;
+      }
+      
+      .homepage-participant-image-placeholder {
+        width: 6rem;
+        height: 6rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $white;
+        font-size: 2.4rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      
+      .homepage-participant-name {
+        font-size: 2rem;
+        font-weight: 700;
+        color: $text;
+        text-align: center;
+        margin: 0 0 1.2rem 0;
+        line-height: 1.3;
+      }
+      
+      .homepage-participant-offering {
+        font-size: 1.4rem;
+        line-height: 1.5;
+        color: $text-light;
+        margin: 0;
+        text-align: center;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        display: -webkit-box;
+        -webkit-line-clamp: 7;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        
+        a {
+          color: $text-link-alternate;
+          text-decoration: none;
+          transition: color 0.2s ease;
+          
+          &:hover {
+            color: $text-link-alternate-lighter;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+  
+  .homepage-participants-navigation {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.25rem;
+    
+    .homepage-participants-dots {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      
+      .homepage-participant-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        border: none;
+        background: rgba($color: #000000, $alpha: 0.25);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        padding: 0;
+        
+        &:hover,
+        &:focus {
+          background: #000;
+          transform: scale(1.1);
+          outline-offset: 2px;
+        }
+        
+        &[aria-current="true"],
+        &.active {
+          background: #000;
+          transform: scale(1.2);
+        }
+      }
+    }
+  }
+}
+
+// Responsive design for homepage participant carousel
+@media (max-width: 1200px) {  
+  .homepage-participants-section {
+    .homepage-participants-carousel {
+      .homepage-participant-card {
+        flex: 0 0 50%;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .homepage-participants-section {
+    padding: 6rem 2rem;
+    
+    .homepage-participants-container {
+      padding: 0 1.5rem;
+    }
+    
+    .homepage-participants-title {
+      font-size: 3.6rem;
+    }
+    
+    .homepage-participants-description {
+      font-size: 1.6rem;
+      max-width: 100%;
+    }
+    
+    .homepage-participants-carousel {
+      .homepage-participant-card {
+        flex: 0 0 100%;
+        padding: 1.8rem;
+        
+        .homepage-participant-image-container {
+          margin-bottom: 1.5rem;
+        }
+        
+        .homepage-participant-name {
+          font-size: 1.8rem;
+          margin-bottom: 1rem;
+        }
+        
+        .homepage-participant-offering {
+          font-size: 1.3rem;
+        }
+      }
+    }
+    
+    .homepage-participants-navigation {
+      margin-top: 2rem;
+      
+      .homepage-participants-dots {
+        gap: 0.75rem;
+        
+        .homepage-participant-dot {
+          width: 0.75rem;
+          height: 0.75rem;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .homepage-participants-section {
+    .homepage-participants-carousel {
+      .homepage-participant-card {
+        padding: 1.5rem;
+      }
+    }
+    
+    .homepage-participants-title {
+      font-size: 3rem;
+    }
+    
+    .homepage-participants-description {
+      font-size: 1.5rem;
+    }
+    
+    .homepage-participants-navigation {
+      .homepage-participants-dots {
+        gap: 1rem;
+        
+        .homepage-participant-dot {
+          width: 1rem;
+          height: 1rem;
+        }
       }
     }
   }

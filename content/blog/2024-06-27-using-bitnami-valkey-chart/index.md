@@ -12,6 +12,8 @@ featured_image = "/assets/media/featured/random-01.webp"
 
 +++
 
+> **Due to changes in the [Bitnami catalog](https://github.com/bitnami/charts/issues/35164)**, the contents of this blog post are, as of September 2025, likely out-of-date and the helm chart **does not represent an operational best practice** without a subscription. This post is preserved for historical reference only. You can track work towards a project-provided Helm chart at [valkey-io/valkey#2371](https://github.com/valkey-io/valkey/issues/2371).
+
 Valkey is a high-performance key/value datastore that supports workloads such as caching, and message queues, supporting many data types including strings, numbers, hashes, bitmaps, and more. Valkey can run in standalone or cluster mode for replication and high availability.
 
 [Bitnami](https://bitnami.com/) offers a number of secure, up-to-date, and easy to deploy charts for a number of popular open source applications.

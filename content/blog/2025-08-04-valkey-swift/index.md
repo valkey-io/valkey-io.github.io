@@ -199,4 +199,4 @@ We'd love you to try the client out and get your feedback.
 
 ### Connect with us
 
-If you want to discuss any of the above, want to report a bug or want to contribute please reach out to us on [GitHub](https://github.com/valkey-io/valkey-swift/) or talk to us in the `#valkey-swift` channel on the [Valkey Slack](https://valkey-oss-developer.slack.com/join/shared_invite/zt-2nxs51chx-EB9hu9Qdch3GMfRcztTSkQ#/shared-invite/email).
+If you want to discuss any of the above, want to report a bug or want to contribute please reach out to us on [GitHub](https://github.com/valkey-io/valkey-swift/) or talk to us in the `#valkey-swift` channel on the [Valkey Slack](https://valkey.io/slack).
