@@ -1595,7 +1595,7 @@ html.banner-hidden .banner {
   background-size: cover;
   background-position: right center;
   background-color: #30186e;
-  background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0.0), rgba(48, 24, 110, 0.75)), url('/img/hero-bg.webp');
+  background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0.15), rgba(48, 24, 110, 0.75)), url('/img/hero-bg.webp');
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1605,7 +1605,7 @@ html.banner-hidden .banner {
   &::after {
     content: "";
     position: absolute; inset: 0;
-    background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0.15), rgba(48, 24, 110, 100));
+    background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0), rgba(48, 24, 110, 100));
     pointer-events: none;
   }
 
