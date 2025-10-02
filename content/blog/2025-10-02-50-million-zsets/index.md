@@ -38,7 +38,7 @@ Valkey 8.1's redesigned dictionary structure cuts [roughly 20–30 bytes per k
 
 At 1 million inserts, Valkey 8.0 used ~95 MB while Valkey 8.1 used ~81 MB. As the ZSET grew, the gap widened. By 10 million inserts, 8.0 consumed 1.06 GB versus 0.77 GB for 8.1 - **a 27% reduction**. At the end of the run (50 million inserts), 8.1 used 3.77 GB compared to 4.83 GB on 8.0, saving 1.06 GB (≈22 %).
 
-These numbers align with the release notes. Valkey's 8.1 announcement highlights lower per‑key overheads and improved data structure handling; Linuxiac notes that 8.1's architectural changes can reduce memory footprints by [up to 20% while improving throughput](https://linuxiac.com/valkey-8-1-in-memory-data-store-unleashes-10-faster-throughput). Our results confirm those claims on a large ZSET workload.
+These numbers align with the release notes. Valkey's 8.1 announcement highlights lower per‑key overheads and improved data structure handling; Linuxiac notes that 8.1's architectural changes can reduce memory footprints by [approximately 20 bytes per KV pair](https://linuxiac.com/valkey-8-1-in-memory-data-store-unleashes-10-faster-throughput), with each pair normally consuming 100 bytes (a 20% reduction!). Our results confirm those claims on a large ZSET workload.
 
 ## Throughput and Total Time
 
@@ -54,7 +54,7 @@ For Raider.IO and similar workloads, these improvements translate directly into 
 * More headroom during peaks - Efficiency gains provide a buffer during seasonal events like game expansions or esports tournaments. When leaderboards surge, there's less risk of hitting memory ceilings.
 * Predictable scaling - A smoother memory growth curve and stable throughput make it easier to forecast when capacity needs to be added and to automate scaling policies.
 
-These benefits don't just apply to leaderboards. Time‑ordered feeds (such as activity streams), job scheduling queues, recommendation rankings, rate‑limiting windows and search scoring all rely on sorted sets. In every case, per‑entry overhead multiplied by millions of entries determines whether you can do more with less. As the Linux Foundation explained, upgrading to Valkey 8.1 can reduce memory footprints for common workloads by up to 20%, helping enterprises scale while keeping costs in check.
+These benefits don't just apply to leaderboards. Time‑ordered feeds (such as activity streams), job scheduling queues, recommendation rankings, rate‑limiting windows and search scoring all rely on sorted sets. In every case, per‑entry overhead multiplied by millions of entries determines whether you can do more with less. As described in the [Linux Foundation press release](https://www.linuxfoundation.org/press/linux-foundation-announces-general-availability-of-valkey-8-1), upgrading to Valkey 8.1 can reduce memory footprints for common workloads by up to 20%, helping enterprises scale while keeping costs in check.
 
 ## Closing Thoughts
 
