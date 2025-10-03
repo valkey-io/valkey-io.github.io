@@ -11,9 +11,13 @@
     <link rel="stylesheet" href="https://download.valkey.io/try-me-valkey/vos/valkey-try-me.css" />
     
     <!-- Body -->
+    {% if page %}
+    {{ page.content | markdown | safe }}
+    {% else %}
     <title>Try Valkey</title>
     <p>This is an in-browser Valkey server and CLI that runs directly within your browser using a <a href="https://github.com/copy/v86">V86</a> emulator, requiring no external installations. </p>
     <p>Try it out below:</p>
+    {% endif %}
     <div id="terminalWrapper" class="container" style="display: none;">
         <div id="terminal-container"></div>
     </div>
@@ -30,7 +34,11 @@
 
     <script>
         "use strict";
-        const FILE_URL = "https://download.valkey.io/try-me-valkey/8.1.0/states/state.bin.gz";  // Path to the .gz file
+        {% if page %}
+        const FILE_URL = "{{ page.extra.state_file | safe }}";  // Path to the .gz file
+        {% else %}
+        const FILE_URL = "{{ section.extra.state_file | safe }}";  // Path to the .gz file
+        {% endif %}
         const CACHE_KEY = "valkey_binary_cache";
         const LAST_MODIFIED_KEY = "valkey_last_modified";
         let emulator;
@@ -138,8 +146,13 @@
                 memory_size: 512 * 1024 * 1024,
                 bios: { url: "https://download.valkey.io/try-me-valkey/vos/v86/bios/seabios.bin" },
                 filesystem: {
-                    baseurl: "https://download.valkey.io/try-me-valkey/8.1.0/fs/alpine-rootfs-flat",
-                    basefs: "https://download.valkey.io/try-me-valkey/8.1.0/fs/alpine-fs.json",
+                    {% if page %}
+                    baseurl: "{{ page.extra.filesystem_base_url | safe }}",
+                    basefs: "{{ page.extra.filesystem_base_fs | safe }}",
+                    {% else %}
+                    baseurl: "{{ section.extra.filesystem_base_url | safe }}",
+                    basefs: "{{ section.extra.filesystem_base_fs | safe }}",
+                    {% endif %}
                 },
                 autostart: true,
                 bzimage_initrd_from_filesystem: true,
