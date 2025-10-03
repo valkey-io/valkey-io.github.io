@@ -1602,6 +1602,13 @@ html.banner-hidden .banner {
   overflow: hidden;
   padding: 8rem 2rem;
 
+  &::after {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0), rgba(48, 24, 110, 100));
+    pointer-events: none;
+  }
+
   @include respond-min(768px) {
     padding: 10rem 2rem;
 
