@@ -9,6 +9,8 @@
     <meta property="og:image" content="/img/valkey-logo-og.png" />
     {% if page and page.description %}<meta name="description" content="{{ page.description}}" />
     {% elif section and section.description %}<meta name="description" content="{{ section.description}}" />{% endif %}
+    {% if section.title and section.title == "Valkey-Operator" %}<meta name="go-import" content="valkey.io/valkey-operator git https://github.com/valkey-io/valkey-operator">
+    <meta name="go-source" content="valkey.io/valkey-operator https://github.com/valkey-io/valkey-operator  https://github.com/valkey-io/valkey-operator/tree/main{/dir} https://github.com/valkey-io/valkey-operator/blob/main{/dir}/{file}#L{line}">{% endif %}
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
