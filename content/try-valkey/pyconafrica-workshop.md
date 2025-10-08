@@ -2,7 +2,7 @@
 title = "Try Valkey for PyCon Africa 2025"
 template = "valkey-try-me.html"
 [extra]
-state_file = "https://download.valkey.io/try-me-valkey/pyconafrica/states/state.bin.gz"
+state_file = "https://download.valkey.io/try-me-valkey/pyconafrica/states/tmux-cli-activated.bin.gz"
 filesystem_base_url = "https://download.valkey.io/try-me-valkey/pyconafrica/fs/alpine-rootfs-flat"
 filesystem_base_fs = "https://download.valkey.io/try-me-valkey/pyconafrica/fs/alpine-fs.json"
 +++
