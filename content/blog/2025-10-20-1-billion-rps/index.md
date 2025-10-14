@@ -1,5 +1,5 @@
 +++
-title= "Scaling Valkey Cluster to 1 Billion Request per Second"
+title= "Scaling a Valkey Cluster to 1 Billion Request per Second"
 date= 2025-10-20 00:00:00
 description= "Learn about the internal workings of cluster mode and the improvements which helped to scale to 1 Billion RPS with the latest Valkey 9.0 release"
 authors= ["hpatro", "maheshcherukumilli", "sarthakaggarwal97", "sungming2"]
@@ -46,7 +46,7 @@ Valkey 9.0 has plenty of other improvements to increase the overall stability of
 In order to scale the Valkey cluster to 1 billion requests per second (RPS) for write command, we decided to choose a SET type command to accurately reflect the scale. We have seen previous experiments where a single instance was able to achieve more than [1 million RPS](/blog/unlock-one-million-rps) so the goal was to reach 1 billion RPS with a 2,000 node cluster, where each shard has 1 primary and 1 replica. A replica is added to each shard for better availability.
 
 **Hardware Configuration**
-For this experiment, the experiments were performed with AWS `r7g.2xlarge` instance type, which is a memory optimized instance, featuring 8 cores and 64 GB memory on an ARM-based (`aarch64`) architecture. In order to generate enough traffic across all the slots, we used 750 instances of AWS `c7g.16xlarge`.
+For this experiment, Valkey cluster was deployed on AWS `r7g.2xlarge` instance type, which is a memory optimized instance, featuring 8 cores and 64 GB memory on an ARM-based (`aarch64`) architecture. In order to generate enough traffic across all the slots, we used 750 instances of AWS `c7g.16xlarge`.
 
 **System Configuration**
 Note: The core assignments used in this guide are examples. Optimal core selection may vary depending on your specific system configuration and workload.
@@ -121,4 +121,4 @@ In the same environment, we tested the recovery time of the cluster when multipl
 
 ## Closing thoughts
 
-With all these improvements made in Valkey, a cluster can now scale to 1 billion RPS using 2,000 nodes which is quite a remarkable feat. However, there is plenty of room to improve further. The steady state CPU utilization overhead from the cluster bus message transfer/processing can be reduced further by incorporating the [SWIM protocol](https://en.wikipedia.org/wiki/SWIM_Protocol) or move the cluster bus messsage processing off the main thread into an independent separate thread. The failover logic can be made smarter as well by incorporating the AZ placement of nodes. We would also like to introduce more observability metrics/logs into the system for better manageability. All of these are being linked under the [Support Large Cluster](https://github.com/valkey-io/valkey/issues/2281) issue. Feel free to check it out and add in your suggestions.
+With all these improvements made in Valkey, a cluster can now scale to 1 billion RPS using 2,000 nodes which is quite a remarkable feat. However, there is plenty of room to improve further. The steady state CPU utilization overhead from the cluster bus message transfer/processing can be reduced further by incorporating the [SWIM protocol](https://en.wikipedia.org/wiki/SWIM_Protocol) or moving the cluster bus messsage processing off the main thread into an independent separate thread. The failover logic can be made smarter as well by incorporating the AZ placement of nodes. We would also like to introduce more observability metrics/logs into the system for better manageability. All of these are being linked under the [Support Large Cluster](https://github.com/valkey-io/valkey/issues/2281) issue. Feel free to check it out and add in your suggestions.
