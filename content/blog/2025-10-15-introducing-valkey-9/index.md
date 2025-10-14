@@ -25,7 +25,7 @@ Worse, in a multi-key operation, if one key resides in the original node and ano
 Finally, in a situation where Valkey is attempting to migrate a very large key (such as collections in data types like sorted sets, sets, or lists) from one node to another, the entire key may be too large to be accepted by the target node’s input buffer leading to a blocked migration that needs manual intervention.
 To unblock the migration you end up losing data either through forcing the slot assignment or deleting the key.
 
-In Valkey, the keyspace is not really flat, but instead keys are bundled into one of 16,384 ‘slots’ and each node takes one or more slots.
+In Valkey, keys are bundled into one of 16,384 ‘slots’ and each node takes one or more slots.
 In Valkey 9.0 instead of being key-by-key, Valkey migrates entire slots at a time, atomically moving the slot from one node to another using the AOF format.
 AOF does not work on a key-by-key basis, but instead AOF plays back all the operations that make up the data, so the input buffer only has to deal with individual items in collections and those will never exceed the size of the input buffer, avoiding large key migration issues.
 The new atomic slot migration doesn’t migrate keys directly, instead, the move-then-delete sequence is on the entire slot; the original node still retains all the keys and data until the entire slot migration is complete avoiding the pre-Valkey 9.0 issues with redirects or retries.
