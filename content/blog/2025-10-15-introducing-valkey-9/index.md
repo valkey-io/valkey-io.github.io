@@ -23,11 +23,12 @@ Key-by-key migration uses a move-then-delete sequence.
 Performance issues arise when a client tries to access a key during a partially migrated state: if the migration hasn’t completed, the client may not know if the key resides on a the original node or the new node and leading to a condition that has more network hops and additional processing.
 Worse, in a multi-key operation, if one key resides in the original node and another in the new node, Valkey cannot properly execute the command, so it requires the client to retry the request until the data resides on a single node, leading to a mini-outage where Valkey still has the data but it is inaccessible until the migration is complete for the affected data.
 Finally, in a situation where Valkey is attempting to migrate a very large key (such as collections in data types like sorted sets, sets, or lists) from one node to another, the entire key may be too large to be accepted by the target node’s input buffer leading to a blocked migration that needs manual intervention.
-To unblock the migration you end up losing data either through forcing the slot assignment or deleting the key.
+To unblock the migration you need to increase the input buffer limit or end up losing data either through forcing the slot assignment or deleting the key.
 
 In Valkey, keys are bundled into one of 16,384 ‘slots’ and each node takes one or more slots.
 In Valkey 9.0 instead of being key-by-key, Valkey migrates entire slots at a time, atomically moving the slot from one node to another using the AOF format.
-AOF does not work on a key-by-key basis, but instead AOF plays back all the operations that make up the data, so the input buffer only has to deal with individual items in collections and those will never exceed the size of the input buffer, avoiding large key migration issues.
+AOF can send individual items in a collection instead of the whole key.
+Consequently, this prevents large collections from causing latency spikes when they are being processed during migration.
 The new atomic slot migration doesn’t migrate keys directly, instead, the move-then-delete sequence is on the entire slot; the original node still retains all the keys and data until the entire slot migration is complete avoiding the pre-Valkey 9.0 issues with redirects or retries.
 For more information, check outthe video from our recent [Keyspace conference talk recording about Valkey 9.0](https://www.youtube.com/watch?v=GoKfeJGXEH0&list=PLAV1X7hxH2HtZWc2YNQRMQe9FT9XTWemE) and look for an upcoming deep dive on atomic slot migrations.
 
@@ -70,7 +71,6 @@ Valkey 9.0 brings numerous small changes and improvements:
 * **Zero copy responses**: Large requests avoid internal memory copying, yielding up to 20% higher throughput,
 * **[Pipeline memory prefetch](https://github.com/valkey-io/valkey/pull/2092)**: Memory prefetching when pipelining, yielding up to 40% higher throughput,
 * **[Multipath TCP](https://github.com/valkey-io/valkey/pull/1811)**: Adds Multipath TCP support which can reduce latency by 25%.
-* **1000+ node cluster**: stability improvements for very large clusters,
 * **[SIMD for BITCOUNT and HyperLogLog](https://github.com/valkey-io/valkey/pull/1741)**: optimizations that yield up to a 200% higher throughput,
 * **[By polygon for geospatial indices](https://github.com/valkey-io/valkey/pull/1809)**: query location by a specified polygon,
 * **[Conditional delete](https://github.com/valkey-io/valkey/pull/1975)**: Adds the [DELIFEQ](/commands/delifeq/) command that deletes the key if the value is equal to a specified value,
