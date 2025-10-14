@@ -117,3 +117,17 @@
   image:
     path: /img/k0rdent.svg
     alt: K0rdent Logo
+
+- name: Momento
+  link:  https://www.gomomento.com/platform/cache/
+  company: > 
+    Momento is relied on for mission-critical products by global leaders including Snap Inc, FOX, and Coinbase to serve millions of users.
+    We provide caching and a low-latency pub/sub event bus at web scale.
+    Momento eliminates operational overhead and delivers enterprise-grade reliability, liberating developers to focus on innovation, not maintenance.
+  offering: >
+    Momento expertly enhances the Valkey storage engine for performance and compatibility without the operational burden.
+    Momento Cache is a globally resilient, zero-operations service built for real-time applications at any scale.
+    It ensures enterprises can instantly handle unpredictable load spikes and distributed workloads with high-throughput, guaranteed low latency, and the complete freedom to focus on innovation, not cluster maintenance.
+  image:
+    path: /img/momento.svg
+    alt: Momento Logo
