@@ -37,24 +37,24 @@ This problem was tackled by [Binbin Zhu](https://github.com/enjoy-binbin) in Val
 * **Reconnection attempt storm to unavailable nodes** During profiling of the cluster with multiple node failures, it was observed that a chunk of compute goes into attempting to reconnect with the already failed nodes. Each node attempts to reconnect to all the failed nodes every 100ms. This lead to significant compute usage when there are hundreds of failed nodes in the cluster. In order to prevent the cluster from getting overwhelmed, [Sarthak Aggarwal](https://github.com/sarthakaggarwal97) implemented a [throttling mechanism](https://github.com/valkey-io/valkey/pull/2154) which allows enough reconnect attempts within a configured cluster node timeout, while ensuring the server node is not overwhelmed.
 * **Optimized failure report tracking** While profiling the cluster it was also observed that when hundreds of nodes fail simultaneously, the surviving nodes spend a significant amount of time processing and cleaning up redundant failure reports. For example, after 499 out of 2000 nodes were killed, the remaining 1501 nodes continued to gossip about each failed node and exchange reports, even after those nodes had already been marked as failed. [Seungmin Lee](https://github.com/sungming2) optimized the [addition/removal of failure report](https://github.com/valkey-io/valkey/pull/2277) by using a radix tree to store the information rounded to every second and group multiple report together. This helps with cleaning up expired failure report efficiently as well. Further optimizations were also made to avoid duplicate failure report processing and save CPU cycles.
 * **Pub/Sub System** Cluster bus system is also used for [pub/sub operations](https://valkey.io/topics/pubsub/) to provide a simplified interface for a client to connect to any node to publish data and subscribers connected on any node would receive the data. The data is transported via the cluster bus. This is quite an interesting usage of the cluster bus. However, the metadata overhead of each packet is roughly 2 KB which is quite large for small pub/sub messages. The observation was the packet header was large due to the slot ownership information (16384 bits = 2048 bytes). And that information was irrelevant for a pub/sub message. Hence, [Roshan Khatri](https://github.com/roshkhatri) introduced a [light weight message header](https://github.com/valkey-io/valkey/pull/654) (~30 bytes) to be used for efficient message transfer across nodes. This allowed pub/sub to scale better with large clusters.
-Valkey also have a sharded pub/sub system which keeps the data traffic of shard channels to a given shard which is an major improvement over the global pub/sub system in cluster mode. This was also onboarded to the light weight message header.
+Valkey also has a sharded pub/sub system which keeps the data traffic of shard channels to a given shard which is an major improvement over the global pub/sub system in cluster mode. This was also onboarded to the light weight message header.
 
 Valkey 9.0 has plenty of other improvements to increase the overall stability of the clustering system. All these enhancements allowed us to scale to 2,000 nodes with bounded recovery time during network partitions and below we have documented the benchmark setup and the throughput we were able to attain.
 
 ## Benchmarking
 
-In order to scale the Valkey cluster to 1 billion requests per second (RPS) for write command, we decided to choose a SET type command to accurately reflect the scale. We have seen previous experiments where a single instance was able to achieve more than [1 million RPS](/blog/unlock-one-million-rps) so our goal was to reach 1 billion RPS with a 2,000 node cluster, where each shard has 1 primary and 1 replica. A replica is added to each shard for better availability.
+In order to scale the Valkey cluster to 1 billion requests per second (RPS) for write command, we decided to choose a SET type command to accurately reflect the scale. We have seen previous experiments where a single instance was able to achieve more than [1 million RPS](/blog/unlock-one-million-rps) so the goal was to reach 1 billion RPS with a 2,000 node cluster, where each shard has 1 primary and 1 replica. A replica is added to each shard for better availability.
 
 **Hardware Configuration**
-For this experiment, we performed our experiments with AWS `r7g.2xlarge`, which is a memory optimized instance, featuring 8 cores and 64 GB memory on an ARM-based (`aarch64`) architecture. In order to generate enough traffic across all the slots, we used 750 instances of AWS `c7g.16xlarge`.
+For this experiment, the experiments were performed with AWS `r7g.2xlarge` instance type, which is a memory optimized instance, featuring 8 cores and 64 GB memory on an ARM-based (`aarch64`) architecture. In order to generate enough traffic across all the slots, we used 750 instances of AWS `c7g.16xlarge`.
 
 **System Configuration**
 Note: The core assignments used in this guide are examples. Optimal core selection may vary depending on your specific system configuration and workload.
 
-Each of our Valkey server nodes had 8 cores, so we decided to pin 2 cores to ensure interrupt affinity.
+Each of the Valkey server nodes had 8 cores, so we decided to pin 2 cores to ensure interrupt affinity.
 
 ```bash
-# identify the network interface, in our case, it was ens5
+# identify the network interface, for this run, it was ens5
 IFACE=$(ip route | awk '/default/ {{print $5; exit}}')
 
 # expose two combined Rx/Tx queues
