@@ -67,7 +67,7 @@ Numbered databases have a whole host of use cases and some very handy clustering
 
 Valkey 9.0 brings numerous small changes and improvements:
 
-* **[Un-deprecation](https://github.com/valkey-io/valkey/pull/2546)**: In a similar vein to numbered databases, the project re-evaluated 25 previously deprecated commands and, based on the project stance of API backward compatibility, restored the usage recommendation for these commands.
+* **[Un-deprecation](https://github.com/valkey-io/valkey/pull/2546)**: In a similar vein to numbered databases, the Valkey project re-evaluated 25 previously deprecated commands and, based on the stance of API backward compatibility, restored the usage recommendation for these commands.
 * **[Zero copy responses](https://github.com/valkey-io/valkey/pull/2078)**: Large requests avoid internal memory copying, yielding up to 20% higher throughput,
 * **[Pipeline memory prefetch](https://github.com/valkey-io/valkey/pull/2092)**: Memory prefetching when pipelining, yielding up to 40% higher throughput,
 * **[Multipath TCP](https://github.com/valkey-io/valkey/pull/1811)**: Adds Multipath TCP support which can reduce latency by 25%.
