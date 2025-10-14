@@ -10,7 +10,7 @@ featured_image = "/assets/media/featured/random-04.webp"
 
 Valkey’s standalone configuration is a single server setup with optional replicas for availability, but all writes flow to one primary. It is one process, one dataset, zero coordination, blazing fast and simple to operate when a single machine’s CPU, memory, and NIC can carry the load. However, Valkey at-scale moves past single node limits.
 
-Valkey’s cluster mode shards the keyspace into **16,384 hash slots** (`CRC16(key) % 16384`) and spreads them across multiple primaries with replicas for redundancy. Clients are cluster aware: they route commands directly to the node owning the slot and follow redirections during resharding or failover. The result is horizontal scalability, balanced throughput, and built in fault tolerance without a central coordinator. Behind the scenes, the cluster bus keeps this distributed system coherent, coordinating membership, gossip, and failover.
+Valkey’s cluster mode shards the keyspace into **16,384 hash slots** and spreads them across multiple primaries with replicas for redundancy. Clients are cluster aware: they route commands directly to the node owning the slot and follow redirections during resharding or failover. The result is horizontal scalability, balanced throughput, and built in fault tolerance without a central coordinator. Behind the scenes, the cluster bus keeps this distributed system coherent, coordinating membership, gossip, and failover.
 ![Diagram showcasing different operational mode](1B-rps-overview.png)
 
 ## Cluster Bus Overview
@@ -32,14 +32,14 @@ When a node misses heartbeats beyond the configurable node-timeout, peers mark i
 
 Across multiple major/minor versions, the community has improved cluster stability a lot and have made multiple changes to handle various failure scenarios to heal the system in a steady manner and avoid any manual intervention. Here are few of the interesting improvements:
 
-* **Multiple primary failures** Failover operation across cluster is serialized. Hence, only one shard can undergo failover at a given point in time. When there are multiple primary outages across the cluster, it used to lead to collision of vote request from replica candidates of impacted shards. Due to the collision, the votes would get split and the cluster won’t reach to consensus of promoting a replica in a given cycle. With a large number of primaries failing, the cluster won’t heal automatically and further an operator needs to manually intervene.
+* **Multiple primary failures** Failover operation across cluster is serialized. Hence, only one shard can undergo failover at a given point in time. When there are multiple primary outages across the cluster, it used to lead to collision of vote request from replica candidates of impacted shards. Due to the collision, the votes would get split and the cluster won’t reach to consensus of promoting a replica in a given cycle. With a large number of primaries failing, the cluster won’t heal automatically and further an administrator needs to manually intervene.
 This problem was tackled by [Binbin Zhu](https://github.com/enjoy-binbin) in Valkey 8.1 by introducing a [ranking mechanism](https://github.com/valkey-io/valkey/pull/1018)  to each shard based on lexicographic order of the shard ID. With the ranking algorithm, the shard with highest ranking would go sooner and the one with lower ranking would add additional delay to start the election for the given shard. This helped to get a consistent recovery time in a multiple primary outage.
-* **Reconnection attempt storm to unavailable nodes** During profiling of the cluster with multiple node failures, we observed that a chunk of compute goes into attempting to reconnect with the already failed nodes. Each node attempts to reconnect to all the failed nodes every 100ms. This lead to significant compute usage when there are hundreds of failed nodes in the cluster. In order to prevent the cluster from getting overwhelmed, [Sarthak Aggarwal](https://github.com/sarthakaggarwal97) implemented a [throttling mechanism](https://github.com/valkey-io/valkey/pull/2154) which allows enough reconnect attempts within a configured cluster node timeout, while ensuring the server node is not overwhelmed.
-* **Optimized failure report tracking** In our experiments we observed that when hundreds of nodes fail simultaneously, the surviving nodes spend a significant amount of time processing and cleaning up redundant failure reports. For example, after 499 out of 2000 nodes were killed, the remaining 1501 nodes continued to gossip about each failed node and exchange reports, even after those nodes had already been marked as failed. [Seungmin Lee](https://github.com/sungming2) optimized the [addition/removal of failure report](https://github.com/valkey-io/valkey/pull/2277) by using a radix tree to store the information rounded to every second and group multiple report together. This helps with cleaning up expired failure report efficiently as well. Further optimizations were also made to avoid duplicate failure report processing and save CPU cycles.
+* **Reconnection attempt storm to unavailable nodes** During profiling of the cluster with multiple node failures, it was observed that a chunk of compute goes into attempting to reconnect with the already failed nodes. Each node attempts to reconnect to all the failed nodes every 100ms. This lead to significant compute usage when there are hundreds of failed nodes in the cluster. In order to prevent the cluster from getting overwhelmed, [Sarthak Aggarwal](https://github.com/sarthakaggarwal97) implemented a [throttling mechanism](https://github.com/valkey-io/valkey/pull/2154) which allows enough reconnect attempts within a configured cluster node timeout, while ensuring the server node is not overwhelmed.
+* **Optimized failure report tracking** While profiling the cluster it was also observed that when hundreds of nodes fail simultaneously, the surviving nodes spend a significant amount of time processing and cleaning up redundant failure reports. For example, after 499 out of 2000 nodes were killed, the remaining 1501 nodes continued to gossip about each failed node and exchange reports, even after those nodes had already been marked as failed. [Seungmin Lee](https://github.com/sungming2) optimized the [addition/removal of failure report](https://github.com/valkey-io/valkey/pull/2277) by using a radix tree to store the information rounded to every second and group multiple report together. This helps with cleaning up expired failure report efficiently as well. Further optimizations were also made to avoid duplicate failure report processing and save CPU cycles.
 * **Pub/Sub System** Cluster bus system is also used for [pub/sub operations](https://valkey.io/topics/pubsub/) to provide a simplified interface for a client to connect to any node to publish data and subscribers connected on any node would receive the data. The data is transported via the cluster bus. This is quite an interesting usage of the cluster bus. However, the metadata overhead of each packet is roughly 2 KB which is quite large for small pub/sub messages. The observation was the packet header was large due to the slot ownership information (16384 bits = 2048 bytes). And that information was irrelevant for a pub/sub message. Hence, [Roshan Khatri](https://github.com/roshkhatri) introduced a [light weight message header](https://github.com/valkey-io/valkey/pull/654) (~30 bytes) to be used for efficient message transfer across nodes. This allowed pub/sub to scale better with large clusters.
-We also have a sharded pub/sub system which keeps the data traffic of shard channels to a given shard which is an major improvement over the global pub/sub system in cluster mode. This was also onboarded to the light weight message header.
+Valkey also have a sharded pub/sub system which keeps the data traffic of shard channels to a given shard which is an major improvement over the global pub/sub system in cluster mode. This was also onboarded to the light weight message header.
 
-We have plenty of other improvements to increase the overall stability of the clustering system. All these enhancements allowed us to scale to 2,000 nodes with bounded recovery time during network partitions and below we have documented our setup and the throughput we were able to attain.
+Valkey 9.0 has plenty of other improvements to increase the overall stability of the clustering system. All these enhancements allowed us to scale to 2,000 nodes with bounded recovery time during network partitions and below we have documented the benchmark setup and the throughput we were able to attain.
 
 ## Benchmarking
 
@@ -91,17 +91,14 @@ sudo cset shield --exec taskset -- -c $CPUSET ./valkey-server valkey-cluster.con
 We launched each Valkey process with minimal changes to the default configurations.
 
 ```text
-cluster-enabled yes
-cluster-config-file nodes.conf
-protected-mode no
-cluster-require-full-coverage no
-cluster-allow-reads-when-down yes
-save ""
-io-threads 6
-maxmemory 50gb
+cluster-enabled yes # To enable cluster mode
+cluster-config-file nodes.conf # To persiste the topology information
+cluster-require-full-coverage no # To prioritize availability
+cluster-allow-reads-when-down yes # To allow reads and partial operations to continue even under slot loss
+save "" # Disable periodic snapshots
+io-threads 6 # Allow offloading io operations to separate io-threads
+maxmemory 50gb # Limit maximum memory utilization by the process
 ```
-
-Cluster mode was enabled via `cluster-enabled` set to `yes` with a cluster config file `nodes.conf` to persist the topology information int it. To prioritize availability, `cluster-require-full-coverage` was set to `no` and `cluster-allow-reads-when-down` was set to `yes` to ensure reads and partial operations continue even under slot loss or reconfiguration. Periodic snapshotting was disabled with `save ""`, and high concurrency is sustained via utilizing `io-threads` which was set to `6`. Each node is provisioned with `maxmemory 50gb` to control dataset and prevent the node from being out of memory while benchmarking.
 
 **Benchmark Configurations**
 We ran the `valkey-benchmark` from 750 client instances to generate the required traffic. We used the following parameters for each of those instances.
