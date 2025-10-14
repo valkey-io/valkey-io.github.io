@@ -20,7 +20,7 @@ Prior to Valkey 9.0, data migrated in the cluster key-by-key.
 This approach works for most situations, but corner cases can lead to degraded performance, operational headaches, and, at worst, blocked node migrations and lost data.
 
 Key-by-key migration uses a move-then-delete sequence.
-Performance issues arise when Valkey tries to access a key during a partially migrated state: if the migration hasn’t completed, the client may not know if the key resides on a the original node or the new node and leading to a condition that has more network hops and additional processing.
+Performance issues arise when a client tries to access a key during a partially migrated state: if the migration hasn’t completed, the client may not know if the key resides on a the original node or the new node and leading to a condition that has more network hops and additional processing.
 Worse, in a multi-key operation, if one key resides in the original node and another in the new node, Valkey cannot properly execute the command, so it requires the client to retry the request until the data resides on a single node, leading to a mini-outage where Valkey still has the data but it is inaccessible until the migration is complete for the affected data.
 Finally, in a situation where Valkey is attempting to migrate a very large key (such as collections in data types like sorted sets, sets, or lists) from one node to another, the entire key may be too large to be accepted by the target node’s input buffer leading to a blocked migration that needs manual intervention.
 To unblock the migration you end up losing data either through forcing the slot assignment or deleting the key.
