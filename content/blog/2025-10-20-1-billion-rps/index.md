@@ -8,8 +8,8 @@ featured = true
 featured_image = "/assets/media/featured/random-04.webp"
 +++
 
-Valkey 9.0 introduces major improvements in the resilience of large clusters, enabling scaling to 2,000 nodes and achieving over 1 billion requests per second, all while ensuring bounded recovery time.
-In this blog, we provide an overview of how the Valkey clustering system works, along with the architectural improvements and rigorous testing that made this level of scale possible.
+The upcoming Valkey 9.0 release brings major improvements in the resilience of large clusters, enabling scaling to 2,000 nodes and achieving over 1 billion requests per second, all while ensuring bounded recovery time.
+In this blog post, we provide an overview of how the Valkey clustering system works, along with the architectural improvements and rigorous testing that made this level of scale possible.
 
 Valkey’s standalone configuration is a single server setup with optional replicas for availability, but all writes flow to one primary. It is one process, one dataset, zero coordination, blazing fast and simple to operate when a single machine’s CPU, memory, and NIC can carry the load. However, Valkey at-scale moves past single node limits.
 
