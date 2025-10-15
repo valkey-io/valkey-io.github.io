@@ -8,6 +8,9 @@ featured = true
 featured_image = "/assets/media/featured/random-04.webp"
 +++
 
+Valkey 9.0 introduces major improvements in the resilience of large clusters, enabling scaling to 2,000 nodes and achieving over 1 billion requests per second, all while ensuring bounded recovery time.
+In this blog, we provide an overview of how the Valkey clustering system works, along with the architectural improvements and rigorous testing that made this level of scale possible.
+
 Valkey’s standalone configuration is a single server setup with optional replicas for availability, but all writes flow to one primary. It is one process, one dataset, zero coordination, blazing fast and simple to operate when a single machine’s CPU, memory, and NIC can carry the load. However, Valkey at-scale moves past single node limits.
 
 Valkey’s cluster mode shards the keyspace into **16,384 hash slots** and spreads them across multiple primaries with replicas for redundancy. Clients are cluster aware: they route commands directly to the node owning the slot and follow redirections during resharding or failover. The result is horizontal scalability, balanced throughput, and built in fault tolerance without a central coordinator. Behind the scenes, the cluster bus keeps this distributed system coherent, coordinating membership, gossip, and failover.
