@@ -7,6 +7,13 @@
     <meta name="Copyright" content="" />
     <meta name="keywords" content="open-source, valkey" />
     <meta property="og:image" content="/img/valkey-logo-og.png" />
+    {% if page and page.extra and page.extra.custom_meta%}
+    {{ page.extra.custom_meta | safe }}
+    {% endif %}
+    {% if section and section.extra and section.extra.custom_meta%}
+    {{ section.extra.custom_meta | safe }}
+    {% endif %}
+
     {% if page and page.description %}<meta name="description" content="{{ page.description}}" />
     {% elif section and section.description %}<meta name="description" content="{{ section.description}}" />{% endif %}
 
