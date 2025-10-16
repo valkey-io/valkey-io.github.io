@@ -1,6 +1,6 @@
 +++
 title="Valkey 9.0: innovation, features, and improvements."
-date=2025-10-14 00:00:01
+date=2025-10-21 00:00:01
 description= """ 
 For Valkey's second major release, Valkey 9.0 brings innovation, long-requested features, and improvements to classic features updated for today’s workloads.
 Read on to find out all the team packed into this release.
@@ -8,6 +8,7 @@ Read on to find out all the team packed into this release.
 authors= ["kyledvs"]
 [extra]
 featured = true
+featured_image = "/assets/media/featured/random-08.webp"
 +++
 
 For Valkey's second major release, Valkey 9.0 brings innovation, long-requested features, and improvements to classic features updated for today’s workloads.
@@ -67,14 +68,15 @@ Numbered databases have a whole host of use cases and some very handy clustering
 
 Valkey 9.0 brings numerous small changes and improvements:
 
+* **[1 Billion Requests/Second with Large Clusters](/blog/1-billion-rps/)**: Improvements in the resilience of large clusters, enabling scaling to 2,000 nodes and achieving over 1 billion requests per second,
+* **[Pipeline Memory Prefetch](https://github.com/valkey-io/valkey/pull/2092)**: Memory prefetching when pipelining, yielding up to 40% higher throughput,
 * **[Un-deprecation](https://github.com/valkey-io/valkey/pull/2546)**: In a similar vein to numbered databases, the Valkey project re-evaluated 25 previously deprecated commands and, based on the stance of API backward compatibility, restored the usage recommendation for these commands.
-* **[Zero copy responses](https://github.com/valkey-io/valkey/pull/2078)**: Large requests avoid internal memory copying, yielding up to 20% higher throughput,
-* **[Pipeline memory prefetch](https://github.com/valkey-io/valkey/pull/2092)**: Memory prefetching when pipelining, yielding up to 40% higher throughput,
+* **[Zero copy Responses](https://github.com/valkey-io/valkey/pull/2078)**: Large requests avoid internal memory copying, yielding up to 20% higher throughput,
 * **[Multipath TCP](https://github.com/valkey-io/valkey/pull/1811)**: Adds Multipath TCP support which can reduce latency by 25%.
 * **[SIMD for BITCOUNT and HyperLogLog](https://github.com/valkey-io/valkey/pull/1741)**: optimizations that yield up to a 200% higher throughput,
-* **[By polygon for geospatial indices](https://github.com/valkey-io/valkey/pull/1809)**: query location by a specified polygon,
-* **[Conditional delete](https://github.com/valkey-io/valkey/pull/1975)**: Adds the [DELIFEQ](/commands/delifeq/) command that deletes the key if the value is equal to a specified value,
-* **[CLIENT LIST filtering](https://github.com/valkey-io/valkey/pull/1466)**: options to filter [CLIENT LIST](/commands/client-list/) using flags, name, idle, library name/version, database, IP, and capabilities.
+* **[By Polygon for Geospatial Indices](https://github.com/valkey-io/valkey/pull/1809)**: query location by a specified polygon,
+* **[Conditional Delete](https://github.com/valkey-io/valkey/pull/1975)**: Adds the [DELIFEQ](/commands/delifeq/) command that deletes the key if the value is equal to a specified value,
+* **[CLIENT LIST Filtering](https://github.com/valkey-io/valkey/pull/1466)**: options to filter [CLIENT LIST](/commands/client-list/) using flags, name, idle, library name/version, database, IP, and capabilities.
 
 And, perhaps, most importantly, a new, whimsical [LOLWUT](/commands/lolwut/) generative art piece especially for version 9.
 
