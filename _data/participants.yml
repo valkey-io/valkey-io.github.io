@@ -125,7 +125,7 @@
     We provide caching and a low-latency pub/sub event bus at web scale.
     Momento eliminates operational overhead and delivers enterprise-grade reliability, liberating developers to focus on innovation, not maintenance.
   offering: >
-    Momento expertly enhances the Valkey storage engine for performance and compatibility without the operational burden.
+    Momento expertly tunes the Valkey storage engine for performance and compatibility without the operational burden.
     Momento Cache is a globally resilient, zero-operations service built for real-time applications at any scale.
     It ensures enterprises can instantly handle unpredictable load spikes and distributed workloads with high-throughput, guaranteed low latency, and the complete freedom to focus on innovation, not cluster maintenance.
   image:
