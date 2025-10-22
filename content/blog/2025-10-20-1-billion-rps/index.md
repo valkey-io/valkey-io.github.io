@@ -58,15 +58,15 @@ Each of the Valkey server nodes had 8 cores, so we decided to pin 2 cores to ens
 
 ```bash
 # identify the network interface, for this run, it was ens5
-IFACE=$(ip route | awk '/default/ {{print $5; exit}}')
+IFACE=$(ip route | awk '/default/ {print $5; exit}')
 
 # expose two combined Rx/Tx queues
 sudo ethtool -L "$IFACE" combined 2
 
 # grab exactly the two IRQ numbers that belong to those queues
-IRQS=($(grep -w "$IFACE" /proc/interrupts | awk '{{gsub(":","",$1); print $1}}'))
-IRQ0=${{IRQS[0]}}
-IRQ1=${{IRQS[1]}}
+IRQS=($(grep -w "$IFACE" /proc/interrupts | awk '{gsub(":","",$1); print $1}'))
+IRQ0=${IRQS[0]}
+IRQ1=${IRQS[1]}
 
 # pin queue-0 interrupt to CPU0
 echo 0 | sudo tee /proc/irq/$IRQ0/smp_affinity_list   # bind IRQ0 → CPU 0
