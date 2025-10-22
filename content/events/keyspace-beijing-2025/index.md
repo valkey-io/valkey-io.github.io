@@ -4,7 +4,7 @@ date= 2025-08-28 01:01:01
 
 [extra]
 body_class = "keyspace-2025"
-event_logo = "./keyspace-logo-beijing.png"
+event_logo = "/events/keyspace-beijing-2025/keyspace-logo-beijing.png"
 +++
 
 Keyspace 北京峰会是开发者、SRE 和 DevOps 专家齐聚一堂，分享 Valkey 的技术、最佳实践和新用途的盛会。您将在为期一天的活动中与项目维护人员、社区爱好者和思想领袖见面交流。
