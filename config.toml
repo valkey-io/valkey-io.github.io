@@ -19,6 +19,7 @@ highlight_code = true
 "valkey-conf" = "valkey.conf"
 
 [extra]
+banner = "**What's new in Valkey 9.0?** Discover new features and improvements. [Read the announcement](/blog/introducing-valkey-9/)."
 command_description_path = "../build-command-docs/"
 command_json_path = "../build-command-json/"
 command_bloom_json_path = "../build-bloom-command-json/"
