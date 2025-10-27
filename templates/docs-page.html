@@ -57,17 +57,6 @@
 {% endblock main_content %}
 
 {% block related_content %}
-<div class="sb-search-container">
-    <input type="text" id="sidebar-search-box" placeholder="Search within topics" onkeyup="searchSidebarTopics()" />
-</div>
-
-<!-- No results message for sidebar search -->
-<div id="sidebar-no-results-message" class="no-results-message" style="display: none;">
-    <span>&lt;/&gt;</span>
-    <h4>No topics found</h4>
-    <p>Check your spelling or try different keywords</p>
-</div>
-
 <h2 id="topic-list-title">Alphabetical Index</h2>
 <ul id="topic-list"></ul>
 
@@ -80,31 +69,6 @@ document.addEventListener("DOMContentLoaded", function() {
     f.then((r) => r.text()).then((v) => { topicListEl.innerHTML = v; })
     f.catch((error) => { topicListEl.innerHTML = "Could not load topic list."; });
 });
-
-function searchSidebarTopics() {
-    var input = document.getElementById("sidebar-search-box").value.toLowerCase();
-    var topicList = document.getElementById("topic-list");
-    var topicListTitle = document.getElementById("topic-list-title");
-    var items = topicList.querySelectorAll(".topic-list-item");
-    var noResultsMessage = document.getElementById("sidebar-no-results-message");
-    var totalVisible = 0;
-
-    items.forEach(function (item) {
-        var text = item.querySelector("a").innerText.toLowerCase();
-        if (text.includes(input)) {
-            item.style.display = "";
-            totalVisible++;
-        } else {
-            item.style.display = "none";
-        }
-    });
-
-    // Show/hide no results message and title based on search results
-    var hasResults = totalVisible > 0;
-    noResultsMessage.style.display = hasResults ? "none" : "block";
-    topicListTitle.style.display = hasResults ? "" : "none";
-    topicList.style.display = hasResults ? "" : "none";
-}
 </script>
 
 <div class="edit_box">
