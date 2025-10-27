@@ -1,7 +1,7 @@
 +++
 title= "Resharding, Reimagined: Introducing Atomic Slot Migration"
 date= 2025-10-29 00:00:00
-description= "Learn about the benefits of Atomic Slot Migration and how it works."
+description= "Valkey 9.0 brings big changes and improvements to the underlying mechanisms of resharding. Find out how Atomic Slot Migration works, the benefits it brings, and the headaches it eliminates."
 authors= ["murphyjacob4"]
 [extra]
 featured = true
@@ -10,24 +10,24 @@ featured_image = "/assets/media/featured/random-05.webp"
 
 Managing the topology of a distributed database is one of the most critical and
 challenging tasks for any operator. For a high-performance system like Valkey,
-moving data slots between nodes—a process known as resharding—needs to be fast,
+moving data slots between nodes —a process known as resharding— needs to be fast,
 reliable, and easy.
 
 Clustered Valkey has historically supported resharding through a process known
-as slot migration, where one or more of the 16384 slots is moved from one shard
+as slot migration, where one or more of the 16,384 slots is moved from one shard
 to another. This slot migration process has historically led to many operational
-headaches. To address this, we’ve introduced a powerful new feature that
+headaches. To address this, Valkey 9.0 introduced a powerful new feature that
 fundamentally improves this process: **Atomic Slot Migration**.
 
-Atomic Slot Migration includes many benefits that we hope will make resharding
+Atomic Slot Migration includes many benefits that makes resharding
 painless. This includes:
 
-- A simpler, one-shot command interface supporting multiple slot ranges in a
-  single migration.
-- Built-in cancellation support and automated rollback on failure
-- Improved large key handling
-- Up to 9x faster slot migrations
-- Greatly reduced client impact during migrations
+- a simpler, one-shot command interface supporting multiple slot ranges in a
+  single migration,
+- built-in cancellation support and automated rollback on failure,
+- improved large key handling,
+- up to 9x faster slot migrations,
+- greatly reduced client impact during migrations.
 
 Let's dive into how it works and what it means for you.
 
@@ -115,11 +115,11 @@ Slot Migration provides many desirable properties over the previous mechanism:
 - **Keys no longer need to be atomically moved**: Collections are moved as
   chunks of elements that are replayed as commands, preventing the reliability
   problems previously encountered when dumping and restoring a large collection.
-- **A migration can easily be rolled back on cancellation or failure**: Since
-  the hash slots are placed in a staging area, we can easily wipe them
+- **A migration can easily be rolled back on cancellation or failure**: Since Valkey
+  places the hash slots in a staging area, they are easily wipe them
   independently of the rest of the database. Since this state is not broadcasted
-  to the cluster, ending the migration is as simple as cleaning up the staging
-  area and marking the migration as cancelled. Many failures, like
+  to the cluster, ending the migration is a straight-forward process of cleaning up
+  the staging area and marking the migration as cancelled. Many failures, like
   out-of-memory, failover, or network partition can be handled completely by the
   engine.
 - **Greatly improved slot migration latency**: Valkey is highly-optimized for
@@ -146,8 +146,7 @@ lifecycle.
 
 ## Legacy vs. Atomic: Head-to-Head Results
 
-To show just how much of an improvement atomic slot migration is, we conducted
-some head-to-head experiments.
+Head-to-head experiments show the improvement provided by atomic slot migration.
 
 ### Test Setup
 
@@ -156,14 +155,14 @@ To make things reproducible, the test setup is outlined below:
 - Valkey cluster nodes are `c4-standard-8` GCE VMs spread across GCP’s
   us-central1 region running Valkey 9.0.0
 - Client machine is a separate `c4-standard-8` GCE VM in us-central1-f
-- Rebalancing is done with the `valkey-cli --cluster rebalance` command, with
-  all parameters defaulted. The only exception is when we run scale in, we use
-  `--cluster-weight` to set the weights to only allocate to 3 shards.
+- Rebalancing is accomplished with the `valkey-cli --cluster rebalance` command, with
+  all parameters defaulted. The only exception is during scale in, where
+  `--cluster-weight` is used to set the weights to only allocate to 3 shards.
 - The cluster is filled with 40 GB of data consisting of 16KB string valued keys
 
 ### Slot Migration Latency: Who's Faster?
 
-We did two tests: one with no load and one with heavy read/write load. The heavy
+The experiment had two tests: one with no load and one with heavy read/write load. The heavy
 load is simulated using memtier-benchmark with a 1:10 set/get ratio on the
 client machine specified above.
 
@@ -205,18 +204,18 @@ client machine specified above.
 The main culprit here is unnecessary network round trips (RTTs) in legacy slot
 migration. Each slot requires:
 
-- 2 RTTs to call SETSLOT and begin the migration
+- 2 RTTs to call `SETSLOT` and begin the migration
 - Each batch of keys in a slot requires:
-  - 1 RTT for CLUSTER GETKEYSINSLOT
-  - 1 RTT for MIGRATE 1 round trip for the actual migration of the key batch
+  - 1 RTT for `CLUSTER GETKEYSINSLOT`
+  - 1 RTT for `MIGRATE` 1 round trip for the actual migration of the key batch
     from source to target node.
-- 2 RTTs to call SETSLOT and end the migration
+- 2 RTTs to call `SETSLOT` and end the migration
 
-Those round trip times add up. For our cluster where we are moving an average of
-160 keys in each slot and using `valkey-cli`'s default batch size of 10, we
-would expect an average of 52 round trips per slot. Since we need to move 4096
-slots, that’s 212,992 round trips. We would spend over a minute just waiting for
-network round trips with just a 300 microsecond average round trip time.
+Those round trip times add up. For the test cluster where an average of
+160 keys in each slot move and using `valkey-cli`'s default batch size of 10, it results
+in an expected average of 52 round trips per slot. Since the cluster needs to move 4,096
+slots, that’s 212,992 round trips. The cluster would spend over a minute just waiting for
+network round trips with only a 300 microsecond average round trip time.
 
 By removing this overhead, atomic slot migration is now only bounded by the
 speed that one node can push data to another, achieving much faster end-to-end
@@ -224,9 +223,9 @@ latency.
 
 ### Client Impact: How Would Applications Respond?
 
-We measured the throughput of a simulated
+The experiment measured the throughput of a simulated
 [valkey-py](https://github.com/valkey-io/valkey-py) workload with 1:10 set/get
-ratio while doing each scaling event. We conducted three trials, and averages
+ratio while doing each scaling event. Over three trial throughput averages
 are shown below.
 
 ![Chart showing queries per second over time. Atomic slot migration quickly dips and recovers, while legacy slot migration incurs a sustained dip](legacy-vs-atomic-client-impact.png)
@@ -269,7 +268,7 @@ with the following sub-commands:
 - `CLUSTER SYNCSLOTS CAPA`
   - Reserved command allowing capability negotiation.
 
-The diagram below shows how CLUSTER SYNCSLOTS is used internally to drive a slot
+The diagram below shows how `CLUSTER SYNCSLOTS` is used internally to drive a slot
 migration from start to finish:
 
 ![Diagram showing how Valkey uses CLUSTER SYNCSLOTS to drive atomic slot migration](atomic-slot-migration-syncslots.png)
@@ -280,6 +279,6 @@ This new Atomic slot migration is a massive step forward for Valkey cluster
 management. It provides a faster, more reliable, and overall easier mechanism
 for resharding your data.
 
-We encourage you to download Valkey 9.0 and try Atomic Slot Migration for
+So, go [download Valkey 9.0](/download/) and try Atomic Slot Migration for
 yourself! A huge thank you to everyone in the community who contributed to the
 design and implementation.
