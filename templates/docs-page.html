@@ -1,4 +1,4 @@
-{% extends "right-aside.html" %}
+{% extends "left-aside.html" %}
 
 {% import "macros/docs.html" as docs %}
 
@@ -21,10 +21,26 @@
 
 {% block subhead_content %}
 {% if has_frontmatter and frontmatter_title %}
-<h1 class="page-title">Documentation: {{ frontmatter_title }}</h1>
+    <div class="styled-title">
+        <h1 class="page-title">Documentation: {{ frontmatter_title }}</h1>
+    </div>
 {% endif  %}
 {% endblock subhead_content %}
 
+{% block breadcrumbs %}
+{# Breadcrumbs section #}
+<nav class="breadcrumbs">
+    <ul class="breadcrumb-list">
+        <li class="breadcrumb-item">
+            <a href="/topics/" class="breadcrumb-link">Topics</a>
+        </li>
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            <img src="/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
+            {% if frontmatter_title %}{{ frontmatter_title }}{% else %}{{ page.slug | upper }}{% endif %}
+        </li>
+    </ul>
+</nav>
+{% endblock breadcrumbs %}
 
 {% block main_content %}
 {% if config.extra.review_list is containing(page.path) %}
@@ -41,6 +57,20 @@
 {% endblock main_content %}
 
 {% block related_content %}
+<h2 id="topic-list-title">Alphabetical Index</h2>
+<ul id="topic-list"></ul>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var 
+        topicListEl = document.getElementById('topic-list'),
+        f = fetch("/topics-list/");
+
+    f.then((r) => r.text()).then((v) => { topicListEl.innerHTML = v; })
+    f.catch((error) => { topicListEl.innerHTML = "Could not load topic list."; });
+});
+</script>
+
 <div class="edit_box">
     See an error?
     <a href="https://github.com/valkey-io/valkey-doc/edit/main/topics/{{ page.slug }}.md">Update this Page on GitHub!</a>
