@@ -10,8 +10,8 @@ featured_image = "/assets/media/featured/random-05.webp"
 
 Managing the topology of a distributed database is one of the most critical and
 challenging tasks for any operator. For a high-performance system like Valkey,
-moving data slots between nodes —a process known as resharding— needs to be fast,
-reliable, and easy.
+moving data slots between nodes —a process known as resharding— needs to be
+fast, reliable, and easy.
 
 Clustered Valkey has historically supported resharding through a process known
 as slot migration, where one or more of the 16,384 slots is moved from one shard
@@ -19,8 +19,8 @@ to another. This slot migration process has historically led to many operational
 headaches. To address this, Valkey 9.0 introduced a powerful new feature that
 fundamentally improves this process: **Atomic Slot Migration**.
 
-Atomic Slot Migration includes many benefits that makes resharding
-painless. This includes:
+Atomic Slot Migration includes many benefits that makes resharding painless.
+This includes:
 
 - a simpler, one-shot command interface supporting multiple slot ranges in a
   single migration,
@@ -115,16 +115,16 @@ Slot Migration provides many desirable properties over the previous mechanism:
 - **Keys no longer need to be atomically moved**: Collections are moved as
   chunks of elements that are replayed as commands, preventing the reliability
   problems previously encountered when dumping and restoring a large collection.
-- **A migration can easily be rolled back on cancellation or failure**: Since Valkey
-  places the hash slots in a staging area, they are easily wipe them
+- **A migration can easily be rolled back on cancellation or failure**: Since
+  Valkey places the hash slots in a staging area, they are easily wipe them
   independently of the rest of the database. Since this state is not broadcasted
-  to the cluster, ending the migration is a straight-forward process of cleaning up
-  the staging area and marking the migration as cancelled. Many failures, like
-  out-of-memory, failover, or network partition can be handled completely by the
-  engine.
-- **Greatly improved slot migration latency**: Valkey is highly-optimized for
+  to the cluster, ending the migration is a straight-forward process of cleaning
+  up the staging area and marking the migration as cancelled. Many failures,
+  like out-of-memory, failover, or network partition can be handled completely
+  by the engine.
+- **Greatly lowered slot migration latency**: Valkey is highly-optimized for
   replication. By batching the slot migrations and using this replication-like
-  process, the end-to-end migration latency can improve by as much as 9x when
+  process, the end-to-end migration latency can lower by as much as 9x when
   compared to legacy slot migration through `valkey-cli`.
 
 ## How to use Atomic Slot Migration
@@ -132,13 +132,14 @@ Slot Migration provides many desirable properties over the previous mechanism:
 A new family of `CLUSTER` commands gives you full control over the migration
 lifecycle.
 
-- `CLUSTER MIGRATESLOTS SLOTSRANGE <start> <end> ... NODE <node-id>`
+- [`CLUSTER MIGRATESLOTS SLOTSRANGE start-slot end-slot NODE node-id`](/commands/cluster-migrateslots/)
   - This command kicks off the migration. You can specify one or more slot
-    ranges and the target node ID to begin pushing data.
-- `CLUSTER CANCELSLOTMIGRATIONS`
+    ranges and the target node ID to begin pushing data. Multiple migrations can
+    be queued in one command by repeating the SLOTSRANGE and NODE arguments.
+- [`CLUSTER CANCELSLOTMIGRATIONS`](/commands/cluster-cancelslotmigrations/)
   - Use this command to safely cancel all ongoing slot migrations originating
     from the node.
-- `CLUSTER GETSLOTMIGRATIONS`
+- [`CLUSTER GETSLOTMIGRATIONS`](/commands/cluster-getslotmigrations/)
   - This gives you an observable log of recent and active migrations, allowing
     you to monitor the status, duration, and outcome of each job. Slot migration
     jobs are stored in memory, allowing for simple programmatic access and error
@@ -155,16 +156,17 @@ To make things reproducible, the test setup is outlined below:
 - Valkey cluster nodes are `c4-standard-8` GCE VMs spread across GCP’s
   us-central1 region running Valkey 9.0.0
 - Client machine is a separate `c4-standard-8` GCE VM in us-central1-f
-- Rebalancing is accomplished with the `valkey-cli --cluster rebalance` command, with
-  all parameters defaulted. The only exception is during scale in, where
+- Rebalancing is accomplished with the `valkey-cli --cluster rebalance` command,
+  with all parameters defaulted. The only exception is during scale in, where
   `--cluster-weight` is used to set the weights to only allocate to 3 shards.
-- The cluster is filled with 40 GB of data consisting of 16KB string valued keys
+- The cluster is filled with 40 GB of data consisting of 16 KB string valued
+  keys
 
 ### Slot Migration Latency: Who's Faster?
 
-The experiment had two tests: one with no load and one with heavy read/write load. The heavy
-load is simulated using memtier-benchmark with a 1:10 set/get ratio on the
-client machine specified above.
+The experiment had two tests: one with no load and one with heavy read/write
+load. The heavy load is simulated using [memtier-benchmark](https://github.com/RedisLabs/memtier_benchmark) with a 1:10 set/get
+ratio on the client machine specified above.
 
 ![Chart showing time to scale in and out when under load, from the table below](legacy-vs-atomic-latency.png)
 
@@ -207,15 +209,22 @@ migration. Each slot requires:
 - 2 RTTs to call `SETSLOT` and begin the migration
 - Each batch of keys in a slot requires:
   - 1 RTT for `CLUSTER GETKEYSINSLOT`
-  - 1 RTT for `MIGRATE` 1 round trip for the actual migration of the key batch
-    from source to target node.
+  - 1 RTT for `MIGRATE`
+  - 1 RTT for the actual migration of the key batch from source to target node
 - 2 RTTs to call `SETSLOT` and end the migration
 
-Those round trip times add up. For the test cluster where an average of
-160 keys in each slot move and using `valkey-cli`'s default batch size of 10, it results
-in an expected average of 52 round trips per slot. Since the cluster needs to move 4,096
-slots, that’s 212,992 round trips. The cluster would spend over a minute just waiting for
-network round trips with only a 300 microsecond average round trip time.
+Those round trip times add up. For this test case where we have:
+
+- 4096 slots to move
+- 160 keys per slot
+- `valkey-cli`'s default batch size of 10
+
+We need:
+
+![Picture of the following formula rendered in LaTeX: RTTs = SlotsCount * (3 * KeysPerSlot/KeysPerBatch + 4) = 4096 * (3 * 160/10 + 4) = 212992](legacy-rtt-formula.png)
+
+Even with a 300 microsecond round trip time, legacy slot migration spends over a
+minute just waiting for those 212,992 round trips.
 
 By removing this overhead, atomic slot migration is now only bounded by the
 speed that one node can push data to another, achieving much faster end-to-end
@@ -225,8 +234,8 @@ latency.
 
 The experiment measured the throughput of a simulated
 [valkey-py](https://github.com/valkey-io/valkey-py) workload with 1:10 set/get
-ratio while doing each scaling event. Over three trial throughput averages
-are shown below.
+ratio while doing each scaling event. Over three trial throughput averages are
+shown below.
 
 ![Chart showing queries per second over time. Atomic slot migration quickly dips and recovers, while legacy slot migration incurs a sustained dip](legacy-vs-atomic-client-impact.png)
 
@@ -241,8 +250,8 @@ legacy slot migration.
 ## Under the Hood: State Machines and Control Commands
 
 To coordinate the complex dance between the two nodes, a new internal command,
-`CLUSTER SYNCSLOTS`, is introduced. This command orchestrates the state machine
-with the following sub-commands:
+[`CLUSTER SYNCSLOTS`](/commands/cluster-syncslots/), is introduced. This command
+orchestrates the state machine with the following sub-commands:
 
 - `CLUSTER SYNCSLOTS ESTABLISH SOURCE <source-node-id> NAME <unique-migration-name> SLOTSRANGE <start> <end> ...`
   - Informs the target node of an in progress slot migration and begins tracking
@@ -268,8 +277,8 @@ with the following sub-commands:
 - `CLUSTER SYNCSLOTS CAPA`
   - Reserved command allowing capability negotiation.
 
-The diagram below shows how `CLUSTER SYNCSLOTS` is used internally to drive a slot
-migration from start to finish:
+The diagram below shows how `CLUSTER SYNCSLOTS` is used internally to drive a
+slot migration from start to finish:
 
 ![Diagram showing how Valkey uses CLUSTER SYNCSLOTS to drive atomic slot migration](atomic-slot-migration-syncslots.png)
 
