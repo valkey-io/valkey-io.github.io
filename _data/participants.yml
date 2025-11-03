@@ -105,6 +105,16 @@
   company: >
     Founded in 2012, ByteDance's mission is to inspire creativity and enrich life. With a suite of more than a dozen products, including TikTok, CapCut, Lark, and Pico, as well as platforms specific to the China market, including Toutiao, Douyin, Fanqie Novel and Xigua Video, ByteDance has made it easier and more fun for people to connect with, consume, and create content.
 
+- name: DigitalOcean
+  link: https://www.digitalocean.com/products/managed-databases-valkey
+  image:
+    path: /img/digitalocean.svg
+    alt: DigitalOcean logo
+  company: >
+    DigitalOcean is a cloud platform that helps you build, deploy, and scale applications. It offers virtual machines, managed containers, serverless functions, object and block storage, managed databases, Gradient AI platform and networking services. DigitalOcean provides APIs, CLIs, and SDKs for programmatic resource management, making cloud infrastructure accessible for developers.
+  offering: >
+    DigitalOcean offers a managed database service for Valkey, known as DigitalOcean Managed Caching for Valkey. This service provides a fully managed, high-performance, in-memory key-value datastore.
+
 - name: k0rdent
   link: https://k0rdent.io
   company: > 
