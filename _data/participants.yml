@@ -131,3 +131,13 @@
   image:
     path: /img/momento.svg
     alt: Momento Logo
+
+- name: Heroku - Salesforce
+  link: https://www.heroku.com/key-value-store/
+  company: >
+    Heroku, Salesforce's AI PaaS, helps IT leaders and app teams conquer AI delivery challenges. It offers a delightful developer experience with automated CI/CD, broad language support, and intelligent autoscaling. Deploy AI apps rapidly and securely, focusing on innovation, not infrastructure, all within the Salesforce Trust Boundary.
+  offering: >
+    Heroku Key-Value Store delivers a robust, scalable, and developer-friendly in-memory datastore, powered by Valkey and compatible with Redis® OSS. It brings enhanced performance and greater efficiency to supercharge your applications. Heroku Key-Value Store lets you gain greater visibility into performance and better manage your instances with a powerful CLI.
+  image:
+    path: /img/heroku.svg
+    alt: Heroku Logo
