@@ -13,9 +13,9 @@ Keyspace Beijing is the event where developers, SREs, and DevOps pros gather to 
 
 ## 日期 / When
 
-2025年11月22日
+2025年12月13日
 
-Nov 22, 2025
+Dec 13, 2025
 
 ## 地点 / Where
 
