@@ -9,11 +9,11 @@ featured = true
 featured_image = "/assets/media/featured/random-06.webp"
 +++
 
-Most of the production incidents I’ve helped debug started with misconfigurations rather than zero-days or sophisticated exploits.
+Most of the production security incidents I've helped debug started with misconfigurations rather than zero-days or sophisticated exploits.
 
 Security misconfiguration ranks as A05 in the [OWASP Top 10:2021](https://owasp.org/Top10/A05_2021-Security_Misconfiguration/), with 90% of applications tested showing some form of misconfiguration. That's staggering. And when it comes to infrastructure like Valkey, the stakes are even higher - your cache often sits at the heart of your application, touching every request.
 
-Engineers really care about security - but it is easy to overlook some crucial settings. This is especially true in the cloud, where everything moves really fast. You spin up a Valkey instance inside your VPC, it works, and you move on to the next problem. VPC can lock down your network to the outsiders  - but I often see multiple teams being able to access the same VPC. This leaves systems vulnerable to insider threads as well as well intentioned people or microservices that just happen to have a bad day. But using default configurations or enabling unnecessary features can make systems [easy targets for attackers](https://socradar.io/redis-redishell-vulnerability-cve-2025-49844/).
+Engineers really care about security - but it is easy to overlook some crucial settings. This is especially true in the cloud, where everything moves really fast. You spin up a Valkey instance inside your VPC, it works, and you move on to the next problem. VPC can lock down your network to the outsiders  - but I often see multiple teams being able to access the same VPC. This leaves systems vulnerable to insider threats as well as well intentioned people or microservices that just happen to have a bad day. But using default configurations or enabling unnecessary features can make systems [easy targets for attackers](https://socradar.io/redis-redishell-vulnerability-cve-2025-49844/).
 
 Let's talk about how to actually secure a Valkey deployment. Not with a single magic bullet, but with layers that work together.
 
@@ -27,13 +27,13 @@ This is your first line of defense. Valkey is designed to be accessed by trusted
 
 This is where putting your Valkey node inside a VPC is necessary - but not sufficient. Security groups help reinforce access limitation to make sure that only services and people who are intended to access the cluster can do so. Your CI runners probably don't need direct cache access. Each service should have just the access it needs.
 
-Modern infrastructure also handles TLS seamlessly. While it is unlikely that an attacker is sniffing your packets on your cloud network, it is best practice to have encryption in transit - even within your own network.
+Modern infrastructure also handles TLS seamlessly. While it is unlikely that an attacker is sniffing your packets on your cloud network, it is best practice to have encryption in transit - even within your own network. Current server hardware barely notices the handshake overhead, and Valkey picked up its TLS support back in 2020, so you rarely have to trade performance for security here.
 
 ### Authentication and Authorization
 
 Authentication adds a critical layer of resiliency. The authentication layer protects you if your firewall or other protections fail, unauthenticated clients still can't access your instance.
 
-Valkey supports [two authentication methods](https://valkey.io/topics/security/#authentication): the newer ACL system (Access Control Lists) and the legacy `requirepass`. ACLs give you more flexibility by allowing you to create users with fine-grained permissions tailored to what each service actually needs.
+Valkey supports [two authentication methods](https://valkey.io/topics/security/#authentication): the newer ACL system (Access Control Lists) and the legacy `requirepass`. ACLs give you more flexibility by allowing you to create users with fine-grained permissions tailored to what each service actually needs. If you already have centralized identity wiring, Valkey's [LDAP integration](https://valkey.io/topics/ldap/) plugs into that source of truth so you aren't managing a separate credential store just for the cache.
 
 ### Command Surface and Runtime Protection
 
@@ -56,6 +56,8 @@ ACL SETUSER admin on >verystrongpassword ~* +@all
 
 This principle of least privilege means that even if credentials are compromised, an attacker is limited to only the operations the user can perform. A read-only monitoring account can't flush your entire cache or modify configurations.
 
+For most application clients, a solid baseline is `ACL SETUSER application on >password +@all -@dangerous -@scripting`, which keeps day-to-day commands available while stripping scripting and other dangerous categories that often lead to trouble.
+
 Beyond command restrictions, focus on container-level privilege boundaries rather than dropping root inside the container.
 
 The [official Valkey container image](https://hub.docker.com/r/valkey/valkey/) runs as root by default, which is standard practice. Container isolation provides the necessary security boundary, but the runtime still needs hardening. Restrict who can run or exec into containers, scope mounted volumes carefully, use read-only mounts for configuration files, and keep the image up to date.
@@ -66,13 +68,13 @@ These controls protect against container breakout and privilege escalation — t
 
 Once Valkey is running, your operational posture determines how quickly you can detect and contain issues. Enable logging so you can see what's happening. Monitor for unusual patterns like sudden spikes in command execution, connections from unexpected sources, or commands that shouldn't be running in your environment.
 
-Set resource limits in your configuration. Poorly written operations or runaway commands can impact your cache's availability. `maxmemory`, `timeout`, and `tcp-keepalive` settings aren't just performance tuning - they help protect against resource exhaustion.
+Set resource limits in your configuration. Poorly written operations or runaway commands can impact your cache's availability. `maxmemory` stops misbehaving workloads from consuming the whole node, and if you touch `timeout`, prefer the unauthenticated variant; forcing disconnects on healthy clients usually just amplifies reconnect storms.
 
-Observability is part of security! Logs and metrics turn silent failures into visible signals, and visibility is what buys you time to respond before small issues become incidents.
+Observability is part of security! Logs and metrics turn silent failures into visible signals, and visibility is what buys you time to respond before small issues become incidents. Track authentication failures like `acl_access_denied_auth` specifically - they're usually the first sign someone is poking around where they shouldn't.
 
 ## The Real Reason for Layered Security
 
-Anecdotally, I’ve seen too many teams implement authentication and feel like they're done. And authentication is great, it's an essential layer. But defense in depth means multiple layers of safeguards, not relying on any single control.
+Anecdotally, I've seen too many teams implement authentication and feel like they're done. And authentication is great, it's an essential layer. But defense in depth means multiple layers of safeguards, not relying on any single control.
 
 Here's a real scenario: You've enabled authentication. But then a developer accidentally pushes credentials into a public GitHub repo. Or a microservice inside your VPC gets compromised and its environment variables are exposed. Or credentials end up in application logs.
 
