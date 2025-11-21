@@ -37,6 +37,9 @@
                             <h3 id="{{ client.name | slugify }}">{{ client.name }}</h3>
                             <ul>
                                 <li><strong>Repo:</strong> <a href="{{ client.repo }}">{{ client.name }}</a></li>
+                                {% if client.website %}
+                                    <li><strong>Website:</strong> <a href="{{ client.website }}">{{ client.website }}</a></li>
+                                {% endif %} 
                                 <li>
                                     <strong>Installation:</strong>
                                     {% if client.installation is iterable %}
