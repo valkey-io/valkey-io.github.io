@@ -3,8 +3,8 @@
 
 {% block main_content %}
     {% set client_path = section.extra.recommended_clients_paths | first %}
-    {% set client = load_data(path = docs::client_json_path(client_path=client_path), format="json", required = false) %}
-    {% if not client %}
+    {% set first_client = load_data(path = docs::client_json_path(client_path=client_path), format="json", required = false) %}
+    {% if not first_client %}
         <strong>Clients page not found.</strong> You likely need to build the client page. See "Building additional content" in the README.md file.
     {% else %}
         <div class="markdown-content">
