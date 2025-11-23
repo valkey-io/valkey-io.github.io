@@ -2,136 +2,188 @@
 title = "Valkey Helm: The new way to deploy Valkey on Kubernetes"
 date = 2025-11-05 
 description = "A guide on why the new Valkey Helm chart exists, how it helps, and how to migrate from Bitnami." 
-authors =  ["maheshcherukumilli"]
+authors =  ["sgissi","maheshcherukumilli"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/valkey-helm.webp"
 +++
 
-Bitnami is changing how it publishes and supports many container images and Helm charts (see [charts issue #35164](https://github.com/bitnami/charts/issues/35164), [charts issue #36215](https://github.com/bitnami/charts/issues/36215), and the [Bitnami Secure Images announcement](https://news.broadcom.com/app-dev/broadcom-introduces-bitnami-secure-images-for-production-ready-containerized-applications)). Some images move behind new terms, and older tags may not be available as before. If your pipelines pull Bitnami charts or images during deploys, you can see rollouts fail (`ImagePullBackOff`, auth/404), clusters drift (staging keeps old cached bits while prod can’t pull or resolves a different tag), and “invisible” upgrades when a moved tag points to a new digest. During incidents, rollbacks slow down or fail because the old image isn’t fetchable. Compliance can break, security patches can stall behind limits or paywalls, and you may face surprise licensing or mirroring costs. Net effect: slower releases, harder debugging, inconsistent environments, and higher operational and business risk.
+Bitnami is changing how it publishes and supports many container images and Helm charts (see [charts issue #35164](https://github.com/bitnami/charts/issues/35164), [charts issue #36215](https://github.com/bitnami/charts/issues/36215), and the [Bitnami Secure Images announcement](https://news.broadcom.com/app-dev/broadcom-introduces-bitnami-secure-images-for-production-ready-containerized-applications)). Some images move behind new terms, and older tags may not be available as before.
+
+If your pipelines pull Bitnami charts or images during deploys, you may experience significant operational issues: rollouts can fail with `ImagePullBackOff` or auth/404 errors, clusters can drift when staging keeps old cached images while production can't pull or resolves a different tag, and "invisible" upgrades can occur when a moved tag points to a new digest. During incidents, rollbacks may slow down or fail entirely because the old image isn't fetchable.
+
+Beyond deployment issues, compliance can break, security patches can stall behind limits or paywalls, and you may face surprise licensing or mirroring costs. The net effect: slower releases, harder debugging, inconsistent environments, and higher operational and business risk.
 
 To reduce the impact on Valkey deployments, the community created an official, project-maintained Helm chart (request: [issue #2371](https://github.com/valkey-io/valkey/issues/2371), chart: [valkey-helm](https://github.com/valkey-io/valkey-helm)). With the official chart, you can pin chart and image versions, keep `values.yaml` in code, and upgrade on your schedule without depending on vendor policy changes.
 
-### Why a Valkey maintained chart helps
+## Why a Valkey maintained chart helps
 
-With the official chart, you run what you intend, not what a third party changes. Pin a chart release from the Valkey repo (for example `--version 0.7.7` from [https://github.com/valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm)) and lock the Valkey image tag in your `values.yaml`. Because the chart follows Valkey releases and docs, you can bump versions in a pull request, test in staging, then promote the same versions to production. If something breaks, use Helm history to roll back with `helm rollback <release> <revision>`. Keep your values in source control, often per environment (`values.staging.yaml`, `values.prod.yaml`), and you get a clean GitOps flow. For details and examples, see the [README](https://github.com/valkey-io/valkey-helm#readme).
+With the official chart, you control exactly which versions you deploy, without third-party vendor policies forcing unexpected changes. Pin a chart release from the Valkey repo (for example `--version 0.9.0` from [https://github.com/valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm)) and lock the Valkey image tag in your `values.yaml`. Because the chart follows Valkey releases and docs, you can bump versions in a pull request, test in staging, then promote the same versions to production.
 
+## Essential capabilities in the Valkey Helm Chart
 
-### Essential capabilities in the Valkey Helm Chart.
+The official Valkey Helm chart supports the following:
 
-This chart focuses on the basics. It gives you a clean default and a few knobs you actually need.
+* **Standalone cache** - Deploy a single Valkey instance with or without data persistence, perfect for simple caching layers and development environments.
 
-* **Small cache for one service.** One Valkey pod, no persistence, ClusterIP service. Fast to start. Good for stateless caches. See the install steps in the [README](https://github.com/valkey-io/valkey-helm#readme).
-* **Read-heavy traffic.** One primary with two replicas. Point reads at a separate service if you prefer. Writes still go to the primary. Configure replicas in `values.yaml` and upgrade with Helm.
-* **Simple durability.** Turn on PVCs. Pick a storage class your cluster supports. Back up PVCs with your platform’s snapshot tools while chart-level hooks are being designed.
-* **Safe deploys.** Pin your chart version and Valkey image tag in `values.yaml`. Use `helm diff` in CI. If probes fail after an upgrade, roll back immediately with Helm.
+* **Replicated read-heavy workloads** - Use a primary-replica topology with separate read and read-write endpoints, distributing read traffic across all replica instances while routing writes to the primary node.
 
-## How to migrate from Bitnami to the Valkey Helm chart (in-place).
+* **ACL-based authentication** - Enable authentication using Access Control Lists for fine-grained user permissions and password-based authentication.
 
-**This path has downtime.** Plan a short **maintenance window** and pause writers during the swap.
+* **TLS encryption** - Enable TLS for encrypted client-server and replica-primary communication, protecting data in transit.
 
-### 1) Find your release and namespace
+* **Metrics** - Monitor Valkey instances using the Prometheus exporter sidecar.
 
+## Migrating from Bitnami to the Official Valkey Chart
+
+Because of differences in how the two charts structure resources, labels, and StatefulSets, you can't upgrade in-place from Bitnami. The charts use incompatible naming conventions and resource management approaches. Instead, deploy the official Valkey chart alongside your existing Bitnami installation and migrate the data. Plan for a brief maintenance window to ensure all writes are fully replicated before switching your applications to the new endpoints.
+
+### Before You Migrate
+
+Review the [official chart documentation](https://github.com/valkey-io/valkey-helm/tree/main/valkey) to understand configuration options and match your current Bitnami settings. Bitnami's default configuration deploys one primary with three replicas, protected by a randomly-generated password and without TLS. The migration steps below will configure the official chart the same way — adjust the chart parameters to match your current deployment.
+
+Make sure to use Bitnami's Valkey chart version 2.0.0 or higher as service name and label have changed from `master` to `primary`.
+
+The following commands should be executed from a Bash shell. You'll need `kubectl` configured to access your Kubernetes cluster, `helm` to install the new chart, and the standard utilities `grep` and `base64`.
+
+### Step 1: Find existing pods, services and namespace
+
+```shell
+$ kubectl get pods --all-namespaces -l app.kubernetes.io/name=valkey -o custom-columns=Pod:.metadata.name,Namespace:.metadata.namespace,Instance:.metadata.labels.app\\.kubernetes\\.io\\/instance
+Pod                                 Namespace   Instance
+valkey-bitnami-primary-0            apps-test   valkey-bitnami
+valkey-bitnami-replicas-0           apps-test   valkey-bitnami
+valkey-bitnami-replicas-1           apps-test   valkey-bitnami
+valkey-bitnami-replicas-2           apps-test   valkey-bitnami
 ```
-helm list --all-namespaces# Example: NAME=valkey-prod  NAMESPACE=acme-valkey
-kubectl get pods,svc,sts,pvc -n acme-valkey
 
+Replace values below with the namespace and instance above:
+
+```bash
+export NAMESPACE="apps-test"
+export INSTANCE="valkey-bitnami"
 ```
 
-### 1) Back up and capture current values
+Identify primary service:
 
+```bash
+export SVCPRIMARY=$(kubectl get service -n $NAMESPACE -l app.kubernetes.io/instance=$INSTANCE,app.kubernetes.io/name=valkey,app.kubernetes.io/component=primary -o jsonpath='{.items[0].metadata.name}')
 ```
-helm get values valkey-prod -n acme-valkey -o yaml > current-values.yaml# Also take an AOF/RDB or storage snapshot
 
+If authentication is enabled, fetch the password:
+
+```bash
+export PASS=$(kubectl get secret -n apps-test -l app.kubernetes.io/name=valkey,app.kubernetes.io/instance=valkey-bitnami -o jsonpath='{.items[0].data.valkey-password}' |  base64 -d)
 ```
 
-### 2) Add the Valkey-helm repo
+### Step 2: Deploy a new Valkey server
 
+Choose an instance name for the new deployment. It must be different from the current instance to avoid overwriting resources.
+
+```bash
+export NEWINSTANCE="valkey"
 ```
+
+Add the official Helm chart repository:
+
+```shell
 helm repo add valkey https://valkey.io/valkey-helm/
 helm repo update
 ```
 
-### 3) Prepare migration overrides
+Create a `values.yaml` file that matches your current deployment. The example below is similar to the default Bitnami Valkey configuration:
 
-Match names so the new chart **reuses the same PVCs and Services**. Create `migrate-values.yaml`:
+**Note**: The example below provides the password as plain-text for simplicity. In production, store the password in a Kubernetes Secret and reference it using the `auth.usersExistingSecret` setting.
 
-```
-# Set to the names your Bitnami release created
-nameOverride: "<bitnami-short-name>"      # e.g., "valkey"
-fullnameOverride: "<bitnami-full-name>"   # e.g., "valkey-master"
-service:
-name: "<existing-service-name>"         # e.g., "valkey"
-port: 6379
-persistence:
-enabled: true
-size: "<existing-pvc-size>"             # e.g., "8Gi"
-storageClass: "<existing-class-or-null>"
+```shell
+cat << EOF > values.yaml
+auth:
+  enabled: true
+  aclUsers:
+    default:
+      password: "$PASS"
+      permissions: "~* &* +@all"
 
-```
+replica:
+  enabled: true
+  replicas: 3
+  persistence:
+    size: 8Gi
 
-Tip: confirm with
-
-```
-kubectl get sts,svc,pvc -n acme-valkey -o wide
-```
-
-### 4) Dry run (recommended)
-
-```
-helm upgrade valkey-prod valkey/valkey \
-  -n acme-valkey \
-  -f current-values.yaml \
-  -f migrate-values.yaml \
-  --dry-run
+valkeyConfig: |
+  appendonly yes
+  save ""
+EOF
 ```
 
-### 5) Enter maintenance window (pause writes)
+Install the new Valkey instance:
 
-### 6) Perform the in-place swap
-
-```
-helm upgrade valkey-prod valkey/valkey \
-  -n acme-valkey \
-  -f current-values.yaml \
-  -f migrate-values.yaml \
-  --atomic --wait --timeout 10m
+```shell
+helm install -n $NAMESPACE $NEWINSTANCE valkey/valkey -f values.yaml
 ```
 
-`--atomic` will auto-rollback if health checks fail.
+Check it is running as expected:
 
-### 7) Verify and reopen traffic
+```shell
+$ kubectl get pods -n $NAMESPACE -l app.kubernetes.io/instance=$NEWINSTANCE
+NAME       READY   STATUS    RESTARTS   AGE
+valkey-0   1/1     Running   0          2m33s
+valkey-1   1/1     Running   0          2m16s
+valkey-2   1/1     Running   0          2m4s
+valkey-3   1/1     Running   0          103s
 
-```
-helm status valkey-prod -n acme-valkey
-kubectl get pods,svc,sts,pvc -n acme-valkey
-```
-
-### Rollback (if needed)
-
-```
-helm history valkey-prod -n acme-valkey
-helm rollback valkey-prod <REVISION> -n acme-valkey --wait
-
+$ kubectl exec -n $NAMESPACE $NEWINSTANCE-0 -c valkey -- valkey-cli -a $PASS --no-auth-warning ping
+PONG
 ```
 
-**Notes**
+Create a shortcut to call Valkey CLI on the new instance:
 
-* PVC reuse depends on matching names; `fullnameOverride` is key.
-* Keep ports and Service names the same to avoid app changes.
-* Copy auth/TLS settings into the new chart before the swap.
+```shell
+export NEW_VALKEY_CLI="kubectl exec -n $NAMESPACE $NEWINSTANCE-0 -c valkey -- valkey-cli -a $PASS --no-auth-warning"
+```
 
-If you run into issues use the chart repo issues at https://github.com/valkey-io/valkey-helm/issues.
+### Step 3: Enable replication
 
-## Next steps
+Replicate data from current instance and ensure it is replicating:
 
-The [issue](https://github.com/bitnami/charts/issues/36215) outlines the planned improvements for the official Valkey Helm chart, which is being actively developed in the open at the [valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm) repository.
+```shell
+$ $NEW_VALKEY_CLI config set primaryauth $PASS
+OK
+$ $NEW_VALKEY_CLI replicaof $SVCPRIMARY 6379
+OK
+$ $NEW_VALKEY_CLI info | grep '^\(role\|master_host\|master_link_status\)'
+role:slave
+master_host:valkey-bitnami-primary
+master_link_status:up
+```
 
-* **Cluster mode.** Make it easy to run primaries and replicas across slots with sane defaults.
-* **Security.** Expose TLS, auth, and Secrets cleanly in values, with copy-paste examples.
-* **Observability.** Add a metrics toggle (Prometheus exporter and sample dashboards).
-* **Backups.** Provide a simple path to schedule snapshots and store them in S3 or GCS.
-* **Upgrades.** Publish notes tied to Valkey releases. Add hooks and checks so failures are obvious and quick to revert.
-* **Docs.** Keep them short. Add clear examples. Link to deeper guides only when needed.
+### Step 4: Enter maintenance window
 
-If you currently rely on Bitnami, test this chart in a dev cluster and try your normal workflows. If something is missing, open an issue at [valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm/issues). Once you try out the official Valkey helm chart please share feedback so the chart grows in the right direction.
+Pause all clients connecting to Valkey. Wait a few seconds to ensure all data is replicated and reconfigure the new instance as primary:
+
+```bash
+$ $NEW_VALKEY_CLI replicaof no one
+OK
+$ $NEW_VALKEY_CLI info | grep '^role:'
+role:master
+```
+
+### Step 5: Switch clients to new endpoints
+
+Update all clients to use the new Valkey read-write and read-only endpoints which are exposed as services (`SERVICE.NAMESPACE.svc.cluster.local`). In the example above:
+
+* Read-Write (primary): `valkey.apps-test.svc.cluster.local`
+* Read-Only (all instances): `valkey-read.apps-test.svc.cluster.local`
+
+## What's next for Valkey Helm?
+
+The chart [milestones](https://github.com/valkey-io/valkey-helm/milestones) outlines the planned improvements for the official Valkey Helm chart, which is being actively developed in the open at the [valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm) repository.
+
+* **Sentinel** - Enable high-availability via Sentinel with automated failover
+* **Backups** - Provide paths to schedule snapshots
+
+## Get started today
+
+If you currently rely on Bitnami, test this chart in a dev cluster and try your normal workflows. The official Valkey Helm chart provides a stable, community-maintained path forward that puts you in control of your deployment lifecycle.
+
+If something is missing or you encounter issues, the Valkey community is here to help. Open an issue at [valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm/issues) or reach out on the [#valkey-helm](https://valkey-oss-developer.slack.com/archives/C09JZ6N2AAV) Slack channel. Your feedback helps ensure the chart grows in the right direction for the entire community.
