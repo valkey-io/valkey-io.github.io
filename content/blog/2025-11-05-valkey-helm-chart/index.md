@@ -32,7 +32,7 @@ The official Valkey Helm chart supports the following:
 
 * **TLS encryption** - Enable TLS for encrypted client-server and replica-primary communication, protecting data in transit.
 
-* **Metrics** - Monitor Valkey instances using the Prometheus exporter sidecar.
+* **Metrics** - Collect Valkey metrics by enabling the Prometheus exporter.
 
 ## Migrating from Bitnami to the Official Valkey Chart
 
@@ -42,14 +42,16 @@ Because of differences in how the two charts structure resources, labels, and St
 
 Review the [official chart documentation](https://github.com/valkey-io/valkey-helm/tree/main/valkey) to understand configuration options and match your current Bitnami settings. Bitnami's default configuration deploys one primary with three replicas, protected by a randomly-generated password and without TLS. The migration steps below will configure the official chart the same way — adjust the chart parameters to match your current deployment.
 
-Make sure to use Bitnami's Valkey chart version 2.0.0 or higher as service name and label have changed from `master` to `primary`.
+Ensure you are using Bitnami Valkey chart version 2.0.0 or higher. That release updated service names and labels from `master` to `primary` for consistency with current terminology, and the migration steps below assumes that naming convention.
 
 The following commands should be executed from a Bash shell. You'll need `kubectl` configured to access your Kubernetes cluster, `helm` to install the new chart, and the standard utilities `grep` and `base64`.
 
 ### Step 1: Find existing pods, services and namespace
 
 ```shell
+# List all pods in all namespaces with app name 'valkey'
 $ kubectl get pods --all-namespaces -l app.kubernetes.io/name=valkey -o custom-columns=Pod:.metadata.name,Namespace:.metadata.namespace,Instance:.metadata.labels.app\\.kubernetes\\.io\\/instance
+# * Sample Output *
 Pod                                 Namespace   Instance
 valkey-bitnami-primary-0            apps-test   valkey-bitnami
 valkey-bitnami-replicas-0           apps-test   valkey-bitnami
@@ -64,15 +66,13 @@ export NAMESPACE="apps-test"
 export INSTANCE="valkey-bitnami"
 ```
 
-Identify primary service:
+Save current environment details to be used for replication:
 
 ```bash
+# Identify the name of the current primary service
 export SVCPRIMARY=$(kubectl get service -n $NAMESPACE -l app.kubernetes.io/instance=$INSTANCE,app.kubernetes.io/name=valkey,app.kubernetes.io/component=primary -o jsonpath='{.items[0].metadata.name}')
-```
 
-If authentication is enabled, fetch the password:
-
-```bash
+# Fetch the default user password
 export PASS=$(kubectl get secret -n apps-test -l app.kubernetes.io/name=valkey,app.kubernetes.io/instance=valkey-bitnami -o jsonpath='{.items[0].data.valkey-password}' |  base64 -d)
 ```
 
@@ -125,21 +125,25 @@ helm install -n $NAMESPACE $NEWINSTANCE valkey/valkey -f values.yaml
 Check it is running as expected:
 
 ```shell
+# List new pods and ensure they are in 'Running' state
 $ kubectl get pods -n $NAMESPACE -l app.kubernetes.io/instance=$NEWINSTANCE
+# * Sample Output *
 NAME       READY   STATUS    RESTARTS   AGE
 valkey-0   1/1     Running   0          2m33s
 valkey-1   1/1     Running   0          2m16s
 valkey-2   1/1     Running   0          2m4s
 valkey-3   1/1     Running   0          103s
 
+# Check that server is responding to CLI commands
 $ kubectl exec -n $NAMESPACE $NEWINSTANCE-0 -c valkey -- valkey-cli -a $PASS --no-auth-warning ping
+# * Sample Output *
 PONG
 ```
 
-Create a shortcut to call Valkey CLI on the new instance:
+Create a shell alias to call the Valkey CLI on the new instance:
 
 ```shell
-export NEW_VALKEY_CLI="kubectl exec -n $NAMESPACE $NEWINSTANCE-0 -c valkey -- valkey-cli -a $PASS --no-auth-warning"
+alias new-valkey-cli="kubectl exec -n $NAMESPACE $NEWINSTANCE-0 -c valkey -- valkey-cli -a $PASS --no-auth-warning"
 ```
 
 ### Step 3: Enable replication
@@ -147,11 +151,19 @@ export NEW_VALKEY_CLI="kubectl exec -n $NAMESPACE $NEWINSTANCE-0 -c valkey -- va
 Replicate data from current instance and ensure it is replicating:
 
 ```shell
-$ $NEW_VALKEY_CLI config set primaryauth $PASS
+# Configure password to connect to existing Valkey instance
+$ new-valkey-cli config set primaryauth $PASS
+# * Sample Output *
 OK
-$ $NEW_VALKEY_CLI replicaof $SVCPRIMARY 6379
+
+# Configure new instance to replicate data from the current instance
+$ new-valkey-cli replicaof $SVCPRIMARY 6379
+# * Sample Output *
 OK
-$ $NEW_VALKEY_CLI info | grep '^\(role\|master_host\|master_link_status\)'
+
+# Check status of replication, it should return a 'slave' role and master_link_status as 'up'
+$ new-valkey-cli info | grep '^\(role\|master_host\|master_link_status\)'
+# * Sample Output *
 role:slave
 master_host:valkey-bitnami-primary
 master_link_status:up
@@ -159,28 +171,32 @@ master_link_status:up
 
 ### Step 4: Enter maintenance window
 
-Pause all clients connecting to Valkey. Wait a few seconds to ensure all data is replicated and reconfigure the new instance as primary:
+Pause all clients connecting to the Valkey server deployed using Bitnami's chart. Wait a few seconds to ensure all data is replicated and reconfigure the new instance back to primary:
 
 ```bash
-$ $NEW_VALKEY_CLI replicaof no one
+# Stops replication with old Valkey instance and become primary
+$ new-valkey-cli replicaof no one
+# * Sample Output *
 OK
-$ $NEW_VALKEY_CLI info | grep '^role:'
+
+# Check that instance role is 'master'
+$ new-valkey-cli info | grep '^role:'
+# * Sample Output *
 role:master
 ```
 
 ### Step 5: Switch clients to new endpoints
 
-Update all clients to use the new Valkey read-write and read-only endpoints which are exposed as services (`SERVICE.NAMESPACE.svc.cluster.local`). In the example above:
+Update all clients to use the new Valkey read-write and read-only endpoints which are exposed as services. To list the service endpoints:
 
-* Read-Write (primary): `valkey.apps-test.svc.cluster.local`
-* Read-Only (all instances): `valkey-read.apps-test.svc.cluster.local`
+```shell
+echo "Read-Write (primary): $NEWINSTANCE.$NAMESPACE.svc.cluster.local"
+echo "Read-only (all instances): $NEWINSTANCE-read.$NAMESPACE.svc.cluster.local"
+```
 
 ## What's next for Valkey Helm?
 
-The chart [milestones](https://github.com/valkey-io/valkey-helm/milestones) outlines the planned improvements for the official Valkey Helm chart, which is being actively developed in the open at the [valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm) repository.
-
-* **Sentinel** - Enable high-availability via Sentinel with automated failover
-* **Backups** - Provide paths to schedule snapshots
+The chart [milestones](https://github.com/valkey-io/valkey-helm/milestones) outlines the planned improvements for the official Valkey Helm chart, which is being actively developed in the open at the [valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm) repository. High-availability via Sentinel for automated failover is the next upcoming feature [#22](https://github.com/valkey-io/valkey-helm/issues/22), followed by Cluster support [#18](https://github.com/valkey-io/valkey-helm/issues/18).
 
 ## Get started today
 
