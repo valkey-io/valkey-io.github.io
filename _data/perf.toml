@@ -1,0 +1,12 @@
+# Example of a homepage performance card.
+# [[dashboards]]
+# title = "GETs/SETs on `9.0.0`"
+# description = "Performance dashboard of GETs and SETs on the Valkey 9.0.0 release. Updated on Oct 21, 2025."
+# link = "https://perf-dashboard.valkey.io/public-dashboards/3e45bf8ded3043edaa941331cd1a94e2"
+
+# Order in this file indicates rendering order.
+
+[[dashboards]]
+title = "GETs/SETs on `unstable`"
+description = "Performance dashboard of GETs and SETs on the Valkey `unstable` branch. Updated nightly."
+link = "https://perf-dashboard.valkey.io/public-dashboards/3e45bf8ded3043edaa941331cd1a94e2"
