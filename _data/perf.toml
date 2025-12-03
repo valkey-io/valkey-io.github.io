@@ -1,4 +1,5 @@
 # Example of a homepage performance card.
+# Both `title` and `description` can contain markdown for styles, but not links.
 # [[dashboards]]
 # title = "GETs/SETs on `9.0.0`"
 # description = "Performance dashboard of GETs and SETs on the Valkey 9.0.0 release. Updated on Oct 21, 2025."
