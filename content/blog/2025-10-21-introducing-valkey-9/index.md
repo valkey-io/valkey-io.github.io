@@ -83,5 +83,5 @@ And, perhaps, most importantly, a new, whimsical [LOLWUT](/commands/lolwut/) gen
 ## Get it today
 
 Valkey 9.0 was built by the collaborative efforts of dozens of contributors.
-Make sure and grab Valkey 9.0 today as a [binary, container](/download/releases/v9-0-0), or [build it from source](https://github.com/valkey-io/valkey/releases/tag/9.0.0) and watch for it in your favourite Linux distribution.
+Make sure and grab Valkey 9.0 today as a [binary, container](/download/releases/v9-0-1), or [build it from source](https://github.com/valkey-io/valkey/releases/tag/9.0.1) and watch for it in your favourite Linux distribution.
 Feel free to post a question on our GitHub discussions or Slack and if you find a bug, make sure and tell the team as an issue.
