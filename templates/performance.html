@@ -13,24 +13,26 @@
         {% for section in perf.sections %}
         <section class="performance-section">
             <h2>{{ section.title }}</h2>
-            
+
             {% if section.iframe_url %}
             <iframe src="{{ section.iframe_url }}" width="100%" height="600" frameborder="0"></iframe>
             {% endif %}
-            
+
             {% if section.description %}
-            <p>{{ section.description }}</p>
+            <p>{{ section.description | markdown | safe }}</p>
             {% endif %}
-            
+
             {% if section.methodology %}
             <h3>Methodology</h3>
-            <p>{{ section.methodology }}</p>
+            <p>{{ section.methodology | markdown | safe }}</p>
             {% endif %}
         </section>
         {% endfor %}
 
         <hr>
-        <p>For questions about performance or to contribute benchmarking data, visit our <a href="/community/">community page</a> or join the discussion on <a href="https://github.com/orgs/valkey-io/discussions">GitHub</a>.</p>
+        <p>For questions about performance or to contribute benchmarking data, visit our <a href="/community/">community
+                page</a> or join the discussion on <a href="https://github.com/orgs/valkey-io/discussions">GitHub</a>.
+        </p>
     </main>
 </div>
 {% endblock content %}
