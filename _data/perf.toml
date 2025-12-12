@@ -1,0 +1,22 @@
+# Example of a homepage performance card.
+# Both `title` and `description` can contain markdown for styles, but not links.
+# [[dashboards]]
+# title = "GETs/SETs on `9.0.0`"
+# description = "Performance dashboard of GETs and SETs on the Valkey 9.0.0 release. Updated on Oct 21, 2025."
+# link = "https://perf-dashboard.valkey.io/public-dashboards/3e45bf8ded3043edaa941331cd1a94e2"
+
+# Order in this file indicates rendering order.
+
+[[dashboards]]
+title = "Valkey Performance Dashboards"
+description = "Valkey Performance Dashboards provide a consolidated view of throughput trends across versions, helping teams validate improvements and identify regressions."
+link = "/performance/"
+
+# Performance dashboard sections for /performance page
+# Order in this file indicates rendering order.
+
+[[sections]]
+title = "Throughput Across Versions"
+iframe_url = "https://perf-dashboard.valkey.io/public-dashboards/38ad683dbd06456c829b547d97e2b7da"
+description = "This dashboard visualizes throughput trends across Valkey versions. It helps compare key releases side by side, highlight performance gains from new features. Read more about [Unlocking 1 Million RPS in Valkey](/blog/unlock-one-million-rps/)."
+methodology = "These metrics are generated using the [valkey-perf-benchmark](https://github.com/valkey-io/valkey-perf-benchmark) tool an AWS `c8g.metal.24xl` instance, running a matrix of configurations that vary pipelining (1, 10), I/O threading (1, 9), and with a data size of 512 bytes. To further stabilize results, we apply IRQ tuning by pinning network interrupts away from CPUs dedicated to the server process, and we isolate the server and benchmark client on separate NUMA nodes to remove L3 cache contention."
