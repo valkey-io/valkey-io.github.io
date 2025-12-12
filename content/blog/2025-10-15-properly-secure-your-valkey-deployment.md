@@ -1,7 +1,7 @@
 +++
 title= "How to Properly Secure Your Valkey Deployment"
 description = "Learn how to secure your Valkey deployment with defense in depth through network configuration, authentication, access controls, and operational best practices for production environments"
-date= 2025-10-15 00:00:00
+date= 2025-12-12 00:00:00
 authors= [ "allenhelton"]
 
 [extra]
