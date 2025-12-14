@@ -8,11 +8,10 @@ featured = true
 featured_image = "/assets/media/featured/valkey-helm.webp"
 +++
 
-Bitnami is changing how it publishes and supports many container images and Helm charts (see [charts issue #35164](https://github.com/bitnami/charts/issues/35164), [charts issue #36215](https://github.com/bitnami/charts/issues/36215), and the [Bitnami Secure Images announcement](https://news.broadcom.com/app-dev/broadcom-introduces-bitnami-secure-images-for-production-ready-containerized-applications)). Some images move behind new terms, and older tags may not be available as before.
+Earlier this year, Bitnami changed how it publishes and supports many container images and Helm charts (see [charts issue #35164](https://github.com/bitnami/charts/issues/35164), [charts issue #36215](https://github.com/bitnami/charts/issues/36215), and the [Bitnami Secure Images announcement](https://news.broadcom.com/app-dev/broadcom-introduces-bitnami-secure-images-for-production-ready-containerized-applications)). Some images move behind new terms, and older tags may not be available as before.
 
-If your pipelines pull Bitnami charts or images during deploys, you may experience significant operational issues: rollouts can fail with `ImagePullBackOff` or auth/404 errors, clusters can drift when staging keeps old cached images while production can't pull or resolves a different tag, and "invisible" upgrades can occur when a moved tag points to a new digest. During incidents, rollbacks may slow down or fail entirely because the old image isn't fetchable.
+If your pipelines pull Bitnami charts or images during deploys, you may experience significant operational issues: rollouts can fail with `ImagePullBackOff` or auth/404 errors, clusters can drift when staging keeps old cached images while production can't pull or resolve a different tag, and "invisible" upgrades can occur when a moved tag points to a new digest. During incidents, rollbacks may slow down or fail entirely because the old image isn't fetchable.
 
-Beyond deployment issues, compliance can break, security patches can stall behind limits or paywalls, and you may face surprise licensing or mirroring costs. The net effect: slower releases, harder debugging, inconsistent environments, and higher operational and business risk.
 
 To reduce the impact on Valkey deployments, the community created an official, project-maintained Helm chart (request: [issue #2371](https://github.com/valkey-io/valkey/issues/2371), chart: [valkey-helm](https://github.com/valkey-io/valkey-helm)). With the official chart, you can pin chart and image versions, keep `values.yaml` in code, and upgrade on your schedule without depending on vendor policy changes.
 
@@ -20,11 +19,11 @@ To reduce the impact on Valkey deployments, the community created an official, p
 
 With the official chart, you control exactly which versions you deploy, without third-party vendor policies forcing unexpected changes. Pin a chart release from the Valkey repo (for example `--version 0.9.0` from [https://github.com/valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm)) and lock the Valkey image tag in your `values.yaml`. Because the chart follows Valkey releases and docs, you can bump versions in a pull request, test in staging, then promote the same versions to production.
 
-## Essential capabilities in the Valkey Helm Chart
+## Capabilities in the Valkey Helm Chart
 
 The official Valkey Helm chart supports the following:
 
-* **Standalone cache** - Deploy a single Valkey instance with or without data persistence, perfect for simple caching layers and development environments.
+* **Standalone instance** - Deploy a single Valkey instance with or without data persistence, perfect for simple caching layers and development environments.
 
 * **Replicated read-heavy workloads** - Use a primary-replica topology with separate read and read-write endpoints, distributing read traffic across all replica instances while routing writes to the primary node.
 
