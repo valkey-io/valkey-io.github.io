@@ -12,7 +12,6 @@ Earlier this year, Bitnami changed how it publishes and supports many container 
 
 If your pipelines pull Bitnami charts or images during deploys, you may experience significant operational issues: rollouts can fail with `ImagePullBackOff` or auth/404 errors, clusters can drift when staging keeps old cached images while production can't pull or resolve a different tag, and "invisible" upgrades can occur when a moved tag points to a new digest. During incidents, rollbacks may slow down or fail entirely because the old image isn't fetchable.
 
-
 To reduce the impact on Valkey deployments, the community created an official, project-maintained Helm chart (request: [issue #2371](https://github.com/valkey-io/valkey/issues/2371), chart: [valkey-helm](https://github.com/valkey-io/valkey-helm)). With the official chart, you can pin chart and image versions, keep `values.yaml` in code, and upgrade on your schedule without depending on vendor policy changes.
 
 ## Why a Valkey maintained chart helps
@@ -138,12 +137,18 @@ kubectl get pods -n $NAMESPACE -l app.kubernetes.io/instance=$NEWINSTANCE
 kubectl exec -n $NAMESPACE $NEWINSTANCE-0 -c valkey -- valkey-cli -a $PASS --no-auth-warning ping
 # * Sample Output *
 # PONG
+
+# Check that the current instance is reachable from the new instance
+kubectl exec -n $NAMESPACE $NEWINSTANCE-0 -c valkey -- valkey-cli -a $PASS -h $SVCPRIMARY --no-auth-warning ping
+# * Sample Output *
+# PONG
 ```
 
-Create a shell alias to call the Valkey CLI on the new instance:
+Create shell aliases to call the Valkey CLI on the new and current instances:
 
 ```bash
 alias new-valkey-cli="kubectl exec -n $NAMESPACE $NEWINSTANCE-0 -c valkey -- valkey-cli -a $PASS --no-auth-warning"
+alias current-valkey-cli="kubectl exec -n $NAMESPACE $NEWINSTANCE-0 -c valkey -- valkey-cli -a $PASS -h $SVCPRIMARY --no-auth-warning"
 ```
 
 ### Step 3: Enable replication
@@ -162,7 +167,7 @@ new-valkey-cli replicaof $SVCPRIMARY 6379
 # OK
 
 # Check status of replication, it should return a 'slave' role and master_link_status as 'up'
-new-valkey-cli info | grep '^\(role\|master_host\|master_link_status\)'
+new-valkey-cli info replication | grep '^\(role\|master_host\|master_link_status\)'
 # * Sample Output *
 # role:slave
 # master_host:valkey-bitnami-primary
@@ -171,11 +176,13 @@ new-valkey-cli info | grep '^\(role\|master_host\|master_link_status\)'
 
 ### Step 4: Enter maintenance window
 
-Pause all clients connecting to the Valkey server deployed using Bitnami's chart. Wait a few seconds to ensure all data is replicated and reconfigure the new instance back to primary:
+Pause all clients connecting to the Valkey server deployed using Bitnami's chart. The failover process will pause client writes, ensure changes are replicated, and promote the new instance to primary:
 
 ```bash
-# Stops replication with old Valkey instance and become primary
-new-valkey-cli replicaof no one
+# Retrieve the new instance Pod IP
+export PODPRIMARY=$(kubectl get pod -n $NAMESPACE $NEWINSTANCE-0 -o jsonpath='{.status.podIP'})
+# Initiate failover
+current-valkey-cli failover to $PODPRIMARY 6379
 # * Sample Output *
 # OK
 
