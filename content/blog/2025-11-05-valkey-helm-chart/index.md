@@ -16,7 +16,7 @@ To reduce the impact on Valkey deployments, the community created an official, p
 
 ## Why a Valkey maintained chart helps
 
-With the official chart, you control exactly which versions you deploy, without third-party vendor policies forcing unexpected changes. Pin a chart release from the Valkey repo (for example `--version 0.9.0` from [https://github.com/valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm)) and lock the Valkey image tag in your `values.yaml`. Because the chart follows Valkey releases and docs, you can bump versions in a pull request, test in staging, then promote the same versions to production.
+With the official chart, you control exactly which versions you deploy, without third-party vendor policies forcing unexpected changes. Pin a chart release from the Valkey repo (for example `--version 0.9.2` from [https://github.com/valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm)) and lock the Valkey image tag in your `values.yaml`. Because the chart follows Valkey releases and docs, you can bump versions in a pull request, test in staging, then promote the same versions to production.
 
 ## Capabilities in the Valkey Helm Chart
 
