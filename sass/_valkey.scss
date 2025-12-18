@@ -769,7 +769,7 @@ p {
     }
   }
 
-  .col_3 {
+  .col-3 {
     @include respond-min(768px) {
       flex: 1 1 25%;
     }
@@ -1853,7 +1853,7 @@ html.banner-hidden .banner {
   .inner-card {
     background: white;
     padding: 3rem;
-    border-radius: 20px;
+    border-radius: 10px;
     margin: 0 0 3rem;
 
     h4 {
@@ -2046,12 +2046,17 @@ blockquote {
 }
 
 // Homepage Blog Cards with Featured Images
+.homepage-performance-section,
 .homepage-blog-section {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
+.homepage-performance-section {
+  margin-bottom: 3rem;
+}
 
+.homepage-performance-card,
 .homepage-blog-card {
   background: #fff;
   border-radius: 10px;
@@ -2078,6 +2083,7 @@ blockquote {
   border-top-right-radius: 10px;
 }
 
+.homepage-performance-card-content,
 .homepage-blog-card-content {
   padding: 1.5rem;
   flex: 1;
@@ -2085,6 +2091,10 @@ blockquote {
   flex-direction: column;
 }
 
+.homepage-performance-card h4 p {
+  margin: none;
+}
+.homepage-performance-card h4,
 .homepage-blog-card-title {
   margin: 0 0 1rem 0;
   font-size: 1.6rem;
@@ -2101,7 +2111,7 @@ blockquote {
     color: #667eea;
   }
 }
-
+.homepage-performance-card h4 + p,
 .homepage-blog-card-description {
   margin: 0 0 1.5rem 0;
   font-size: 1.4rem;
@@ -2113,7 +2123,7 @@ blockquote {
   overflow: hidden;
   flex: 1;
 }
-
+.homepage-performance-card .view-dashboard,
 .homepage-blog-card-readmore {
   display: inline-flex;
   align-items: center;
@@ -2130,7 +2140,7 @@ blockquote {
   transition: all 0.2s ease;
   background: #fff;
 }
-
+.homepage-performance-card .view-dashboard:hover,
 .homepage-blog-card-readmore:hover {
   background: #667eea;
   color: #fff;
