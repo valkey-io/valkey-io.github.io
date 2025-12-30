@@ -25,8 +25,14 @@ Dec 13, 2025
 
 Dongsheng Building, Tower A, No. 8 Zhongguancun East Road, Haidian District, Beijing (490 meters walk from North Exit A of Wudaokou Subway Station)
 
-## 门票 / Registration
+## 演示 PDF / Presentation Slides
 
-[领取您的免费门票](https://www.wjx.top/vm/tqTMGH4.aspx)
-
-[Get your free ticket](https://www.wjx.top/vm/tqTMGH4.aspx)
+* [什么是 Valkey：从诞生到未来发展方向](./slides/什么是Valkey：从诞生到未来发展方向.pdf)
+* [Valkey Dual Channel Replication](./slides/Valkey-Dual-Channel-Replication.pdf)
+* [Valkey 高可用切换技术演进及最佳实践](./slides/Valkey高可用切换技术演进及最佳实践.pdf)
+* [基于 Valkey 构建超大规模的集群服务](./slides/基于Valkey构建超大规模的集群服务.pdf)
+* [Valkey Cluster Atomic Slot Migration](./slides/Valkey-Cluster-Atomic-Slot-Migration.pdf)
+* [Valkey Hash Field Expiration 特性解读](./slides/Valkey-Hash-Field-Expiration特性解读.pdf)
+* [Valkey Over RDMA: 极致的高性能 KV 存储](./slides/Valkey-Over-RDMA：极致的高性能KV存储.pdf)
+* [Valkey Over MPTCP](./slides/Valkey-Over-MPTCP.pdf)
+* [Valkey 多可用区部署实践](./slides/Valkey多可用区部署实践.pdf)
