@@ -1,6 +1,6 @@
 +++
 title = "Valkey Helm: The new way to deploy Valkey on Kubernetes"
-date = 2025-11-05 
+date = 2026-01-06
 description = "A guide on why the new Valkey Helm chart exists, how it helps, and how to migrate from Bitnami." 
 authors =  ["sgissi","maheshcherukumilli"]
 [extra]
