@@ -1,0 +1,67 @@
+.footer-email-list {
+    margin-top: 2em;
+    margin-bottom: 1em;
+    text-align: left;
+    h2 {
+        margin-top: 0;
+    }
+    
+    .footer-form {
+        div.field {
+            text-align: left;
+        }
+        .legal-consent-container, .hs-richtext {
+            text-align: left;
+            p {
+                max-width: none;
+                margin: auto;
+            }
+        }
+        input[type="submit"] {
+            background: none;
+            border: 1px solid white;
+            color: white;
+            padding: 0.5em 2em;
+            cursor: pointer;
+        }
+        .actions {
+            text-align: left;
+        }
+        .hs_submit {
+            padding-top: 1em;
+            height: 100px; /* this is due to the floating  captcha badge */
+        }
+        .hs_recaptcha {
+            float: right;
+            opacity: 0.5;
+            min-height: 60px;
+        }
+        .hs-error-msgs {
+            list-style-type: none;
+            color: red;
+            padding-left: 0;
+            margin-top: 0;
+            li {
+                adding-left: 0;
+            }
+        }
+
+        input[type="text"], 
+        input[type="email"],
+        select {
+            background: none;
+            border: none;
+            border-bottom: 1px solid white;
+            color: white;
+            &::placeholder {
+                opacity: 1;
+                color: white;
+            }
+            width: 100%;
+            margin-bottom: 0.75em;
+        }
+        select {
+            color: white;
+        }
+    }
+}
