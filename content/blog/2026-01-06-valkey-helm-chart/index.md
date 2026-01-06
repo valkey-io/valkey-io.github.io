@@ -8,7 +8,7 @@ featured = true
 featured_image = "/assets/media/featured/valkey-helm.webp"
 +++
 
-Earlier this year, Bitnami changed how it publishes and supports many container images and Helm charts (see [charts issue #35164](https://github.com/bitnami/charts/issues/35164), [charts issue #36215](https://github.com/bitnami/charts/issues/36215), and the [Bitnami Secure Images announcement](https://news.broadcom.com/app-dev/broadcom-introduces-bitnami-secure-images-for-production-ready-containerized-applications)). Some images move behind new terms, and older tags may not be available as before.
+Last year, Bitnami changed how it publishes and supports many container images and Helm charts (see [charts issue #35164](https://github.com/bitnami/charts/issues/35164), [charts issue #36215](https://github.com/bitnami/charts/issues/36215), and the [Bitnami Secure Images announcement](https://news.broadcom.com/app-dev/broadcom-introduces-bitnami-secure-images-for-production-ready-containerized-applications)). Some images move behind new terms, and older tags may not be available as before.
 
 If your pipelines pull Bitnami charts or images during deploys, you may experience significant operational issues: rollouts can fail with `ImagePullBackOff` or auth/404 errors, clusters can drift when staging keeps old cached images while production can't pull or resolve a different tag, and "invisible" upgrades can occur when a moved tag points to a new digest. During incidents, rollbacks may slow down or fail entirely because the old image isn't fetchable.
 
