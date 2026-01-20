@@ -2,7 +2,7 @@
 title = "Valkey 2025 Year-End Review: Reflecting on Progress and Looking Ahead"
 date = 2026-01-20
 description = "Valkey 2025 recap and 2026 goals"
-authors= ["madolson"], ["kyledvs"], ["crystalpham"]
+authors= ["madolson", "kyledvs", "crystalpham"]
 +++
 
 As we kick off 2026, it’s a great moment to pause, reflect, and celebrate what the Valkey project and its community has accomplished together. This past year marked an important chapter for Valkey, one defined by growth, collaboration, and a shared commitment to building an open, high-performance key-value store for everyone.
