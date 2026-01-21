@@ -1,7 +1,7 @@
 +++
 title = "Valkey 2025 Year-End Review: Reflecting on Progress and Looking Ahead"
 date = 2026-01-20
-description = "Valkey 2025 recap and 2026 goals"
+description = "This past year marked an important chapter for Valkey, one defined by growth, collaboration, and a shared commitment to building an open, high-performance key-value store for everyone."
 authors= ["madolson", "kyledvs", "crystalpham"]
 +++
 
@@ -9,34 +9,27 @@ As we kick off 2026, it’s a great moment to pause, reflect, and celebrate what
 ## 2025 Key Milestones
 This past year brought meaningful progress across the Valkey ecosystem. Some highlights include:
 * [Valkey bundle](https://valkey.io/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/)
-JSON
-Bloom
-Vector Search
-LDAP
+    * JSON
+    * Bloom
+    * Vector Search
+    * LDAP
 * [Valkey 8.1 release](https://valkey.io/blog/valkey-8-1-0-ga/)
-Hash table
-* Valkey 9.0 release
+* [Valkey 9.0 release](https://valkey.io/blog/introducing-valkey-9/)
 Valkey 9.0 brings innovation, long-requested features, and improvements to classic features updated with 1 billion+ RPS clusters, 40% higher throughput, and major feature launches including:
-Hash field expiration — fine-grained TTLs that automatically free memory
-Atomic slot migration — seamless, zero-error resharding with no downtime
-Multiple databases in cluster mode — isolate workloads within a single cluster
-
-    * [Read the blog here >>](https://valkey.io/blog/introducing-valkey-9/)
-
-    * [Press Release >>](https://www.linuxfoundation.org/press/valkey-9.0-delivers-performance-and-resiliency-for-real-time-workloads)
-
-    * [Download >>](https://valkey.io/download/)
+    * Hash field expiration — fine-grained TTLs that automatically free memory
+    * Atomic slot migration — seamless, zero-error resharding with no downtime
+    * Multiple databases in cluster mode — isolate workloads within a single cluster
 * Technical milestones
-Try me Valkey
-[Valkey Glide](https://valkey.io/blog/az-affinity-strategy/) 
-[Helm Chart ](https://valkey.io/blog/valkey-helm-chart/) (blog post came out in 2026, but it was actually released in 2025)
-[Performance Dashboards ](https://valkey.io/performance/)
-[Valkey swift](https://valkey.io/blog/valkey-swift/)
+    * [Try Valkey](https://valkey.io/try-valkey/)
+    * [Valkey Glide](https://valkey.io/blog/az-affinity-strategy/) 
+    * [Helm Chart ](https://valkey.io/blog/valkey-helm-chart/) 
+    * [Performance Dashboards ](https://valkey.io/performance/)
+    * [Valkey swift](https://valkey.io/blog/valkey-swift/)
 ## Community Growth
 ### 2025 events recap
 We hosted our first Valkey conferences, [Keyspace Amsterdam](https://events.linuxfoundation.org/keyspace/) and [Keyspace Beijing](https://valkey.io/events/keyspace-beijing-2025/)! At Keyspace Amsterdam, Sr. Developer Advocate Roberto Luna Rojas presented [“Valkey‑bundle: One‑stop shop for real‑time applications."](https://bit.ly/4qlG1M1) You can revisit KeySpace Amsterdam content anytime through the session playlist [here](https://www.youtube.com/watch?v=5jko_JMQVpg&list=PLAV1X7hxH2HtZWc2YNQRMQe9FT9XTWemE).
 
-While in Beijing, Sr. Developer Advocate Kyle Davis joined a panel to share insights on Valkey and real‑world adoption. More than insert number developers, SREs, and DevOps professionals came together to exchange ideas, share best practices, and explore new use cases powered by Valkey. 
+While in Beijing, some of the Valkey community members joined a panel to share insights on Valkey and real‑world adoption. More than 65+ in-person and 1,000+ on-stream consisting of developers, SREs, and DevOps professionals came together to exchange ideas, share best practices, and explore new use cases powered by Valkey. 
 ![KeySpace-Beijing](image3.jpg)
 ![KeySpace-Beijing](image4.jpg)
 
@@ -44,7 +37,7 @@ At [AWS re:Invent](https://reinvent.awsevents.com/) in Las Vegas, Valkey took ov
 ![house-of-valkey](image1.png)
 ![house-of-valkey](image2.png)
 
-At [Open Source Summit Japan](https://www.youtube.com/watch?v=8-trRjBr81I&list=PLbzoR-pLrL6pRN6kobVnmu0rY2RLLczAj), Madelyn Olson of the Valkey Technical Steering Committee and Roberto Luna Rojas, Sr. Developer Advocate, presented sessions on open source governance, Linux packaging, community transitions, and GitHub best practices. [Watch the session here >>](https://www.youtube.com/watch?v=eW3uLjIj69g)
+At [Open Source Summit Japan](https://www.youtube.com/watch?v=8-trRjBr81I&list=PLbzoR-pLrL6pRN6kobVnmu0rY2RLLczAj), Madelyn Olson of the Valkey Technical Steering Committee and Roberto Luna Rojas, Sr. Developer Advocate, presented sessions on open source governance, Linux packaging, community transitions, and GitHub best practices. [Watch the session here.](https://www.youtube.com/watch?v=eW3uLjIj69g)
 
 Beyond those key highlights, the Valkey team and community stayed active throughout the year, showing up at many events around the world. [SymfonyCon Amsterdam](https://live.symfony.com/2025-amsterdam-con/) added a playful splash to the calendar as the Symfony community marked its 20th anniversary with bouncy balls, ball pits, and cake. Valkey also made its mark at [NDC London](https://ndcconferences.com/), where attendees met Sr. OSS Developer Advocate, Nigel Brown and stocked up on Valkey beanies and stickers. Valkey’s presence extended even further across [PyCon Africa](https://za.pycon.org/), [PyCon Australia](https://2025.pycon.org.au/), [Laracon](https://laracon.us/), [Aspara](https://www.alibabacloud.com/en/apsara-conference?_p_lc=1), and more continuing to build meaningful connections and celebrate the growing global Valkey community.
 ![valkey-events](image5.jpg)
@@ -56,8 +49,8 @@ Beyond those key highlights, the Valkey team and community stayed active through
 ## Where to next for the Valkey community
 In 2026, Valkey will be on the road again, with appearances planned at the [Unlocked conference](https://unlocked.gomomento.com/) and [Laracon India 2026](https://laracon.in/) from January 31st - February 1st, with even more events to be announced as the year unfolds.
 ## Valkey contributors (2025) 
-346 active contributors: an individual who performed activities such as commits, issues, or pull requests during the selected time period. *Source: [LFX analytics](https://insights.linuxfoundation.org/project/valkey?timeRange=past365days&start=2025-01-15&end=2026-01-15)
-60 active organizations: Organizations that had at least one active contributor during the selected period. *Source: LFX analytics
+In 2025, the Valkey project had 346 active contributors which are individuals who performed activities such as commits, issues, or pull requests during the selected time period. Source: [LFX analytics](https://insights.linuxfoundation.org/project/valkey?timeRange=past365days&start=2025-01-15&end=2026-01-15)
+    * 60 active organizations: Organizations that had at least one active contributor during the selected period. *Source: LFX analytics
 
 ## Valkey in the news
 * DBTA: [Valkey 9.0 Offers Performance and Resiliency for Real-Time Workloads](https://www.dbta.com/Editorial/News-Flashes/Valkey-90-Offers-Performance-and-Resiliency-for-Real-Time-Workloads-172148.aspx)
@@ -81,5 +74,5 @@ Thank you to everyone who contributed code, tested releases, filed issues, share
 
 ## Get Involved
 To learn more and explore ways to get involved in the community:
-* Visit the [Valkey site](https://valkey.io/) to learn more about the project. If you would like to contribute to the mission, please consider joining the [Valkey community here](https://valkey.io/community/), where community members contribute and shape the future of the Valkey project.
+* If you would like to contribute to the mission, please consider joining the [Valkey community here](https://valkey.io/community/), where community members contribute and shape the future of the Valkey project.
 * Follow along on our social channels for the latest Valkey community news, event recaps, and project developments ([LinkedIn](https://www.linkedin.com/company/valkey/), [X](https://x.com/valkey_io), and [BlueSky](https://bsky.app/profile/valkeyio.bsky.social)).
