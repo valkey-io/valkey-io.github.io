@@ -1392,6 +1392,18 @@ pre table {
 .command-group {
   margin-bottom: 2rem;
   
+  .command-entry .deprecated-notice {
+    text-transform: uppercase;
+    text-decoration: none;
+    color: black;
+    display: inline-block;
+    background-color: #d1d9ff;
+    padding: 0.33rem;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: 600;
+  }
+
   h2 {
     border-bottom: 1px solid $line;
     padding-bottom: 1rem;
