@@ -27,23 +27,21 @@ Valkey 9.0 brings innovation, long-requested features, and improvements to class
     * [Performance Dashboards ](https://valkey.io/performance/)
     * [Valkey swift](https://valkey.io/blog/valkey-swift/)
 ## Community Growth
-## Valkey contributors (2025) 
-In 2025, the Valkey project had 346 active contributors which are individuals who performed activities such as commits, issues, or pull requests during the selected time period. Source: [LFX analytics](https://insights.linuxfoundation.org/project/valkey?timeRange=past365days&start=2025-01-15&end=2026-01-15)
-    * 60 active organizations: Organizations that had at least one active contributor during the selected period. *Source: LFX analytics
+In 2025, the Valkey project had 346 active contributors which are individuals who performed activities such as commits, issues, or pull requests during the selected time period. (Source: [LFX analytics])(https://insights.linuxfoundation.org/project/valkey?timeRange=past365days&start=2025-01-15&end=2026-01-15)
 
-### 2025 events recap
-We hosted our first Valkey conference, [keyspace Amsterdam](https://events.linuxfoundation.org/keyspace/),in 2025. Here are few photos from the event. 
-![KeySpace-Amsterdam](IMG_9.jpeg)
-![KeySpace-Amsterdam](IMG_10.jpeg)
-![KeySpace-Amsterdam](IMG_11.jpeg)
+## 2025 events recap
+We hosted our first Valkey conference, [Keyspace Amsterdam](https://events.linuxfoundation.org/keyspace/),in 2025. Here are few photos from the event. 
+![Keyspace-Amsterdam](IMG_9.jpeg)
+![Keyspace-Amsterdam](IMG_10.jpeg)
+![Keyspace-Amsterdam](IMG_11.jpeg)
 
-While in [keyspace Beijing](https://valkey.io/events/keyspace-beijing-2025/), some of the Valkey community members joined a panel to share insights on Valkey and real‑world adoption. More than 65+ in-person and 1,000+ on-stream consisting of developers, SREs, and DevOps professionals came together to exchange ideas, share best practices, and explore new use cases powered by Valkey. 
-![KeySpace-Beijing](image3.jpg)
-![KeySpace-Beijing](image4.jpg)
+While in [Keyspace Beijing](https://valkey.io/events/keyspace-beijing-2025/), some of the Valkey community members joined a panel to share insights on Valkey and real‑world adoption. More than 65+ in-person and 1,000+ on-stream consisting of developers, SREs, and DevOps professionals came together to exchange ideas, share best practices, and explore new use cases powered by Valkey. 
+![Keyspace-Beijing](image3.jpg)
+![Keyspace-Beijing](image4.jpg)
 
 At [AWS re:Invent](https://reinvent.awsevents.com/) in Las Vegas, Valkey took over the Strip’s iconic Taco Bell Cantina for the three-floor House of Valkey, turning the conference into a true party hub. Attendees enjoyed deep technical conversations, live performers, giveaways, and exclusive swag. 
-![house-of-valkey](image1.png)
-![house-of-valkey](image2.png)
+![House-of-Valkey](image1.png)
+![House-of-Valkey](image2.png)
 
 At [Open Source Summit Japan](https://www.youtube.com/watch?v=8-trRjBr81I&list=PLbzoR-pLrL6pRN6kobVnmu0rY2RLLczAj), Madelyn Olson of the Valkey Technical Steering Committee and Roberto Luna Rojas, Sr. Developer Advocate, presented sessions on open source governance, Linux packaging, community transitions, and GitHub best practices. [Watch the session here.](https://www.youtube.com/watch?v=eW3uLjIj69g)
 
