@@ -30,7 +30,7 @@ Valkey 9.0 brings innovation, long-requested features, and improvements to class
 ## Valkey contributors (2025) 
 In 2025, the Valkey project had 346 active contributors which are individuals who performed activities such as commits, issues, or pull requests during the selected time period. Source: [LFX analytics](https://insights.linuxfoundation.org/project/valkey?timeRange=past365days&start=2025-01-15&end=2026-01-15)
     * 60 active organizations: Organizations that had at least one active contributor during the selected period. *Source: LFX analytics
-    
+
 ### 2025 events recap
 We hosted our first Valkey conference, [keyspace Amsterdam](https://events.linuxfoundation.org/keyspace/),in 2025. Here are few photos from the event. 
 ![KeySpace-Amsterdam](IMG_9.jpeg)
@@ -72,7 +72,7 @@ Looking ahead into 2026, the Valkey Project and its community will focus on:
 * Building deeper connections to other open source projects to be optimized for Valkey,
 * Providing a wider network of local groups of Valkey enthusiast.
 
-We’re excited about what’s ahead and committed to evolving Valkey project in ways that serve both current community members and future adopters.
+We’re excited about what’s ahead and committed to evolving the Valkey project in ways that serve both current community members and future adopters.
 
 ## Thank You
 Thank you to everyone who contributed code, tested releases, filed issues, shared feedback, or adopted Valkey in production. Your continued involvement strengthens and advances the Valkey project.
