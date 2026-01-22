@@ -151,3 +151,19 @@
     DigitalOcean is a cloud platform that helps you build, deploy, and scale applications. It offers virtual machines, managed containers, serverless functions, object and block storage, managed databases, Gradient AI platform and networking services. DigitalOcean provides APIs, CLIs, and SDKs for programmatic resource management, making cloud infrastructure accessible for developers.
   offering: >
     DigitalOcean offers a managed database service for Valkey, known as DigitalOcean Managed Caching for Valkey. This service provides a fully managed, high-performance, in-memory key-value datastore.
+
+- name: BetterDB
+  link: https://betterdb.com
+  company: >
+    BetterDB provides Valkey-native observability and monitoring tools. Backed by Open
+    Core Ventures under an Open Charter that guarantees open-source licensing in perpetuity,
+    BetterDB helps teams migrating from Redis gain deep visibility into their Valkey
+    deployments with enterprise-grade analytics and compliance features.
+  offering: >
+    BetterDB is the first monitoring platform built specifically for Valkey, leveraging
+    Valkey-exclusive features like COMMANDLOG, per-slot metrics, and async I/O threading
+    visibility. It provides real-time dashboards, slowlog analysis, client analytics,
+    ACL audit trails, and Prometheus integration - capabilities existing Redis tools cannot offer.
+  image:
+    path: /img/betterdb.svg
+    alt: BetterDB Logo
