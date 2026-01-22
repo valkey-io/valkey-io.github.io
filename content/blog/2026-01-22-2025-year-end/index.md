@@ -7,8 +7,8 @@ authors= ["kyledvs", "crystalpham"]
 
 As we kick off 2026, it’s a great moment to pause, reflect, and celebrate what the Valkey project and its community has accomplished together. This past year marked an important chapter for Valkey, one defined by growth, collaboration, and a shared commitment to building an open, high-performance key-value store for everyone.
 ## 2025 Key Milestones
-This past year brought meaningful progress across the Valkey ecosystem. Some highlights included the list below:
-* [Valkey bundle](https://valkey.io/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/)
+This past year brought meaningful progress across the Valkey ecosystem. Some highlights:
+* [Valkey bundle](https://valkey.io/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/) included:
     * JSON
     * Bloom
     * Vector Search
@@ -27,7 +27,7 @@ Valkey 9.0 brings innovation, long-requested features, and improvements to class
     * [Performance Dashboards ](https://valkey.io/performance/)
     * [Valkey swift](https://valkey.io/blog/valkey-swift/)
 ## Community Growth
-In 2025, the Valkey project had 346 active contributors which are individuals who performed activities such as commits, issues, or pull requests during the selected time period. (Source: [LFX analytics])(https://insights.linuxfoundation.org/project/valkey?timeRange=past365days&start=2025-01-15&end=2026-01-15)
+In 2025, the Valkey project had 346 active contributors which are individuals who performed activities such as commits, issues, or pull requests during the selected time period. (Source: [LFX analytics](https://insights.linuxfoundation.org/project/valkey?timeRange=past365days&start=2025-01-15&end=2026-01-15))
 
 ## 2025 events recap
 We hosted our first Valkey conference, [Keyspace Amsterdam](https://events.linuxfoundation.org/keyspace/),in 2025. Here are few photos from the event. 
@@ -65,7 +65,7 @@ In 2026, Valkey will be on the road again, with appearances planned at the [Unlo
 
 ## 2026 Valkey Community Goals
 Looking ahead into 2026, the Valkey Project and its community will focus on:
-* Making Valkey easier to [run](https://github.com/valkey-io/valkey-operator), scale ([1](https://github.com/valkey-io/valkey/issues/2392), [2](https://github.com/valkey-io/valkey/issues/2392), [3](https://github.com/valkey-io/valkey/issues/2957), [4](https://github.com/valkey-io/valkey/issues/2878)), [manage, and observe](https://github.com/valkey-io/valkey-admin)
+* Making Valkey easier to [run](https://github.com/valkey-io/valkey-operator), scale [1](https://github.com/valkey-io/valkey/issues/2392), [2](https://github.com/valkey-io/valkey/issues/2392), [3](https://github.com/valkey-io/valkey/issues/2957), [4](https://github.com/valkey-io/valkey/issues/2878), [manage, and observe](https://github.com/valkey-io/valkey-admin)
 * Better utilizing existing infrastructure to take advantage of modern CPUs with multi-threading and higher performance ([1](https://github.com/valkey-io/valkey/pull/2470), [2](https://github.com/valkey-io/valkey/issues/2022), [3](https://github.com/valkey-io/valkey/issues/1483)) , and squeezing out more memory efficiency ([1](https://github.com/valkey-io/valkey/pull/2516), [2](https://github.com/valkey-io/valkey/pull/2508), [3](https://github.com/valkey-io/valkey/pull/2867), [4](https://github.com/valkey-io/valkey/issues/2618)),
 * Building deeper connections to other open source projects to be optimized for Valkey,
 * Providing a wider network of local groups of Valkey enthusiast.
