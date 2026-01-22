@@ -2,18 +2,19 @@
 title = "Valkey 2025 Year-End Review: Reflecting on Progress and Looking Ahead"
 date = 2026-01-22
 description = "This past year marked an important chapter for Valkey, one defined by growth, collaboration, and a shared commitment to building an open, high-performance key-value store for everyone."
-authors= ["madolson", "kyledvs", "crystalpham"]
+authors= ["kyledvs", "crystalpham"]
 +++
 
 As we kick off 2026, it’s a great moment to pause, reflect, and celebrate what the Valkey project and its community has accomplished together. This past year marked an important chapter for Valkey, one defined by growth, collaboration, and a shared commitment to building an open, high-performance key-value store for everyone.
 ## 2025 Key Milestones
-This past year brought meaningful progress across the Valkey ecosystem. Some highlights include:
+This past year brought meaningful progress across the Valkey ecosystem. Some highlights included the list below:
 * [Valkey bundle](https://valkey.io/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/)
     * JSON
     * Bloom
     * Vector Search
     * LDAP
 * [Valkey 8.1 release](https://valkey.io/blog/valkey-8-1-0-ga/)
+Valkey 8.1 is a minor version update designed to further enhance performance, reliability, observability and usability over Valkey 8.0 for all Valkey installations.
 * [Valkey 9.0 release](https://valkey.io/blog/introducing-valkey-9/)
 Valkey 9.0 brings innovation, long-requested features, and improvements to classic features updated with 1 billion+ RPS clusters, 40% higher throughput, and major feature launches including:
     * Hash field expiration — fine-grained TTLs that automatically free memory
@@ -26,13 +27,17 @@ Valkey 9.0 brings innovation, long-requested features, and improvements to class
     * [Performance Dashboards ](https://valkey.io/performance/)
     * [Valkey swift](https://valkey.io/blog/valkey-swift/)
 ## Community Growth
+## Valkey contributors (2025) 
+In 2025, the Valkey project had 346 active contributors which are individuals who performed activities such as commits, issues, or pull requests during the selected time period. Source: [LFX analytics](https://insights.linuxfoundation.org/project/valkey?timeRange=past365days&start=2025-01-15&end=2026-01-15)
+    * 60 active organizations: Organizations that had at least one active contributor during the selected period. *Source: LFX analytics
+    
 ### 2025 events recap
-We hosted our first Valkey conferences, [Keyspace Amsterdam](https://events.linuxfoundation.org/keyspace/) and [Keyspace Beijing](https://valkey.io/events/keyspace-beijing-2025/)! At Keyspace Amsterdam, Sr. Developer Advocate Roberto Luna Rojas presented [“Valkey‑bundle: One‑stop shop for real‑time applications."](https://bit.ly/4qlG1M1) You can revisit KeySpace Amsterdam content anytime through the session playlist [here](https://www.youtube.com/watch?v=5jko_JMQVpg&list=PLAV1X7hxH2HtZWc2YNQRMQe9FT9XTWemE).
+We hosted our first Valkey conference, [keyspace Amsterdam](https://events.linuxfoundation.org/keyspace/),in 2025. Here are few photos from the event. 
 ![KeySpace-Amsterdam](IMG_9.jpeg)
 ![KeySpace-Amsterdam](IMG_10.jpeg)
 ![KeySpace-Amsterdam](IMG_11.jpeg)
 
-While in Beijing, some of the Valkey community members joined a panel to share insights on Valkey and real‑world adoption. More than 65+ in-person and 1,000+ on-stream consisting of developers, SREs, and DevOps professionals came together to exchange ideas, share best practices, and explore new use cases powered by Valkey. 
+While in [keyspace Beijing](https://valkey.io/events/keyspace-beijing-2025/), some of the Valkey community members joined a panel to share insights on Valkey and real‑world adoption. More than 65+ in-person and 1,000+ on-stream consisting of developers, SREs, and DevOps professionals came together to exchange ideas, share best practices, and explore new use cases powered by Valkey. 
 ![KeySpace-Beijing](image3.jpg)
 ![KeySpace-Beijing](image4.jpg)
 
@@ -51,9 +56,6 @@ Beyond those key highlights, the Valkey team and community stayed active through
 
 ## Where to next for the Valkey community
 In 2026, Valkey will be on the road again, with appearances planned at the [Unlocked conference](https://unlocked.gomomento.com/) and [Laracon India 2026](https://laracon.in/) from January 31st - February 1st, with even more events to be announced as the year unfolds.
-## Valkey contributors (2025) 
-In 2025, the Valkey project had 346 active contributors which are individuals who performed activities such as commits, issues, or pull requests during the selected time period. Source: [LFX analytics](https://insights.linuxfoundation.org/project/valkey?timeRange=past365days&start=2025-01-15&end=2026-01-15)
-    * 60 active organizations: Organizations that had at least one active contributor during the selected period. *Source: LFX analytics
 
 ## Valkey in the news
 * DBTA: [Valkey 9.0 Offers Performance and Resiliency for Real-Time Workloads](https://www.dbta.com/Editorial/News-Flashes/Valkey-90-Offers-Performance-and-Resiliency-for-Real-Time-Workloads-172148.aspx)
