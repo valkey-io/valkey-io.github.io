@@ -28,6 +28,9 @@ Valkey 9.0 brings innovation, long-requested features, and improvements to class
 ## Community Growth
 ### 2025 events recap
 We hosted our first Valkey conferences, [Keyspace Amsterdam](https://events.linuxfoundation.org/keyspace/) and [Keyspace Beijing](https://valkey.io/events/keyspace-beijing-2025/)! At Keyspace Amsterdam, Sr. Developer Advocate Roberto Luna Rojas presented [“Valkey‑bundle: One‑stop shop for real‑time applications."](https://bit.ly/4qlG1M1) You can revisit KeySpace Amsterdam content anytime through the session playlist [here](https://www.youtube.com/watch?v=5jko_JMQVpg&list=PLAV1X7hxH2HtZWc2YNQRMQe9FT9XTWemE).
+![KeySpace-Amsterdam](IMG_6208.jpeg)
+![KeySpace-Amsterdam](IMG_6225.jpeg)
+![KeySpace-Amsterdam](IMG_6234.jpeg)
 
 While in Beijing, some of the Valkey community members joined a panel to share insights on Valkey and real‑world adoption. More than 65+ in-person and 1,000+ on-stream consisting of developers, SREs, and DevOps professionals came together to exchange ideas, share best practices, and explore new use cases powered by Valkey. 
 ![KeySpace-Beijing](image3.jpg)
