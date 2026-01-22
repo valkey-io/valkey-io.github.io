@@ -1,6 +1,6 @@
 +++
 title = "Valkey 2025 Year-End Review: Reflecting on Progress and Looking Ahead"
-date = 2026-01-20
+date = 2026-01-22
 description = "This past year marked an important chapter for Valkey, one defined by growth, collaboration, and a shared commitment to building an open, high-performance key-value store for everyone."
 authors= ["madolson", "kyledvs", "crystalpham"]
 +++
