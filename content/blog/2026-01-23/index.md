@@ -13,6 +13,7 @@ From new releases and roadmap milestones to community highlights and upcoming ev
 
 ![Valkey Community Carousel](valkeycommunity.gif)
 
+
 ## Why Subscribe to Valkey?
 When you subscribe, you’ll get:
 * Breaking updates on new releases, features, and project announcements
