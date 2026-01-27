@@ -69,7 +69,7 @@ jobs:
             ../valkey-json/src/commands ../valkey-search/src/commands
 
       - name: Build only
-        uses: shalzz/zola-deploy-action@v0.19.1
+        uses: shalzz/zola-deploy-action@v0.22.0
         env:
           BUILD_DIR: website
           BUILD_ONLY: true
