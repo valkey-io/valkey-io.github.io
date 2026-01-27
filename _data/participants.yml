@@ -155,8 +155,7 @@
 - name: BetterDB
   link: https://betterdb.com
   company: >
-    BetterDB provides Valkey-native observability and monitoring tools. Backed by Open
-    Core Ventures under an Open Charter that guarantees open-source licensing in perpetuity,
+    BetterDB provides Valkey-native observability and monitoring tools. Backed by Open Core Ventures under an Open Charter, BetterDB is committed to maintaining an open source platform for the benefit of the public,
     BetterDB helps teams migrating from Redis gain deep visibility into their Valkey
     deployments with enterprise-grade analytics and compliance features.
   offering: >
