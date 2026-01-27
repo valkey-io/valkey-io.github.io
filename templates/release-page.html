@@ -34,7 +34,7 @@
 {% set latest_minor = this_major_line | sort(attribute="0") | last %}
 
 {% set new_patch = (latest_patch.3 == page_minor) and (latest_patch.4 != page_patch) %}
-{% set new_minor = (latest_patch.2 == page_major) and (latest_patch.3 != page_minor) %}
+{% set new_minor = (latest_patch.2 == page_major) and (latest_patch.3 != page_minord) %}
 patch:
 <pre>
     {{ latest_patch | json_encode(pretty= true) | safe }}
