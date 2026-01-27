@@ -5,7 +5,67 @@
 {% endblock subhead_content%}
 {% block main_content %}
 {% set release = page.extra %}
+{% set page_ver_parts = release.tag | split(pat=".") %}
+{% set page_major = page_ver_parts.0 %}
+{% set page_minor = page_ver_parts.1 %}
+{% set page_patch = page_ver_parts.2 %}
 {% set release_date = page.date %}
+{% set this_minor_line = [] %}
+{% set this_major_line = [] %}
+{% set section_file = page.ancestors.1 %}
+{% set section = get_section(path= section_file) %}
+{% for page in section.pages %}
+    {% set this_version_parts = page.extra.tag | split(pat=".") %}
+    {% set this_version_major = this_version_parts.0 %}
+    {% set this_version_minor = this_version_parts.1 %}
+    {% set this_version_patch = this_version_parts.2 %}
+
+    {% if (page_major == this_version_major) and (page_minor == this_version_minor) %}
+        {% set ver = [ page.date, page.extra.tag, this_version_major, this_version_minor, this_version_patch, page.slug]  %}
+        {% set_global this_minor_line  = this_minor_line | concat(with= [ ver ] ) %}
+    {% endif %}
+    {% if (page_major == this_version_major) %}
+        {% set ver = [ page.date, page.extra.tag, this_version_major, this_version_minor, this_version_patch, page.slug]  %}
+        {% set_global this_major_line  = this_major_line | concat(with= [ ver ] ) %}
+    {% endif %}
+{% endfor %}
+
+{% set latest_patch = this_minor_line | sort(attribute="0") | last %}
+{% set latest_minor = this_major_line | sort(attribute="0") | last %}
+
+{% set new_patch = (latest_patch.3 == page_minor) and (latest_patch.4 != page_patch) %}
+{% set new_minor = (latest_patch.2 == page_major) and (latest_patch.3 != page_minor) %}
+patch:
+<pre>
+    {{ latest_patch | json_encode(pretty= true) | safe }}
+</pre>
+minor:
+<pre>
+    {{ latest_minor | json_encode(pretty= true) | safe }}
+</pre>
+
+
+{% if new_patch %}
+    There is a new patch version {{latest_patch.2}}.{{latest_patch.3}}.{{latest_patch.4}}
+{% endif %}
+{% if new_minor %}
+    new minor!
+{% endif %}
+
+
 
 {% include "includes/release.html" %}
+
+<script>
+const latest = () => {
+
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("page load");
+});
+window.addEventListener("hashchange", () => {
+  console.log("The hash has changed!");
+});
+</script>
 {% endblock main_content %}
