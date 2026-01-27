@@ -7,8 +7,8 @@ build_search_index = true
 
 generate_feeds = true
 
-[markdown]
-highlight_code = true
+[markdown.highlighting]
+theme = "github-dark-default"
 
 # Needed to stop certain command topics from being destroyed by the slugifier
 [slugify]
