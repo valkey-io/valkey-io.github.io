@@ -2,7 +2,7 @@
 title= "Introducing Valkey Admin: Visual Cluster Management for Valkey"
 description = "Valkey Admin is an open-source desktop application that provides visual cluster topology, hot key detection, performance diagnostics, and interactive key management for Valkey clusters without piecing together CLI commands."
 date= 2026-02-03 00:00:00
-authors= [ "allenhelton", "arsenykostenko]
+authors= [ "allenhelton", "arsenykostenko"]
 
 [extra]
 featured = true
