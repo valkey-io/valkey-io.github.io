@@ -21,7 +21,7 @@
 
 {% set release_lines_unique = release_lines | unique %}
 {% for line in release_lines_unique %}
-   
+    <h2>{{ line }}.x</h2>
     <ul>
     {% for release in section.pages | sort(attribute="date") | reverse %}
         {% set split_ver = release.extra.tag | split(pat=".")%}
