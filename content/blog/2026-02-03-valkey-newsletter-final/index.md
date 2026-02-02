@@ -19,4 +19,4 @@ If you care about Valkey — or rely on it — this is how you stay in the loop.
 👉 [Subscribe now](https://hubs.la/Q03-LC830) now and stay connected.
 Subscription is open to everyone, so invite a teammate, a collaborator, or any open source enthusiast who doesn’t want to miss what’s coming next.
 
-Valkey is growing. Make sure you’re part of the conversation.
+Valkey is growing! Make sure you’re part of the conversation.
