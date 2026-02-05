@@ -1,12 +1,12 @@
 +++
 title= "Introducing Valkey Admin: Visual Cluster Management for Valkey"
-description = "Valkey Admin is an open-source desktop application that provides visual cluster topology, hot key detection, performance diagnostics, and interactive key management for Valkey clusters without piecing together CLI commands."
-date= 2026-02-03 00:00:00
+description = "Valkey Admin is an open-source desktop application that provides visual cluster topology, hot key detection, performance diagnostics, and interactive key management for Valkey clusters without piecing together CLI commands. Now in preview!"
+date= 2026-02-10 00:00:00
 authors= [ "allenhelton", "arsenykostenko"]
 
 [extra]
 featured = true
-featured_image = "/assets/media/featured/random-04.webp"
+featured_image = "images/hero.jpg"
 +++
 
 Do you ever wonder why we still manage Valkey the same way we always have? The honest answer is that it works. And once something works, it tends to stick around.
@@ -26,11 +26,11 @@ Valkey Admin is an application that gives you a direct, visual interface to your
 
 Immediately upon connecting, you can see the shape of the cluster itself: which nodes are primaries, which are replicas, and how individual nodes are behaving. From there, you can drill into node dashboards, view key metrics, and understand what's happening without reconstructing the picture manually.
 
-![Screenshot of Valkey Admin](/assets/media/pictures/valkeyAdmin.jpg)
-
 Key management is a first-class workflow. You can browse keys interactively, inspect values, check TTLs, look at sizes and data structures, modify or remove keys, and search or filter by prefix. All Valkey data types are supported, and the goal is to make inspection and troubleshooting straightforward rather than procedural.
 
 Valkey Admin also includes tools for diagnosing performance problems. It can identify hot keys using low-overhead analysis when LFU is enabled, or fall back to configurable sampling when it isn't. Command logs surface slow commands, large requests, and large replies, making it easier to understand why latency changes instead of just noticing that it did.
+
+![Screenshot of hot key monitoring in Valkey Admin](images/hot-key-monitoring.jpg)
 
 The application also embeds the standard Valkey CLI. You run the same commands you already know, but with added context, including the ability to diff results between runs so changes in state are visible instead of implicit.
 
