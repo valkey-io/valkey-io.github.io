@@ -5,7 +5,7 @@ template = "community.html"
 page_template = "community.html"
 [extra]
 cards = [
-    { icon = "icon-users.svg", title = "Hack NCState 2026", description = "💫 We’re excited to sponsor Hack NC State 2026! Join us Feb 14 – Feb 15 for a 24-hour hackathon at NC State. 🤝 Take on the API Integration Challenge with your team of 3–4 and put your skills to the test. 👀 Visit the Valkey booth for exclusive SWAG and connect with our team! We can’t wait to see the innovative solutions you create.", links = [
+    { icon = "icon-users.svg", title = "Hack NCState 2026", description = "We're thrilled to sponsor Hack NC State 2026. Join us February 14-15 for a 24-hour hackathon at NC State! Rally your team of 3-4 and take on our API Integration Challenge, put your skills to the test and show us what you've got! Be sure to stop by the Valkey booth for exclusive swag and a chance to connect with our team. We can't wait to see the innovative solutions you build.", links = [
     { url = "https://hackncstate.org/", text = "Hack NCState 2026" }
   ] },
 ]
