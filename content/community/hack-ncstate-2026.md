@@ -14,13 +14,9 @@ cards = [
 # Welcome Hack NCState 2026
 
 💫 We’re excited to sponsor Hack NC State 2026!
-<br>
 Join us Feb 14 – Feb 15 for a 24-hour hackathon at NC State.
-<br>
 🤝 Take on the API Integration Challenge with your team of 3–4 and put your skills to the test.
-<br>
 👀 Visit the Valkey booth for exclusive SWAG and connect with our team!
-<br>
 We can’t wait to see the innovative solutions you create.
 
 
