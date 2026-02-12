@@ -12,7 +12,7 @@ cards = [
 +++
 
 # Welcome Hack NCState 2026
-<div style="text-align: auto; margin: 2em;">
+
 💫 We’re excited to sponsor Hack NC State 2026!
 <br>
 Join us Feb 14 – Feb 15 for a 24-hour hackathon at NC State.
@@ -22,7 +22,7 @@ Join us Feb 14 – Feb 15 for a 24-hour hackathon at NC State.
 👀 Visit the Valkey booth for exclusive SWAG and connect with our team!
 <br>
 We can’t wait to see the innovative solutions you create.
-</div>
+
 
 ## How to Contribute with us?
 We welcome your involvement in the Valkey community! Here are several ways you can contribute:
