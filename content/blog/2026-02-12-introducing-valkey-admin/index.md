@@ -6,7 +6,7 @@ authors= [ "allenhelton", "arsenykostenko"]
 
 [extra]
 featured = true
-featured_image = "images/hero.jpg"
+featured_image = "/blog/introducing-valkey-admin/images/hero.jpg"
 +++
 
 Do you ever wonder why we still manage Valkey the same way we always have? The honest answer is that it works. And once something works, it tends to stick around.
@@ -32,7 +32,7 @@ Valkey Admin also includes tools for diagnosing performance problems. It can ide
 
 ![Screenshot of hot key monitoring in Valkey Admin](images/hot-key-monitoring.jpg)
 
-The application also embeds the `valkey-cli`. You run the same commands you already know, but with added context, including the ability to diff results between runs so changes in state are highly visible.
+The application also embeds the `valkey-cli`. You run the same commands you already know, but with added context, including the ability to diff results between runs, so changes in state are highly visible.
 
 This isn't meant to replace a full monitoring stack, and it's not trying to be a wall of dashboards. If you already have Grafana and alerting in place, Valkey Admin lives somewhere between ad-hoc CLI usage and long-term metrics. It's the tool you reach for when you need to understand what's happening right now.
 
@@ -57,13 +57,13 @@ The project is fully open source, and contributions are encouraged both to impro
 ## Where it's headed
 Valkey Admin focuses on reducing day-to-day overhead of operating cache clusters, not trying to be an all-encompassing admin platform. During the Unlocked talk, Zhang was careful not to over-promise a long-term roadmap, instead pointing to areas the community is actively exploring.
 
-> *"Valkey Admin is about solving the day-to-day problems Valkey users face ? understanding cluster topology, identifying performance bottlenecks, and managing keys ? without having to piece everything together by hand."*
+> *"Valkey Admin is about solving the day-to-day problems Valkey users face understanding cluster topology, identifying performance bottlenecks, and managing keys without having to piece everything together by hand."*
 > Rong Zhang, Product Manager, AWS (Unlocked Conference)
 
 Based on early feedback, the focus areas include deeper analysis of large keys, improved visualization for complex data types, stronger auth and access control, and a web-native version for Kubernetes or Docker Compose. According to Zhang, there's also interest in AI-assisted observability that explains what changed and why, assisting operators at an entirely new level.
 
 ## Getting started
-You can try Valkey Admin by cloning the [repository](https://github.com/valkey-io/valkey-admin) and running `./quickstart.sh`. The script installs dependencies, builds the application, and spins up a local Valkey cluster so there's something to connect to immediately. A few minutes later, you have a working desktop app.
+Valkey Admin is currently in preview, but you can try it today by cloning the [repository](https://github.com/valkey-io/valkey-admin) and running `./quickstart.sh`. The script installs dependencies, builds the application, and spins up a local Valkey cluster so there's something to connect to immediately. A few minutes later, you have a working desktop app.
 
 From there, you add a connection to your own Valkey instance and start working. There's no lengthy setup process and no configuration file you need to get exactly right before the tool becomes useful.
 
