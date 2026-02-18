@@ -1,6 +1,6 @@
 +++
 title = "Operational Lessons from Large-Scale Valkey Deployments"
-date = 2026-02-17
+date = 2026-02-19
 description = "Production lessons on tail latency, migrations, and scale from engineers operating Valkey at real-world scale."
 authors = ["allenhelton", "mikecallahan"]
 
@@ -23,7 +23,7 @@ Across multiple conversations throughout the day, the recurring theme was what c
 
 The takeaway was that scale changes *which questions you should be asking*. Conversations shift from "does it work?" to "what happens when it's stressed?"
 
-This aligns with recent work in Valkey such as [Atomic Slot Migration](https://valkey.io/blog/atomic-slot-migration/), [I/O threading improvements](https://valkey.io/blog/valkey-8-1-0-ga/#i-o-threads-improvements) introduced in Valkey 8, and [copy-avoidance paths](https://github.com/valkey-io/valkey/pull/2078) for large replies. These changes reflect lessons learned at scale, where larger clusters, heavier payloads, and higher concurrency expose constraints that smaller deployments rarely encounter.
+This aligns with recent work in Valkey such as [Atomic Slot Migration](https://valkey.io/blog/atomic-slot-migration/), [I/O threading improvements](https://valkey.io/blog/valkey-8-1-0-ga/#i-o-threads-improvements) introduced in Valkey 8.0, and [copy-avoidance paths](https://github.com/valkey-io/valkey/pull/2078) for large replies. These changes reflect lessons learned at scale, where larger clusters, heavier payloads, and higher concurrency expose constraints that smaller deployments rarely encounter.
 
 ## Predictability Over Peak Throughput
 
@@ -51,7 +51,7 @@ Bandwidth becomes a primary bottleneck and incident driver — a reminder that n
 
 Instead of asking "are we out of CPU or memory?", teams found themselves asking "what are we actually sending over the wire?" Payload size distribution, network behavior, and client request patterns frequently ended up being primary cost drivers compared to processor utilization alone. Nacho recounted that monitoring how large those requests were and how unevenly they arrived were crucial to Mercado Libre's stability.
 
-This awareness is visible in recent Valkey releases as well. Valkey 9 added [pipeline memory prefetching](https://github.com/valkey-io/valkey/pull/2092) to smooth bursty workloads and [Multipath TCP](https://github.com/valkey-io/valkey/pull/1811) support to reduce network-induced latency, alongside [large-cluster resilience improvements](https://valkey.io/blog/1-billion-rps/) aimed at keeping end-to-end latency stable at higher node counts. Taken together, these changes point less toward chasing peak throughput numbers and more toward limiting the impact of uneven traffic and network variability.
+This awareness is visible in recent Valkey releases as well. Valkey 9.0 added [pipeline memory prefetching](https://github.com/valkey-io/valkey/pull/2092) to smooth bursty workloads and [Multipath TCP](https://github.com/valkey-io/valkey/pull/1811) support to reduce network-induced latency, alongside [large-cluster resilience improvements](https://valkey.io/blog/1-billion-rps/) aimed at keeping end-to-end latency stable at higher node counts. Taken together, these changes point less toward chasing peak throughput numbers and more toward limiting the impact of uneven traffic and network variability.
 
 ## Community Participation Is the Multiplier
 
