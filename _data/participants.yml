@@ -166,3 +166,13 @@
   image:
     path: /img/betterdb.svg
     alt: BetterDB Logo
+
+- name: anynines
+  link:  https://anynines.com/products/a9s-keyvalue/
+  image:
+    path: /img/anynines.svg
+    alt: anynines logo
+  company: >
+    anynines provides [managed data services](https://anynines.com/products/data-services/) that automate provisioning, operations, and lifecycle management across Cloud Foundry and Kubernetes. Teams get on-demand, self-service databases and data services with consistent automation, infrastructure flexibility, and built-in reliability without tying applications to specific platforms or vendors.
+  offering: >
+    [a9s KeyValue](https://anynines.com/products/a9s-keyvalue/) is a managed in-memory NoSQL database that delivers high-performance data storage with minimal overhead. Delivered by [anynines](https://anynines.com/), it is built on open-source Valkey and fully compatible with legacy Redis® OSS.
