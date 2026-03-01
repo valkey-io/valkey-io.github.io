@@ -1,6 +1,6 @@
 +++
 title= "Valkey at Hack NC State 2026: 15 Innovative Projects Built in 24 Hours" 
-description = "Hackathons are a stress test - not just for the people participating, but for the tools they choose. When a team has 24 hours to go from a blank repo to a working demo, every technology choice gets pressure-tested in ways that months of careful planning never quite replicate. You find out fast what's intuitive, what breaks, and what delivers when it matters." 
+description = "At Hack NC State 2026, 15 teams participated in Valkey's API challenge during a 24-hour hackathon, building projects across AI-generated content detection, financial security, and privacy tools. The winning project, Catphish, built a voice verification system achieving sub-5ms operations, while runner-ups Privasee and GuardRock AI tackled privacy analysis and video manipulation detection. Teams leveraged Valkey's data structures such as hashes, sorted sets, streams, and vector embeddings to achieve sub-millisecond latencies and sophisticated caching, demonstrating how Valkey enables rapid development of scalable, socially impactful applications addressing AI voice cloning, financial fraud, deepfakes, and privacy protection."
 date= 2026-02-28 19:38:01 
 authors= ["mtuteja", "rlunar"]
 
@@ -9,7 +9,7 @@ featured = false
 featured_image = "/blog/valkey-at-hack-nc-state-2026-15-innovative-projects-built-in-24-hours/images/valkey-at-hack-nc-state-2026-01.jpg"
 +++
 
-Hackathons are a stress test - not just for the people participating, but for the tools they choose. When a team has 24 hours to go from a blank repo to a working demo, every technology choice gets pressure-tested in ways that months of careful planning never quite replicate. You find out fast what's intuitive, what breaks, and what delivers when it matters.
+Hackathons are a stress test, not just for the people participating, but for the tools they choose. When a team has 24 hours to go from a blank repo to a working demo, every technology choice gets pressure-tested in ways that months of careful planning never quite replicate. You find out fast what's intuitive, what breaks, and what delivers when it matters.
 
 On February 14-15, 2026, Valkey participated in [Hack NC State 2026](https://hackncstate.org/), North Carolina State University's premier hackathon. The event brought together 371 attendees organized into 96 teams for an intense 24-hour coding competition at the Talley Student Union on NC State's main campus.
 
