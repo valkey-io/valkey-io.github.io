@@ -124,7 +124,8 @@ Use OpenSearch when you need deeper search platform capabilities like multi-lang
 ## Getting started
 
 The first release of valkey-search focused on vector search, and this release extends the search to text, tag and numeric index types.
-This launch also provides post-query data processing facilities. Whether you're building cutting-edge AI applications or integrating search into existing systems, we invite you to try it out.
+This launch also provides post-query data processing facilities.
+Whether you're building cutting-edge AI applications or integrating search into existing systems, we invite you to try it out.
 
 The easiest way to get started is by visiting the [GitHub repository](https://github.com/valkey-io/valkey-search), where you'll find setup instructions, documentation, and examples.
 You can clone the repo, fire up the [dev container](https://hub.docker.com/r/valkey/valkey-bundle), and start building high-performance search & aggregation workflows with valkey-search.
