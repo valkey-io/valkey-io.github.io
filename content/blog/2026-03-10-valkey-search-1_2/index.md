@@ -130,8 +130,10 @@ The easiest way to get started is by visiting the [GitHub repository](https://gi
 You can clone the repo, fire up the [dev container](https://hub.docker.com/r/valkey/valkey-bundle), and start building high-performance search & aggregation workflows with valkey-search.
 The repository includes a preconfigured development environment and a setup script to get you productive quickly.
 
-The enhanced functionality of Valkey Search discussed in this blog requires Valkey 9.x or newer. The earlier 1.0 release limited to vector search is compatible with Valkey 8.1.1 and later (so Valkey 9+ works there too).
+The enhanced functionality of Valkey Search discussed in this blog requires Valkey 9.x or newer.
+The earlier 1.0 release limited to vector search is compatible with Valkey 8.1.1 and later (so Valkey 9+ works there too).
 You can connect using official Valkey client libraries such as Valkey GLIDE (Java, Python, Node.js, Go), valkey-py, valkey-go, and valkey-java (Java) and popular Redis-compatible clients.
 
-Get Involved: Join the valkey-search community, file issues, open pull requests, or suggest improvements. We welcome contributions of all kinds - code, documentation, testing, and feedback.
+Get Involved: Join the valkey-search community, file issues, open pull requests, or suggest improvements.
+We welcome contributions of all kinds - code, documentation, testing, and feedback.
 Your involvement helps make valkey-search better for everyone. Future releases will include additional query functionalities.
