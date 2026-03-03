@@ -7,10 +7,13 @@ authors= [ "karthiksubbarao", "allenss", "bcathcart", "cnuthalapati"]
 
 Valkey Search, the official Valkey module, now enables searching across text, tags, and numeric fields over terabytes of data with microsecond-level latency and up to millions of queries per second.
 You can now search your Valkey data combining full-text search, numeric, tag and vector filters in a single query, then analyze results with server-side processing like grouping, counts, and averages.
-This complements the vector search capabilities that were introduced in Valkey search 1.0. Valkey Search includes built-in support for scaling to terabyte-scale clusters, ensuring reads remain efficient and low-latency as data grows.
-It supports real-time updates so new and updated data becomes searchable immediately. Running aggregations within your Valkey Cache reduces data movement and eliminates the need to export large result sets to the application layer for post processing.
+This complements the vector search capabilities that were introduced in Valkey search 1.0.
+Valkey Search includes built-in support for scaling to terabyte-scale clusters, ensuring reads remain efficient and low-latency as data grows.
+It supports real-time updates so new and updated data becomes searchable immediately.
+Running aggregations within your Valkey Cache reduces data movement and eliminates the need to export large result sets to the application layer for post processing.
 Valkey Search provides a flexible, high-performance foundation for querying across a range of use cases, from powering in-app search experiences, and recommendation systems to simple in-cache lookups.
-You can use Valkey Aggregations to power in-app analytics, dashboards, or generate reports on cached data for your application. The new capabilities are compatible with Valkey versions 9.0 and above and is BSD-3-Clause licensed.
+You can use Valkey Aggregations to power in-app analytics, dashboards, or generate reports on cached data for your application.
+The new capabilities are compatible with Valkey versions 9.0 and above and is BSD-3-Clause licensed.
 
 In this blog, you will learn about full-text, exact-match, range and aggregation queries, explore the key use cases they enable.
 
