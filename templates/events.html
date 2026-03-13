@@ -9,7 +9,7 @@
 
 <div class="events-calendar">
   <div class="events-legend">
-    <span class="legend-item"><span class="legend-dot first-party"></span> Linux Foundation</span>
+    <span class="legend-item"><span class="legend-dot first-party"></span> Valkey Events</span>
     <span class="legend-item"><span class="legend-dot third-party"></span> Third Party</span>
   </div>
 
@@ -138,7 +138,7 @@
     var eventMonth = e.date.substring(0, 7);
     var today = new Date().toISOString().substring(0, 10);
     listHtml += '<div class="event-card' + (e.date < today ? ' past' : '') + '" data-month="' + eventMonth + '">' +
-      '<span class="event-card-badge ' + e.type + '">' + (e.type === 'first-party' ? 'Linux Foundation' : 'Third Party') + '</span>' +
+      '<span class="event-card-badge ' + e.type + '">' + (e.type === 'first-party' ? 'Valkey Event' : 'Third Party') + '</span>' +
       '<h3><a href="' + e.url + '">' + e.title + '</a></h3>' +
       '<p class="event-card-date">' + dateStr + '</p>' +
       '<p class="event-card-location"><a href="' + e.locationUrl + '" target="_blank">' + e.location + '</a></p>' +
