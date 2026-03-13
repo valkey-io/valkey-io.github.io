@@ -1,12 +1,155 @@
-{% extends "right-aside.html" %}
+{% extends "fullwidth.html" %}
 
-{% block subhead_content%}
+{% block subhead_content %}
 <h1 class="page-title">Events</h1>
-{% endblock subhead_content%}
+{% endblock subhead_content %}
+
 {% block main_content %}
-<ul>
-  {% for page in section.pages %}
-  <li><a href="{{ page.permalink | safe }}">{{ page.title }}</a> {{ page.date | date(format="%Y-%m-%d ", timezone="Europe/Paris") }} </li>
-  {% endfor %}
-</ul>
+{% set events = load_data(path="/_data/events.yml") %}
+
+<div class="events-calendar">
+  <div class="events-legend">
+    <span class="legend-item"><span class="legend-dot first-party"></span> Linux Foundation</span>
+    <span class="legend-item"><span class="legend-dot third-party"></span> Third Party</span>
+  </div>
+
+  <div class="calendar-nav">
+    <button class="calendar-nav-btn" id="cal-prev" aria-label="Previous month">&#9664;</button>
+    <span class="calendar-nav-title" id="cal-title"></span>
+    <button class="calendar-nav-btn" id="cal-next" aria-label="Next month">&#9654;</button>
+  </div>
+
+  <div class="calendar-grid" id="cal-grid">
+    <div class="calendar-header">
+      <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+    </div>
+    <div class="calendar-days" id="cal-days"></div>
+  </div>
+
+  <div class="events-list" id="events-list"></div>
+</div>
+
+<script>
+(function() {
+  var events = [
+    {% for event in events %}
+    {
+      title: "{{ event.title | safe }}",
+      date: "{{ event.date | safe }}",
+      type: "{{ event.type | safe }}",
+      location: "{{ event.location | safe }}",
+      locationUrl: "{{ event.location_url | safe }}",
+      url: "{{ event.url | safe }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ];
+
+  // Collect events by month
+  var monthSet = {};
+  events.forEach(function(e) {
+    var key = e.date.substring(0, 7);
+    if (!monthSet[key]) monthSet[key] = [];
+    monthSet[key].push(e);
+  });
+
+  // Build all months from first to last event
+  var eventDates = events.map(function(e) { return e.date; }).sort();
+  var first = eventDates[0].split('-');
+  var last = eventDates[eventDates.length - 1].split('-');
+  var months = [];
+  var y = parseInt(first[0]), m = parseInt(first[1]);
+  var endY = parseInt(last[0]), endM = parseInt(last[1]);
+  while (y < endY || (y === endY && m <= endM)) {
+    months.push(y + '-' + (m < 10 ? '0' + m : m));
+    m++;
+    if (m > 12) { m = 1; y++; }
+  }
+  var currentIdx = 0;
+
+  // Start on current month if it exists, otherwise first month
+  var now = new Date();
+  var currentKey = now.getFullYear() + '-' + (now.getMonth() + 1 < 10 ? '0' + (now.getMonth() + 1) : '' + (now.getMonth() + 1));
+  var foundIdx = months.indexOf(currentKey);
+  if (foundIdx !== -1) currentIdx = foundIdx;
+
+  var monthNames = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+
+  function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
+  function startDay(y, m) { var d = new Date(y, m, 1).getDay(); return d === 0 ? 6 : d - 1; } // Mon=0
+
+  function render() {
+    var key = months[currentIdx];
+    var parts = key.split('-');
+    var year = parseInt(parts[0]);
+    var month = parseInt(parts[1]) - 1;
+    var total = daysInMonth(year, month);
+    var start = startDay(year, month);
+    var evts = monthSet[key] || [];
+
+    // Build event lookup by day
+    var byDay = {};
+    evts.forEach(function(e) { var d = parseInt(e.date.substring(8, 10)); if (!byDay[d]) byDay[d] = []; byDay[d].push(e); });
+
+    document.getElementById('cal-title').textContent = monthNames[month] + ' ' + year;
+
+    // Calendar days
+    var html = '';
+    for (var i = 0; i < start; i++) html += '<div class="calendar-day empty"></div>';
+    for (var d = 1; d <= total; d++) {
+      var hasEvents = byDay[d];
+      if (hasEvents) {
+        var labels = '';
+        hasEvents.forEach(function(e) {
+          labels += '<a href="' + e.url + '" class="event-label ' + e.type + '">' + e.title + '</a>';
+        });
+        html += '<div class="calendar-day has-event"><span class="day-num">' + d + '</span>' + labels + '</div>';
+      } else {
+        html += '<div class="calendar-day"><span class="day-num">' + d + '</span></div>';
+      }
+    }
+    document.getElementById('cal-days').innerHTML = html;
+
+    // Highlight current month's event cards
+    var allCards = document.querySelectorAll('.event-card');
+    var firstMatch = null;
+    allCards.forEach(function(card) {
+      var cardMonth = card.getAttribute('data-month');
+      if (cardMonth === key) {
+        card.classList.add('active');
+        if (!firstMatch) firstMatch = card;
+      } else {
+        card.classList.remove('active');
+      }
+    });
+    if (firstMatch) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Nav button state
+    document.getElementById('cal-prev').disabled = currentIdx === 0;
+    document.getElementById('cal-next').disabled = currentIdx === months.length - 1;
+  }
+
+  // Render all event cards once
+  var allEvents = events.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var listHtml = '';
+  allEvents.forEach(function(e) {
+    var dateObj = new Date(e.date + 'T00:00:00');
+    var dateStr = monthNames[dateObj.getMonth()] + ' ' + dateObj.getDate() + ', ' + dateObj.getFullYear();
+    var eventMonth = e.date.substring(0, 7);
+    var today = new Date().toISOString().substring(0, 10);
+    listHtml += '<div class="event-card' + (e.date < today ? ' past' : '') + '" data-month="' + eventMonth + '">' +
+      '<span class="event-card-badge ' + e.type + '">' + (e.type === 'first-party' ? 'Linux Foundation' : 'Third Party') + '</span>' +
+      '<h3><a href="' + e.url + '">' + e.title + '</a></h3>' +
+      '<p class="event-card-date">' + dateStr + '</p>' +
+      '<p class="event-card-location"><a href="' + e.locationUrl + '" target="_blank">' + e.location + '</a></p>' +
+      '</div>';
+  });
+  document.getElementById('events-list').innerHTML = listHtml;
+
+  document.getElementById('cal-prev').addEventListener('click', function() { if (currentIdx > 0) { currentIdx--; render(); } });
+  document.getElementById('cal-next').addEventListener('click', function() { if (currentIdx < months.length - 1) { currentIdx++; render(); } });
+
+  render();
+})();
+</script>
 {% endblock main_content %}
