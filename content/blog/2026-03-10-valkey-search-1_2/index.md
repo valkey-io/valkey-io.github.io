@@ -24,7 +24,7 @@ Valkey Search updates the index on the write path, using additional CPU and memo
 When you add, update, or delete an indexed key, the module receives the mutation event, extracts indexed attributes, queues the indexing work, and updates the index before acknowledging the write.
 
 Valkey Search supports multi-threading so you can maximize ingestion throughput by using multiple parallel connections to saturate the index update process without pipelining on a single connection.
-Index updates are parallelized at the attribute level: a mutated key is decomposed into attributes, and each per-attribute index update runs in parallel.
+Index updates are processed by background worker threads, and index changes become visible only after the update completes, at which point the client is unblocked.
 The system ensures atomic visibility by exposing index changes only after a whole key finishes its attribute updates, and it then unblocks the client.
 
 ## Consistency Your Application Needs
