@@ -2441,6 +2441,11 @@ blockquote {
   padding: 2rem 20px;
 }
 
+.body main:has(.events-calendar) {
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .events-legend {
   display: flex;
   gap: 2rem;
