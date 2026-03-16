@@ -1,7 +1,7 @@
 ---
 title: Chaitanya Nuthalapati
 extra:
-    photo: '/assets/media/authors/karthiksubbarao.jpg'
+    photo: '/assets/media/authors/cnuthalapati.jpg'
     github: cnuthalapati
 ---
 
