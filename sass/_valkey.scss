@@ -2465,8 +2465,8 @@ blockquote {
     border-radius: 50%;
     display: inline-block;
 
-    &.first-party { background-color: $lf-dark-blue; }
-    &.third-party { background-color: $purple-100; }
+    &.first-party { background-color: #6983ff; }
+    &.third-party { background-color: $yellow-100; }
   }
 }
 
@@ -2555,8 +2555,8 @@ blockquote {
   word-break: break-word;
   margin-top: 2px;
 
-  &.first-party { background-color: $lf-dark-blue; }
-  &.third-party { background-color: $purple-100; }
+  &.first-party { background-color: #6983ff; }
+  &.third-party { background-color: $yellow-100; }
   &:hover { opacity: 0.85; }
   &, &:visited { color: $white; }
 }
@@ -2596,8 +2596,8 @@ blockquote {
       font-weight: 600;
       color: $white;
 
-      &.first-party { background-color: $lf-dark-blue; }
-      &.third-party { background-color: $purple-100; }
+      &.first-party { background-color: #6983ff; }
+      &.third-party { background-color: $yellow-100; }
     }
 
     .event-card-date {
