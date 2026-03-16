@@ -2438,7 +2438,7 @@ blockquote {
 .events-calendar {
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem 0;
+  padding: 2rem 20px;
 }
 
 .events-legend {
@@ -2460,8 +2460,8 @@ blockquote {
     border-radius: 50%;
     display: inline-block;
 
-    &.first-party { background-color: $blue-300; }
-    &.third-party { background-color: $green-200; }
+    &.first-party { background-color: $lf-dark-blue; }
+    &.third-party { background-color: $purple-100; }
   }
 }
 
@@ -2550,8 +2550,8 @@ blockquote {
   word-break: break-word;
   margin-top: 2px;
 
-  &.first-party { background-color: $blue-300; }
-  &.third-party { background-color: $green-200; }
+  &.first-party { background-color: $lf-dark-blue; }
+  &.third-party { background-color: $purple-100; }
   &:hover { opacity: 0.85; }
   &, &:visited { color: $white; }
 }
@@ -2591,8 +2591,8 @@ blockquote {
       font-weight: 600;
       color: $white;
 
-      &.first-party { background-color: $blue-300; }
-      &.third-party { background-color: $green-200; }
+      &.first-party { background-color: $lf-dark-blue; }
+      &.third-party { background-color: $purple-100; }
     }
 
     .event-card-date {

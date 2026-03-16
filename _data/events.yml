@@ -1,3 +1,5 @@
+# Events index: Add an entry here for each event to appear on the calendar.
+# For Valkey-hosted events, also create a page under content/events/.
 - title: "Contributor Summit Amsterdam"
   date: "2025-08-24"
   type: "first-party"

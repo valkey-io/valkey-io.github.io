@@ -30,7 +30,7 @@
 </div>
 
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
   var events = [
     {% for event in events %}
     {
@@ -57,8 +57,8 @@
   var first = eventDates[0].split('-');
   var last = eventDates[eventDates.length - 1].split('-');
   var months = [];
-  var y = parseInt(first[0]), m = parseInt(first[1]);
-  var endY = parseInt(last[0]), endM = parseInt(last[1]);
+  var y = Number(first[0]), m = Number(first[1]);
+  var endY = Number(last[0]), endM = Number(last[1]);
   while (y < endY || (y === endY && m <= endM)) {
     months.push(y + '-' + (m < 10 ? '0' + m : m));
     m++;
@@ -81,15 +81,15 @@
   function render() {
     var key = months[currentIdx];
     var parts = key.split('-');
-    var year = parseInt(parts[0]);
-    var month = parseInt(parts[1]) - 1;
+    var year = Number(parts[0]);
+    var month = Number(parts[1]) - 1;
     var total = daysInMonth(year, month);
     var start = startDay(year, month);
     var evts = monthSet[key] || [];
 
     // Build event lookup by day
     var byDay = {};
-    evts.forEach(function(e) { var d = parseInt(e.date.substring(8, 10)); if (!byDay[d]) byDay[d] = []; byDay[d].push(e); });
+    evts.forEach(function(e) { var d = Number(e.date.substring(8, 10)); if (!byDay[d]) byDay[d] = []; byDay[d].push(e); });
 
     document.getElementById('cal-title').textContent = monthNames[month] + ' ' + year;
 
@@ -150,6 +150,6 @@
   document.getElementById('cal-next').addEventListener('click', function() { if (currentIdx < months.length - 1) { currentIdx++; render(); } });
 
   render();
-})();
+});
 </script>
 {% endblock main_content %}
