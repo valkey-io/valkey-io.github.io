@@ -54,11 +54,10 @@ Valkey Search supports real-time updates, so new and updated data becomes search
 
 ### Real-time Search with Multi-threading
 
-Valkey Search uses indexes to organize keys by the contents of their searchable attributes, ensuring reads are low-latency and remain efficient as data grows.
-Valkey Search updates the index on the write path, using additional CPU and memory on writes to provide immediate and low-latency search.
+Valkey Search uses indexes to organize keys by the contents of their searchable attributes, ensuring reads remain fast and efficient as data grows.
 When you add, update, or delete an indexed key, the module receives the mutation event, extracts indexed attributes, queues the indexing work, and updates the index before acknowledging the write.
 
-Valkey Search supports multi-threading so you can maximize ingestion throughput by using multiple parallel connections to saturate the index update process without pipelining on a single connection.
+Valkey Search is multi-threaded, so you can maximize ingestion throughput by using multiple parallel connections to saturate the index update process without pipelining on a single connection.
 Index updates are processed by background worker threads, and index changes become visible only after the update completes, at which point the client is unblocked.
 
 ### Read-after-write Consistency
@@ -68,22 +67,22 @@ A write only completes after its index updates are applied, so any search sent t
 If your application can tolerate some staleness, you can offload reads to replicas.
 On replicas, search is eventually consistent because replication and index maintenance are asynchronous, and each node maintains its own local indexes.
 
-Multi-key updates wrapped in a transaction or Lua script are also atomically visible to search.
+Multi-key updates wrapped in a MULTI/EXEC transaction or Lua script are also atomically visible to search.
 Valkey Search exposes the index only after all attribute updates in the batch are applied.
-Separately, in cluster mode, read-after-write consistency is guaranteed per shard.
+Separately, in cluster mode, read-after-write consistency is guaranteed per primary.
 If you write a key on one shard, searches that depend on that shard see the change after the write returns, but a fan-out query across multiple shards does not have a single global transactional view.
 
 ### Scale to Terabytes of Data
 
 Valkey Search includes built-in support for cluster mode, enabling you to scale to terabytes of data without requiring application or client code changes.
-In cluster mode, Valkey Search creates indexes that span multiple shards by maintaining a separate index on each shard for the keys owned by that shard. When you create, update, or drop an index on any primary, Valkey Search propagates that change to all nodes.
+In cluster mode, Valkey Search creates indexes that span multiple shards by maintaining a separate index on each node for the keys assigned to that node's slot range. When you create, update, or drop an index on any primary, Valkey Search propagates that change to all nodes.
 
 You can scale read throughput by distributing queries evenly across the cluster so no single node or shard becomes the bottleneck.
-You can increase throughput by using more CPUs, which leverages multithreading to scale throughput linearly for both querying and ingesting, or add replicas to increase query throughput.
+You can increase throughput by scaling to instances with more vCPUs, allowing multithreading to scale throughput linearly for both querying and ingesting, or add replicas to increase query throughput.
 
 For queries, the coordinating node that receives the query request, packages a query plan and sends it to every shard (running on either primaries or replicas).
-Each shard performs the search and fetches matching local keys, then returns results for the coordinator to merge. Because the fan-out and merge logic exists on every cluster node, any node can coordinate a query.
-For mutations, updates are handled locally: when a key is added, updated, or deleted, only the local shard index is updated, and no other cluster member is modified.
+A node within each shard performs the search and fetches its matching keys, then returns results for the coordinator to merge. Because the fan-out and merge logic exists on every cluster node, any node can coordinate a query.
+For mutations, updates are handled by the owning primary: when a key is added, updated, or deleted, only that primary's index is updated directly, and the change replicates to its replicas.
 
 ## Getting Started
 
