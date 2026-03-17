@@ -34,7 +34,7 @@ The prefix/suffix pattern matching provided by full-text search makes it ideal f
 Finally, fuzzy matching capabilities allow you to accurately match documents despite spelling variations, typos, or inconsistent formats to support typo-tolerant retrieval.
 For example, when a shopper on Acme.inc types "noise cancelling earphones" in the search bar, the app can search across descriptions to retrieve relevant products:
 ```
-FT.SEARCH product_index "noise cancl*"
+FT.SEARCH product_index "noise canc*"
 ```
 This returns matching products with all their indexed attributes:
 ```
@@ -112,7 +112,7 @@ You can scale read throughput by distributing Search queries evenly across prima
 You can increase throughput by scaling to instances with more vCPUs, allowing multithreading to scale throughput linearly for both querying and ingesting, or by adding replicas to increase query throughput.
 
 For queries, the coordinating node that receives the query request, packages a query plan and sends it to every shard (to run on either primaries or replicas).
-A node within each shard performs the search and fetches its matching keys, then returns results for the coordinator to merge. Because the fan-out and merge logic exists on every cluster node, any node can coordinate a query.For mutations, the primary owning the slot handles updates: when a key is added, updated, or deleted, only that primary updates its index directly, and the change replicates to its replicas.
+A node within each shard performs the search and fetches its matching keys, then returns results for the coordinator to merge. Because the fan-out and merge logic exists on every cluster node, any node can coordinate a query. For mutations, the primary owning the slot handles updates: when a key is added, updated, or deleted, only that primary updates its index directly, and the change replicates to its replicas.
 ## Getting Started
 Valkey Search 1.2 extends search to text, tag, and numeric attribute types and adds result aggregation capabilities such as filtering, sorting, grouping, and computing metrics. Whether you're building cutting-edge AI applications, latency-sensitive search experiences, or integrating search into existing systems, we invite you to try it out. 
 To get started with Valkey Search, visit the [Valkey Search GitHub repository](https://github.com/valkey-io/valkey-search) and the [Valkey Bundle on Docker Hub](https://hub.docker.com/r/valkey/valkey-bundle). The official Valkey Bundle image provides the fastest path to running Valkey with preloaded modules, including Valkey Search, so you can begin building search and aggregation workflows without manual module setup. You can connect using official Valkey client libraries such as Valkey GLIDE, valkey-py, valkey-go, and valkey-java, as well as other Redis-compatible clients. Valkey Search is available under the BSD-3-Clause license. You can learn more about Valkey Search through our [documentation](https://valkey.io/topics/search/).
