@@ -74,8 +74,8 @@ Here, the query is searching through vector representations of product reviews t
 
 ## Transform Your Valkey Data with Aggregations
 Aggregations help you analyze and summarize the results of a search query, instead of returning a raw list of matching documents.
-You can use GROUPBY to form groups on any indexed attribute such as category, brand, region, and time, apply REDUCE functions such as COUNT, SUM, and AVG to compute per-group statistics, and use APPLY to create computed attributes on the fly.
-You can then refine and shape the output with post-aggregation FILTER, SORTBY, and LIMIT, chaining stages together to build multi-step workflows in a single query.
+You can use `GROUPBY` to form groups on any indexed attribute such as category, brand, region, and time, apply `REDUCE` functions such as `COUNT`, `SUM`, and `AVG` to compute per-group statistics, and use `APPLY` to create computed attributes on the fly.
+You can then refine and shape the output with post-aggregation `FILTER`, `SORTBY`, and `LIMIT`, chaining stages together to build multi-step workflows in a single query.
 This makes aggregations a strong fit for low-latency lightweight analytics directly on indexed Valkey data, without the need to export large result sets to the application layer. Some applications of aggregations include:
 1. Faceted navigation and filtering: Power dynamic filtering UIs using aggregations to compute real-time counts over the current result set (for example by category, brand, price band, rating, or availability), enabling users to narrow down search results with instant feedback on available options. You can also group and count items by attribute such as genre, tags, language, or creator to power structured browsing and category-level summaries across large catalogs.
 2. Real-time statistics: Use aggregations to compute grouped rankings for powering in-app flows such as trending items by recent engagement, category leaders by revenue, or top performers by region.
@@ -88,7 +88,7 @@ GROUPBY 1 @price_band
 REDUCE COUNT 0 AS product_count
 SORTBY 2 @price_band ASC
 ```
-This filters for products from the "shopnow" manufacturer, uses APPLY to bucket each product's price into $50 bands (0–49, 50–99, 100–149, etc.), groups by those bands, counts products in each, and sorts by price band ascending — giving Acme.inc a price distribution histogram for that manufacturer's products.
+This filters for products from the "shopnow" manufacturer, uses `APPLY` to bucket each product's price into $50 bands (0–49, 50–99, 100–149, etc.), groups by those bands, counts products in each, and sorts by price band ascending — giving Acme.inc a price distribution histogram for that manufacturer's products.
 
 ## Under the Hood
 ### Real-time Search with Multi-threading
@@ -110,12 +110,13 @@ Valkey Search includes built-in support for cluster mode, enabling you to scale 
 In cluster mode, Valkey Search creates indexes that span multiple shards by maintaining a separate index on each node for the keys belonging to that node's slot range. When you create, update, or drop an index on any primary, Valkey Search propagates that change to all nodes.
 You can scale read throughput by distributing Search queries evenly across primary nodes so that no single node becomes a bottleneck, or by routing some Search queries to replicas.
 You can increase throughput by scaling to instances with more vCPUs, allowing multithreading to scale throughput linearly for both querying and ingesting, or by adding replicas to increase query throughput.
+
 For queries, the coordinating node that receives the query request, packages a query plan and sends it to every shard (to run on either primaries or replicas).
-A node within each shard performs the search and fetches its matching keys, then returns results for the coordinator to merge. Because the fan-out and merge logic exists on every cluster node, any node can coordinate a query.
-For mutations, the primary owning the slot handles updates: when a key is added, updated, or deleted, only that primary updates its index directly, and the change replicates to its replicas.
+A node within each shard performs the search and fetches its matching keys, then returns results for the coordinator to merge. Because the fan-out and merge logic exists on every cluster node, any node can coordinate a query.For mutations, the primary owning the slot handles updates: when a key is added, updated, or deleted, only that primary updates its index directly, and the change replicates to its replicas.
 ## Getting Started
 Valkey Search 1.2 extends search to text, tag, and numeric attribute types and adds result aggregation capabilities such as filtering, sorting, grouping, and computing metrics. Whether you're building cutting-edge AI applications, latency-sensitive search experiences, or integrating search into existing systems, we invite you to try it out. 
 To get started with Valkey Search, visit the [Valkey Search GitHub repository](https://github.com/valkey-io/valkey-search) and the [Valkey Bundle on Docker Hub](https://hub.docker.com/r/valkey/valkey-bundle). The official Valkey Bundle image provides the fastest path to running Valkey with preloaded modules, including Valkey Search, so you can begin building search and aggregation workflows without manual module setup. You can connect using official Valkey client libraries such as Valkey GLIDE, valkey-py, valkey-go, and valkey-java, as well as other Redis-compatible clients. Valkey Search is available under the BSD-3-Clause license. You can learn more about Valkey Search through our [documentation](https://valkey.io/topics/search/).
+
 Get Involved: Join the valkey-search community, file issues, open pull requests, or suggest improvements. We welcome contributions of all kinds - code, documentation, testing, and feedback. Your involvement helps make valkey-search better for everyone.
 
 > **Note:** As of March 13, 2026, if you want to use Valkey Search 1.2 features on docker, use the current valkey/valkey-bundle:unstable image.
