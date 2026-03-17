@@ -11,10 +11,10 @@ Valkey Search enables searching terabytes of data with latency as low as microse
 Until now, Valkey Search focused on vector similarity, enabling a wide range of workloads such as semantic search and AI workloads. 
 But if you needed to filter your data by numeric attributes such as price ranges, match on exact attributes such as color or size, or search within text attributes such as product reviews, you had to build that yourself.
 
-In this post, we'll walk through what's new, show how it works, and explore the use cases these capabilities unlock.
+With Valkey Search 1.2, that changes. In this post, we'll walk through what's new, show how it works, and explore the use cases these capabilities unlock.
 
 ## Searching Your Valkey Data
-Valkey Search uses indexes to organize your data by searchable attributes, so queries can find matching keys without scanning every document. To get started with search, you first define an index over the attributes you want to search. Valkey Search supports four query types — full-text, tag, numeric range, and vector similarity, which can be used independently or combined with boolean operators. For example, consider an e-commerce retailer Acme.inc using Valkey to store their product catalog who creates an index like this:
+Valkey Search uses indexes to organize your data by searchable attributes, so queries can find matching keys without scanning every document. To get started with search, you first define an index over the attributes you want to search. Valkey Search supports four query types — full-text, tag, numeric range, and vector similarity, which you can use independently or combine with boolean operators. For example, consider an e-commerce retailer Acme.inc using Valkey to store their product catalog who creates an index like this:
 ```
 FT.CREATE product_index ON HASH SCHEMA
   description TEXT
@@ -47,8 +47,8 @@ This returns matching products with all their indexed attributes:
 4) "product:1042"
    ...
 ```
-Tag Search: Tag queries filter documents by checking attribute values for exact matches against the provided value. TAG attributes are best for structured categorical data where queries are based on exact value matching.
-You can treat TAG as a specialized alternative to TEXT for attributes that should be matched as discrete values such as userIDs, categories, and status flags.
+Tag Search: Tag queries filter documents by checking attribute values for exact matches against the provided value. TAG attributes are best for structured categorical data where queries rely on exact value matching.
+You can treat TAG as a specialized alternative to TEXT for attributes that you want to match as discrete values such as userIDs, categories, and status flags.
 This makes TAG a great fit to express conditions like "category is earphones AND size is small, but color is not red."
 TAG filtering shines in use cases such as streaming and gaming platforms to retrieve metadata by exact identifiers such as user ID, region, or genre to power real-time stats and fast in-app filtering.
 It is also well suited for session and user management, where you need to quickly locate active sessions and entitlements by exact identifiers such as session ID, device properties, or tenant ID across millions of documents.
@@ -56,7 +56,7 @@ For example, when a shopper on Acme.inc filters for earphones manufactured by "s
 ```
 FT.SEARCH product_index "@manufacturer:{shopnow} @color:{white}"
 ```
-Numeric Range Queries: Range search retrieves documents by filtering and sorting over numeric and time attributes using comparisons such as greater than, less than, and between. This makes it ideal for applications that query attributes such as scores, price bands, time windows, inventory thresholds, distances, and timestamps. 
+Numeric Range Queries: Range search retrieves documents by filtering and sorting over numeric and time attributes using comparisons such as greater than, less than, and between. This makes it ideal for applications that query attributes such as scores, price bands, time windows, inventory thresholds, distances, and timestamps.
 Valkey Search supports range-based queries with microsecond latencies, making it a strong fit for real-time leaderboards where you rank and retrieve content by numeric metrics such as scores, downloads, or engagement with updates reflected immediately.
 Range queries are also well suited for financial transactions or time series data, enabling ultra-fast lookups by amounts, fees, date ranges, and risk scores to power customer-facing applications, personalization, or real-time monitoring.
 For example, when a shopper on Acme.inc sets the price slider to $50–$100 and filters by 4-star and above, the app can query the numeric index:
@@ -95,27 +95,27 @@ This filters for products from the "shopnow" manufacturer, uses APPLY to bucket 
 Valkey Search uses indexes to organize keys by the contents of their searchable attributes, ensuring reads remain fast and efficient as data grows.
 When you add, update, or delete an indexed key, the module receives the mutation event, extracts indexed attributes, queues the indexing work, and updates the index before acknowledging the write.
 Valkey Search is multi-threaded, so you can maximize ingestion throughput by using multiple parallel connections to saturate the index update process without pipelining on a single connection.
-Index updates are processed by background worker threads, and index changes become visible only after the update completes, at which point the client is unblocked.
+Background worker threads process index updates, and the client receives a response only after the update is committed to the index.
 ### Read-after-write Consistency
-For workloads that require strict read-after-write behavior, you can route search queries to primaries.
+For workloads that require strict read-after-write behavior, you can configure your client to route search queries to primaries.
 A write only completes after its index updates are applied, so any search sent to the same primary after the write returns will see that change.
 If your application can tolerate some staleness, you can offload reads to replicas.
 On replicas, search is eventually consistent because replication and index maintenance are asynchronous, and each node maintains its own local indexes.
 Multi-key updates wrapped in a MULTI/EXEC transaction or Lua script are also atomically visible to search.
 Valkey Search exposes the index only after all attribute updates in the batch are applied.
-Separately, in cluster mode, read-after-write consistency is guaranteed per primary.
-If you write a key on one shard, searches that depend on that shard see the change after the write returns, but a fan-out query across multiple shards does not have a single global transactional view.
+Separately, in cluster mode, read-after-write consistency applies per primary of the shard.
+If you write a key to a primary, searches sent to that primary see the change after the write returns, but a fan-out query spanning multiple shards does not have a single global transactional view.
 ### Scale to Terabytes of Data
 Valkey Search includes built-in support for cluster mode, enabling you to scale to terabytes of data without requiring application or client code changes.
-In cluster mode, Valkey Search creates indexes that span multiple shards by maintaining a separate index on each node for the keys assigned to that node's slot range. When you create, update, or drop an index on any primary, Valkey Search propagates that change to all nodes.
-You can scale read throughput by distributing queries evenly across the cluster so no single node or shard becomes the bottleneck, or configuring your client to initiate Search queries on replicas.
-You can increase throughput by scaling to instances with more vCPUs, allowing multithreading to scale throughput linearly for both querying and ingesting, or add replicas to increase query throughput.
-For queries, the coordinating node that receives the query request, packages a query plan and sends it to every shard (running on either primaries or replicas).
+In cluster mode, Valkey Search creates indexes that span multiple shards by maintaining a separate index on each node for the keys belonging to that node's slot range. When you create, update, or drop an index on any primary, Valkey Search propagates that change to all nodes.
+You can scale read throughput by distributing Search queries evenly across primary nodes so that no single node becomes a bottleneck, or by routing some Search queries to replicas.
+You can increase throughput by scaling to instances with more vCPUs, allowing multithreading to scale throughput linearly for both querying and ingesting, or by adding replicas to increase query throughput.
+For queries, the coordinating node that receives the query request, packages a query plan and sends it to every shard (to run on either primaries or replicas).
 A node within each shard performs the search and fetches its matching keys, then returns results for the coordinator to merge. Because the fan-out and merge logic exists on every cluster node, any node can coordinate a query.
-For mutations, updates are handled by the owning primary: when a key is added, updated, or deleted, only that primary's index is updated directly, and the change replicates to its replicas.
+For mutations, the primary owning the slot handles updates: when a key is added, updated, or deleted, only that primary updates its index directly, and the change replicates to its replicas.
 ## Getting Started
-Valkey Search 1.2 extends search to text, tag, and numeric attribute types and adds result aggregation capabilities such as filtering, sorting, grouping, and computing metrics. Whether you're building cutting-edge AI applications, building latency-sensitive search experiences, or integrating search into existing systems, we invite you to try it out. 
-To get started with Valkey Search, visit the [Valkey Search GitHub repository](https://github.com/valkey-io/valkey-search) and the [Valkey Bundle on Docker Hub](https://hub.docker.com/r/valkey/valkey-bundle). The official Valkey Bundle image provides the fastest path to running Valkey with preloaded modules, including Valkey Search, so you can begin building search and aggregation workflows without manual module setup. You can connect using official Valkey client libraries such as Valkey GLIDE, valkey-py, valkey-go, and valkey-java, as well as other Redis-compatible clients. Valkey Search is licensed under the BSD-3-Clause license. You can learn more about Valkey Search through our [documentation](https://valkey.io/topics/search/).
+Valkey Search 1.2 extends search to text, tag, and numeric attribute types and adds result aggregation capabilities such as filtering, sorting, grouping, and computing metrics. Whether you're building cutting-edge AI applications, latency-sensitive search experiences, or integrating search into existing systems, we invite you to try it out. 
+To get started with Valkey Search, visit the [Valkey Search GitHub repository](https://github.com/valkey-io/valkey-search) and the [Valkey Bundle on Docker Hub](https://hub.docker.com/r/valkey/valkey-bundle). The official Valkey Bundle image provides the fastest path to running Valkey with preloaded modules, including Valkey Search, so you can begin building search and aggregation workflows without manual module setup. You can connect using official Valkey client libraries such as Valkey GLIDE, valkey-py, valkey-go, and valkey-java, as well as other Redis-compatible clients. Valkey Search is available under the BSD-3-Clause license. You can learn more about Valkey Search through our [documentation](https://valkey.io/topics/search/).
 Get Involved: Join the valkey-search community, file issues, open pull requests, or suggest improvements. We welcome contributions of all kinds - code, documentation, testing, and feedback. Your involvement helps make valkey-search better for everyone.
 
 > **Note:** As of March 13, 2026, if you want to use Valkey Search 1.2 features on docker, use the current valkey/valkey-bundle:unstable image.

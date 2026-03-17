@@ -1,7 +1,7 @@
 ---
 title: Brennan Cathcart
 extra:
-    photo: '/assets/media/authors/karthiksubbarao.jpg'
+    photo: '/assets/media/authors/bcathcart.jpeg'
     github: bcathcart
 ---
 
