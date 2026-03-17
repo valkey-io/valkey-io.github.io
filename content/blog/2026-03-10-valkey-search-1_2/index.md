@@ -34,7 +34,7 @@ The prefix/suffix pattern matching provided by full-text search makes it ideal f
 Finally, fuzzy matching capabilities allow you to accurately match documents despite spelling variations, typos, or inconsistent formats to support typo-tolerant retrieval.
 For example, when a shopper on Acme.inc types "noise cancelling earphones" in the search bar, the app can search across descriptions to retrieve relevant products:
 ```
-FT.SEARCH product_index "@description:(noise cancl*)"
+FT.SEARCH product_index "noise cancl*"
 ```
 This returns matching products with all their indexed attributes:
 ```
@@ -68,7 +68,7 @@ Hybrid queries are ideal for applications that need to query across multiple att
 This eliminates the need to stitch together multiple queries or round-trips, making it a natural fit for recommendation systems, media platforms, and real-time operational workflows.
 Combining our examples from above, when a shopper on Acme.inc searches for "noise cancelling earphones" and filters for products in "white" color, under $150, that are good for running, the app can combine all of this into a single query:
 ```
-FT.SEARCH product_index "@description:(noise cancelling earphones) @color:{white} @price:[0 150] =>[KNN 5 @review $vector] PARAMS 2 vector ‘VECTOR_REPRESENTATION’"
+FT.SEARCH product_index "noise cancelling earphones @color:{white} @price:[0 150] =>[KNN 5 @review $vector]" PARAMS 2 vector 'VECTOR_REPRESENTATION'
 ```
 Here, the query is searching through vector representations of product reviews to find “earphones that are good for running”.
 
