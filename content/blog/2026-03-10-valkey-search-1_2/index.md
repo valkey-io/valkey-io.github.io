@@ -4,9 +4,15 @@ description = "Valkey Search now enables querying across text, tags, and numeric
 date= 2026-03-10 00:00:00
 authors= [ "karthiksubbarao", "allenss", "bcathcart", "cnuthalapati"]
 +++
-Until now, Valkey Search focused on vector similarity, enabling a wide range of workloads such as semantic search and AI workloads. But if you needed to filter your data by numeric attributes such as price ranges, match on exact attributes such as color or size, or search within text attributes such as product reviews, you had to build that yourself.
-Valkey Search now enables searching across text, tags, and numeric attributes over terabytes of data with microsecond-level latency. You can now combine full-text search, exact-match tags, numeric ranges, and vector similarity in a single query, then analyze results with server-side aggregations with the low latency you expect from Valkey. Valkey Search 1.2 provides a flexible, high-performance foundation for querying across a range of use cases, from powering in-app search experiences to recommendation systems and analyzing Valkey data to support in-app analytics and reporting dashboards.
+
+Valkey Search now lets you search across text, tag, numeric, and vector attributes in a single query, and analyze results with server-side aggregations at the low latency you expect from Valkey. 
+Valkey Search provides a flexible, high-performance foundation for querying across a range of use cases, from powering in-app search experiences to recommendation systems and analyzing data to support in-app analytics and reporting dashboards.
+
+Until now, Valkey Search focused on vector similarity, enabling a wide range of workloads such as semantic search and AI workloads. 
+But if you needed to filter your data by numeric attributes such as price ranges, match on exact attributes such as color or size, or search within text attributes such as product reviews, you had to build that yourself.
+
 In this post, we'll walk through what's new, show how it works, and explore the use cases these capabilities unlock.
+
 ## Searching Your Valkey Data
 Valkey Search uses indexes to organize your data by searchable attributes, so queries can find matching keys without scanning every document. To get started with search, you first define an index over the attributes you want to search. Valkey Search supports four query types — full-text, tag, numeric range, and vector similarity, which can be used independently or combined with boolean operators. For example, consider an e-commerce retailer Acme.inc using Valkey to store their product catalog who creates an index like this:
 ```
