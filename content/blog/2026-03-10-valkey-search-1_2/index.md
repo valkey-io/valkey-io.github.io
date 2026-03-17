@@ -3,6 +3,10 @@ title= "Beyond Vectors: Introducing Full-Text Search and Aggregations to Valkey"
 description = "Valkey Search now enables querying across text, tags, and numeric data and analyzing results with aggregations."
 date= 2026-03-17 01:00:00
 authors= [ "karthiksubbarao", "allenss", "bcathcart", "cnuthalapati"]
+
+[extra]
+featured = false
+featured_image = "/assets/media/featured/random-06.webp"
 +++
 
 Valkey Search now lets you search across text, tag, numeric, and vector attributes in a single query, and analyze results with server-side aggregations at the low latency you expect from Valkey. 
