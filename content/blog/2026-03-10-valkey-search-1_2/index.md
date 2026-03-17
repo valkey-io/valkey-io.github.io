@@ -1,7 +1,7 @@
 +++
 title= "Beyond Vectors: Introducing Full-Text Search and Aggregations to Valkey"
 description = "Valkey Search now enables querying across text, tags, and numeric data and analyzing results with aggregations."
-date= 2026-03-10 00:00:00
+date= 2026-03-17 01:00:00
 authors= [ "karthiksubbarao", "allenss", "bcathcart", "cnuthalapati"]
 +++
 
