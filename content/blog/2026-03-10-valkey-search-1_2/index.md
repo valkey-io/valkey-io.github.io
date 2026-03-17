@@ -6,7 +6,7 @@ authors= [ "karthiksubbarao", "allenss", "bcathcart", "cnuthalapati"]
 +++
 
 Valkey Search now lets you search across text, tag, numeric, and vector attributes in a single query, and analyze results with server-side aggregations at the low latency you expect from Valkey. 
-Valkey Search provides a flexible, high-performance foundation for querying across a range of use cases, from powering in-app search experiences to recommendation systems and analyzing data to support in-app analytics and reporting dashboards.
+Valkey Search enables searching terabytes of data with latency as low as microseconds, providing a flexible foundation for querying across a range of use cases, from powering in-app search experiences to recommendation systems and analyzing data to support in-app analytics and reporting dashboards.
 
 Until now, Valkey Search focused on vector similarity, enabling a wide range of workloads such as semantic search and AI workloads. 
 But if you needed to filter your data by numeric attributes such as price ranges, match on exact attributes such as color or size, or search within text attributes such as product reviews, you had to build that yourself.
