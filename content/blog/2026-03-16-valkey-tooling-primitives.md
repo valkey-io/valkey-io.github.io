@@ -9,27 +9,29 @@ featured = true
 featured_image = "/assets/media/featured/random-04.webp"
 +++
 
-Valkey is protocol-compatible with Redis. That's one of its greatest strengths - existing clients are largely compatible, the learning curve is not steep. It's also, quietly, a problem for tooling.
+Valkey is protocol-compatible with Redis and supports the full Redis 7.2.4 command API. That's one of its greatest strengths - existing clients are largely compatible, the learning curve is not steep. It's also, quietly, a problem for tooling.
 
 Because compatibility means every tool built before Valkey existed technically "works" with it - tools that haven't been updated to take advantage of what Valkey now offers natively. And when something works well enough, nobody builds a better version. Why would they?
 
-The release of Valkey Admin is a signal that the community already knows this is a problem worth solving. It's also a useful frame for the broader question: what do Valkey's newer primitives actually make possible, and are the tools keeping up?
+The release of [Valkey Admin](https://github.com/valkey-io/valkey-admin) is a signal that the community already knows this is a problem worth solving. It's also a useful frame for the broader question: what do Valkey's newer primitives actually make possible, and are the tools keeping up?
 
-## Valkey-specific primitives that deserve purpose-built tooling
+## Primitives that deserve purpose-built tooling
 
-**COMMANDLOG** (8.1+) is the clearest example. Unlike SLOWLOG, which only flags commands that exceed an execution time threshold, COMMANDLOG tracks by three separate criteria: slow execution, large request payloads, and large reply payloads.
+[LATENCY history](https://valkey.io/commands/latency-history/) has been in Valkey (and Redis before it) for a while, but it's consistently underused because the data is rarely captured continuously. Valkey maintains a history of latency events - fork operations, AOF flushes, AOF rewrites. When you collect this over time, questions like "did our latency spike coincide with an AOF flush?" become answerable. Without continuous collection, you're left staring at the current state and reasoning backward with no evidence.
+
+Valkey has taken this further with two primitives that have no Redis equivalent.
+
+[COMMANDLOG](https://valkey.io/commands/commandlog-get/) (8.1+) is the clearest example. Unlike SLOWLOG, which only flags commands that exceed an execution time threshold, COMMANDLOG tracks by three separate criteria: slow execution, large request payloads, and large reply payloads.
 
 The distinction matters more than it looks. A command retrieving a 50MB hash may execute quickly - the data is in memory, the read is fast - but it's saturating your network, causing tail latency for every other client sharing that connection, and buffering data in ways that won't show up in slowlog at all. You end up with rising P99 latency and no obvious culprit, because the traditional tool for finding slow commands says everything is fine. COMMANDLOG with large-reply tracking shows you exactly which command patterns are the problem - something that simply wasn't possible to diagnose this way before.
 
-**CLUSTER SLOT-STATS** (8.0+) gives you per-slot key counts, reads, writes, and CPU usage across a cluster. Before this, shard balancing was largely a guessing game based on aggregate node metrics - you could see that a node was hot, but not which slots were driving it. With SLOT-STATS you can identify specific hot slots and make targeted rebalancing decisions backed by actual data rather than intuition.
-
-**LATENCY history** has been in Valkey (and Redis before it) for a while, but it's consistently underused because the data is rarely captured continuously. Valkey maintains a history of latency events - fork operations, AOF flushes, AOF rewrites. When you collect this over time, questions like "did our latency spike coincide with an AOF flush?" become answerable. Without continuous collection, you're left staring at the current state and reasoning backward with no evidence.
+[CLUSTER SLOT-STATS](https://valkey.io/commands/cluster-slot-stats/) (8.0+) gives you per-slot key counts, reads, writes, and CPU usage across a cluster. Before this, shard balancing was largely a guessing game based on aggregate node metrics - you could see that a node was hot, but not which slots were driving it. With SLOT-STATS you can identify specific hot slots and make targeted rebalancing decisions backed by actual data rather than intuition.
 
 ## Purpose-built tooling exists, and it's coming to Valkey
 
 Redis recognized this early. Redis Insight and the Redis Insight VS Code extension exist precisely because the generic tools weren't enough - operators needed something that understood Redis's data model, its operational commands, and how developers actually interact with it day to day. The investment made sense because the tool could be built around the specific primitives Redis exposed.
 
-Valkey is getting the same treatment. Valkey Admin - the project's own operator tool, and the closest thing to a Valkey-native alternative to Redis Insight - is a clear signal that the community recognizes this. On the editor side, a VS Code extension for Valkey brings the same workflow into the development environment. But the point isn't any specific tool. The point is that the category needs to exist, and it needs to keep pace with what Valkey is shipping.
+Valkey is getting the same treatment. [Valkey Admin](https://github.com/valkey-io/valkey-admin) - the project's own operator tool, and the closest thing to a Valkey-native alternative to Redis Insight - is a clear signal that the community recognizes this. On the editor side, a VS Code extension for Valkey brings the same workflow into the development environment. But the point isn't any specific tool. The point is that the category needs to exist, and it needs to keep pace with what Valkey is shipping.
 
 There's a harder problem underneath this though: most of Valkey's operational data is ephemeral by design. The slowlog is a circular buffer. COMMANDLOG entries don't persist across restarts. Command patterns that caused a latency spike hours ago leave no trace unless something was collecting continuously. Purpose-built tooling needs to solve for persistence, not just presentation.
 
