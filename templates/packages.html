@@ -233,11 +233,11 @@
 <div class="pkg-gpg-section">
   <h2>GPG Key</h2>
   <p>All packages are signed with our GPG key. Download the public key:
-  <a href="{{ page.extra.gpg_key_url }}">GPG-KEY-valkey.asc</a></p>
+  <a href="{{ page.extra.gpg_key_url | safe }}">GPG-KEY-valkey.asc</a></p>
 </div>
 
 <script>
-var REPO_URL = "{{ page.extra.repo_url }}";
+var REPO_URL = "{{ page.extra.repo_url | safe }}";
 
 function showInstructions() {
   var osSel = document.getElementById("os-select");
