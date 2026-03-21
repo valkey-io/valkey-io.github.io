@@ -1,9 +1,7 @@
-
 +++
 title = "Meetup Groups"
-description = "Charter for Valkey Community Meetup Groups"
-template = "community.html"
-page_template = "community.html"
+description = "Charter and guidelines for Valkey community meetup groups worldwide."
+template = "fullwidth.html"
 +++
 
 # Valkey Meetup Charter
@@ -16,7 +14,7 @@ Valkey Meetup Groups are community-driven meetups and recurring gatherings dedic
 
 ### 2.1 Frequency
 
-Each Meetup Group is expected to hold a meetup a minimum of once every 6 months. Consistency is key to building trust, momentum, and a thriving local community.
+Each Meetup Group is expected to hold a meetup at least once every 6 months. Groups that hold fewer than one meetup per year will lose their status as a recognized Valkey Meetup Group.
 
 ### 2.2 Topics
 
@@ -44,20 +42,25 @@ Meetings can vary, but most will include a combination of presentations, demos, 
 
 - Use Valkey first language (not product-led)
 - Emphasize open source, governance, and community
-- Slides should include Valkey [branding](https://github.com/valkey-io/assets/blob/main/Valkey%20Branding/valkey_brand_guidelines.pdf)
+- Slides should include Valkey branding
 - Avoid positioning Valkey as a single-vendor project
 
 ## 3. Locations
 
-For the most up-to-date listing of Meetup Groups, please visit the Valkey Meetup Groups page (hopefully add the new LF page for User groups). If you don't see your city listed and are interested in leading a new one, open a [**New Meetup Group Issue**](https://github.com/valkey-io/valkey-io.github.io/issues/new?template=new-meetup-group.md) issue to begin the conversation.
+For the most up-to-date listing of Meetup Groups, please visit the Valkey Meetup Groups page (will be updated with the LF tool). If you don't see your city listed and are interested in leading a new one, open a [**New Meetup Group Request**](https://github.com/valkey-io/valkey-io.github.io/issues/new?template=new-meetup-group.md) issue to begin the conversation.
+
+**Request Lifecycle:**
+1. Open a New Meetup Group Request issue on GitHub
+2. Join [Valkey Slack](https://valkey.io/slack/) and share your issue in the [#meetup-groups](https://valkey-oss-developer.slack.com/archives/C0AL7GL1YSZ) channel
+3. The Valkey team will review your request and follow up!
 
 ## 4. Get in touch!
 
-Want to speak at an upcoming meetup, share ideas with your local group, become an organizer or need sponsorship to host it? The community is here to help! Reach out on the [**#meetup-groups**](https://join.slack.com/t/valkey-oss-developer/shared_invite/zt-3sefoop7q-Unqv81ZlcZltrl1o~GZDrw) channel in [**Valkey Slack**](https://join.slack.com/t/valkey-oss-developer/shared_invite/zt-3sefoop7q-Unqv81ZlcZltrl1o~GZDrw) for guidance, resources, and support to get involved.
+Want to speak at an upcoming meetup, share ideas with your local group, become an organizer or need sponsorship to host it? The community is here to help! Reach out on the [#meetup-groups](https://valkey-oss-developer.slack.com/archives/C0AL7GL1YSZ) channel in [Valkey Slack](https://valkey.io/slack/) for guidance, resources, and support to get involved.
 
 ## 5. Code of Conduct
 
-All hosts, speakers, organizers, and participants involved in Valkey Meetup Groups are expected to follow the **Code of Conduct**.
+All hosts, speakers, organizers, and participants involved in Valkey Meetup Groups are expected to follow the [Code of Conduct](https://events.linuxfoundation.org/about/code-of-conduct/).
 
 ---
 
