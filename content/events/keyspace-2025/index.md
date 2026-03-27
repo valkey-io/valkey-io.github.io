@@ -1,10 +1,13 @@
 +++
 title = "Keyspace Amsterdam"
-date= 2025-08-28 01:01:01
+date = 2025-08-28 01:01:01
 
 [extra]
 body_class = "keyspace-2025"
 event_logo = "/events/keyspace-2025/keyspace-logo-6.png"
+event_type = "first-party"
+location = "RAI Amsterdam Convention Centre, Amsterdam, Netherlands"
+location_url = "https://www.google.com/maps/place/Amsterdam+RAI/@52.3411938,4.8860407,1232m"
 +++
 <style type="text/css">
 /* this page pulls in CSS from sessionize and it clashes with our color scheme */
