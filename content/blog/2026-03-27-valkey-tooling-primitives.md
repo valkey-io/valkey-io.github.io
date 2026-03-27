@@ -1,6 +1,6 @@
 +++
 title = "What Valkey's new primitives tell us about the tools we need"
-date = 2026-03-16
+date = 2026-03-27
 description = "Valkey ships powerful operational primitives like COMMANDLOG, SLOT-STATS, and upcoming per-thread I/O metrics — but without purpose-built tooling, much of that value goes unrealized."
 authors = ["kivanow"]
 
