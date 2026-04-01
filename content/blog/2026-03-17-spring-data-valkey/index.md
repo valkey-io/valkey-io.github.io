@@ -1,7 +1,7 @@
 +++
 title= "Announcing Spring Data Valkey: A New Season for High-Performance Spring Applications"
 description = "Introducing Spring Data Valkey, a new open source Spring Data module that provides first-class integration between Valkey and the Spring ecosystem."
-date= 2026-03-17 00:00:00
+date= 2026-04-01 00:00:00
 authors= ["makubo-aws"]
 
 [extra]
