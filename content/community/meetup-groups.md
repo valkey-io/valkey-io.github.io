@@ -14,7 +14,7 @@ Valkey Meetup Groups are community-driven meetups and recurring gatherings dedic
 
 ### 2.1 Frequency
 
-Each Meetup Group is expected to hold a meetup at least once every 6 months. Groups that hold fewer than one meetup per year will lose their status as a recognized Valkey Meetup Group.
+Each Meetup Group is encouraged to hold a meetup at least once every 6 months. Groups that hold fewer than one meetup per year will lose their status as a recognized Valkey Meetup Group.
 
 ### 2.2 Topics
 
