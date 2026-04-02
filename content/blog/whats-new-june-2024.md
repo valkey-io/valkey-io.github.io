@@ -5,6 +5,7 @@ description= "What have people been saying about Valkey in June 2024? Read on to
 authors= ["kyledvs"]
 
 [extra]
+type = "Community Highlight"
 categories= "roundup"
 featured = false
 featured_image = "/assets/media/featured/random-01.webp"

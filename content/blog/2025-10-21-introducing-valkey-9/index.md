@@ -7,6 +7,7 @@ Read on to find out all the team packed into this release.
     """
 authors= ["kyledvs"]
 [extra]
+type = "Announcements"
 featured = true
 featured_image = "/assets/media/featured/random-08.webp"
 +++

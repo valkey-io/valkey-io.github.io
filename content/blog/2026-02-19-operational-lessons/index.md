@@ -5,6 +5,7 @@ description = "Production lessons on tail latency, migrations, and scale from en
 authors = ["allenhelton", "mikecallahan"]
 
 [extra]
+type = "Community Highlight"
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"
 +++

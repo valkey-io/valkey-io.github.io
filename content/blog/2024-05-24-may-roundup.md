@@ -8,6 +8,7 @@ description= "It's become clear that people want to talk about Valkey and have b
 authors= ["kyledvs"]
 
 [extra]
+type = "Community Highlight"
 categories= "update"
 featured = false
 featured_image = "/assets/media/featured/random-02.webp"

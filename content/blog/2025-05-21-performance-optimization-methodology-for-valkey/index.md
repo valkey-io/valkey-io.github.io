@@ -5,6 +5,7 @@ description= "Performance Optimization Methodology for Valkey"
 authors= ["lipzhu", "guowangy"]
 
 [extra]
+type = "Technical Deep Dive"
 categories= "performance"
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"

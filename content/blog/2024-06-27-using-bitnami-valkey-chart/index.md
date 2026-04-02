@@ -7,6 +7,7 @@ aliases= [
 ]
 authors=["rafariossaa"]
 [extra]
+type = "How-to"
 featured = false
 featured_image = "/assets/media/featured/random-01.webp"
 

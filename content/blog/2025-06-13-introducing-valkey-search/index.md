@@ -5,6 +5,7 @@ date= 2025-07-07 01:01:01
 authors= ["yairgott", "allenss"] 
 
 [extra]
+type = "Announcements"
 featured = false
 featured_image = "/assets/media/featured/random-08.webp"
 +++

@@ -14,6 +14,7 @@ description= "Learn about the new performance improvements in Valkey 8 which red
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "dantouitou", "uriyagelnik"]
 [extra]
+type = "Technical Deep Dive"
 featured = true
 featured_image = "/assets/media/featured/random-01.webp"
 +++

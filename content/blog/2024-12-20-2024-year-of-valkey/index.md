@@ -5,6 +5,7 @@ description = "The end of the calendar year is a great time to reflect, but for 
 date= 2024-12-20 01:01:01
 authors= ["kyledvs"]
 [extra]
+type = "Community Highlight"
 featured = false
 featured_image = "/assets/media/featured/random-05.webp"
 

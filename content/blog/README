@@ -1,0 +1,54 @@
+# Valkey Blog
+
+Blog posts live in `content/blog/`. Each post is either a standalone `.md` file or a directory with an `index.md` (use a directory when you need to include images or other assets).
+
+## Front matter
+
+Every blog post must include TOML front matter between `+++` fences. Example:
+
+```toml
++++
+title = "Your Post Title"
+date = 2026-04-01
+description = "A short summary shown in the blog listing and metadata."
+authors = ["github-username"]
+
+[extra]
+type = "Announcements"
+featured = false
+featured_image = "/assets/media/featured/random-01.webp"
++++
+```
+
+### Required fields
+
+| Field | Description |
+|-------|-------------|
+| `title` | Post title |
+| `date` | Publish date (`YYYY-MM-DD`) |
+| `description` | Short summary for the blog listing |
+| `authors` | List of GitHub usernames |
+| `extra.type` | Post category (see below). **The build will fail if this is missing.** |
+
+### Optional fields
+
+| Field | Description |
+|-------|-------------|
+| `extra.featured` | Set to `true` to show in the Featured sidebar |
+| `extra.featured_image` | Path to a featured image |
+
+### Post types
+
+Valid types are defined in `config.toml` under `[extra.blog_types]`. Current values:
+
+- `Technical Deep Dive` — In-depth technical content
+- `Announcements` — Releases, new features, project news
+- `Community Highlight` — Community stories, year-in-review, ecosystem
+- `How-to` — Tutorials and guides
+- `Events` — Event recaps and announcements
+
+To add a new type, update `config.toml`, `sass/_valkey.scss` (badge color), and this README.
+
+## File naming
+
+Use the format `YYYY-MM-DD-slug.md` (or `YYYY-MM-DD-slug/index.md` for posts with assets).

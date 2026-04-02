@@ -7,6 +7,7 @@
 
 <h1>{{ page.title }}</h1>
 <div class="meta">
+  <span class="blog-type-badge" data-type="{{ page.extra.type }}">{{ page.extra.type }}</span>
   {{ page.date | date(format="%Y-%m-%d") }}
   {% if page.authors %}
     &middot; 

@@ -53,3 +53,6 @@ publish_hold = [
     "/topics/rdd/"
 ]
 
+
+[extra.blog_types]
+types = ["Technical Deep Dive", "Community Highlight", "How-to", "Announcements", "Events"]

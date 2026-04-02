@@ -6,6 +6,7 @@ authors= ["dmitrypol"]
 categories= "modules"
 
 [extra]
+type = "How-to"
 categories= "performance"
 featured = false
 featured_image = "/assets/media/featured/random-04.webp"

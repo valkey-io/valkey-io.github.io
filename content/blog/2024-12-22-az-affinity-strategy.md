@@ -4,6 +4,7 @@ date= 2025-01-08 01:01:01
 description= "By implementing AZ affinity routing in Valkey and using GLIDE, you can achieve lower latency and cost savings by routing requests to replicas in the same AZ as the client."
 authors= [ "asafporatstoler", "adarovadya", "muhammadawawdi"]
 [extra]
+type = "Technical Deep Dive"
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"
 +++

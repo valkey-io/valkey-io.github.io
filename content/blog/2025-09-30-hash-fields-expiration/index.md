@@ -11,6 +11,7 @@ description= """
     """
 authors= ["ranshid"]
 [extra]
+type = "Technical Deep Dive"
 featured = true
 featured_image = "/assets/media/featured/random-08.webp"
 +++

@@ -5,6 +5,7 @@ date= 2025-08-04 00:00:00
 authors= [ "adamfowler"]
 
 [extra]
+type = "Announcements"
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"
 +++

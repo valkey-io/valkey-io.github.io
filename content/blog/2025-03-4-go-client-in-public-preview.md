@@ -4,6 +4,7 @@ description = "Valkey Glide now supports GO. Read to learn more about the new cl
 date= 2025-03-04 01:01:01
 authors= [ "niharikabhavaraju"]
 [extra]
+type = "Announcements"
 featured = false
 featured_image = "/assets/media/featured/default.webp"
 +++

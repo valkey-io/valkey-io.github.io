@@ -4,6 +4,7 @@ date = 2026-01-06
 description = "A guide on why the new Valkey Helm chart exists, how it helps, and how to migrate from Bitnami." 
 authors =  ["sgissi","maheshcherukumilli"]
 [extra]
+type = "Announcements"
 featured = true
 featured_image = "/assets/media/featured/valkey-helm.webp"
 +++

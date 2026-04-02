@@ -5,6 +5,7 @@ date= 2025-12-12 00:00:00
 authors= [ "allenhelton"]
 
 [extra]
+type = "How-to"
 featured = true
 featured_image = "/assets/media/featured/random-06.webp"
 +++

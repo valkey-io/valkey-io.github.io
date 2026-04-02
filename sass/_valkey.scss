@@ -911,6 +911,47 @@ aside {
   }
 }
 
+.blog-type-filters {
+  margin-bottom: 1.5rem;
+
+  select {
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    border: 1px solid $grey-lt-300;
+    background: $white;
+    color: $text;
+    font-size: 1.3rem;
+    cursor: pointer;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.blog-type-badge {
+  display: inline-block;
+  padding: 0.15rem 0.7rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $white;
+  background-color: $grey-dk-200;
+
+  &[data-type="Technical Deep Dive"] { background-color: $blue-200; }
+  &[data-type="Community Highlight"] { background-color: $green-200; }
+  &[data-type="How-to"] { background-color: $purple-200; }
+  &[data-type="Announcements"] { background-color: $yellow-100; }
+  &[data-type="Events"] { background-color: $red-100; }
+}
+
 .blog-inner {
   
   .blog-list {

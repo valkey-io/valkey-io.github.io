@@ -5,6 +5,7 @@ date= 2026-04-01 00:00:00
 authors= ["makubo-aws"]
 
 [extra]
+type = "Announcements"
 featured = false
 +++
 

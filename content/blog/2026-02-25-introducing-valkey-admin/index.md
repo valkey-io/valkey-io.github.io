@@ -5,6 +5,7 @@ date= 2026-02-25 00:00:00
 authors= [ "allenhelton", "arsenykostenko"]
 
 [extra]
+type = "Community Highlight"
 featured = true
 featured_image = "/blog/introducing-valkey-admin/images/hero.jpg"
 +++

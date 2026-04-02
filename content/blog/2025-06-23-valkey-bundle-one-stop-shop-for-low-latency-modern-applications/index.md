@@ -5,6 +5,7 @@ date= 2025-06-23 00:00:01
 authors= ["rlunar"] 
 
 [extra]
+type = "Announcements"
 featured = false
 featured_image = "/assets/media/featured/random-02.webp"
 +++

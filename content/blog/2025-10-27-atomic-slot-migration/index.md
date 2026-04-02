@@ -4,6 +4,7 @@ date= 2025-10-29 00:00:00
 description= "Valkey 9.0 brings big changes and improvements to the underlying mechanisms of resharding. Find out how Atomic Slot Migration works, the benefits it brings, and the headaches it eliminates."
 authors= ["murphyjacob4"]
 [extra]
+type = "Technical Deep Dive"
 featured = true
 featured_image = "/assets/media/featured/random-05.webp"
 +++

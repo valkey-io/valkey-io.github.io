@@ -3,6 +3,8 @@ title = "Don’t Miss What’s Next in Valkey — Subscribe Now"
 date = 2026-02-04
 description = "Valkey is moving fast — and the easiest way to stay ahead is to subscribe to the official Valkey newsletter. From new releases and roadmap milestones to community highlights and upcoming events, our newsletter is your single source of truth for everything happening across the Valkey ecosystem."
 authors = ["crystalpham"]
+[extra]
+type = "Announcements"
 +++
 
 Valkey is moving fast and the easiest way to stay ahead is to [subscribe](/blog/valkey-newsletter-new/#email-signup) to the official Valkey newsletter.

@@ -5,6 +5,7 @@ date= 2025-09-25 00:00:00
 authors= [ "kyledvs"]
 
 [extra]
+type = "Technical Deep Dive"
 featured = true
 featured_image = "/blog/numbered-databases/images/move-db.drawio.png"
 +++

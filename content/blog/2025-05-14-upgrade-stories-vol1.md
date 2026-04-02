@@ -5,6 +5,7 @@ date= 2025-05-14 01:01:01
 authors= ["kyledvs", "nigel"] 
 
 [extra]
+type = "Community Highlight"
 categories= "update"
 featured = false
 featured_image = "/assets/media/featured/random-04.webp"
