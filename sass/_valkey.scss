@@ -945,7 +945,7 @@ aside {
   color: $white;
   background-color: $grey-dk-200;
 
-  &[data-type="Technical Deep Dive"] { background-color: $blue-200; }
+  &[data-type="Technical Deep Dive"] { background-color: #6983ff; }
   &[data-type="Community Highlight"] { background-color: $green-200; }
   &[data-type="How-to"] { background-color: $purple-200; }
   &[data-type="Announcements"] { background-color: $yellow-100; }
