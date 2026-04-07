@@ -31,7 +31,7 @@ Release candidates aren’t made available with a lot of hoopla: no big press re
 ```shell
 $ git fetch upstream
 ...
-$ git checkout 6b85ca4
+$ git checkout 9.1.0-rc1
 ...
 $ make all
 ```
