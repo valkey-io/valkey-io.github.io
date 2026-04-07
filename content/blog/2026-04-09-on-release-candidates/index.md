@@ -26,7 +26,7 @@ However, beyond testing, release candidates gives you a little bit of lead time 
 
 ## Getting a release candidate
 
-Release candidates aren’t made available with a lot of hoopla: no big press releases, no social media notices, (typically) no blog post, and (usually) not on package managers or standalone packages. Valkey releases candidates are [published on GitHub](https://github.com/valkey-io/valkey/releases) (also as a [feed](https://www.notion.so/Lucas-Valkey-On-boarding-334674d091f38023a40ffaa311418855?pvs=21)) with a link to the source code, from here you can download and build the software yourself. Personally, I don’t download the software but rather grab the commit ID from the release page then do everything via git. In this example, the commit ID for the Valkey 9.1.0-rc1 is `6b85ca4` and I have a remote called ‘upstream’ pointed at [`github.com/valkey-io/valkey`](https://github.com/valkey-io/valkey)
+Release candidates aren’t made available with a lot of hoopla: no big press releases, no social media notices, (typically) no blog post, and (usually) not on package managers or standalone packages. Valkey releases candidates are [published on GitHub](https://github.com/valkey-io/valkey/releases) (also as a [feed](https://github.com/valkey-io/valkey/releases.atom)) with a link to the source code, from here you can download and build the software yourself. Personally, I don’t download the software but rather grab the commit ID from the release page then do everything via git. In this example, the commit ID for the Valkey 9.1.0-rc1 is `6b85ca4` and I have a remote called ‘upstream’ pointed at [`github.com/valkey-io/valkey`](https://github.com/valkey-io/valkey)
 
 ```shell
 $ git fetch upstream
