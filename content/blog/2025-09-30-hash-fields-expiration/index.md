@@ -10,6 +10,8 @@ description= """
     We’ll also walk through practical examples to show how you can start using this feature today.
     """
 authors= ["ranshid"]
+[taxonomies]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-08.webp"

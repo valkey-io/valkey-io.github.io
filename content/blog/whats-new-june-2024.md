@@ -4,6 +4,8 @@ date= 2024-06-27 01:01:01
 description= "What have people been saying about Valkey in June 2024? Read on to find out."
 authors= ["kyledvs"]
 
+[taxonomies]
+blog_type = ["Community Highlight"]
 [extra]
 categories= "roundup"
 featured = false

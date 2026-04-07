@@ -4,6 +4,8 @@ date = 2026-03-27
 description = "Valkey ships powerful operational primitives like COMMANDLOG, SLOT-STATS, and upcoming per-thread I/O metrics — but without purpose-built tooling, much of that value goes unrealized."
 authors = ["kivanow"]
 
+[taxonomies]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"

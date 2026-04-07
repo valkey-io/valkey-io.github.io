@@ -5,6 +5,8 @@ description= "Extending Valkey using Rust SDK."
 authors= ["dmitrypol"]
 categories= "modules"
 
+[taxonomies]
+blog_type = ["How-to"]
 [extra]
 categories= "performance"
 featured = false

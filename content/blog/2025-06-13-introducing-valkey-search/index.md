@@ -3,7 +3,8 @@ title= "Introducing Vector Search To Valkey"
 description = "Learn how to build high-performance, reliable vector similarity search with valkey-search." 
 date= 2025-07-07 01:01:01 
 authors= ["yairgott", "allenss"] 
-
+[taxonomies]
+blog_type = ["Announcements"]
 [extra]
 featured = false
 featured_image = "/assets/media/featured/random-08.webp"

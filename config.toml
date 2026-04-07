@@ -7,6 +7,10 @@ build_search_index = true
 
 generate_feeds = true
 
+taxonomies = [
+    { name = "blog_type", render = false },
+]
+
 [markdown.highlighting]
 theme = "github-dark-default"
 
