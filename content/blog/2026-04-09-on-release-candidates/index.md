@@ -53,6 +53,6 @@ valkey_release_stage:rc1
 
 When you test a release candidate, it’s important to report bugs promptly. While each individual feature is tested, your unique environment and use-case may reveal corner cases that are yet unknown. The best way to report feedback is via an issue on GitHub. Make sure when you report issues you clearly indicate that you’re using a release candidate.
 
-While the project values feedback of all forms, if you find out during a release candidate that you don’t like or agree with a new API, return values, or if you think something is missing or doesn’t belong, it *may be too late* to have any real impact. While not impossible, it would be unlikely for a release candidate to trigger a large change in these areas. Primarily release candidates help validate stability, compatibility, and performance.
+While the project values feedback of all forms, if you find out during a release candidate that you don’t like or agree with a new API, return values, or if you think something is missing or doesn’t belong, it's best to suggest the changes as soon as possible. It would be unlikely for a release candidate to trigger a large change in new features, but they may refine features or implement additional flags or configurations.
 
 Evaluating and providing feedback on release candidates is a great way to contribute to the project. So, no matter if it is this release candidate or one in the future: blaze the trail and do your part to get that feedback in and make the Valkey GA release rock solid.
