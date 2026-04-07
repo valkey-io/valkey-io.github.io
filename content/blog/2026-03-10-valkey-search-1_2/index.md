@@ -5,6 +5,9 @@ date= 2026-03-17 01:00:00
 authors= [ "karthiksubbarao", "allenss", "bcathcart", "cnuthalapati"]
 [taxonomies]
 blog_type = ["Announcements"]
+[extra]
+featured = true
+featured_image = "/assets/media/featured/random-06.webp"
 +++
 
 Valkey Search now lets you search across text, tag, numeric, and vector attributes in a single query, and analyze results with server-side aggregations at the low latency you expect from Valkey. 
