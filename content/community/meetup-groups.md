@@ -42,7 +42,7 @@ Meetings can vary, but most will include a combination of presentations, demos, 
 
 - Use Valkey first language (not product-led)
 - Emphasize open source, governance, and community
-- Slides should include Valkey branding
+- Slides should include Valkey branding — refer to the [Valkey Brand Guidelines](https://github.com/valkey-io/assets/blob/main/Valkey%20Branding/valkey_brand_guidelines.pdf) for logos, colors, and usage
 - Avoid positioning Valkey as a single-vendor project
 
 ## 3. Locations
