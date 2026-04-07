@@ -1,7 +1,7 @@
 +++
 title = "On release candidates"
 date = 2026-04-09
-description = "A release candidate  just came out for Valkey. You’ve likely heard of the term before but do you know what it really means?"
+description = "A release candidate just came out for Valkey. You’ve likely heard of the term before but do you know what it really means?"
 authors = ["kyledvs"]
 [extra]
 featured = true
