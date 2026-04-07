@@ -36,7 +36,7 @@
   </ul>
   <p class="blog-no-results" hidden>No posts match this filter.</p>
   <script>
-  (function() {
+  document.addEventListener('DOMContentLoaded', function() {
     var select = document.getElementById('blog-type-select');
     if (!select) return;
     var items = document.querySelectorAll('.blog-list li');
@@ -66,7 +66,7 @@
       applyFilter(type);
       history.replaceState(null, '', type === 'All' ? location.pathname + location.search : '#' + encodeURIComponent(type));
     });
-  })();
+  });
   </script>
 {% endblock main_content %}
 
