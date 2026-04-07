@@ -4,8 +4,9 @@ description = "Valkey was founded just over a year ago to keep high-performance 
 date= 2025-09-16 00:00:00
 authors= [ "lorilorusso"]
 
+[taxonomies]
+blog_type = ["Community Highlight"]
 [extra]
-type = "Community Highlight"
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"
 +++

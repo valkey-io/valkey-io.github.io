@@ -7,8 +7,9 @@ aliases = [
 description= "Welcome! For the inaugural blog post on valkey.io, I’d like to recap the story so far, what to look forward to, and then describe how this blog works."
 authors= ["kyledvs"]
 
+[taxonomies]
+blog_type = ["Announcements"]
 [extra]
-type = "Announcements"
 categories= "update"
 featured = false
 featured_image = "/assets/media/featured/random-05.webp"

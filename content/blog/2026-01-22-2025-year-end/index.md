@@ -3,8 +3,8 @@ title = "Valkey 2025 Year-End Review: Reflecting on Progress and Looking Ahead"
 date = 2026-01-22
 description = "This past year marked an important chapter for Valkey, one defined by growth, collaboration, and a shared commitment to building an open, high-performance key-value store for everyone."
 authors= ["kyledvs", "crystalpham"]
-[extra]
-type = "Community Highlight"
+[taxonomies]
+blog_type = ["Community Highlight"]
 +++
 
 As we kick off 2026, it’s a great moment to pause, reflect, and celebrate what the Valkey project and its community has accomplished together. This past year marked an important chapter for Valkey, one defined by growth, collaboration, and a shared commitment to building an open, high-performance key-value store for everyone.

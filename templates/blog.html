@@ -8,25 +8,26 @@
 {% endblock subhead_content %}
 
 {% block main_content %}
-  {% set blog_types = config.extra.blog_types.types %}
+  {% set taxonomy = get_taxonomy(kind="blog_type", required=false) %}
+  {% if taxonomy %}
   <div class="blog-type-filters" hidden>
     <label for="blog-type-select" class="sr-only">Filter posts by type</label>
     <select id="blog-type-select">
       <option value="All">All Types</option>
-      {% for t in blog_types %}
-      <option value="{{ t }}">{{ t }}</option>
+      {% for term in taxonomy.items %}
+      <option value="{{ term.name }}">{{ term.name }}</option>
       {% endfor %}
     </select>
   </div>
+  {% endif %}
   <ul class="blog-list">
     {% for page in section.pages %}
-    {% if not page.extra.type %}
-      {{ throw(message="Blog post '" ~ page.title ~ "' is missing [extra] type. Add type to its front matter.") }}
-    {% elif blog_types is not containing(page.extra.type) %}
-      {{ throw(message="Blog post '" ~ page.title ~ "' has invalid type '" ~ page.extra.type ~ "'. Check config.toml for valid types.") }}
-    {% endif %}
-    <li data-type="{{ page.extra.type }}">
-      <span class="blog-type-badge" data-type="{{ page.extra.type }}">{{ page.extra.type }}</span>
+    {% set blog_type = page.taxonomies.blog_type | default(value=[]) %}
+    {% set type_name = blog_type | first | default(value="") %}
+    <li{% if type_name %} data-type="{{ type_name }}"{% endif %}>
+      {% if type_name %}
+      <span class="blog-type-badge" data-type="{{ type_name }}">{{ type_name }}</span>
+      {% endif %}
       <h2><a href="{{ page.permalink }}">{{ page.title  | safe}}</a></h2>
       <div class="meta">{{ page.date | date(format="%A %B %e, %Y") }}</div>
       <p>{{ page.description | safe }}</p>
@@ -36,37 +37,34 @@
   <p class="blog-no-results" hidden>No posts match this filter.</p>
   <script>
   (function() {
-    const select = document.getElementById('blog-type-select');
-    const items = document.querySelectorAll('.blog-list li');
-    const noResults = document.querySelector('.blog-no-results');
-    const filters = select.closest('.blog-type-filters');
-
-    filters.hidden = false;
+    var select = document.getElementById('blog-type-select');
+    if (!select) return;
+    var items = document.querySelectorAll('.blog-list li');
+    var noResults = document.querySelector('.blog-no-results');
+    select.closest('.blog-type-filters').hidden = false;
 
     function applyFilter(type) {
-      let visible = 0;
+      var visible = 0;
       items.forEach(function(li) {
-        const show = type === 'All' || li.getAttribute('data-type') === type;
+        var show = type === 'All' || li.getAttribute('data-type') === type;
         li.hidden = !show;
         if (show) visible++;
       });
       noResults.hidden = visible > 0;
     }
 
-    // Sync filter with URL hash on load
-    const initial = decodeURIComponent(location.hash.slice(1));
-    if (initial) {
-      const option = Array.from(select.options).find(function(o) { return o.value === initial; });
-      if (option) {
-        select.value = initial;
-        applyFilter(initial);
+    try {
+      var initial = decodeURIComponent(location.hash.slice(1));
+      if (initial) {
+        var option = Array.from(select.options).find(function(o) { return o.value === initial; });
+        if (option) { select.value = initial; applyFilter(initial); }
       }
-    }
+    } catch(e) {}
 
     select.addEventListener('change', function() {
-      const type = select.value;
+      var type = select.value;
       applyFilter(type);
-      history.replaceState(null, '', type === 'All' ? location.pathname : '#' + encodeURIComponent(type));
+      history.replaceState(null, '', type === 'All' ? location.pathname + location.search : '#' + encodeURIComponent(type));
     });
   })();
   </script>

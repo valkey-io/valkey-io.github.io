@@ -4,8 +4,9 @@ date = 2026-02-19
 description = "Production lessons on tail latency, migrations, and scale from engineers operating Valkey at real-world scale."
 authors = ["allenhelton", "mikecallahan"]
 
+[taxonomies]
+blog_type = ["Community Highlight"]
 [extra]
-type = "Community Highlight"
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"
 +++

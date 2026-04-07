@@ -3,8 +3,8 @@ title = "Introducing Enhanced JSON Capabilities in Valkey"
 description = "Learn about the new Valkey JSON with some real-world examples and application."
 date = "2025-06-30 01:01:01"
 authors= [ "roshkhatri"]
-[extra]
-type = "Announcements"
+[taxonomies]
+blog_type = ["Announcements"]
 +++
 
 JSON is a ubiquitous format for semi-structured data, and developers often expect native support across their technology stack, including in-memory stores like Valkey. Previously, working with JSON in Valkey required serializing entire objects as strings or flattening them into Hashes, limiting nesting. These workarounds added complexity and made updates harder than they should be.

@@ -4,8 +4,9 @@ description = "Learn how to use bloom filters to perform large-scale membership 
 date= 2025-04-09 01:01:01
 authors= [ "karthiksubbarao"]
 
+[taxonomies]
+blog_type = ["Announcements"]
 [extra]
-type = "Announcements"
 featured = false
 featured_image = "/assets/media/featured/random-02.webp"
 +++

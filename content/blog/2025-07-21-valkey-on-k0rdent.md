@@ -3,8 +3,8 @@ title = "Using k0rdent MultiClusterService Template for Valkey on Kubernetes"
 description = "Learn how to deploy and manage Valkey across multiple Kubernetes clusters using k0rdent's template-driven approach for simplified multi-cluster application delivery."
 date = "2025-07-21 01:01:42"
 authors= [ "s3rj1k"]
-[extra]
-type = "Community Highlight"
+[taxonomies]
+blog_type = ["Community Highlight"]
 +++
 
 Managing distributed applications across multiple Kubernetes clusters can be a complex and time-consuming process. This guide demonstrates how to streamline Valkey deployment using [k0rdent's](https://k0rdent.io/) `MultiClusterService` template, providing a practical example of modern multi-cluster application delivery.

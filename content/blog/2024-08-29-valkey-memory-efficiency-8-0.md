@@ -3,8 +3,9 @@ title= "Storing more with less: Memory Efficiency in Valkey 8"
 date= 2024-09-04 01:01:01
 description= "Learn about the new memory efficiency improvements in Valkey 8 which reduces memory overhead, which allows more data to be stored in the same amount of memory."
 authors= [ "hpatro"]
+[taxonomies]
+blog_type = ["Technical Deep Dive"]
 [extra]
-type = "Technical Deep Dive"
 featured = true
 featured_image = "/assets/media/featured/random-05.webp"
 +++

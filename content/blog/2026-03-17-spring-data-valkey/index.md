@@ -4,8 +4,9 @@ description = "Introducing Spring Data Valkey, a new open source Spring Data mod
 date= 2026-04-01 00:00:00
 authors= ["makubo-aws"]
 
+[taxonomies]
+blog_type = ["Announcements"]
 [extra]
-type = "Announcements"
 featured = false
 +++
 

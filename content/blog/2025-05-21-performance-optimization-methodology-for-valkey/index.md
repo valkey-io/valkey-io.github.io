@@ -4,8 +4,9 @@ date= 2025-05-27 00:00:00
 description= "Performance Optimization Methodology for Valkey"
 authors= ["lipzhu", "guowangy"]
 
+[taxonomies]
+blog_type = ["Technical Deep Dive"]
 [extra]
-type = "Technical Deep Dive"
 categories= "performance"
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"

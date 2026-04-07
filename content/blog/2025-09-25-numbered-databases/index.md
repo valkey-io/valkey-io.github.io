@@ -4,8 +4,9 @@ description = "Valkey 9.0 brings new namespacing abilities to cluster mode. In t
 date= 2025-09-25 00:00:00
 authors= [ "kyledvs"]
 
+[taxonomies]
+blog_type = ["Technical Deep Dive"]
 [extra]
-type = "Technical Deep Dive"
 featured = true
 featured_image = "/blog/numbered-databases/images/move-db.drawio.png"
 +++

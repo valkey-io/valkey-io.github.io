@@ -13,8 +13,9 @@ description= "Learn about the new performance improvements in Valkey 8 which red
 # 'authors' are the folks who wrote or contributed to the post.
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "dantouitou", "uriyagelnik"]
+[taxonomies]
+blog_type = ["Technical Deep Dive"]
 [extra]
-type = "Technical Deep Dive"
 featured = true
 featured_image = "/assets/media/featured/random-01.webp"
 +++

@@ -13,8 +13,10 @@ date = 2026-04-01
 description = "A short summary shown in the blog listing and metadata."
 authors = ["github-username"]
 
+[taxonomies]
+blog_type = ["Announcements"]
+
 [extra]
-type = "Announcements"
 featured = false
 featured_image = "/assets/media/featured/random-01.webp"
 +++
@@ -28,7 +30,7 @@ featured_image = "/assets/media/featured/random-01.webp"
 | `date` | Publish date (`YYYY-MM-DD`) |
 | `description` | Short summary for the blog listing |
 | `authors` | List of GitHub usernames |
-| `extra.type` | Post category (see below). **The build will fail if this is missing.** |
+| `taxonomies.blog_type` | Post category (see below) |
 
 ### Optional fields
 
@@ -39,7 +41,7 @@ featured_image = "/assets/media/featured/random-01.webp"
 
 ### Post types
 
-Valid types are defined in `config.toml` under `[extra.blog_types]`. Current values:
+The `blog_type` taxonomy is defined in `config.toml`. Current values:
 
 - `Technical Deep Dive` — In-depth technical content
 - `Announcements` — Releases, new features, project news
@@ -47,7 +49,7 @@ Valid types are defined in `config.toml` under `[extra.blog_types]`. Current val
 - `How-to` — Tutorials and guides
 - `Events` — Event recaps and announcements
 
-To add a new type, update `config.toml`, `sass/_valkey.scss` (badge color), and this README.
+To add a new type, add a post using it and update `sass/_valkey.scss` (badge color) and this README.
 
 ## File naming
 
