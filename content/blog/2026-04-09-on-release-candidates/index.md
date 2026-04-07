@@ -8,7 +8,7 @@ featured = true
 featured_image = "/assets/media/featured/random-05.webp"
 +++
 
-A *release candidate* (RC) just came out for Valkey. You’ve likely heard of the term before but do you know what it *really* means, especially in terms of Valkey? And do you know if you should care about this release? If any of those questions peak your interest, read on.
+A *release candidate* (RC) just came out for Valkey. You’ve likely heard of the term before but do you know what it *really* means, especially in terms of Valkey? And do you know if you should care about this release? If any of those questions pique your interest, read on.
 
 Before pulling apart the specific reasons to use a release candidate, it’s important to talk about generally available (GA) releases in Valkey. Valkey broadly follows the SemVer spec so there are two types of GA releases in Valkey: planned and unplanned. Valkey has two types of *planned* releases: major release (N.0.0: for example 8.0.0, 9.0.0, etc.) and minor release (X.N.0: 8.1.0, 9.1.0, etc.). Alternately, *unplanned* release are patches (X.X.N: 7.2.6, 8.0.1, 8.1.1, etc.). 
 
