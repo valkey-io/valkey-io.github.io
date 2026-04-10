@@ -4,8 +4,8 @@ date = 2026-04-14
 description = "HackNCState hackathon experience by the winning team" 
 authors =  ["ahassan","nwitt","rmalik","tristancurtis"]
 [extra]
-featured = true
-featured_image = "/assets/media/featured/valkey-helm.webp"
+taxonomies.blog_type = "Events"
+
 +++
 
 The telecommunications industry is facing growing trust challenges as communication networks become targets for increasingly sophisticated fraud.
