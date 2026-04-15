@@ -1,9 +1,9 @@
 +++
 title = "Victory at HackNC State: Innovating for the Telecom Industry with Valkey"
-date = 2026-04-14
+date = 2026-04-15
 description = "HackNCState hackathon experience by the winning team" 
 authors =  ["ahassan","nwitt","rmalik","tristancurtis"]
-[extra]
+[taxonomies]
 blog_type = ["Events"]
 +++
 
