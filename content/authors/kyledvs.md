@@ -5,7 +5,7 @@ extra:
     github: stockholmux
 ---
 
-Kyle is the General Manger for the Valkey ecosystem at Percona.
+Kyle is the General Manager for the Valkey ecosystem at Percona.
 He has a long history with open source software development; he was a founding contributor to the OpenSearch project and worked to build a community around Bottlerocket OS.
 When not working, Kyle enjoys 3D printing and getting his hands dirty in his Edmonton, Alberta-based home garden.
 
