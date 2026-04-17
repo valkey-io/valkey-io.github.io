@@ -30,7 +30,7 @@ In the previous post we mentioned the feature set of the client which included:
 
 ## What's New 
 
-We have made significant improvements to the cluster client. Cluster mode error handling is now more robust, with seamless support for ASK and MOVED redirections, and TRYAGAIN errors. Downtime during node failures has been drastically dropped from 30 seconds to under 2 seconds. 
+We have made significant improvements to the cluster client. Cluster mode error handling is now more robust, with seamless support for ASK and MOVED redirections, and TRYAGAIN errors. Downtime during failovers and connection loss has been drastically dropped from 30 seconds to under 2 seconds. 
 
 We have also brought the cluster client to have feature parity with the standard client. Cluster client now supports cluster-level pipelines and transactions by splitting pipelines across correct shards, so the user doesn't have to worry about the location of their keys. We have also improved subscription connection management wherein both the standalone and the cluster client now allocate a single shared connection for all subscriptions instead of allocating a connection for each subscription.
 
