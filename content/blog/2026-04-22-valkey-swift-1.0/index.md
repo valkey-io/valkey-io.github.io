@@ -7,6 +7,7 @@ authors= [ "adamfowler", "nilanshusharma"]
 [taxonomies]
 blog_type = ["Announcements"]
 [extra]
+featured_image = "/assets/media/featured/random-04.webp"
 +++
 In this previous [article](https://valkey.io/blog/valkey-swift/) we introduced the preview release of [valkey-swift](https://github.com/valkey-io/valkey-swift). We are now excited to announce the 1.0 release of valkey-swift, a client library for Valkey written in Swift.
 
