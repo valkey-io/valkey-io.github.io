@@ -45,10 +45,10 @@ Other improvements in version 1.0 include:
 
 Valkey-swift is constantly adding new features. Upcoming features include: 
 
-* Sentinel Mode Support.
-* Cluster wide multi-key commands.
-* Integration with the Swift package swift-metrics.
-* And much more!
+- Sentinel Mode Support.
+- Cluster wide multi-key commands.
+- Integration with the Swift package swift-metrics.
+- And much more!
 
 ## Contributing
 
