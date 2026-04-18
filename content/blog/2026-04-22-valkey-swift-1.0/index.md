@@ -1,6 +1,6 @@
 +++
 title= "valkey-swift - Announcing 1.0 Release "
-description = "We are now excited to announce the 1.0 release of valkey-swift, a client library for Valkey written in Swift."
+description = "We are excited to announce the 1.0 release of valkey-swift, a client library for Valkey written in Swift."
 date= 2026-04-22 00:00:00
 authors= [ "adamfowler", "nilanshusharma"]
 
@@ -19,7 +19,7 @@ The release of v1.0 means there is now a production ready client with stable API
 
 ## Features
 
-In the previous post we mentioned the feature set of the client which included:
+In the previous post, we mentioned the feature set of the client which included:
 
 - Supporting all the available Valkey commands. Using custom code generation tools we ensure that we are always up to date with latest set of commands offered by Valkey.
 - Cluster-Mode compatible client with cluster-aware routing, dynamic topology discovery and handling cluster MOVED redirections.
@@ -37,19 +37,19 @@ We have also brought the cluster client to have feature parity with the standard
 Finally, both standalone and cluster clients now support reading from replicas for scaling reads. Currently we only support round-robin based replica selection, but we intend to extend this to include latency and az-aware methods.
 
 Other improvements included in version 1.0 include:
-- Support for new commands from Valkey 9.0
-- Support for distributed tracing
-- Dynamic command pipelines defined at runtime. Previously a series of pipelined commands could only be defined at compile time
-- Client configuration for accessing a numbered database
-- Support for the Valkey module valkey-search
+- Support for new commands from Valkey 9.0.
+- Support for distributed tracing.
+- Dynamic command pipelines defined at runtime. Previously a series of pipelined commands could only be defined at compile time.
+- Client configuration for accessing a numbered database.
+- Support for the Valkey module valkey-search.
 
 ## What’s Next 
 
 valkey-swift is constantly adding new features. Upcoming features include: 
 
-* Sentinel Mode Support 
-* Cluster wide multi-key commands
-* Integration with the Swift package swift-metrics
+* Sentinel Mode Support.
+* Cluster wide multi-key commands.
+* Integration with the Swift package swift-metrics.
 * And much more!
 
 ## Contributing
