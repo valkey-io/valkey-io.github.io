@@ -70,6 +70,8 @@
 {% macro format_language(language) %}
     {% if language == "php" %}
         {{ language | upper }}
+    {% elif language == "csharp" %}
+        C#
     {% else %}
         {{ language | title }}
     {% endif %}
