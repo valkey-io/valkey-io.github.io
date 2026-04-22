@@ -1,0 +1,43 @@
+{% extends "default.html" %}
+
+{% block content %}
+
+{% set authors = get_section(path="authors/_index.md") %}
+{% set author_pages = authors.pages | sort(attribute="title")  %}
+{% block subhead_content %}{% endblock subhead_content %}
+
+<div class="leadership-section">
+    <div class="leadership-header">
+        <h1>Leadership</h1>
+        {{ page.content | markdown | safe }}
+    </div>
+
+
+    <h2>Project Technical Steering Committee</h2>
+    <div class="leadership-header">
+        <div class="leadership-card-grid">
+{% for author in author_pages %}
+    {% if author.extra and author.extra.tsc  %}
+            <div class="leadership-card">
+                {% if author.extra.photo %}
+                    <img src="{{ author.extra.photo }}" alt="{{ author.title}}" class="leadership-card-photo" />
+                {% endif %}
+                <h3>{{ author.title }}</h3>
+                {% if author.extra.tsc.position %}
+                <h4>{{author.extra.tsc.position}}</h4>
+                {% endif %}
+                <p>{{ author.extra.tsc.affiliation }}</p>
+                
+
+                <div class="leadership-card-actions">
+                    <a href="{{author.path}}" class="btn" target="_blank">Bio</a>
+                    {% if author.extra.github %}
+                        <a href="https://github.com/{{author.extra.github}}" class="btn" target="_blank">GitHub</a>
+                    {% endif %}
+                </div>
+            </div>
+    {% endif %}
+{% endfor %}
+        </div>
+    </div>
+{% endblock content %}

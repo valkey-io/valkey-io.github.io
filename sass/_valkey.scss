@@ -1917,7 +1917,7 @@ html.banner-hidden .banner {
   text-align: center;
 }
 
-.community-header {
+.community-header, .leadership-header {
   h1 {
     text-align: center;
     background-image: linear-gradient(#382270, #4e51bf);
@@ -1943,6 +1943,11 @@ html.banner-hidden .banner {
   }
 }
 
+.leadership-header p {
+  margin-left: 25%;
+  margin-right: 25%;
+}
+
 .community-title {
   color: #fff;
   font-size: 3.2rem;
@@ -1951,13 +1956,13 @@ html.banner-hidden .banner {
   letter-spacing: 1px;
 }
 
-.community-section {
+.community-section, .leadership-section {
   background: #e9eef7;
   text-align: center;
   padding-bottom: 6rem;
 }
 
-.community-card-grid {
+.community-card-grid, .leadership-card-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
@@ -1969,17 +1974,17 @@ html.banner-hidden .banner {
 }
 
 @media (max-width: 900px) {
-  .community-card-grid {
+  .community-card-grid, .leadership-card-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 @media (max-width: 600px) {
-  .community-card-grid {
+  .community-card-grid, .leadership-card-grid {
     grid-template-columns: 1fr;
   }
 }
 
-.community-card {
+.community-card, .leadership-card {
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 4px 24px 0 rgba(105, 131, 255, 0.10);
@@ -1989,32 +1994,41 @@ html.banner-hidden .banner {
   align-items: center;
   transition: box-shadow 0.2s;
 }
-.community-card:hover {
+.community-card:hover, .leadership-card:hover {
   box-shadow: 0 8px 32px 0 rgba(105, 131, 255, 0.18);
+}
+
+.community-card-icon, .leadership-card-photo {
+  margin-bottom: 1.2rem;
+}
+.leadership-card-photo {
+  height: 100px;
 }
 
 .community-card-icon {
   width: 48px;
   height: 48px;
-  margin-bottom: 1.2rem;
 }
 
-.community-card h3 {
+.community-card h3, .leadership-card h3 {
   font-size: 2rem;
   font-weight: 700;
   color: #2d2471;
   margin: 0 0 0.7rem 0;
   text-align: center;
+  & + h4 {
+    margin-top: 0;
+  }
 }
 
-.community-card p {
+.community-card p, .leadership-card p {
   color: #3a3a4d;
   font-size: 1.75rem;
   margin: 0 0 1.5rem 0;
   text-align: left;
 }
 
-.community-card-actions {
+.community-card-actions, .leadership-card-actions {
   display: flex;
   gap: 0.7rem;
   flex-wrap: wrap;
@@ -2023,7 +2037,7 @@ html.banner-hidden .banner {
   margin-top: auto;
 }
 
-.community-card .btn {
+.community-card .btn, .leadership-card .btn {
   background: none;
   color: #072150;
   border: 1px solid #072150;
@@ -2038,7 +2052,7 @@ html.banner-hidden .banner {
   transition: background 0.15s, color 0.15s, border 0.15s;
 }
 
-.community-card .btn:hover {
+.community-card .btn:hover, .leadership-card .btn:hover {
   background: #072150;
   color: #fff;
   border: 1px solid #072150;
