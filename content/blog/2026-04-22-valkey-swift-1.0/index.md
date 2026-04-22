@@ -30,7 +30,7 @@ Features included in our preview release of valkey-swift:
 
 Since the preview release, we have made significant improvements to the cluster client. Cluster mode error handling is now more robust, with seamless support for ASK and MOVED redirections, and TRYAGAIN errors. We reduced downtime during failovers and connection loss from 30 seconds to under 2 seconds. 
 
-The cluster client also now has feature parity with the standard client. Cluster client supports cluster-level pipelines and transactions by splitting pipelines across correct shards, so the user doesn't have to worry about the location of their keys. We have also improved subscription connection management wherein both the standalone and the cluster client now allocate a single shared connection for all subscriptions instead of allocating a connection for each subscription.
+The cluster client also now has feature parity with the standard client. It supports cluster-level pipelines and transactions by splitting pipelines across the correct shards, so you don't have to worry about the location of your keys. We have also improved subscription connection management where both the standalone and the cluster client now allocate a single shared connection for all subscriptions instead of allocating a connection for each subscription.
 
 Finally, both standalone and cluster clients support reading from replicas for scaling reads. Currently, we only support round-robin-based replica selection, but we intend to extend this to include latency aware and AZ-aware methods.
 
