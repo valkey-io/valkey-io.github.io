@@ -3,6 +3,8 @@ title: Ping Xie
 extra:
     photo: '/assets/media/authors/pingxie.jpeg'
     github: pingxie
+    tsc:
+        affiliation: "Oracle"
 ---
 
 Ping Xie is a software engineer at Google Cloud. He is currently an active
