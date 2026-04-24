@@ -9,24 +9,24 @@ blog_type = ["Announcements"]
 [extra]
 featured_image = "/assets/media/featured/random-04.webp"
 +++
-Last summer, we introduced the preview [release](https://valkey.io/blog/valkey-swift/) of [valkey-swift](https://github.com/valkey-io/valkey-swift). This 1.0 release delivers a production-ready client with stable APIs that takes full advantage of all the modern features of Swift 6.
+Last summer, we [introduced the preview release](https://valkey.io/blog/valkey-swift/) of [valkey-swift](https://github.com/valkey-io/valkey-swift). This 1.0 release delivers a production-ready client with stable APIs that takes full advantage of all the modern features of Swift 6.
 
 ## Introduction
 
-Valkey-swift is a production-grade Swift client built with modern Swift features in mind. Using Valkey with Swift provides strongly typed APIs with clean semantics, memory-safety and data-race-safety guarantees, and a very light memory footprint. The API uses Swift's structured concurrency — a paradigm designed to bring clarity to concurrent programming by using the structure of your code to automatically define the lifetimes of tasks and associated resources. This allows you to write clean concurrent code without worrying about its side effects like race conditions and connection leaks.
+Valkey-swift is a production-grade Swift client built with modern Swift features in mind. Using Valkey with Swift provides strongly typed APIs with clean semantics, memory-safety and data-race-safety guarantees, and a very light memory footprint. The client API uses Swift's structured concurrency — a paradigm designed to bring clarity to concurrent programming by using the structure of your code to automatically define the lifetimes of tasks and associated resources. This allows you to write clean concurrent code without worrying about its side effects like race conditions and connection leaks.
 
 ## Features
 
 Features included in our preview release of valkey-swift:
 
-- Supporting all the available Valkey commands. Using custom code generation tools we ensure that we are always up to date with the latest set of commands that Valkey offers.
+- Support for all available Valkey commands. Custom code generation tools keep us in sync with the latest commands that Valkey offers.
 - Cluster-mode-compatible client with cluster-aware routing, dynamic topology discovery, and handling cluster MOVED redirections.
 - Command pipelining to improve performance by batching multiple commands in a single request and connection.
 - Support for publish and subscribe to message queues by running multiple subscriptions on a single connection.
 - Connection pooling for performance and resilience with support for connections over TLS for end-to-end encryption.
 - Support for Valkey Modules: valkey-bloom, valkey-json.
 
-## What's New 
+## What's New in valkey-swift 1.0
 
 Since the preview release, we have made significant improvements to the cluster client. Cluster mode error handling is now more robust, with seamless support for ASK and MOVED redirections, and TRYAGAIN errors. We reduced downtime during failovers and connection loss from 30 seconds to under 2 seconds. 
 
@@ -43,11 +43,11 @@ Other improvements in version 1.0 include:
 
 ## What’s Next 
 
-Valkey-swift is constantly adding new features. Upcoming features include: 
+Valkey-swift is constantly adding new features. Planned features include: 
 
 - Sentinel mode support.
 - Cluster-wide multi-key commands.
-- Integration with the Swift package swift-metrics.
+- Integration with the Swift package [swift-metrics](https://github.com/apple/swift-metrics/).
 - And much more!
 
 ## Contributing
