@@ -53,7 +53,7 @@ To add a new type, add a post using it and update `sass/_valkey.scss` (badge col
 
 ## Review process
 
-PRs that add a new blog post with `blog_type` of **Technical Deep Dive** or **Announcements** will automatically have the `@valkey-io/technical-blog-reviewers` team requested as reviewers. All other blog types will have `@valkey-io/content-creators` requested instead.
+PRs that add a new blog post with `blog_type` of **Technical Deep Dive** or **Announcements** will automatically have the `@valkey-io/technical-blog-reviewers` team requested as an additional reviewer. All content changes are reviewed by `@valkey-io/content-creators` via CODEOWNERS.
 
 All commits must be signed off per the [DCO](https://developercertificate.org/) using `git commit --signoff`.
 

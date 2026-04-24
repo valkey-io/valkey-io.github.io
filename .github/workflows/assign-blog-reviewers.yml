@@ -39,7 +39,6 @@ jobs:
 
             const technicalTypes = ['Technical Deep Dive', 'Announcements'];
             let needsTechnical = false;
-            let needsContent = false;
 
             for (const file of newBlogFiles) {
               // Fetch file content from the PR head SHA via the API (safe for fork PRs)
@@ -64,18 +63,11 @@ jobs:
 
               if (technicalTypes.includes(blogType)) {
                 needsTechnical = true;
-              } else {
-                needsContent = true;
               }
             }
 
-            // Assign the appropriate reviewer teams
-            const teams = [];
-            if (needsTechnical) teams.push('technical-blog-reviewers');
-            if (needsContent) teams.push('content-creators');
-
-            if (teams.length === 0) {
-              core.info('No new blog posts with recognized types, skipping.');
+            if (!needsTechnical) {
+              core.info('No technical/announcement blog posts found, skipping.');
               return;
             }
 
@@ -84,9 +76,9 @@ jobs:
                 owner,
                 repo,
                 pull_number: pr_number,
-                team_reviewers: teams,
+                team_reviewers: ['technical-blog-reviewers'],
               });
-              core.info(`Requested review from: ${teams.join(', ')}`);
+              core.info('Requested review from technical-blog-reviewers.');
             } catch (error) {
               core.warning(`Failed to request reviewers: ${error.message}`);
             }
