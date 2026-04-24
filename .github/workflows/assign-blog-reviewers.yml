@@ -72,7 +72,7 @@ jobs:
             // Assign the appropriate reviewer teams
             const teams = [];
             if (needsTechnical) teams.push('technical-blog-reviewers');
-            if (needsContent) teams.push('content-approvers');
+            if (needsContent) teams.push('content-creators');
 
             if (teams.length === 0) {
               core.info('No new blog posts with recognized types, skipping.');
