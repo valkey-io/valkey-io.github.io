@@ -1209,6 +1209,13 @@ aside {
   }
 }
 
+.container.right-aside {
+  .author-photo-container  img {
+      width: 100px;
+  }
+}
+
+
 .author-info {
   flex: 1;
   text-align: left;
