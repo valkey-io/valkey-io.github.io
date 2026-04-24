@@ -2002,7 +2002,7 @@ html.banner-hidden .banner {
   margin-bottom: 1.2rem;
 }
 .leadership-card-photo {
-  height: 100px;
+  height: 150px;
 }
 
 .community-card-icon {
@@ -2040,19 +2040,44 @@ html.banner-hidden .banner {
 .community-card .btn, .leadership-card .btn {
   background: none;
   color: #072150;
-  border: 1px solid #072150;
-  border-radius: 24px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  transition: background 0.15s, color 0.15s, border 0.15s;
+  font-size: 1.5rem;
 }
 
-.community-card .btn:hover, .leadership-card .btn:hover {
+.leadership-card h4 {
+  margin-bottom: 0.25em;
+}
+
+.leadership-card .icon {
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: -0.125em;
+  path {
+    fill: #d1d9ff;
+  }
+}
+
+
+.community-card .btn {
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid #072150;
+  border-radius: 24px;
+  padding: 0.75rem 1.5rem;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+}
+.leadership-card .btn .icon path {
+  transition: fill 0.15s, color 0.15s, border 0.15s;
+}
+
+.leadership-card .btn:hover {
+  .icon path {
+    fill: #2d2471
+  }  
+}
+.community-card .btn:hover {
   background: #072150;
   color: #fff;
   border: 1px solid #072150;
