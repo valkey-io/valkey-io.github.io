@@ -37,8 +37,9 @@ jobs:
               return;
             }
 
-            const targetTypes = ['Technical Deep Dive', 'Announcements'];
-            let shouldAssign = false;
+            const technicalTypes = ['Technical Deep Dive', 'Announcements'];
+            let needsTechnical = false;
+            let needsContent = false;
 
             for (const file of newBlogFiles) {
               // Fetch file content from the PR head SHA via the API (safe for fork PRs)
@@ -61,25 +62,31 @@ jobs:
               const blogType = match[1];
               core.info(`${file.filename}: blog_type = "${blogType}"`);
 
-              if (targetTypes.includes(blogType)) {
-                shouldAssign = true;
+              if (technicalTypes.includes(blogType)) {
+                needsTechnical = true;
+              } else {
+                needsContent = true;
               }
             }
 
-            if (!shouldAssign) {
-              core.info('No matching blog types found, skipping reviewer assignment.');
+            // Assign the appropriate reviewer teams
+            const teams = [];
+            if (needsTechnical) teams.push('technical-blog-reviewers');
+            if (needsContent) teams.push('content-approvers');
+
+            if (teams.length === 0) {
+              core.info('No new blog posts with recognized types, skipping.');
               return;
             }
 
-            // Request review from the team
             try {
               await github.rest.pulls.requestReviewers({
                 owner,
                 repo,
                 pull_number: pr_number,
-                team_reviewers: ['technical-blog-reviewers'],
+                team_reviewers: teams,
               });
-              core.info('Requested review from technical-blog-reviewers.');
+              core.info(`Requested review from: ${teams.join(', ')}`);
             } catch (error) {
               core.warning(`Failed to request reviewers: ${error.message}`);
             }
