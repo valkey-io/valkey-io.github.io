@@ -7,7 +7,4 @@ extra:
         affiliation: "Oracle"
 ---
 
-Ping Xie is a software engineer at Google Cloud. He is currently an active
-member of the Technical Steering Committee for Valkey. Ping values
-collaboration and is dedicated to delivering high-quality solutions in
-the distributed database area.
+Ping Xie is an engineer and open source contributor who enjoys tackling hard technical problems and the architectural diplomacy needed to build durable systems. He is a member of the Valkey Technical Steering Committee and helps guide the project's design and evolution. Ping values clarity, rigor, and reliability in systems built for real-world use.
