@@ -2,16 +2,18 @@
 
 {% block main_content %}
 <style>
+  /* Note: this site sets html { font-size: 10px } in sass/_valkey.scss,
+     so 1rem = 10px here. All rem values below are sized against that base. */
   .pkg-selector {
     background: #f1f0fa;
     border: 1px solid #eaeaea;
     border-radius: 10px;
-    padding: 1.75rem;
-    margin: 0 0 2rem;
+    padding: 2.8rem;
+    margin: 0 0 3.2rem;
   }
   .pkg-selector-row {
     display: flex;
-    gap: 1rem;
+    gap: 1.6rem;
   }
   .pkg-selector-col {
     flex: 1;
@@ -19,14 +21,14 @@
   .pkg-selector label {
     font-weight: 600;
     display: block;
-    margin-bottom: 0.4rem;
-    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+    font-size: 1.5rem;
     color: #002a3a;
   }
   .pkg-selector select {
     width: 100%;
-    padding: 0.6rem 0.75rem;
-    font-size: 0.95rem;
+    padding: 1rem 1.2rem;
+    font-size: 1.5rem;
     border: 1px solid #eaeaea;
     border-radius: 6px;
     background: #fff;
@@ -42,23 +44,23 @@
     .pkg-selector-row { flex-direction: column; }
   }
 
-  .pkg-instructions { display: none; margin-top: 1.5rem; }
+  .pkg-instructions { display: none; margin-top: 2.4rem; }
   .pkg-instructions.active { display: block; }
 
   .pkg-instructions h2 {
     color: #002a3a;
-    font-size: 1.4rem;
+    font-size: 2.2rem;
     font-weight: 700;
-    margin-bottom: 1.25rem;
+    margin-bottom: 2rem;
   }
 
   .pkg-step {
-    margin: 1.25rem 0;
+    margin: 2rem 0;
   }
   .pkg-step-header {
     display: flex;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
   }
   .pkg-step-num {
     display: inline-flex;
@@ -66,42 +68,42 @@
     justify-content: center;
     background: #6983ff;
     color: #fff;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 2.4rem;
+    height: 2.4rem;
     border-radius: 50%;
-    font-size: 0.8rem;
+    font-size: 1.3rem;
     font-weight: 700;
-    margin-right: 0.6rem;
+    margin-right: 1rem;
     flex-shrink: 0;
   }
   .pkg-step-title {
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 1.5rem;
     color: #002a3a;
   }
 
   .pkg-instructions pre {
     background: #1a2026;
     color: #e0e6ed;
-    padding: 1rem 1.25rem;
+    padding: 1.6rem 2rem;
     border-radius: 8px;
     overflow-x: auto;
-    font-size: 0.875rem;
+    font-size: 1.4rem;
     font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", Menlo, monospace;
     position: relative;
     line-height: 1.5;
   }
   .pkg-instructions pre .pkg-copy-btn {
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+    top: 0.8rem;
+    right: 0.8rem;
     background: rgba(255,255,255,0.1);
     color: rgba(255,255,255,0.6);
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: 5px;
-    padding: 0.2rem 0.6rem;
+    padding: 0.3rem 1rem;
     cursor: pointer;
-    font-size: 0.75rem;
+    font-size: 1.2rem;
     font-family: inherit;
     transition: all 0.2s;
   }
@@ -110,19 +112,20 @@
     color: #fff;
   }
 
-  #pkg-no-selection p {
+  #pkg-no-selection p,
+  #pkg-no-packages p {
     color: #6b7a8d;
     text-align: center;
-    padding: 2rem 0;
-    font-size: 1rem;
+    padding: 3.2rem 0;
+    font-size: 1.6rem;
   }
 
   .pkg-gpg-section {
-    margin-top: 2.5rem;
-    padding-top: 2rem;
+    margin-top: 4rem;
+    padding-top: 3.2rem;
     border-top: 1px solid #eaeaea;
   }
-  .pkg-gpg-section h2 { margin-bottom: 0.75rem; }
+  .pkg-gpg-section h2 { margin-bottom: 1.2rem; }
   .pkg-gpg-section p { color: #6b7a8d; }
   .pkg-gpg-section a { color: #0053b8; text-decoration: none; }
   .pkg-gpg-section a:hover { color: #6983ff; text-decoration: underline; }
@@ -134,29 +137,17 @@
   <div class="pkg-selector-row">
     <div class="pkg-selector-col">
       <label for="version-select">Valkey version</label>
-      <select id="version-select" onchange="showInstructions()">
+      <select id="version-select" onchange="onVersionChange()">
         <option value="">-- Choose version --</option>
         {% for ver in page.extra.versions %}
-        <option value="{{ ver }}">Valkey {{ ver }}</option>
+        <option value="{{ ver.name }}">Valkey {{ ver.name }}</option>
         {% endfor %}
       </select>
     </div>
     <div class="pkg-selector-col">
       <label for="os-select">Operating system</label>
-      <select id="os-select" onchange="showInstructions()">
+      <select id="os-select" onchange="showInstructions()" disabled>
         <option value="">-- Choose your OS --</option>
-        {% for group in page.extra.os_groups %}
-        <optgroup label="{{ group.label }}">
-          {% for entry in group.entries %}
-          <option value="{{ entry.value }}"
-                  data-name="{{ entry.name }}"
-                  data-type="{{ entry.type }}"
-                  data-pkg="{{ entry.pkg }}">
-            {{ entry.name }}
-          </option>
-          {% endfor %}
-        </optgroup>
-        {% endfor %}
       </select>
     </div>
   </div>
@@ -164,6 +155,10 @@
 
 <div id="pkg-no-selection" class="pkg-instructions active">
   <p>Select a Valkey version and your operating system to get installation instructions.</p>
+</div>
+
+<div id="pkg-no-packages" class="pkg-instructions">
+  <p>No packages are available for the selected Valkey version yet.</p>
 </div>
 
 <div id="rpm-instructions" class="pkg-instructions">
@@ -238,6 +233,57 @@
 
 <script>
 var REPO_URL = "{{ page.extra.repo_url | safe }}";
+var PKG_VERSIONS = {{ page.extra.versions | json_encode | safe }};
+var PKG_VERSION_MAP = {};
+for (var i = 0; i < PKG_VERSIONS.length; i++) {
+  PKG_VERSION_MAP[PKG_VERSIONS[i].name] = PKG_VERSIONS[i];
+}
+
+function onVersionChange() {
+  var verSel = document.getElementById("version-select");
+  var osSel = document.getElementById("os-select");
+  var ver = verSel.value;
+  var prevOs = osSel.value;
+
+  // Reset OS dropdown.
+  osSel.innerHTML = '<option value="">-- Choose your OS --</option>';
+  osSel.disabled = true;
+
+  if (!ver) {
+    showInstructions();
+    return;
+  }
+
+  var verData = PKG_VERSION_MAP[ver];
+  var groups = verData && verData.os_groups ? verData.os_groups : [];
+  if (groups.length === 0) {
+    var sections = document.querySelectorAll(".pkg-instructions");
+    for (var s = 0; s < sections.length; s++) sections[s].classList.remove("active");
+    document.getElementById("pkg-no-packages").classList.add("active");
+    return;
+  }
+
+  for (var g = 0; g < groups.length; g++) {
+    var optgroup = document.createElement("optgroup");
+    optgroup.label = groups[g].label;
+    var entries = groups[g].entries || [];
+    for (var e = 0; e < entries.length; e++) {
+      var entry = entries[e];
+      var opt = document.createElement("option");
+      opt.value = entry.value;
+      opt.dataset.name = entry.name;
+      opt.dataset.type = entry.type;
+      opt.dataset.pkg = entry.pkg || "";
+      opt.textContent = entry.name;
+      if (entry.value === prevOs) opt.selected = true;
+      optgroup.appendChild(opt);
+    }
+    osSel.appendChild(optgroup);
+  }
+  osSel.disabled = false;
+
+  showInstructions();
+}
 
 function showInstructions() {
   var osSel = document.getElementById("os-select");
