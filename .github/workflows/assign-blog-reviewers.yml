@@ -51,20 +51,13 @@ jobs:
 
               const content = Buffer.from(data.content, 'base64').toString('utf-8');
 
-              // Extract blog_type from TOML (+++ fences) or YAML (--- fences) front matter
-              let blogTypes = [];
+              // Extract blog_type from TOML front matter (between +++ fences)
               const tomlMatch = content.match(/blog_type\s*=\s*\[([^\]]+)\]/);
-              const yamlMatch = content.match(/blog_type:\s*\n((?:\s*-\s*.+\n)+)/);
-              if (tomlMatch) {
-                blogTypes = [...tomlMatch[1].matchAll(/"([^"]+)"/g)].map(m => m[1]);
-              } else if (yamlMatch) {
-                blogTypes = [...yamlMatch[1].matchAll(/-\s*"?([^"\n]+)"?/g)].map(m => m[1].trim());
-              }
-
-              if (blogTypes.length === 0) {
-                core.setFailed(`${file.filename}: could not parse blog_type from front matter.`);
+              if (!tomlMatch) {
+                core.setFailed(`${file.filename}: could not parse blog_type from TOML front matter. Ensure the post uses TOML (not YAML) frontmatter.`);
                 return;
               }
+              const blogTypes = [...tomlMatch[1].matchAll(/"([^"]+)"/g)].map(m => m[1]);
 
               core.info(`${file.filename}: blog_type = ${JSON.stringify(blogTypes)}`);
 
