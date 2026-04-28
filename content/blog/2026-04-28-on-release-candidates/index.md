@@ -1,8 +1,10 @@
 +++
 title = "On release candidates"
-date = 2026-04-09
+date = 2026-04-28
 description = "A release candidate just came out for Valkey. You’ve likely heard of the term before but do you know what it really means?"
 authors = ["kyledvs"]
+[taxonomies]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-05.webp"
