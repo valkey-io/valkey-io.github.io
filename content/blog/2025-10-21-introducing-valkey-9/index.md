@@ -6,6 +6,8 @@ For Valkey's second major release, Valkey 9.0 brings innovation, long-requested 
 Read on to find out all the team packed into this release.
     """
 authors= ["kyledvs"]
+[taxonomies]
+blog_type = ["Announcements"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-08.webp"

@@ -14,7 +14,8 @@ recommended_clients_paths = [
     "/go/valkey-go.json",
     "/php/phpredis.json",
     "/php/predis.json",
-    "/swift/valkey-swift.json"
+    "/swift/valkey-swift.json",
+    "/csharp/valkey-GLIDE.json"
     ] 
 
 client_fields =[

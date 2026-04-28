@@ -911,6 +911,47 @@ aside {
   }
 }
 
+.blog-type-filters {
+  margin-bottom: 1.5rem;
+
+  select {
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    border: 1px solid $grey-lt-300;
+    background: $white;
+    color: $text;
+    font-size: 1.3rem;
+    cursor: pointer;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.blog-type-badge {
+  display: inline-block;
+  padding: 0.15rem 0.7rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: $white;
+  background-color: $grey-dk-200;
+
+  &[data-type="Technical Deep Dive"] { background-color: #6983ff; }
+  &[data-type="Community Highlight"] { background-color: $green-200; }
+  &[data-type="How-to"] { background-color: $purple-200; }
+  &[data-type="Announcements"] { background-color: $yellow-100; }
+  &[data-type="Events"] { background-color: $red-100; }
+}
+
 .blog-inner {
   
   .blog-list {
@@ -1167,6 +1208,13 @@ aside {
     object-fit: cover;
   }
 }
+
+.container.right-aside {
+  .author-photo-container  img {
+      width: 100px;
+  }
+}
+
 
 .author-info {
   flex: 1;
@@ -1876,7 +1924,7 @@ html.banner-hidden .banner {
   text-align: center;
 }
 
-.community-header {
+.community-header, .leadership-header {
   h1 {
     text-align: center;
     background-image: linear-gradient(#382270, #4e51bf);
@@ -1902,6 +1950,11 @@ html.banner-hidden .banner {
   }
 }
 
+.leadership-header p {
+  margin-left: 25%;
+  margin-right: 25%;
+}
+
 .community-title {
   color: #fff;
   font-size: 3.2rem;
@@ -1910,13 +1963,13 @@ html.banner-hidden .banner {
   letter-spacing: 1px;
 }
 
-.community-section {
+.community-section, .leadership-section {
   background: #e9eef7;
   text-align: center;
   padding-bottom: 6rem;
 }
 
-.community-card-grid {
+.community-card-grid, .leadership-card-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2.5rem;
@@ -1928,17 +1981,17 @@ html.banner-hidden .banner {
 }
 
 @media (max-width: 900px) {
-  .community-card-grid {
+  .community-card-grid, .leadership-card-grid {
     grid-template-columns: 1fr 1fr;
   }
 }
 @media (max-width: 600px) {
-  .community-card-grid {
+  .community-card-grid, .leadership-card-grid {
     grid-template-columns: 1fr;
   }
 }
 
-.community-card {
+.community-card, .leadership-card {
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 4px 24px 0 rgba(105, 131, 255, 0.10);
@@ -1948,32 +2001,41 @@ html.banner-hidden .banner {
   align-items: center;
   transition: box-shadow 0.2s;
 }
-.community-card:hover {
+.community-card:hover, .leadership-card:hover {
   box-shadow: 0 8px 32px 0 rgba(105, 131, 255, 0.18);
+}
+
+.community-card-icon, .leadership-card-photo {
+  margin-bottom: 1.2rem;
+}
+.leadership-card-photo {
+  height: 150px;
 }
 
 .community-card-icon {
   width: 48px;
   height: 48px;
-  margin-bottom: 1.2rem;
 }
 
-.community-card h3 {
+.community-card h3, .leadership-card h3 {
   font-size: 2rem;
   font-weight: 700;
   color: #2d2471;
   margin: 0 0 0.7rem 0;
   text-align: center;
+  & + h4 {
+    margin-top: 0;
+  }
 }
 
-.community-card p {
+.community-card p, .leadership-card p {
   color: #3a3a4d;
   font-size: 1.75rem;
   margin: 0 0 1.5rem 0;
   text-align: left;
 }
 
-.community-card-actions {
+.community-card-actions, .leadership-card-actions {
   display: flex;
   gap: 0.7rem;
   flex-wrap: wrap;
@@ -1982,21 +2044,46 @@ html.banner-hidden .banner {
   margin-top: auto;
 }
 
-.community-card .btn {
+.community-card .btn, .leadership-card .btn {
   background: none;
   color: #072150;
-  border: 1px solid #072150;
-  border-radius: 24px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  text-decoration: none;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  transition: background 0.15s, color 0.15s, border 0.15s;
+  font-size: 1.5rem;
 }
 
+.leadership-card h4 {
+  margin-bottom: 0.25em;
+}
+
+.leadership-card .icon {
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: -0.125em;
+  path {
+    fill: #d1d9ff;
+  }
+}
+
+
+.community-card .btn {
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid #072150;
+  border-radius: 24px;
+  padding: 0.75rem 1.5rem;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+}
+.leadership-card .btn .icon path {
+  transition: fill 0.15s, color 0.15s, border 0.15s;
+}
+
+.leadership-card .btn:hover {
+  .icon path {
+    fill: #2d2471
+  }  
+}
 .community-card .btn:hover {
   background: #072150;
   color: #fff;
@@ -2432,4 +2519,191 @@ blockquote {
       }
     }
   }
+}
+
+// Events Calendar
+.events-calendar {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 20px;
+}
+
+.body main:has(.events-calendar) {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.events-legend {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  font-size: 1.4rem;
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+
+    &.first-party { background-color: #6983ff; }
+    &.third-party { background-color: $yellow-100; }
+  }
+}
+
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+
+  .calendar-nav-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    min-width: 220px;
+    text-align: center;
+    color: $text;
+  }
+
+  .calendar-nav-btn {
+    background: none;
+    border: 1px solid $line;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1.6rem;
+    color: $text;
+
+    &:hover:not(:disabled) { background-color: $background-darker; }
+    &:disabled { opacity: 0.3; cursor: default; }
+  }
+}
+
+.calendar-grid {
+  border: 1px solid $line;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.calendar-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background-color: $blue-dk-300;
+  color: $white;
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+
+  span { padding: 0.8rem 0; }
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day {
+  min-height: 60px;
+  padding: 0.4rem;
+  border: 1px solid $line-lighter;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  font-size: 1.3rem;
+  min-width: 0;
+  overflow: hidden;
+
+  &.empty { background-color: $background-darker; }
+
+  &.has-event { background-color: $highlight-lightest; }
+
+  .day-num {
+    color: $text-light;
+    margin-bottom: 0.3rem;
+  }
+}
+
+.event-label {
+  display: block;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  line-height: 1.2;
+  color: $white;
+  text-decoration: none;
+  word-break: break-word;
+  margin-top: 2px;
+
+  &.first-party { background-color: #6983ff; }
+  &.third-party { background-color: $yellow-100; }
+  &:hover { opacity: 0.85; }
+  &, &:visited { color: $white; }
+}
+
+.events-list {
+  display: grid;
+  gap: 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.5rem;
+
+  .event-card {
+    display: block;
+    padding: 1.5rem;
+    border: 1px solid $line;
+    border-radius: 8px;
+    transition: box-shadow 0.2s;
+
+    &:hover { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+
+    &.active { border-color: $blue-vibrant-300; box-shadow: 0 0 0 2px $blue-vibrant-300; }
+
+    &.past { opacity: 0.5; }
+
+    h3 {
+      margin: 0.5rem 0;
+      font-size: 1.8rem;
+
+      a { color: $text; text-decoration: none; &:hover { color: $link-color; } }
+    }
+
+    .event-card-badge {
+      display: inline-block;
+      padding: 0.2rem 0.8rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: $white;
+
+      &.first-party { background-color: #6983ff; }
+      &.third-party { background-color: $yellow-100; }
+    }
+
+    .event-card-date {
+      font-size: 1.4rem;
+      color: $text-light;
+      margin: 0.3rem 0;
+    }
+
+    .event-card-location {
+      font-size: 1.4rem;
+      margin: 0.3rem 0;
+
+      a { color: $link-color; }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .calendar-header span { font-size: 1.1rem; }
+  .calendar-day { min-height: 40px; font-size: 1.1rem; }
+  .calendar-nav .calendar-nav-title { font-size: 1.8rem; min-width: auto; }
 }

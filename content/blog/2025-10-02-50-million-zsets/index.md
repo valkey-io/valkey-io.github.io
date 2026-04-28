@@ -5,6 +5,8 @@ description= """
 The latest Valkey 8.1 release introduces a redesigned hash table and other optimizations that promise lower memory usage and higher throughput. In this post, we put Valkey 8.1 under pressure by benchmarking it against Valkey 8.0, inserting 50 million members into a sorted set and measuring memory consumption and throughput along the way.
     """
 authors= ["khawaja"]
+[taxonomies]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
 featured_image = "/blog/50-million-zsets/hero-used-memory-vs-inserts-new.png"

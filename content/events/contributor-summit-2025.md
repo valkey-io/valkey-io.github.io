@@ -1,6 +1,11 @@
 +++
 title = "Contributor Summit Amsterdam"
-date= 2025-08-24 01:01:01
+date = 2025-08-24 01:01:01
+
+[extra]
+event_type = "first-party"
+location = "RAI Amsterdam Convention Centre, Amsterdam, Netherlands"
+location_url = "https://www.google.com/maps/place/Amsterdam+RAI/@52.3411938,4.8860407,1232m"
 +++
 
 Calling all Valkey contributors, maintainers, product, and engagement leaders! Valkey Contributor Summit is the in-person event to gain insight into the mechanics and future of the project. At the event we have time and space to brainstorm, discuss, and plan the future of the project. Bring your ideas, calendars, and an open mind to chart the destiny of Valkey.
