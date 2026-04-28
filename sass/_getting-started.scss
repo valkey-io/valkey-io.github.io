@@ -1,0 +1,313 @@
+// Getting Started page styles
+
+// Override the default .body .width-limiter row layout for this page
+.getting-started-page .body .width-limiter,
+.getting-started .width-limiter {
+  flex-flow: column nowrap !important;
+}
+
+.getting-started {
+  // Tab bar
+  .gs-tab-bar {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: flex-start;
+
+    .width-limiter {
+      display: block;
+      flex: none;
+      padding: 0;
+    }
+
+    .gs-tab-toggle {
+      display: inline-flex;
+      border: 1px solid var(--border-color, #d1d5db);
+      border-radius: 9999px;
+      overflow: hidden;
+      background: #fff;
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 22px;
+        font-size: 14px;
+        font-weight: 500;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: #6b7280;
+        transition: all 0.2s;
+
+        &.active {
+          background: var(--text-color, #1a1a2e);
+          color: #fff;
+        }
+
+        .gs-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: var(--brand-color, #6852e0);
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+
+        &.active .gs-dot {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  // Tab content visibility
+  .gs-tab-content {
+    display: none;
+    animation: gsFadeIn 0.3s ease;
+
+    &.gs-active {
+      display: block;
+    }
+  }
+
+  @keyframes gsFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  // Hero
+  .gs-hero {
+    max-width: 720px;
+    padding: 40px 0 20px;
+
+    h1 {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+
+    .gs-rotating-word {
+      color: var(--brand-color, #6852e0);
+      display: inline-block;
+      min-width: 180px;
+    }
+
+    .gs-subtitle {
+      font-size: 17px;
+      color: #6b7280;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .gs-stat {
+      font-size: 15px;
+      color: #6b7280;
+
+      strong {
+        color: var(--text-color, #1a1a2e);
+      }
+    }
+  }
+
+  // Sections
+  .gs-section {
+    max-width: 720px;
+    padding: 16px 0;
+
+    h2 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 10px;
+    }
+
+    > p {
+      color: #6b7280;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+  }
+
+  // Install tabs
+  .gs-install-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border-color, #d1d5db);
+
+    button {
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #6b7280;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+
+      &.active {
+        color: var(--brand-color, #6852e0);
+        border-bottom-color: var(--brand-color, #6852e0);
+      }
+    }
+  }
+
+  .gs-install-panel {
+    display: none;
+
+    &.gs-active {
+      display: block;
+    }
+  }
+
+  // Code blocks
+  .gs-code-block {
+    position: relative;
+    background: #1a1a2e;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 14px 0;
+    overflow-x: auto;
+
+    pre {
+      margin: 0;
+    }
+
+    code {
+      font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      font-size: 13px;
+      color: #e0e0e0;
+      line-height: 1.7;
+    }
+
+    .gs-comment {
+      color: #6b7280;
+    }
+  }
+
+  // Copy button
+  .gs-copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #ccc;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    &.copied {
+      color: #34d399;
+      border-color: #34d399;
+    }
+  }
+
+  // FAQ
+  .gs-faq-item {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border-color, #d1d5db);
+
+    &:first-child {
+      border-top: 1px solid var(--border-color, #d1d5db);
+    }
+
+    h3 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    p {
+      color: #6b7280;
+      font-size: 15px;
+      line-height: 1.7;
+
+      a {
+        color: var(--brand-color, #6852e0);
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  // Agent tab
+  .gs-agent-intro {
+    padding: 32px 0 16px;
+    font-size: 15px;
+    color: #6b7280;
+    max-width: 720px;
+  }
+
+  .gs-agent-response {
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 10px;
+    padding: 28px;
+    margin-bottom: 48px;
+    max-width: 720px;
+
+    .gs-copy-btn {
+      background: #fff;
+      border: 1px solid var(--border-color, #d1d5db);
+      color: #6b7280;
+
+      &:hover {
+        background: #f5f5f5;
+        color: #1a1a2e;
+      }
+    }
+
+    .gs-response-header {
+      font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.8;
+      padding-bottom: 18px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color, #d1d5db);
+      white-space: pre-wrap;
+    }
+
+    .gs-response-body {
+      font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-color, #1a1a2e);
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 640px) {
+  .getting-started {
+    .gs-hero h1 {
+      font-size: 28px;
+    }
+
+    .gs-agent-response {
+      padding: 16px;
+    }
+
+    .gs-install-tabs button {
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+  }
+}
