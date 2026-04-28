@@ -51,17 +51,24 @@ jobs:
 
               const content = Buffer.from(data.content, 'base64').toString('utf-8');
 
-              // Extract blog_type from TOML front matter (between +++ fences)
-              const match = content.match(/blog_type\s*=\s*\["([^"]+)"\]/);
-              if (!match) {
-                core.info(`${file.filename}: no blog_type found, skipping.`);
-                continue;
+              // Extract blog_type from TOML (+++ fences) or YAML (--- fences) front matter
+              let blogTypes = [];
+              const tomlMatch = content.match(/blog_type\s*=\s*\[([^\]]+)\]/);
+              const yamlMatch = content.match(/blog_type:\s*\n((?:\s*-\s*.+\n)+)/);
+              if (tomlMatch) {
+                blogTypes = [...tomlMatch[1].matchAll(/"([^"]+)"/g)].map(m => m[1]);
+              } else if (yamlMatch) {
+                blogTypes = [...yamlMatch[1].matchAll(/-\s*"?([^"\n]+)"?/g)].map(m => m[1].trim());
               }
 
-              const blogType = match[1];
-              core.info(`${file.filename}: blog_type = "${blogType}"`);
+              if (blogTypes.length === 0) {
+                core.setFailed(`${file.filename}: could not parse blog_type from front matter.`);
+                return;
+              }
 
-              if (technicalTypes.includes(blogType)) {
+              core.info(`${file.filename}: blog_type = ${JSON.stringify(blogTypes)}`);
+
+              if (blogTypes.some(t => technicalTypes.includes(t))) {
                 needsTechnical = true;
               }
             }
