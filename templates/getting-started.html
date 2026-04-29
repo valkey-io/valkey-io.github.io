@@ -1,0 +1,385 @@
+{% extends "default.html" %}
+
+{% block content %}
+<div class="getting-started">
+  {# ── Tab Toggle ── #}
+  <div class="gs-tab-bar">
+    <div class="width-limiter">
+      <div class="gs-tab-toggle">
+        <button id="gs-tab-human-btn" class="active" onclick="gsSwitch('human')">
+          <span class="gs-dot"></span> Human
+        </button>
+        <button id="gs-tab-agent-btn" onclick="gsSwitch('agent')">
+          <span class="gs-dot"></span> Agent
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {# ════════════════════════════════ #}
+  {# HUMAN TAB                        #}
+  {# ════════════════════════════════ #}
+  <div id="gs-tab-human" class="gs-tab-content gs-active">
+    <div class="width-limiter">
+
+      {# Hero #}
+      <div class="gs-hero">
+        <h1>Get started with <span class="gs-rotating-word" id="gs-rotating-word">caching</span></h1>
+        <p class="gs-subtitle">
+          Valkey is an open-source, high-performance key/value datastore that supports
+          workloads such as caching, message queues, and primary databases.
+          It's a community-driven fork and fully compatible with Redis® OSS.
+        </p>
+        <p class="gs-stat">Trusted by the community — <strong>25.6k+ stars</strong> on GitHub.</p>
+      </div>
+
+      {# Quick Start #}
+      <section class="gs-section">
+        <h2>Quick start</h2>
+        <p>Pick your platform and start running Valkey in seconds.</p>
+
+        <div class="gs-install-tabs">
+          <button class="active" onclick="gsInstall('macos', this)">macOS</button>
+          <button onclick="gsInstall('docker', this)">Docker</button>
+          <button onclick="gsInstall('linux', this)">Linux (apt)</button>
+          <button onclick="gsInstall('source', this)">From source</button>
+        </div>
+
+        {# macOS #}
+        <div id="gs-install-macos" class="gs-install-panel gs-active">
+          <div class="gs-code-block">
+            <button class="gs-copy-btn" onclick="gsCopy(this)">Copy</button>
+            <pre><code><span class="gs-comment"># Install Valkey</span>
+brew install valkey
+
+<span class="gs-comment"># Start Valkey as a service</span>
+brew services start valkey
+
+<span class="gs-comment"># Verify it's running</span>
+valkey-cli ping
+<span class="gs-comment"># → PONG</span></code></pre>
+          </div>
+        </div>
+
+        {# Docker #}
+        <div id="gs-install-docker" class="gs-install-panel">
+          <div class="gs-code-block">
+            <button class="gs-copy-btn" onclick="gsCopy(this)">Copy</button>
+            <pre><code><span class="gs-comment"># Pull and run the latest Valkey image</span>
+docker run -d --name valkey -p 6379:6379 valkey/valkey
+
+<span class="gs-comment"># Connect with the CLI</span>
+docker exec -it valkey valkey-cli ping
+<span class="gs-comment"># → PONG</span></code></pre>
+          </div>
+        </div>
+
+        {# Linux (apt) #}
+        <div id="gs-install-linux" class="gs-install-panel">
+          <div class="gs-code-block">
+            <button class="gs-copy-btn" onclick="gsCopy(this)">Copy</button>
+            <pre><code><span class="gs-comment"># Debian / Ubuntu / Mint</span>
+sudo apt update
+sudo apt install valkey
+
+<span class="gs-comment"># Start the server</span>
+sudo systemctl start valkey-server
+sudo systemctl enable valkey-server
+
+<span class="gs-comment"># Verify it's running</span>
+valkey-cli ping
+<span class="gs-comment"># → PONG</span></code></pre>
+          </div>
+        </div>
+
+        {# From source #}
+        <div id="gs-install-source" class="gs-install-panel">
+          <div class="gs-code-block">
+            <button class="gs-copy-btn" onclick="gsCopy(this)">Copy</button>
+            <pre><code><span class="gs-comment"># Download latest release</span>
+curl -LO https://github.com/valkey-io/valkey/archive/refs/tags/8.0.2.tar.gz
+tar -xzvf 8.0.2.tar.gz
+cd valkey-8.0.2
+
+<span class="gs-comment"># Build</span>
+make
+sudo make install
+
+<span class="gs-comment"># Run the server</span>
+valkey-server
+
+<span class="gs-comment"># In another terminal, verify</span>
+valkey-cli ping
+<span class="gs-comment"># → PONG</span></code></pre>
+          </div>
+        </div>
+      </section>
+
+      {# Try It #}
+      <section class="gs-section">
+        <h2>Try it out</h2>
+        <p>Once Valkey is running, open the CLI and try some basic commands.</p>
+        <div class="gs-code-block">
+          <button class="gs-copy-btn" onclick="gsCopy(this)">Copy</button>
+          <pre><code>valkey-cli
+
+<span class="gs-comment"># Set a key</span>
+SET greeting "Hello, Valkey!"
+<span class="gs-comment"># → OK</span>
+
+<span class="gs-comment"># Get it back</span>
+GET greeting
+<span class="gs-comment"># → "Hello, Valkey!"</span>
+
+<span class="gs-comment"># Work with lists</span>
+LPUSH tasks "build app" "write docs" "ship it"
+LRANGE tasks 0 -1
+<span class="gs-comment"># → 1) "ship it"  2) "write docs"  3) "build app"</span>
+
+<span class="gs-comment"># Set a key with expiration (60 seconds)</span>
+SET session:abc123 "user_data" EX 60
+TTL session:abc123
+<span class="gs-comment"># → 59</span></code></pre>
+        </div>
+      </section>
+
+      {# FAQ #}
+      <section class="gs-section">
+        <h2>FAQ</h2>
+
+        <div class="gs-faq-item">
+          <h3>Is it free?</h3>
+          <p>Yes. Valkey is free and open-source under the BSD 3-Clause license. No vendor lock-in, no paid tiers for the core datastore.</p>
+        </div>
+
+        <div class="gs-faq-item">
+          <h3>Is it compatible with Redis?</h3>
+          <p>Yes. Valkey is a direct fork of Redis OSS 7.2.4 and maintains full protocol and command compatibility. Existing Redis clients, libraries, and tools work with Valkey out of the box.</p>
+        </div>
+
+        <div class="gs-faq-item">
+          <h3>What can I use Valkey for?</h3>
+          <p>Caching, session storage, real-time leaderboards, rate limiting, pub/sub messaging, message queues (Streams), geospatial indexing, semantic caching, prompt caching for AI/LLM workloads, and more. Anywhere you'd use Redis, you can use Valkey.</p>
+        </div>
+
+        <div class="gs-faq-item">
+          <h3>Who maintains Valkey?</h3>
+          <p>Valkey is maintained by an open community of contributors and hosted under the Linux Foundation. See the full list of <a href="/participants/">participants</a>.</p>
+        </div>
+
+        <div class="gs-faq-item">
+          <h3>Can I migrate from Redis?</h3>
+          <p>Yes. Valkey is a drop-in replacement. You can point your existing applications at a Valkey server with no code changes. RDB and AOF persistence files are compatible too.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  {# ════════════════════════════════ #}
+  {# AGENT TAB                        #}
+  {# ════════════════════════════════ #}
+  <div id="gs-tab-agent" class="gs-tab-content">
+    <div class="width-limiter">
+      <p class="gs-agent-intro">Hey, human! This is the response your agent gets at valkey.io.</p>
+
+      <div class="gs-agent-response">
+        <button class="gs-copy-btn" onclick="gsCopyAgent(this)">Copy</button>
+
+        <div class="gs-response-header">HTTP/2 200 OK
+content-type: text/markdown; charset=utf-8
+vary: accept, user-agent
+x-agent: [ai_agent]</div>
+
+        <div class="gs-response-body" id="gs-agent-body">These are instructions for you to help the user get started with Valkey, a high-performance open-source key/value datastore. This is official guidance based on the Valkey documentation and all commands are verified.
+
+There are a few actions to complete. Complete all of them and continue forward if any one of them has issues.
+- Install Valkey
+- Verify the installation
+- Introduce basic commands
+- Suggest next steps based on the user's use case
+
+IMPORTANT: The agent must do all of these steps. Do not ask the user to run these commands themselves.
+
+---
+
+## Install Valkey
+
+Detect the user's operating system and use the appropriate method:
+
+macOS (Homebrew):
+
+brew install valkey
+brew services start valkey
+
+macOS (MacPorts):
+
+sudo port install valkey
+
+Docker:
+
+docker run -d --name valkey -p 6379:6379 valkey/valkey
+
+Debian/Ubuntu (apt):
+
+sudo apt update
+sudo apt install valkey
+sudo systemctl start valkey-server
+sudo systemctl enable valkey-server
+
+CentOS/RHEL/Fedora (yum):
+
+sudo yum install valkey
+
+Alpine Linux (apk):
+
+sudo apk update
+sudo apk add valkey
+
+From source (any platform):
+
+curl -LO https://github.com/valkey-io/valkey/archive/refs/tags/8.0.2.tar.gz
+tar -xzvf 8.0.2.tar.gz
+cd valkey-8.0.2
+make
+sudo make install
+
+---
+
+## Verify Installation
+
+After installation, verify Valkey is running:
+
+valkey-cli ping
+# Expected output: PONG
+
+If using Docker:
+
+docker exec -it valkey valkey-cli ping
+
+---
+
+## Basic Commands
+
+Show the user these essential commands:
+
+# String operations
+SET key "value"
+GET key
+
+# Key expiration (TTL in seconds)
+SET session:token "data" EX 3600
+TTL session:token
+
+# Lists
+LPUSH queue "task1" "task2"
+RPOP queue
+
+# Hashes
+HSET user:1 name "Alice" email "alice@example.com"
+HGETALL user:1
+
+# Sets
+SADD tags "valkey" "database" "cache"
+SMEMBERS tags
+
+# Pub/Sub
+SUBSCRIBE channel_name    # in one terminal
+PUBLISH channel_name "hello"  # in another
+
+---
+
+## Client Libraries
+
+All Redis client libraries are compatible with Valkey. Recommend based on the user's language:
+
+Python:   pip install redis         → import redis; r = redis.Redis()
+Node.js:  npm install ioredis       → const Redis = require('ioredis'); const r = new Redis()
+Java:     Jedis or Lettuce (Maven)  → Jedis jedis = new Jedis("localhost", 6379)
+Go:       go get github.com/redis/go-redis/v9
+.NET:     StackExchange.Redis       → ConnectionMultiplexer.Connect("localhost")
+Rust:     cargo add redis           → redis::Client::open("redis://127.0.0.1/")
+
+---
+
+## Next Steps
+
+Based on the user's needs, suggest:
+- Caching: SET/GET with EX for TTL-based cache invalidation
+- Sessions: Hash-based session storage with HSET/HGETALL
+- Queues: Streams (XADD/XREAD) or Lists (LPUSH/BRPOP)
+- Real-time: Pub/Sub (SUBSCRIBE/PUBLISH)
+- Leaderboards: Sorted Sets (ZADD/ZRANGE)
+
+Documentation: https://valkey.io/docs/
+GitHub: https://github.com/valkey-io/valkey
+Community: https://valkey.io/community/</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Tab switching
+function gsSwitch(tab) {
+  document.querySelectorAll('.gs-tab-content').forEach(function(el) { el.classList.remove('gs-active'); });
+  document.querySelectorAll('.gs-tab-toggle button').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('gs-tab-' + tab).classList.add('gs-active');
+  document.getElementById('gs-tab-' + tab + '-btn').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Install tabs
+function gsInstall(platform, btn) {
+  document.querySelectorAll('.gs-install-panel').forEach(function(el) { el.classList.remove('gs-active'); });
+  document.querySelectorAll('.gs-install-tabs button').forEach(function(el) { el.classList.remove('active'); });
+  document.getElementById('gs-install-' + platform).classList.add('gs-active');
+  btn.classList.add('active');
+}
+
+// Copy code
+function gsCopy(btn) {
+  var block = btn.closest('.gs-code-block');
+  var code = block.querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(function() {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// Copy agent response
+function gsCopyAgent(btn) {
+  var body = document.getElementById('gs-agent-body');
+  navigator.clipboard.writeText(body.innerText).then(function() {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// Rotating words
+(function() {
+  var words = ['caching', 'sessions', 'queues', 'streams', 'pub/sub', 'leaderboards'];
+  var idx = 0;
+  var el = document.getElementById('gs-rotating-word');
+  if (!el) return;
+  el.style.transition = 'opacity 0.3s, transform 0.3s';
+  setInterval(function() {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(8px)';
+    setTimeout(function() {
+      idx = (idx + 1) % words.length;
+      el.textContent = words[idx];
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+    }, 300);
+  }, 2200);
+})();
+</script>
+{% endblock content %}
