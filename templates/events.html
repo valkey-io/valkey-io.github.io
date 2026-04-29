@@ -6,6 +6,11 @@
 
 {% block main_content %}
 
+<div class="events-intro" style="text-align: center; max-width: 800px; margin: 0 auto 2rem;">
+  <p>Come meet us at an upcoming Valkey event!</p>
+  <p>Get involved: <a href="/community/meetup-groups/">Host a Meetup</a> | <a href="https://form.asana.com/?k=FA6ZlbUBbiaE4b7LJ9EXqQ&amp;d=9283783873717">Share an event</a></p>
+</div>
+
 <div class="events-calendar">
   <div class="events-legend">
     <span class="legend-item"><span class="legend-dot first-party"></span> Valkey Events</span>
@@ -129,13 +134,22 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Render all event cards once
-  var allEvents = events.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var today = new Date().toISOString().substring(0, 10);
+  var currentMonth = today.substring(0, 7);
+  var thisMonth = events.filter(function(e) { return e.date.substring(0, 7) === currentMonth && e.date >= today; })
+                        .sort(function(a, b) { return a.date.localeCompare(b.date); });
+  var upcoming = events.filter(function(e) { return e.date > today && e.date.substring(0, 7) !== currentMonth; })
+                       .sort(function(a, b) { return a.date.localeCompare(b.date); });
+  var past = events.filter(function(e) { return e.date < today; })
+                   .sort(function(a, b) { return b.date.localeCompare(a.date); });
+ var allEvents = thisMonth.concat(upcoming).concat(past);
+
   var listHtml = '';
   allEvents.forEach(function(e) {
     var dateObj = new Date(e.date + 'T00:00:00');
     var dateStr = monthNames[dateObj.getMonth()] + ' ' + dateObj.getDate() + ', ' + dateObj.getFullYear();
     var eventMonth = e.date.substring(0, 7);
-    var today = new Date().toISOString().substring(0, 10);
+   // var today = new Date().toISOString().substring(0, 10);
     listHtml += '<div class="event-card' + (e.date < today ? ' past' : '') + '" data-month="' + eventMonth + '">' +
       '<span class="event-card-badge ' + e.type + '">' + (e.type === 'first-party' ? 'Valkey Event' : 'Third Party') + '</span>' +
       '<h3><a href="' + e.url + '">' + e.title + '</a></h3>' +
