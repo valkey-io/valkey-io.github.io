@@ -1,4 +1,5 @@
 {%- extends "default.html" -%}
+{% import "macros/release.html" as release_macros %}
 
 {%- block content -%}
 {% if section.extra and section.extra.hero %}
@@ -29,15 +30,13 @@
                 {% endfor %}
                 
                 {% set most_recent_release_page = active_releases | slice(end= 1) %}
-                {% set release_date = most_recent_release_page[0].date %}
-                {% set release = most_recent_release_page[0].extra %}
                 
-                {% set split_ver = release.tag | split(pat=".")%}
+                {% set split_ver = most_recent_release_page[0].extra.tag | split(pat=".")%}
                 {% set_global major = split_ver | nth(n= 0) %}
                 
                 <h3> Version {{major}}.x.x </h3>
                 <div class="inner-card">
-                    {% include "includes/release.html" %}
+                    {{ release_macros::release_info(date= most_recent_release_page[0].date, release= most_recent_release_page[0].extra ) }}
                 </div>
 
                 <h3> Latest supported version of past releases</h3>
@@ -48,9 +47,8 @@
                         {% set older_major = older_split_ver | nth(n= 0) %}
                         {% if older_major != major %}
                             {% set_global major = older_major %}
-                            {% set release = older_release.extra %}
                             <h4> Version {{major}}.x.x </h4>
-                            {% include "includes/release.html" %}
+                            {{ release_macros::release_info(date= older_release.date, release= older_release.extra ) }}
                         {% endif %}
                     {% endfor %}
                 </div>                   
