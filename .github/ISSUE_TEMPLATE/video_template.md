@@ -14,8 +14,8 @@ Please replace everything in `[]` before submitting.
 **What is your proposed topic?**
 [Please include a 1-2 sentence description of the content of the video].
 
-**Who is creating this video post?**
-[Github alias of who will be creating and responsible for addressing updates on the blog.]
+**Who is creating this video?**
+[GitHub alias of who will be creating and responsible for addressing updates on the video.]
 
 **What is your ideal publishing date?**
 [Please list a date that is at least 5 business days from today. Due to other pending video posts, review time, and project events, publish dates are best effort.]
