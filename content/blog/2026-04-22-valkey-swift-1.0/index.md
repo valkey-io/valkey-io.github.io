@@ -15,7 +15,7 @@ Last summer, we [introduced the preview release](https://valkey.io/blog/valkey-s
 
 Valkey-swift is a production-grade Swift client built with modern Swift features in mind. Using Valkey with Swift provides strongly typed APIs with clean semantics, memory-safety and data-race-safety guarantees, and a very light memory footprint. The client API uses Swift's structured concurrency — a paradigm designed to bring clarity to concurrent programming by using the structure of your code to automatically define the lifetimes of tasks and associated resources. This allows you to write clean concurrent code without worrying about its side effects like race conditions and connection leaks.
 
-## Features
+## Core Features
 
 Features included in our preview release of valkey-swift:
 
