@@ -17,7 +17,7 @@ Valkey-swift is a production-grade Swift client built with modern Swift features
 
 ## Core Features
 
-Features included in our preview release of valkey-swift:
+Valkey-swift has included these core features since our preview release in August 2025:
 
 - Support for all available Valkey commands. Custom code generation tools keep us in sync with the latest commands that Valkey offers.
 - Cluster-mode-compatible client with cluster-aware routing, dynamic topology discovery, and handling cluster MOVED redirections.
