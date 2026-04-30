@@ -1,7 +1,7 @@
 +++
 title= "Valkey-swift - Announcing 1.0 Release"
 description = "We are excited to announce the 1.0 release of valkey-swift, a client library for Valkey written in Swift."
-date= 2026-04-22 00:00:00
+date= 2026-04-30 00:00:00
 authors= [ "adamfowler", "nilanshusharma"]
 
 [taxonomies]
