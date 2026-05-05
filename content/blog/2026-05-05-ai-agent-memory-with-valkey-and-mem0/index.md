@@ -10,9 +10,9 @@ featured = true
 featured_image = "/assets/media/featured/random-08.webp"
 +++
 
-Large language models (LLMs) are stateless. They retain nothing between calls. Every response requires the application to pass in whatever context the model needs, whether that is the current conversation history or facts from prior sessions. Without memory, responses are less personalized and less relevant, users often have to repeat themselves, and token costs rise as raw history accumulates. 
+AI agent memory turns a stateless large language model (LLM) into an assistant that knows its users and delivers personalized, relevant responses. Implementing an agent memory layer can cut token cost by up to 90% and keep responses under 2 seconds ([Mem0 benchmarks](https://mem0.ai/research-3)). Without memory, responses lose relevance, users repeat themselves, and token costs climb as raw history accumulates.
 
-Adding an application-managed persistent agentic memory layer helps extract the facts that matter, store them, and retrieve them on demand to improve responses while reducing token costs. This post walks through how agent memory works and provides practical guidance, including an implementation using Valkey and Mem0 (an open-source memory framework), when to use file-based context versus a store-backed memory layer, infrastructure requirements for the storage layer, and best practices.
+This post walks through how agent memory works and provides practical guidance, including an implementation using Valkey and Mem0 (an open-source memory framework), when to use file-based context versus a store-backed memory layer, infrastructure requirements for the storage layer, and best practices.
 
 ## Breaking Down AI Agent Interactions
 
@@ -117,7 +117,7 @@ Valkey Search combines scope filters and vector retrieval in a single query and 
 Memory systems should provide Time-to-Live (TTL) controls to automatically expire memories to ensure freshness, and precise deletion controls for conflict resolution, privacy, and compliance. Valkey provides mature data life controls such as per-document expiration with [EXPIRE](https://valkey.io/commands/expire/) and [TTL](https://valkey.io/commands/ttl/), removal of expiration with [PERSIST](https://valkey.io/commands/persist/), and support for non-blocking deletion with [UNLINK](https://valkey.io/commands/unlink/). Valkey also supports hash-field expiration and introspection with commands such as [HEXPIRE](https://valkey.io/commands/hexpire/) and [HTTL](https://valkey.io/commands/httl/), making it easier to apply different retention windows within a single memory document. Together, these primitives let teams mix short-lived session memory, persistent long-term memory, and precise cleanup without building a separate lifecycle subsystem in the application.
 
 
-### Valkey vs Other Open Source Solutions
+### Open Source Storage Options: A Side-by-Side
 
 The table below uses the following scale to compare three popular vector search solutions. Best fit means a native, first-class primitive where the requirement is the default behavior. Strong fit means production-ready but may require configuration or carry known tradeoffs. Supported means achievable but with workarounds, application-level implementation, or tradeoffs that developers must actively manage.
 
