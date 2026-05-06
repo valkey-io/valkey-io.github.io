@@ -1,0 +1,84 @@
+name: Assign blog reviewers
+
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+    paths:
+      - 'content/blog/**'
+
+permissions:
+  pull-requests: write
+
+jobs:
+  assign-reviewers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for new technical/announcement blog posts
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pr_number = context.payload.pull_request.number;
+            const head_sha = context.payload.pull_request.head.sha;
+
+            // Get files changed in the PR
+            const files = await github.paginate(
+              github.rest.pulls.listFiles,
+              { owner, repo, pull_number: pr_number, per_page: 100 }
+            );
+
+            // Filter for newly added .md files under content/blog/
+            const newBlogFiles = files.filter(
+              f => f.status === 'added' && f.filename.startsWith('content/blog/') && f.filename.endsWith('.md')
+            );
+
+            if (newBlogFiles.length === 0) {
+              core.info('No new blog files added, skipping.');
+              return;
+            }
+
+            const technicalTypes = ['Technical Deep Dive', 'Announcements'];
+            let needsTechnical = false;
+
+            for (const file of newBlogFiles) {
+              // Fetch file content from the PR head SHA via the API (safe for fork PRs)
+              const { data } = await github.rest.repos.getContent({
+                owner: context.payload.pull_request.head.repo.owner.login,
+                repo: context.payload.pull_request.head.repo.name,
+                path: file.filename,
+                ref: head_sha,
+              });
+
+              const content = Buffer.from(data.content, 'base64').toString('utf-8');
+
+              // Extract blog_type from TOML front matter (between +++ fences)
+              const tomlMatch = content.match(/blog_type\s*=\s*\[([^\]]+)\]/);
+              if (!tomlMatch) {
+                core.setFailed(`${file.filename}: could not parse blog_type from TOML front matter. Ensure the post uses TOML (not YAML) frontmatter.`);
+                return;
+              }
+              const blogTypes = [...tomlMatch[1].matchAll(/"([^"]+)"/g)].map(m => m[1]);
+
+              core.info(`${file.filename}: blog_type = ${JSON.stringify(blogTypes)}`);
+
+              if (blogTypes.some(t => technicalTypes.includes(t))) {
+                needsTechnical = true;
+              }
+            }
+
+            if (!needsTechnical) {
+              core.info('No technical/announcement blog posts found, skipping.');
+              return;
+            }
+
+            try {
+              await github.rest.pulls.requestReviewers({
+                owner,
+                repo,
+                pull_number: pr_number,
+                team_reviewers: ['technical-blog-reviewers'],
+              });
+              core.info('Requested review from technical-blog-reviewers.');
+            } catch (error) {
+              core.warning(`Failed to request reviewers: ${error.message}`);
+            }
