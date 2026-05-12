@@ -6,13 +6,15 @@ on:
     paths:
       - 'content/blog/**'
 
+permissions: {}
+
 jobs:
   assign-reviewers:
     runs-on: ubuntu-latest
     steps:
       - name: Generate token
         id: generate-token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
         with:
           app-id: ${{ secrets.VALKEYRIE_BOT_APP_ID }}
           private-key: ${{ secrets.VALKEYRIE_BOT_PRIVATE_KEY }}
