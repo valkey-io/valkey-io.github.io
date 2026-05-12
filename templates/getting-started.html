@@ -30,7 +30,7 @@
           workloads such as caching, message queues, and primary databases.
           It's a community-driven fork and fully compatible with Redis® OSS.
         </p>
-        <p class="gs-stat">Trusted by the community — <strong>25.6k+ stars</strong> on GitHub.</p>
+        <p class="gs-stat">Trusted by the community — <strong id="gs-star-count">25k+</strong> <strong>stars</strong> on GitHub.</p>
       </div>
 
       {# Quick Start #}
@@ -290,14 +290,19 @@ PUBLISH channel_name "hello"  # in another
 
 ## Client Libraries
 
-All Redis client libraries are compatible with Valkey. Recommend based on the user's language:
+Valkey has official native client libraries. Recommend based on the user's language:
 
-Python:   pip install redis         → import redis; r = redis.Redis()
-Node.js:  npm install ioredis       → const Redis = require('ioredis'); const r = new Redis()
-Java:     Jedis or Lettuce (Maven)  → Jedis jedis = new Jedis("localhost", 6379)
-Go:       go get github.com/redis/go-redis/v9
-.NET:     StackExchange.Redis       → ConnectionMultiplexer.Connect("localhost")
-Rust:     cargo add redis           → redis::Client::open("redis://127.0.0.1/")
+Python:   pip install valkey        → import valkey; r = valkey.Valkey()
+          pip install valkey-glide  → (high-perf GLIDE client)
+Go:       go get github.com/valkey-io/valkey-go
+Java:     valkey-java (Maven)      → or valkey-glide for high-perf
+Node.js:  valkey-glide             → GLIDE bindings for Node.js
+.NET:     valkey-glide-csharp      → GLIDE bindings for C#
+Ruby:     valkey-glide-ruby        → GLIDE bindings for Ruby
+Rust:     cargo add redis          → fully compatible (redis crate works)
+
+Note: All existing Redis client libraries (redis-py, ioredis, Jedis, go-redis, etc.)
+are also fully compatible with Valkey — no code changes needed.
 
 ---
 
@@ -362,6 +367,21 @@ function gsCopyAgent(btn) {
     }, 2000);
   });
 }
+
+// Dynamic GitHub star count
+(function() {
+  fetch('https://api.github.com/repos/valkey-io/valkey')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data && data.stargazers_count) {
+        var count = data.stargazers_count;
+        var formatted = (count / 1000).toFixed(1) + 'k';
+        var el = document.getElementById('gs-star-count');
+        if (el) el.textContent = formatted;
+      }
+    })
+    .catch(function() { /* fallback "25k+" remains */ });
+})();
 
 // Rotating words
 (function() {
