@@ -105,7 +105,7 @@ What's inside:
 - Hot key detection with minimal cluster overhead
 - Command logs for slow commands and large requests
 
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=-ypi0VkKaIE" title="Valkey Admin 1.0 Release" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-ypi0VkKaIE" title="Valkey Admin 1.0 Release" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Join the community
 
