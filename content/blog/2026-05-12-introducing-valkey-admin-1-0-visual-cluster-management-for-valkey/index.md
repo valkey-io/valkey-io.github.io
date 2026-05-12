@@ -22,19 +22,19 @@ Valkey Admin organizes its capabilities around three user workflows: observabili
 
 **Observability.** The dashboard shows real-time metrics including memory usage, CPU utilization, hit ratio, and command throughput, streamed over WebSocket, so the view reflects real-time changes without manual refresh. The cluster topology view renders a visual map of shards, primaries, and replicas, showing each node's role, host, and connection status. A disconnected replica or a node that cannot be reached will surface immediately on the map.
 
-![Cluster topology view](valkey-admin_01-cluster-topology.png)
+![Cluster topology view rendering shards, primaries, and replicas as a connected graph, with each node showing its role, host, and connection status](valkey-admin_01-cluster-topology.png)
 
-![Dashboard view showing key metrics in real-time](valkey-admin_02-dashboard-view.png)
+![Dashboard view showing real-time cluster metrics including memory usage, CPU utilization, hit ratio, and command throughput streamed over WebSocket](valkey-admin_02-dashboard-view.png)
 
 **Inspection and interaction.** The key browser lets you browse, search, inspect, and edit keys across seven data types: String, Hash, List, Set, Sorted Set, Stream, and JSON. The browser lets you search by pattern or exact key name, with results capped for responsiveness on large keyspaces. This covers the common tasks of verifying key contents during incident response, checking TTLs, and confirming that application writes landed correctly. The send command panel lets you run any Valkey command with formatted response output and a searchable command history for the current session, for quick command execution and debugging.
 
-![Key type distribution](valkey-admin_03-key-type-distribution.png)
+![Key Browser view showing the distribution of keys across data types in the cluster, with counts for String, Hash, List, Set, Sorted Set, Stream, and JSON](valkey-admin_03-key-type-distribution.png)
 
-![Key inspection](valkey-admin_04-key-inspection.png)
+![Key Browser inspection panel displaying a selected key's value, TTL, and metadata, with controls to edit the value and refresh the entry](valkey-admin_04-key-inspection.png)
 
 **Troubleshooting.** Hot key detection identifies frequently accessed keys across the cluster (more on this in the next section). Command logs surface slow commands, large requests, and large replies aggregated across the cluster with node attribution, so you can trace latency spikes back to specific shards. Under the hood, Command logs analyze `COMMANDLOG` output, a Valkey 8.1 feature that tracks slow commands, large requests, and large replies in a single log. A typical triage path: dashboard for anomalies, command logs for the problematic commands, hot key detection to confirm the issue.
 
-![Activity view with hot key detection and command logs](valkey-admin_05-activity-view.png)
+![Activity view combining hot key detection results with command log entries for slow commands, large requests, and large replies, attributed to the originating cluster nodes](valkey-admin_05-activity-view.png)
 
 These six features (dashboard, cluster topology, key browser, send command, hot key detection, command logs) ship in Valkey Admin 1.0. We welcome feedback on what to build next.
 
@@ -54,7 +54,7 @@ CLUSTER SLOT-STATS ORDERBY CPU-USEC LIMIT 50
 
 This returns the fifty slots consuming the most CPU time, in descending order. Valkey Admin visualizes these results, resolves the keys in each slot, and ranks them by access frequency, turning a multi-step CLI workflow into a single view.
 
-![Node heatmap for hot keys](valkey-admin_06-node-heatmap.png)
+![Node heatmap visualizing CPU usage across cluster nodes, with hotter shards highlighted to identify slots with the most concentrated load](valkey-admin_06-node-heatmap.png)
 
 **Monitor-based detection.** For any deployment where hot slots are not available, Valkey Admin uses the `MONITOR` command. It samples commands in real time across all monitored nodes, with configurable sampling duration and interval, then aggregates the results to surface the most frequently accessed keys.
 
@@ -88,10 +88,9 @@ docker pull valkey/valkey-admin:latest
 To pre-configure metrics collection at startup, set these environment variables:
 
 - `VALKEY_HOST`: your Valkey host or cluster endpoint
-- `VALKEY_PORT`: (no default)
-- `VALKEY_TLS`: set to `true` for TLS connections
-- `VALKEY_ENDPOINT_TYPE`: `node` or `cluster-endpoint` (default: `cluster-endpoint`)
-- `VALKEY_AUTH_TYPE`: `password` or `iam`
+- `VALKEY_PORT`: defaults to `6379`
+- `VALKEY_TLS`: set to `true` for TLS connections (defaults to `false`)
+- `VALKEY_AUTH_TYPE`: `password` or `iam` (defaults to `password`)
 
 The `examples/` directory in the repo contains deployment guides for Docker, Kubernetes, and IAM authentication. Valkey Admin does not include built-in authentication for its web interface. In Docker and Kubernetes deployments, run it behind a reverse proxy or an auth layer such as an OAuth proxy, Cognito, or your identity provider. Metrics are captured per primary node. Replica observability is not independent; you see replica status through the cluster topology view, but metrics collection targets primaries.
 
