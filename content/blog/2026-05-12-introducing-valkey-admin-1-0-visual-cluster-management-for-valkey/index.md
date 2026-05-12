@@ -94,6 +94,19 @@ To pre-configure metrics collection at startup, set these environment variables:
 
 The `examples/` directory in the repo contains deployment guides for Docker, Kubernetes, and IAM authentication. Valkey Admin does not include built-in authentication for its web interface. In Docker and Kubernetes deployments, run it behind a reverse proxy or an auth layer such as an OAuth proxy, Cognito, or your identity provider. Metrics are captured per primary node. Replica observability is not independent; you see replica status through the cluster topology view, but metrics collection targets primaries.
 
+## Demo
+
+A visual cluster management tool for Valkey — real-time dashboards, topology maps, key browser, hot key detection, and command logs, all in one place.
+
+What's inside:
+- Real-time cluster dashboards over WebSocket
+- Topology visualization with per-node detail
+- Key browser across 7 data types
+- Hot key detection with minimal cluster overhead
+- Command logs for slow commands and large requests
+
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=-ypi0VkKaIE" title="Valkey Admin 1.0 Release" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## Join the community
 
 Valkey Admin gives Valkey users a unified tool for monitoring, inspecting, and troubleshooting Valkey clusters, whether you're running a three-node development cluster or a production deployment at scale. We invite you to try it out.
