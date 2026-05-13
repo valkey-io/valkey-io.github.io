@@ -96,15 +96,6 @@ The `examples/` directory in the repo contains deployment guides for Docker, Kub
 
 ## Demo
 
-A visual cluster management tool for Valkey — real-time dashboards, topology maps, key browser, hot key detection, and command logs, all in one place.
-
-What's inside:
-- Real-time cluster dashboards over WebSocket
-- Topology visualization with per-node detail
-- Key browser across 7 data types
-- Hot key detection with minimal cluster overhead
-- Command logs for slow commands and large requests
-
 <iframe width="560" height="315" src="https://www.youtube.com/embed/-ypi0VkKaIE" title="Valkey Admin 1.0 Release" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Join the community
