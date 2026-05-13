@@ -81,11 +81,12 @@
     padding: 40px 0 20px;
 
     h1 {
-      font-size: clamp(32px, 5vw, 52px);
+      font-size: clamp(28px, 4vw, 52px);
       font-weight: 700;
       line-height: 1.15;
       letter-spacing: -1px;
       margin-bottom: 20px;
+      white-space: nowrap;
     }
 
     .gs-rotating-word {

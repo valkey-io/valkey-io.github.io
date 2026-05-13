@@ -1,15 +1,16 @@
 {% extends "default.html" %}
 
 {% block content %}
+{% set valkey_version = "8.0.2" %}
 <div class="getting-started">
   {# ── Tab Toggle ── #}
   <div class="gs-tab-bar">
     <div class="width-limiter">
-      <div class="gs-tab-toggle">
-        <button id="gs-tab-human-btn" class="active" onclick="gsSwitch('human')">
+      <div class="gs-tab-toggle" role="tablist" aria-label="Audience">
+        <button id="gs-tab-human-btn" class="active" role="tab" aria-selected="true" aria-controls="gs-tab-human" onclick="gsSwitch('human')">
           <span class="gs-dot"></span> Human
         </button>
-        <button id="gs-tab-agent-btn" onclick="gsSwitch('agent')">
+        <button id="gs-tab-agent-btn" role="tab" aria-selected="false" aria-controls="gs-tab-agent" onclick="gsSwitch('agent')">
           <span class="gs-dot"></span> Agent
         </button>
       </div>
@@ -19,7 +20,7 @@
   {# ════════════════════════════════ #}
   {# HUMAN TAB                        #}
   {# ════════════════════════════════ #}
-  <div id="gs-tab-human" class="gs-tab-content gs-active">
+  <div id="gs-tab-human" class="gs-tab-content gs-active" role="tabpanel" aria-labelledby="gs-tab-human-btn">
     <div class="width-limiter">
 
       {# Hero #}
@@ -178,7 +179,7 @@ TTL session:abc123
   {# ════════════════════════════════ #}
   {# AGENT TAB                        #}
   {# ════════════════════════════════ #}
-  <div id="gs-tab-agent" class="gs-tab-content">
+  <div id="gs-tab-agent" class="gs-tab-content" role="tabpanel" aria-labelledby="gs-tab-agent-btn" hidden>
     <div class="width-limiter">
       <p class="gs-agent-intro">Hey, human! This is the response your agent gets at valkey.io.</p>
 
@@ -324,12 +325,26 @@ Community: https://valkey.io/community/</div>
 </div>
 
 <script>
-// Tab switching
+// Tab switching with ARIA state management
 function gsSwitch(tab) {
-  document.querySelectorAll('.gs-tab-content').forEach(function(el) { el.classList.remove('gs-active'); });
-  document.querySelectorAll('.gs-tab-toggle button').forEach(function(el) { el.classList.remove('active'); });
-  document.getElementById('gs-tab-' + tab).classList.add('gs-active');
-  document.getElementById('gs-tab-' + tab + '-btn').classList.add('active');
+  // Update panels
+  document.querySelectorAll('.gs-tab-content[role="tabpanel"]').forEach(function(el) {
+    el.classList.remove('gs-active');
+    el.setAttribute('hidden', '');
+  });
+  var activePanel = document.getElementById('gs-tab-' + tab);
+  activePanel.classList.add('gs-active');
+  activePanel.removeAttribute('hidden');
+
+  // Update tab buttons
+  document.querySelectorAll('.gs-tab-toggle button[role="tab"]').forEach(function(el) {
+    el.classList.remove('active');
+    el.setAttribute('aria-selected', 'false');
+  });
+  var activeBtn = document.getElementById('gs-tab-' + tab + '-btn');
+  activeBtn.classList.add('active');
+  activeBtn.setAttribute('aria-selected', 'true');
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -341,8 +356,13 @@ function gsInstall(platform, btn) {
   btn.classList.add('active');
 }
 
-// Copy code
+// Copy code (with clipboard API guard)
 function gsCopy(btn) {
+  if (!navigator.clipboard) {
+    btn.textContent = 'Failed';
+    setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+    return;
+  }
   var block = btn.closest('.gs-code-block');
   var code = block.querySelector('code');
   navigator.clipboard.writeText(code.innerText).then(function() {
@@ -352,11 +372,19 @@ function gsCopy(btn) {
       btn.textContent = 'Copy';
       btn.classList.remove('copied');
     }, 2000);
+  }).catch(function() {
+    btn.textContent = 'Failed';
+    setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
   });
 }
 
-// Copy agent response
+// Copy agent response (with clipboard API guard)
 function gsCopyAgent(btn) {
+  if (!navigator.clipboard) {
+    btn.textContent = 'Failed';
+    setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+    return;
+  }
   var body = document.getElementById('gs-agent-body');
   navigator.clipboard.writeText(body.innerText).then(function() {
     btn.textContent = 'Copied!';
@@ -365,6 +393,9 @@ function gsCopyAgent(btn) {
       btn.textContent = 'Copy';
       btn.classList.remove('copied');
     }, 2000);
+  }).catch(function() {
+    btn.textContent = 'Failed';
+    setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
   });
 }
 
