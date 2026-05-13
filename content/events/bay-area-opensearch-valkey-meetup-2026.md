@@ -1,6 +1,6 @@
 +++
 title = "Bay Area OpenSearch + Valkey Meetup - April 2026"
-date = 2026-04-20
+date = 2026-04-20 01:01:01
 
 [extra]
 event_type = "third-party"

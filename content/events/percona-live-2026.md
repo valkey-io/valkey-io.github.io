@@ -1,6 +1,6 @@
 +++
 title = "Percona Live 2026"
-date = 2026-05-27
+date = 2026-05-27 01:01:01
 
 [extra]
 event_type = "third-party"

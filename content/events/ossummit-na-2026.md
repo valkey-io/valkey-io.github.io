@@ -1,6 +1,6 @@
 +++
 title = "Open Source Summit North America 2026"
-date = 2026-05-18
+date = 2026-05-18 01:01:01
 
 [extra]
 event_type = "third-party"
