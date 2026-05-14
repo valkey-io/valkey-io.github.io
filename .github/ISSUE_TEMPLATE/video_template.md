@@ -9,7 +9,7 @@ assignees: ''
 **New Video Post**
 
 This is an issue created to propose a video posted to our YouTube page. Make sure to fill out all the fields so the team can best plan to sequence, edit, and publish your post in a timely manner.
-Please replace everything in `[]` before submitting. 
+Please replace everything in `[]` before submitting.
 
 **What is your proposed topic?**
 [Please include a 1-2 sentence description of the content of the video].
@@ -22,3 +22,5 @@ Please replace everything in `[]` before submitting.
 
 **Is this video dependent on something else?**
 [Examples: the video needs to be published before an event, the video publishing date depends on a software release date, etc.]
+
+- [] **Please check to confirm that your content has been reviewed by all necessary groups at your company, including, but not limited to legal, marketing, public relations/communications and other engineering teams. By checking yes, you understand that the Linux Foundation is not responsible for ensuring these teams review.**
