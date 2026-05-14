@@ -5,4 +5,4 @@ extra:
     github: jaduffy
 ---
 
-Jeff Duffy is a product manager in the ElastiCache team at AWS focused on Valkey. He thinks two wheeled vehicles are the superior form.
+Jeff Duffy is a product manager in the ElastiCache team at AWS focused on Valkey. He thinks two-wheeled vehicles are the superior form.

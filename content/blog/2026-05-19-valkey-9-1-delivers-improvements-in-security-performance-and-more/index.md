@@ -21,7 +21,7 @@ Release 9.1 strengthens Valkey's security capabilities with several important en
 
 **Database-level Access Control:** Valkey now supports database-level access control, allowing administrators to restrict which commands a user may execute with per-database granularity. Previously, ACL rules could control which commands a user could execute and which keys they could access, but that access applied to any database. With database-level ACLs, administrators and operators can now scope user permissions to specific databases, enabling stronger multi-tenant isolation and more granular security policies.
 
-As an example, we can create a user a user and limit their access to databases 0 and 1:
+As an example, we can create a user and limit their access to databases 0 and 1:
 ```bash
 > ACL SETUSER app-user on >secretpass +@all ~* db=0,1
 ```
@@ -40,7 +40,7 @@ But not database 2:
 (error) NOPERM No permissions to access database
 ```
 
-**Lua Moved to a Module:** The Lua scripting engine has been moved to its own module, decoupling the scripting engine from the core server. By extracting Lua into a module, Valkey reduces its security surface area and gives operators the option to disable Lua entirely if it is not required. To make it easier to understand which scripting engines are loaded, the  [`INFO`](https://valkey.io/commands/info/) command has a new section named `Scripting Engines`*. <add comment about pinning future versions>*
+**Lua Moved to a Module:** The Lua scripting engine has been moved to its own module, decoupling the scripting engine from the core server. By extracting Lua into a module, Valkey reduces its security surface area and gives operators the option to disable Lua entirely if it is not required. To make it easier to understand which scripting engines are loaded, the  [`INFO`](https://valkey.io/commands/info/) command has a new section named `Scripting Engines`.
 
 **TLS Improvements:** Valkey now displays TLS certificate expiration dates via the [`INFO`](https://valkey.io/commands/info/) command, making it easier to detect and avoid outages caused by expired TLS certificates. 9.1 also includes automatic background reloading of TLS certificates to enable rotation without downtime and support for TLS authentication using certificate Subject Alternate Name (SAN) URIs for easier mTLS integration.
 
@@ -50,13 +50,13 @@ But not database 2:
 
 New observability features in Valkey 9.1 make it easier to understand how your server is performing:
 
-**Main and I/O Thread Usage Metrics:** CPU usage metrics alone don’t provide enough insight into how loaded a Valkey server is, as the main thread and I/O threads will wait for work in a busy loop that can appear as near 100% CPU utilization, even if the threads are relatively idle. New cumulative metrics for main and I/O thread usage make it easier to monitor the your server’s true load and tune accordingly.
+**Main and I/O Thread Usage Metrics:** CPU usage metrics alone don’t provide enough insight into how loaded a Valkey server is, as the main thread and I/O threads will wait for work in a busy loop that can appear as near 100% CPU utilization, even if the threads are relatively idle. New cumulative metrics for main and I/O thread usage make it easier to monitor your server’s true load and tune accordingly.
 
 **JSON Logging :** Server logs can now be emitted in JSON format with the `log_format json` configuration directive. To emit logs in JSON format, add the following configuration to valkey.conf: 
 `log-format json`
 
 Previously on plain text:
-```
+```text
 14082:M 14 May 2026 14:12:43.508 * oO0OoO0OoO0Oo Valkey is starting oO0OoO0OoO0Oo
 14082:M 14 May 2026 14:12:43.510 * Valkey version=255.255.255, bits=64, commit=6c329dfe, modified=0, pid=14082, just started
 14082:M 14 May 2026 14:12:43.512 * Configuration loaded
@@ -153,7 +153,7 @@ OK
 (integer) 3600
 > GET session:def
 "user:2"
-````
+```
 
 2. Use NX to only set keys that do not already exist
 ```bash
