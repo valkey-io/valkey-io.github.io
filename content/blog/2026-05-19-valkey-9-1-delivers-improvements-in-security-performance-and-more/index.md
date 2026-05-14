@@ -30,7 +30,7 @@ After authenticating, that user can interact with database 0:
 ```bash
 > SELECT 0
 OK
- > SET mykey “hello”
+ > SET mykey "hello"
 OK
 ```
 
@@ -52,7 +52,7 @@ New observability features in Valkey 9.1 make it easier to understand how your s
 
 **Main and I/O Thread Usage Metrics:** CPU usage metrics alone don’t provide enough insight into how loaded a Valkey server is, as the main thread and I/O threads will wait for work in a busy loop that can appear as near 100% CPU utilization, even if the threads are relatively idle. New cumulative metrics for main and I/O thread usage make it easier to monitor your server’s true load and tune accordingly.
 
-**JSON Logging :** Server logs can now be emitted in JSON format with the `log_format json` configuration directive. To emit logs in JSON format, add the following configuration to valkey.conf: 
+**JSON Logging :** Server logs can now be emitted in JSON format with the `log-format json` configuration directive. To emit logs in JSON format, add the following configuration to valkey.conf: 
 `log-format json`
 
 Previously on plain text:
@@ -98,7 +98,7 @@ Notable performance enhancements in 9.1 include:
 
 **Faster Sorted Set Queries**: Improvements to skiplist query processing makes sorted set operations like [`ZRANGEBYSCORE`](https://valkey.io/commands/zrangebyscore/) and [`ZRANGEBYLEX`](https://valkey.io/commands/zrangebylex/) faster.
 
-**Cached COMMAND responses**: [`COMMAND`](https://valkey.io/commands/command/) responses are now cached, reducing the time it takes to initialize new connnections.
+**Cached COMMAND responses**: [`COMMAND`](https://valkey.io/commands/command/) responses are now cached, reducing the time it takes to initialize new connections.
 
 **Default Hardware Clock**: Valkey now enables hardware clock use by default, reducing the overhead of time-related system calls and improving GET and SET performance by up to 3% overall.
 
@@ -222,14 +222,14 @@ Let's explore some examples:
 
 Tooling improvements in 9.1 include: 
 
-**CLI Support for Atomic Slot Migration**: The Valkey CLI tool now supports atomic slot migration by providing the `--cluster-use-atomic-slot-migration` parameter when performing  --`cluster rebalance` and  --`cluster reshard` operations. 
+**CLI Support for Atomic Slot Migration**: The Valkey CLI tool now supports atomic slot migration by providing the `--cluster-use-atomic-slot-migration` parameter when performing `--cluster rebalance` and  `--cluster reshard` operations. 
 
 **Benchmark Improvements:** The `valkey-benchmark` tool has been enhanced with RPS distribution in the output support and new `--warmup` and `--duration` parameters, giving users more control over benchmarking runs and more detailed performance analysis.
 
 
 ## Thank You to Our Contributors
 
-Valkey 9.1 was made possible by over eighty individual contributors. For the full list of changes, see the [release notes on GitHub](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc1). Thank you to everyone who contributed code, reported issues, reviewed pull requests, and helped make this release possible. Valkey continues to get better because you helped make it that way. 
+Valkey 9.1 was made possible by over eighty individual contributors. For the full list of changes, see the release notes on GitHub [9.1.0-rc1](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc1) and [9.1.0-rc2](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc2). Thank you to everyone who contributed code, reported issues, reviewed pull requests, and helped make this release possible. Valkey continues to get better because you helped make it that way. 
 
 We encourage you to try Valkey 9.1 and share your feedback on [GitHub](https://github.com/valkey-io/valkey) and in the [Valkey community](https://valkey.io/community/).
 
