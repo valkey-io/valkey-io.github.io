@@ -23,4 +23,6 @@ Please replace everything in `[]` before submitting.
 **Is this video dependent on something else?**
 [Examples: the video needs to be published before an event, the video publishing date depends on a software release date, etc.]
 
-- [] **Please check to confirm that your content has been reviewed by all necessary groups at your company, including, but not limited to legal, marketing, public relations/communications and other engineering teams. By checking yes, you understand that the Linux Foundation is not responsible for ensuring these teams review.**
+
+
+- [ ] **Please check to confirm that your content has been reviewed by all necessary groups at your company, including, but not limited to legal, marketing, public relations/communications and other engineering teams. By checking yes, you understand that the Linux Foundation is not responsible for ensuring these teams review.**
