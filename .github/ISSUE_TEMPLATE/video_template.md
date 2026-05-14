@@ -1,7 +1,7 @@
 ---
 name: 🎥 New Video post
 about: Create a video post 
-title: "[VIDEO POST] <Put your tentative blog post title here>"
+title: "[VIDEO POST] <Put your tentative video post title here>"
 labels: 'video-post, untriaged'
 assignees: ''
 ---
