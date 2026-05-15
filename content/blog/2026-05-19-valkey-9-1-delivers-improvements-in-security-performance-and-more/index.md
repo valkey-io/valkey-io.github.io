@@ -40,7 +40,7 @@ But not database 2:
 (error) NOPERM No permissions to access database
 ```
 
-**Lua Moved to a Module:** The Lua scripting engine has been moved to its own module, decoupling the scripting engine from the core server. By extracting Lua into a module, Valkey reduces its security surface area and gives operators the option to disable Lua entirely if it is not required. To make it easier to understand which scripting engines are loaded, the  [`INFO`](https://valkey.io/commands/info/) command has a new section named `Scripting Engines`.
+**Lua Moved to a Module:** Valkey 9.1 moves the Lua scripting engine into its own module, decoupling it from the core server. By extracting Lua into a module, Valkey reduces its security surface area and gives operators the option to disable Lua entirely if it is not required. To make it easier to understand which scripting engines are loaded, the  [`INFO`](https://valkey.io/commands/info/) command has a new section named `Scripting Engines`.
 
 **TLS Improvements:** Valkey now displays TLS certificate expiration dates via the [`INFO`](https://valkey.io/commands/info/) command, making it easier to detect and avoid outages caused by expired TLS certificates. 9.1 also includes automatic background reloading of TLS certificates to enable rotation without downtime and support for TLS authentication using certificate Subject Alternate Name (SAN) URIs for easier mTLS integration.
 
@@ -52,7 +52,7 @@ New observability features in Valkey 9.1 make it easier to understand how your s
 
 **Main and I/O Thread Usage Metrics:** CPU usage metrics alone don’t provide enough insight into how loaded a Valkey server is, as the main thread and I/O threads will wait for work in a busy loop that can appear as near 100% CPU utilization, even if the threads are relatively idle. New cumulative metrics for main and I/O thread usage make it easier to monitor your server’s true load and tune accordingly.
 
-**JSON Logging :** Server logs can now be emitted in JSON format with the `log-format json` configuration directive. To emit logs in JSON format, add the following configuration to valkey.conf: 
+**JSON Logging :** Valkey can now emit server logs in JSON format with the `log-format json` configuration directive. To emit logs in JSON format, add the following configuration to valkey.conf: 
 `log-format json`
 
 Previously on plain text:
@@ -88,19 +88,23 @@ Each log line is a single JSON object:
 
 ## Performance
 
+![Performance: 2.1M requests per second on a single instance](valkey-9-1_performance.png)
+
+Valkey 9.1 pushes single-instance throughput to 2.1 million requests per second using 512-byte payloads, 9 IO threads, and a pipeline depth of 10 commands. You can explore the full results and compare across versions on the [Valkey Performance Dashboards](https://valkey.io/performance/).
+
 Notable performance enhancements in 9.1 include:
 
-**New IO threading model**: A new lock-free redesign of the IO threading communication model improves throughput by up to 17% for a variety of workload types.
+**New IO threading model**: A redesign of the IO threading communication model improves throughput by up to 17% for a variety of workload types.
 
-**Faster Stream Operations**: The [`XRANGE`](https://valkey.io/commands/xrange/) and [`XREVRANGE`](https://valkey.io/commands/xrevrange/) commands are up to 30% faster thanks to streams optimizations.
+**Faster Stream Operations**: The [`XRANGE`](https://valkey.io/commands/xrange/) and [`XREVRANGE`](https://valkey.io/commands/xrevrange/) commands are up to 30% faster thanks to [streams range hot path optimizations](https://github.com/valkey-io/valkey/pull/3002).
 
 **Higher throughput GETs**:  Raising the string embedding size threshold delivers up to 30% higher throughput for string GET commands.
 
 **Faster Sorted Set Queries**: Improvements to skiplist query processing makes sorted set operations like [`ZRANGEBYSCORE`](https://valkey.io/commands/zrangebyscore/) and [`ZRANGEBYLEX`](https://valkey.io/commands/zrangebylex/) faster.
 
-**Cached COMMAND responses**: [`COMMAND`](https://valkey.io/commands/command/) responses are now cached, reducing the time it takes to initialize new connections.
+**Cached COMMAND responses**: [`COMMAND`](https://valkey.io/commands/command/) responses are now cached. This may reduce connection establishment time for some clients which use this command as part of client initialization.
 
-**Default Hardware Clock**: Valkey now enables hardware clock use by default, reducing the overhead of time-related system calls and improving GET and SET performance by up to 3% overall.
+**Enable Hardware Clock by default**: Valkey now enables hardware clock use by default, reducing the overhead of time-related system calls and improving GET and SET performance by up to 3% overall.
 
 
 ## Efficiency
@@ -109,13 +113,13 @@ Notable performance enhancements in 9.1 include:
 
 9.1 continues Valkey’s focus on memory efficiency and faster internal operations:
 
-**Reduced Memory Usage for Strings**: Internal pointer optimizations bring a 20% memory savings for strings under 128 bytes, delivering significant memory usage reduction for common use cases that store many small string values.
+**Reduced Memory Usage for Strings**: Internal pointer optimizations bring up to a 20% memory reduction for strings under 128 bytes, delivering significant memory usage reduction for common use cases that store many small string values.
 
-**Reduced Memory Usage for Sorted Sets**: Sorted set memory usage has been reduced via skiplist optimizations, reducing memory usage by up to 10%.
+**Reduced Memory Usage for Sorted Sets**: Skiplist optimizations reduce sorted set memory usage by up to 10%.
 
-**Improved Rehashing Performance**: Internal hash table rehashing (often triggered by keyspace growth) has been optimized to reduce latency impact during rehashing operations.
+**Improved Rehashing Performance**: Valkey 9.1 optimizes internal hash table rehashing (often triggered by keyspace growth) to reduce latency impact during rehashing operations.
 
-**Faster Bulk Delete Operations**: Internal hash table resizing is paused during bulk delete operations like [`SREM`](https://valkey.io/commands/srem/), [`ZREM`](https://valkey.io/commands/zrem/), and [`HDEL`](https://valkey.io/commands/hdel/) to avoid unnecessary rehashing operations and improve bulk deletion performance.
+**Faster Bulk Delete Operations**: Valkey now pauses internal hash table resizing during bulk delete operations like [`SREM`](https://valkey.io/commands/srem/), [`ZREM`](https://valkey.io/commands/zrem/), and [`HDEL`](https://valkey.io/commands/hdel/) to avoid unnecessary rehashing operations and improve bulk deletion performance.
 
 **More Efficient Replica Creation**: Replica creation with AOF enabled now reuses the received RDB file instead of generating a new snapshot for the initial AOF base file.
 
@@ -124,7 +128,7 @@ Notable performance enhancements in 9.1 include:
 
 ### HGETDEL
 
-The new [`HGETDEL`](https://valkey.io/commands/hgetdel/) command atomically retrieves and deletes one or more fields from a hash. This is useful for queue-like patterns where you need to consume and remove data in a single operation, eliminating the need for an [`HGET`](https://valkey.io/commands/hget/) followed by an [`HDEL`](https://valkey.io/commands/hdel/) and the race conditions that can arise between them.
+The new [`HGETDEL`](https://valkey.io/commands/hgetdel/) command atomically retrieves and deletes one or more fields from a hash. This is useful for queue-like patterns where you need to consume and remove data in a single operation, eliminating the need to use a transaction with [`HGET`](https://valkey.io/commands/hget/) followed by an [`HDEL`](https://valkey.io/commands/hdel/).
 
 Let's see a practical example showing a job hash where `status` and `payload` fields are atomically retrieved and removed in one call, leaving only the `retries` field behind.
 
@@ -224,12 +228,12 @@ Tooling improvements in 9.1 include:
 
 **CLI Support for Atomic Slot Migration**: The Valkey CLI tool now supports atomic slot migration by providing the `--cluster-use-atomic-slot-migration` parameter when performing `--cluster rebalance` and  `--cluster reshard` operations. 
 
-**Benchmark Improvements:** The `valkey-benchmark` tool has been enhanced with RPS distribution in the output support and new `--warmup` and `--duration` parameters, giving users more control over benchmarking runs and more detailed performance analysis.
+**Benchmark Improvements:** The `valkey-benchmark` tool now includes RPS distribution in the output and new `--warmup` and `--duration` parameters, giving users more control over benchmarking runs and more detailed performance analysis.
 
 
 ## Thank You to Our Contributors
 
-Valkey 9.1 was made possible by over eighty individual contributors. For the full list of changes, see the release notes on GitHub [9.1.0-rc1](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc1) and [9.1.0-rc2](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc2). Thank you to everyone who contributed code, reported issues, reviewed pull requests, and helped make this release possible. Valkey continues to get better because you helped make it that way. 
+Over eighty individual contributors made Valkey 9.1 possible. For the full list of changes, see the release notes on GitHub [9.1.0-rc1](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc1) and [9.1.0-rc2](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc2). Thank you to everyone who contributed code, reported issues, reviewed pull requests, and helped make this release possible. Valkey continues to get better because you helped make it that way. 
 
 We encourage you to try Valkey 9.1 and share your feedback on [GitHub](https://github.com/valkey-io/valkey) and in the [Valkey community](https://valkey.io/community/).
 
