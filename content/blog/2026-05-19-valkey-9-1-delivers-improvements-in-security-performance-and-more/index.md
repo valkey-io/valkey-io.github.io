@@ -8,16 +8,17 @@ authors= ["jaduffy", "rlunar"]
 blog_type = ["Announcements"]
 [extra]
 featured = true
-featured_image = "/assets/media/featured/Valkey-Release.svg"
+featured_image = "/assets/media/featured/valkey-release.svg"
 +++
 
 The Valkey community is excited to announce Valkey version 9.1. This latest release includes new functionality and improvements for security, observability, performance, efficiency, and tooling from over eighty contributors. Let's take a look at a few of the highlights in this release.
+
 
 ## Security
 
 Release 9.1 strengthens Valkey's security capabilities with several important enhancements:
 
-**Database-level Access Control:** Valkey now supports database-level access control, allowing administrators to restrict which commands a user may execute with per-database granularity. Previously, ACL rules could control which commands a user could execute and which keys they could access, but that access applied to any database. With database-level ACLs, administrators and operators can now scope user permissions to specific databases, enabling stronger multi-tenant isolation and more granular security policies.
+**Database-level Access Control:** Valkey enables stronger multi-tenant solution isolation and more granular security policies by allowing administrators to restrict which commands a user may execute with per-database granularity. Previously, ACL rules could control which commands a user could execute and which keys they could access, but that access applied to any database. With database-level ACLs, administrators and operators can now scope user permissions to specific databases.
 
 As an example, we can create a user and limit their access to databases 0 and 1:
 ```bash
@@ -28,7 +29,7 @@ After authenticating, that user can interact with database 0:
 ```bash
 > SELECT 0
 OK
- > SET mykey "hello"
+> SET mykey "hello"
 OK
 ```
 
@@ -42,6 +43,7 @@ But not database 2:
 
 **TLS Improvements:** Valkey now displays TLS certificate expiration dates via the [`INFO`](https://valkey.io/commands/info/) command, making it easier to detect and avoid outages caused by expired TLS certificates. 9.1 also includes automatic background reloading of TLS certificates to enable rotation without downtime and support for TLS authentication using certificate Subject Alternate Name (SAN) URIs for easier mTLS integration.
 
+
 ## Observability
 
 ![Observability: Main and I/O Thread Usage Metrics](valkey-9-1_observability.png)
@@ -50,8 +52,7 @@ New observability features in Valkey 9.1 make it easier to understand how your s
 
 **Main and I/O Thread Usage Metrics:** CPU usage metrics alone don’t provide enough insight into how loaded a Valkey server is, as the main thread and I/O threads will wait for work in a busy loop that can appear as near 100% CPU utilization, even if the threads are relatively idle. New cumulative metrics for main and I/O thread usage make it easier to monitor your server’s true load and tune accordingly.
 
-**JSON Logging :** Valkey can now emit server logs in JSON format with the `log-format json` configuration directive. To emit logs in JSON format, add the following configuration to valkey.conf: 
-`log-format json`
+**JSON Logging:** Valkey can now emit server logs in JSON format with the `log-format json` configuration directive, making logs natively parseable by observability tools without custom parsing patterns. To emit logs in JSON format, add the following configuration to `valkey.conf`: `log-format json`.
 
 Previously on plain text:
 ```text
@@ -86,9 +87,9 @@ Each log line is a single JSON object:
 
 ## Performance
 
-![Performance: 2.1M requests per second on a single instance](valkey-9-1_performance.png)
+![Performance: 2.1M requests per second on a single server](valkey-9-1_performance.png)
 
-Valkey 9.1 pushes single-instance throughput to 2.1 million requests per second using 512-byte payloads, 9 IO threads, and a pipeline depth of 10 commands. You can explore the full results and compare across versions on the [Valkey Performance Dashboards](https://valkey.io/performance/).
+Valkey 9.1 pushes single server throughput to 2.1 million requests per second using 512-byte payloads, 9 IO threads, and a pipeline depth of 10 commands. You can explore the full results and compare across versions on the [Valkey Performance Dashboards](https://valkey.io/performance/).
 
 Notable performance enhancements in 9.1 include:
 
@@ -145,7 +146,7 @@ Let's see a practical example showing a job hash where `status` and `payload` fi
 
 The new [`MSETEX`](https://valkey.io/commands/msetex/) command allows you to set multiple keys with a shared expiration time in a single command. Previously, setting multiple keys with the same TTL required either multiple [`SETEX`](https://valkey.io/commands/setex/) calls or a pipeline of [`SET`](https://valkey.io/commands/set/) and [`EXPIRE`](https://valkey.io/commands/expire/) commands. [`MSETEX`](https://valkey.io/commands/msetex/) simplifies this common pattern and reduces round trips.
 
-Let's see three examples:
+Let's see two examples:
 
 1. Set 3 session keys that all expire in 3600 seconds
 ```bash
@@ -165,12 +166,6 @@ OK
 "user:1"
 > GET session:xyz
 "user:4"
-```
-
-3. Use PX for millisecond precision expiration
-```bash
-> MSETEX 2 cache:page1 "<html>..." cache:page2 "<html>..." PX 500
-OK
 ```
 
 ### CLUSTERSCAN
@@ -224,7 +219,7 @@ Let's explore some examples:
 
 Tooling improvements in 9.1 include: 
 
-**CLI Support for Atomic Slot Migration**: The Valkey CLI tool now supports atomic slot migration by providing the `--cluster-use-atomic-slot-migration` parameter when performing `--cluster rebalance` and  `--cluster reshard` operations. 
+**CLI Support for Atomic Slot Migration**: The Valkey CLI tool now supports atomic slot migration by providing the `--cluster-use-atomic-slot-migration` parameter when performing `--cluster rebalance` and `--cluster reshard` operations.
 
 **Benchmark Improvements:** The `valkey-benchmark` tool now includes RPS distribution in the output and new `--warmup` and `--duration` parameters, giving users more control over benchmarking runs and more detailed performance analysis.
 
@@ -234,4 +229,3 @@ Tooling improvements in 9.1 include:
 Over eighty individual contributors made Valkey 9.1 possible. For the full list of changes, see the release notes on GitHub [9.1.0-rc1](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc1) and [9.1.0-rc2](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc2). Thank you to everyone who contributed code, reported issues, reviewed pull requests, and helped make this release possible. Valkey continues to get better because you helped make it that way. 
 
 We encourage you to try Valkey 9.1 and share your feedback on [GitHub](https://github.com/valkey-io/valkey) and in the [Valkey community](https://valkey.io/community/).
-
