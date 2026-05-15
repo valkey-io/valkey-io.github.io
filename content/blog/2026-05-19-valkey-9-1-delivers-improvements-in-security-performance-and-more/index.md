@@ -15,8 +15,6 @@ The Valkey community is excited to announce Valkey version 9.1. This latest rele
 
 ## Security
 
-![Security: Database-level Access Control, Lua Moved to a Module and TLS Improvements](valkey-9-1_security.png)
-
 Release 9.1 strengthens Valkey's security capabilities with several important enhancements:
 
 **Database-level Access Control:** Valkey now supports database-level access control, allowing administrators to restrict which commands a user may execute with per-database granularity. Previously, ACL rules could control which commands a user could execute and which keys they could access, but that access applied to any database. With database-level ACLs, administrators and operators can now scope user permissions to specific databases, enabling stronger multi-tenant isolation and more granular security policies.
