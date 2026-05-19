@@ -2528,6 +2528,12 @@ blockquote {
   padding: 2rem 20px;
 }
 
+.events-intro {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+}
+
 .body main:has(.events-calendar) {
   padding-left: 0;
   padding-right: 0;
