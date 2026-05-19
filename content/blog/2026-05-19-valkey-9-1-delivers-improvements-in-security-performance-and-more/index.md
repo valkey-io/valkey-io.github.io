@@ -39,7 +39,7 @@ But not database 2:
 (error) NOPERM No permissions to access database
 ```
 
-**Lua Moved to a Module:** Valkey 9.1 moves the Lua scripting engine into its own module, decoupling it from the core server. By extracting Lua into a module, Valkey reduces its security surface area and gives operators the option to disable Lua entirely if it is not required. To make it easier to understand which scripting engines are loaded, the  [`INFO`](https://valkey.io/commands/info/) command has a new section named `Scripting Engines`.
+**Lua Moved to a Module:** Valkey 9.1 moves the Lua scripting engine into its own module, decoupling it from the core server. By extracting Lua into a module, Valkey reduces its security surface area and gives operators the option to disable Lua entirely if it is not required. To make it easier to understand which scripting engines are loaded, the  [`INFO`](https://valkey.io/commands/info/) command has a new reply section named `Scripting Engines`.
 
 **TLS Improvements:** Valkey now displays TLS certificate expiration dates via the [`INFO`](https://valkey.io/commands/info/) command, making it easier to detect and avoid outages caused by expired TLS certificates. 9.1 also includes automatic background reloading of TLS certificates to enable rotation without downtime and support for TLS authentication using certificate Subject Alternate Name (SAN) URIs for easier mTLS integration.
 
