@@ -8,7 +8,7 @@ authors= ["jaduffy", "rlunar"]
 blog_type = ["Announcements"]
 [extra]
 featured = true
-featured_image = "/assets/media/featured/valkey-release.svg"
+featured_image = "/assets/media/featured/Valkey-Release.svg"
 +++
 
 The Valkey community is excited to announce version 9.1.0 This latest release includes new functionality and improvements for security, observability, performance, efficiency, and tooling from over eighty contributors. Let's take a look at a few of the highlights in this release.
