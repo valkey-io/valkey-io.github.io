@@ -11,14 +11,14 @@ featured = true
 featured_image = "/assets/media/featured/valkey-release.svg"
 +++
 
-The Valkey community is excited to announce Valkey version 9.1. This latest release includes new functionality and improvements for security, observability, performance, efficiency, and tooling from over eighty contributors. Let's take a look at a few of the highlights in this release.
+The Valkey community is excited to announce version 9.1.0 This latest release includes new functionality and improvements for security, observability, performance, efficiency, and tooling from over eighty contributors. Let's take a look at a few of the highlights in this release.
 
 
 ## Security
 
 Release 9.1 strengthens Valkey's security capabilities with several important enhancements:
 
-**Database-level Access Control:** Valkey enables stronger multi-tenant solution isolation and more granular security policies by allowing administrators to restrict which commands a user may execute with per-database granularity. Previously, ACL rules could control which commands a user could execute and which keys they could access, but that access applied to any database. With database-level ACLs, administrators and operators can now scope user permissions to specific databases.
+**Numbered Database-level Access Control:** Valkey enables stronger multi-tenant solution isolation and more granular security policies by allowing administrators to restrict which commands a user may execute with per-database granularity. Previously, ACL rules could control which commands a user could execute and which keys they could access, but that access applied to any database. With database-level ACLs, administrators and operators can now scope user permissions to specific databases.
 
 As an example, we can create a user and limit their access to databases 0 and 1:
 ```bash
@@ -46,13 +46,17 @@ But not database 2:
 
 ## Observability
 
-![Observability: Main and I/O Thread Usage Metrics](valkey-9-1_observability.png)
+![Valkey 9.1 Observability highlights: Main and I/O Thread Usage](valkey-9-1_observability.png)
 
-New observability features in Valkey 9.1 make it easier to understand how your server is performing:
+New observability features in Valkey 9.1.0 make it easier to understand how your server is performing:
 
 **Main and I/O Thread Usage Metrics:** CPU usage metrics alone don’t provide enough insight into how loaded a Valkey server is, as the main thread and I/O threads will wait for work in a busy loop that can appear as near 100% CPU utilization, even if the threads are relatively idle. New cumulative metrics for main and I/O thread usage make it easier to monitor your server’s true load and tune accordingly.
 
-**JSON Logging:** Valkey can now emit server logs in JSON format with the `log-format json` configuration directive, making logs natively parseable by observability tools without custom parsing patterns. To emit logs in JSON format, add the following configuration to `valkey.conf`: `log-format json`.
+**JSON Logging:** Valkey can now emit server logs in JSON format with the `log-format json` configuration directive, making logs natively parseable by observability tools without custom parsing patterns. To emit logs in JSON format, add the following configuration to `valkey.conf`: 
+
+```bash
+log-format json
+```
 
 Previously on plain text:
 ```text
@@ -89,9 +93,9 @@ Each log line is a single JSON object:
 
 ![Performance: 2.1M requests per second on a single server](valkey-9-1_performance.png)
 
-Valkey 9.1 pushes single server throughput to 2.1 million requests per second using 512-byte payloads, 9 IO threads, and a pipeline depth of 10 commands. You can explore the full results and compare across versions on the [Valkey Performance Dashboards](https://valkey.io/performance/).
+Valkey 9.1.0 pushes single server throughput to 2.1 million requests per second using 512-byte payloads, 9 IO threads, and a pipeline depth of 10 commands. You can explore the full results and compare across versions on the [Valkey Performance Dashboards](https://valkey.io/performance/).
 
-Notable performance enhancements in 9.1 include:
+Notable performance enhancements in 9.1.0 include:
 
 **New IO threading model**: A redesign of the IO threading communication model improves throughput by up to 17% for a variety of workload types.
 
@@ -110,13 +114,13 @@ Notable performance enhancements in 9.1 include:
 
 ![Efficiency: Accelerated Faster Sorted Set Queries](valkey-9-1_efficiency.png)
 
-9.1 continues Valkey’s focus on memory efficiency and faster internal operations:
+9.1.0 continues Valkey’s focus on memory efficiency and faster internal operations:
 
 **Reduced Memory Usage for Strings**: Internal pointer optimizations bring up to a 20% memory reduction for strings under 128 bytes, delivering significant memory usage reduction for common use cases that store many small string values.
 
 **Reduced Memory Usage for Sorted Sets**: Skiplist optimizations reduce sorted set memory usage by up to 10%.
 
-**Improved Rehashing Performance**: Valkey 9.1 optimizes internal hash table rehashing (often triggered by keyspace growth) to reduce latency impact during rehashing operations.
+**Improved Rehashing Performance**: Valkey 9.1.0 optimizes internal hash table rehashing (often triggered by keyspace growth) to reduce latency impact during rehashing operations.
 
 **Faster Bulk Delete Operations**: Valkey now pauses internal hash table resizing during bulk delete operations like [`SREM`](https://valkey.io/commands/srem/), [`ZREM`](https://valkey.io/commands/zrem/), and [`HDEL`](https://valkey.io/commands/hdel/) to avoid unnecessary rehashing operations and improve bulk deletion performance.
 
@@ -158,7 +162,7 @@ OK
 "user:2"
 ```
 
-2. Use NX to only set keys that do not already exist
+2. Use `NX` to only set keys that do not already exist
 ```bash
 > MSETEX 2 session:abc "user:99" session:xyz "user:4" NX EX 3600
 OK
@@ -217,7 +221,7 @@ Let's explore some examples:
 
 ## Tooling
 
-Tooling improvements in 9.1 include: 
+Tooling improvements in 9.1.0 include: 
 
 **CLI Support for Atomic Slot Migration**: The Valkey CLI tool now supports atomic slot migration by providing the `--cluster-use-atomic-slot-migration` parameter when performing `--cluster rebalance` and `--cluster reshard` operations.
 
@@ -226,6 +230,6 @@ Tooling improvements in 9.1 include:
 
 ## Thank You to Our Contributors
 
-Over eighty individual contributors made Valkey 9.1 possible. For the full list of changes, see the release notes on GitHub [9.1.0-rc1](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc1) and [9.1.0-rc2](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc2). Thank you to everyone who contributed code, reported issues, reviewed pull requests, and helped make this release possible. Valkey continues to get better because you helped make it that way. 
+Over eighty individual contributors made Valkey 9.1.0 possible. For the full list of changes, see the release notes on GitHub [9.1.0-rc1](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc1) and [9.1.0-rc2](https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc2). Thank you to everyone who contributed code, reported issues, reviewed pull requests, and helped make this release possible. Valkey continues to get better because you helped make it that way. 
 
-We encourage you to try Valkey 9.1 and share your feedback on [GitHub](https://github.com/valkey-io/valkey) and in the [Valkey community](https://valkey.io/community/).
+We encourage you to try Valkey 9.1.0 and share your feedback on [GitHub](https://github.com/valkey-io/valkey) and in the [Valkey community](https://valkey.io/community/).
