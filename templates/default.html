@@ -43,7 +43,12 @@
         onclick="window.toggleHeaderMenu();"
       ></div>
       <nav role="navigation" aria-label="Main">
-        <a role="menuitem" href="/download/">Download</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/download/">Download</a>
+          <div class="submenu">
+            <a role="menuitem" href="/download/packages/">Packages</a>
+          </div>
+        </div>
 
         <div class="has-submenu">
           <a role="menuitem" href="/docs/">Documentation</a>
