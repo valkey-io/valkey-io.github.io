@@ -103,12 +103,13 @@ Snap [contributed this behavior](https://github.com/valkey-io/valkey/issues/1688
 
 For high-memory workloads, Snap measured how quickly replication buffers filled during full syncs. In the traditional single-channel replication model, the primary buffers all new write commands in its Client Output Buffer (COB) while the RDB snapshot is being transferred. If the COB fills before the transfer completes, the replica is disconnected and the process starts over, resulting in a full-sync loop that never completes. From the outside it looks like slow replication, but in reality, it is an infinite retry cycle.
 
-Valkey 8.0 introduced [dual-channel replication](https://valkey.io/blog/valkey-8-0-0-rc1/#replication) to address this directly. Rather than a single connection handling both the RDB transfer and the incremental command stream, dual-channel replication opens a dedicated RDB channel for bulk data while maintaining a separate main channel for streaming updates. The replica buffers incremental updates locally while loading the snapshot and applies them once loading completes. COB pressure on the primary drops substantially because the primary no longer needs to buffer the entire write stream for the duration of a large sync. In scenarios with heavy read commands, sync time can be cut by up to 50%. Dual-channel replication is on by default in Valkey 9.0.
+Valkey 8.0 introduced [dual-channel replication](https://valkey.io/blog/valkey-8-0-0-rc1/#replication) to address this directly. Rather than a single connection handling both the RDB transfer and the incremental command stream, dual-channel replication opens a dedicated RDB channel for bulk data while maintaining a separate main channel for streaming updates. The replica buffers incremental updates locally while loading the snapshot and applies them once loading completes. COB pressure on the primary drops substantially because the primary no longer needs to buffer the entire write stream for the duration of a large sync. In scenarios with heavy read commands, sync time can be cut by up to 50%.
 
-For teams not yet on Valkey 9.0, enabling dual-channel replication is a single config line. The flag can be toggled at runtime without a restart, which makes it straightforward to validate against a live workload before committing:
+Dual-channel replication has been available since Valkey 8.0, with one important detail: it engages only when diskless sync is enabled on the primary. With diskless sync off, replication falls back to the ordinary disk-based path and COB pressure stays on the primary. Both flags can be toggled at runtime without a restart, which makes it straightforward to validate against a live workload before committing:
 
 ```bash
 # valkey.conf
+repl-diskless-sync yes
 dual-channel-replication-enabled yes
 ```
 
