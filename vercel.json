@@ -1,0 +1,6 @@
+{
+  "installCommand": "cd valkey-astro && npm install",
+  "buildCommand": "cd valkey-astro && npm run build",
+  "outputDirectory": "valkey-astro/dist",
+  "framework": "astro"
+}

@@ -22,15 +22,16 @@ const searchIndex = {
 
 // Process all docs
 for (const doc of docs) {
-  const parentDir = doc.slug.split('/')[0];
-  const slug = doc.slug.split('/').slice(1).join('/') || doc.slug;
+  const docPath = ('slug' in doc && doc.slug ? doc.slug : doc.id).replace(/\.(md|mdx)$/, '');
+  const parentDir = docPath.split('/')[0];
+  const slug = docPath.split('/').slice(1).join('/') || docPath;
 
   const entry = {
-    id: `doc-${doc.slug}`,
+    id: `doc-${docPath}`,
     type: parentDir,
     title: doc.data.title || slug.replace(/-/g, ' ').toUpperCase(),
     description: doc.data.description || '',
-    url: `/docs/${doc.slug}/`,
+    url: `/docs/${docPath}/`,
     keywords: doc.data.keywords || [],
   };
 
