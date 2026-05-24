@@ -3,6 +3,8 @@
 This repo contains the source for the valkey.io website (build scripts, template, blog posts, stylesheets, etc.).
 The build integrates content from [`valkey-io/valkey-doc`](https://github.com/valkey-io/valkey-doc) and the commands definitions from [`valkey-io/valkey`](https://github.com/valkey-io/valkey), [`valkey-io/valkey-bloom`](https://github.com/valkey-io/valkey-bloom), and [`valkey-io/valkey-json`](https://github.com/valkey-io/valkey-json) (see [Build Locally](#build-locally) below for more details)
 
+Live deployment: https://team-outliers-valkey-io-github-9dzlaawtv.vercel.app/
+
 ## Contributing
 
 We welcome contributions! Please see our [CONTRIBUTING](CONTRIBUTING.md) page to learn more about how to contribute to the website.
