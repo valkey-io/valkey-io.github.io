@@ -1,0 +1,25 @@
+{
+  "name": "valkey-astro",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "prebuild": "node ../build-valkey-data.js",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "sync-data": "node ../build-valkey-data.js"
+  },
+  "dependencies": {
+    "@astrojs/react": "^5.0.5",
+    "@astrojs/starlight": "^0.39.2",
+    "@astrojs/vercel": "^10.0.7",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "astro": "^6.3.1",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "sharp": "^0.34.5"
+  }
+}
