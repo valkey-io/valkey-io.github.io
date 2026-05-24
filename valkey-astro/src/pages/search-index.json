@@ -1,0 +1,622 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-05-24T11:13:27.195Z",
+  "commands": [],
+  "blogs": [
+    {
+      "id": "blog-2024-04-12-hello-world",
+      "type": "blog",
+      "filename": "2024-04-12-hello-world.md",
+      "url": "/blog/2024-04-12-hello-world/"
+    },
+    {
+      "id": "blog-2024-04-16-valkey-7-2-5-out",
+      "type": "blog",
+      "filename": "2024-04-16-valkey-7-2-5-out.md",
+      "url": "/blog/2024-04-16-valkey-7-2-5-out/"
+    },
+    {
+      "id": "blog-2024-04-26-modules-101",
+      "type": "blog",
+      "filename": "2024-04-26-modules-101.md",
+      "url": "/blog/2024-04-26-modules-101/"
+    },
+    {
+      "id": "blog-2024-05-24-may-roundup",
+      "type": "blog",
+      "filename": "2024-05-24-may-roundup.md",
+      "url": "/blog/2024-05-24-may-roundup/"
+    },
+    {
+      "id": "blog-2024-07-07-unlock-one-million-rps",
+      "type": "blog",
+      "filename": "2024-07-07-unlock-one-million-rps.md",
+      "url": "/blog/2024-07-07-unlock-one-million-rps/"
+    },
+    {
+      "id": "blog-2024-07-31-valkey-8-0-0-rc1",
+      "type": "blog",
+      "filename": "2024-07-31-valkey-8-0-0-rc1.md",
+      "url": "/blog/2024-07-31-valkey-8-0-0-rc1/"
+    },
+    {
+      "id": "blog-2024-08-29-valkey-memory-efficiency-8-0",
+      "type": "blog",
+      "filename": "2024-08-29-valkey-memory-efficiency-8-0.md",
+      "url": "/blog/2024-08-29-valkey-memory-efficiency-8-0/"
+    },
+    {
+      "id": "blog-2024-09-13-unlock-one-million-rps-part2",
+      "type": "blog",
+      "filename": "2024-09-13-unlock-one-million-rps-part2.md",
+      "url": "/blog/2024-09-13-unlock-one-million-rps-part2/"
+    },
+    {
+      "id": "blog-2024-09-16-valkey-8-ga",
+      "type": "blog",
+      "filename": "2024-09-16-valkey-8-ga.md",
+      "url": "/blog/2024-09-16-valkey-8-ga/"
+    },
+    {
+      "id": "blog-2024-12-22-az-affinity-strategy",
+      "type": "blog",
+      "filename": "2024-12-22-az-affinity-strategy.md",
+      "url": "/blog/2024-12-22-az-affinity-strategy/"
+    },
+    {
+      "id": "blog-2025-03-4-go-client-in-public-preview",
+      "type": "blog",
+      "filename": "2025-03-4-go-client-in-public-preview.md",
+      "url": "/blog/2025-03-4-go-client-in-public-preview/"
+    },
+    {
+      "id": "blog-2025-04-02-valkey-8-1-0-ga",
+      "type": "blog",
+      "filename": "2025-04-02-valkey-8-1-0-ga.md",
+      "url": "/blog/2025-04-02-valkey-8-1-0-ga/"
+    },
+    {
+      "id": "blog-2025-04-09-introducing-bloom-filters",
+      "type": "blog",
+      "filename": "2025-04-09-introducing-bloom-filters.md",
+      "url": "/blog/2025-04-09-introducing-bloom-filters/"
+    },
+    {
+      "id": "blog-2025-04-27-valkey-modules-rust-sdk-updates",
+      "type": "blog",
+      "filename": "2025-04-27-valkey-modules-rust-sdk-updates.md",
+      "url": "/blog/2025-04-27-valkey-modules-rust-sdk-updates/"
+    },
+    {
+      "id": "blog-2025-05-14-upgrade-stories-vol1",
+      "type": "blog",
+      "filename": "2025-05-14-upgrade-stories-vol1.md",
+      "url": "/blog/2025-05-14-upgrade-stories-vol1/"
+    },
+    {
+      "id": "blog-2025-06-30-introducing-enhanced-json-capabilities-in-valkey",
+      "type": "blog",
+      "filename": "2025-06-30-introducing-enhanced-json-capabilities-in-valkey.md",
+      "url": "/blog/2025-06-30-introducing-enhanced-json-capabilities-in-valkey/"
+    },
+    {
+      "id": "blog-2025-07-10-keyspace-save-the-date",
+      "type": "blog",
+      "filename": "2025-07-10-keyspace-save-the-date.md",
+      "url": "/blog/2025-07-10-keyspace-save-the-date/"
+    },
+    {
+      "id": "blog-2025-07-21-valkey-on-k0rdent",
+      "type": "blog",
+      "filename": "2025-07-21-valkey-on-k0rdent.md",
+      "url": "/blog/2025-07-21-valkey-on-k0rdent/"
+    },
+    {
+      "id": "blog-2025-08-12-keyspace-schedule",
+      "type": "blog",
+      "filename": "2025-08-12-keyspace-schedule.md",
+      "url": "/blog/2025-08-12-keyspace-schedule/"
+    },
+    {
+      "id": "blog-2025-09-11-valkey-investment-in-open-source",
+      "type": "blog",
+      "filename": "2025-09-11-valkey-investment-in-open-source.md",
+      "url": "/blog/2025-09-11-valkey-investment-in-open-source/"
+    },
+    {
+      "id": "blog-2025-10-15-properly-secure-your-valkey-deployment",
+      "type": "blog",
+      "filename": "2025-10-15-properly-secure-your-valkey-deployment.md",
+      "url": "/blog/2025-10-15-properly-secure-your-valkey-deployment/"
+    },
+    {
+      "id": "blog-2026-03-27-valkey-tooling-primitives",
+      "type": "blog",
+      "filename": "2026-03-27-valkey-tooling-primitives.md",
+      "url": "/blog/2026-03-27-valkey-tooling-primitives/"
+    },
+    {
+      "id": "blog-whats-new-june-2024",
+      "type": "blog",
+      "filename": "whats-new-june-2024.md",
+      "url": "/blog/whats-new-june-2024/"
+    },
+    {
+      "id": "blog-_index",
+      "type": "blog",
+      "filename": "_index.md",
+      "url": "/blog/_index/"
+    }
+  ],
+  "topics": [
+    {
+      "id": "topic-acl",
+      "type": "topic",
+      "filename": "acl.md",
+      "url": "/topics/acl/"
+    },
+    {
+      "id": "topic-admin",
+      "type": "topic",
+      "filename": "admin.md",
+      "url": "/topics/admin/"
+    },
+    {
+      "id": "topic-ARM",
+      "type": "topic",
+      "filename": "ARM.md",
+      "url": "/topics/ARM/"
+    },
+    {
+      "id": "topic-atomic-slot-migration",
+      "type": "topic",
+      "filename": "atomic-slot-migration.md",
+      "url": "/topics/atomic-slot-migration/"
+    },
+    {
+      "id": "topic-benchmark",
+      "type": "topic",
+      "filename": "benchmark.md",
+      "url": "/topics/benchmark/"
+    },
+    {
+      "id": "topic-bitfields",
+      "type": "topic",
+      "filename": "bitfields.md",
+      "url": "/topics/bitfields/"
+    },
+    {
+      "id": "topic-bitmaps",
+      "type": "topic",
+      "filename": "bitmaps.md",
+      "url": "/topics/bitmaps/"
+    },
+    {
+      "id": "topic-bloomfilters",
+      "type": "topic",
+      "filename": "bloomfilters.md",
+      "url": "/topics/bloomfilters/"
+    },
+    {
+      "id": "topic-cli",
+      "type": "topic",
+      "filename": "cli.md",
+      "url": "/topics/cli/"
+    },
+    {
+      "id": "topic-client-side-caching",
+      "type": "topic",
+      "filename": "client-side-caching.md",
+      "url": "/topics/client-side-caching/"
+    },
+    {
+      "id": "topic-clients",
+      "type": "topic",
+      "filename": "clients.md",
+      "url": "/topics/clients/"
+    },
+    {
+      "id": "topic-cluster-spec",
+      "type": "topic",
+      "filename": "cluster-spec.md",
+      "url": "/topics/cluster-spec/"
+    },
+    {
+      "id": "topic-cluster-tutorial",
+      "type": "topic",
+      "filename": "cluster-tutorial.md",
+      "url": "/topics/cluster-tutorial/"
+    },
+    {
+      "id": "topic-command-arguments",
+      "type": "topic",
+      "filename": "command-arguments.md",
+      "url": "/topics/command-arguments/"
+    },
+    {
+      "id": "topic-command-tips",
+      "type": "topic",
+      "filename": "command-tips.md",
+      "url": "/topics/command-tips/"
+    },
+    {
+      "id": "topic-data-types",
+      "type": "topic",
+      "filename": "data-types.md",
+      "url": "/topics/data-types/"
+    },
+    {
+      "id": "topic-debugging",
+      "type": "topic",
+      "filename": "debugging.md",
+      "url": "/topics/debugging/"
+    },
+    {
+      "id": "topic-distlock",
+      "type": "topic",
+      "filename": "distlock.md",
+      "url": "/topics/distlock/"
+    },
+    {
+      "id": "topic-eval-intro",
+      "type": "topic",
+      "filename": "eval-intro.md",
+      "url": "/topics/eval-intro/"
+    },
+    {
+      "id": "topic-faq",
+      "type": "topic",
+      "filename": "faq.md",
+      "url": "/topics/faq/"
+    },
+    {
+      "id": "topic-functions-intro",
+      "type": "topic",
+      "filename": "functions-intro.md",
+      "url": "/topics/functions-intro/"
+    },
+    {
+      "id": "topic-geospatial",
+      "type": "topic",
+      "filename": "geospatial.md",
+      "url": "/topics/geospatial/"
+    },
+    {
+      "id": "topic-hashes",
+      "type": "topic",
+      "filename": "hashes.md",
+      "url": "/topics/hashes/"
+    },
+    {
+      "id": "topic-history",
+      "type": "topic",
+      "filename": "history.md",
+      "url": "/topics/history/"
+    },
+    {
+      "id": "topic-hyperloglogs",
+      "type": "topic",
+      "filename": "hyperloglogs.md",
+      "url": "/topics/hyperloglogs/"
+    },
+    {
+      "id": "topic-index",
+      "type": "topic",
+      "filename": "index.md",
+      "url": "/topics/index/"
+    },
+    {
+      "id": "topic-indexing",
+      "type": "topic",
+      "filename": "indexing.md",
+      "url": "/topics/indexing/"
+    },
+    {
+      "id": "topic-installation",
+      "type": "topic",
+      "filename": "installation.md",
+      "url": "/topics/installation/"
+    },
+    {
+      "id": "topic-introduction",
+      "type": "topic",
+      "filename": "introduction.md",
+      "url": "/topics/introduction/"
+    },
+    {
+      "id": "topic-key-specs",
+      "type": "topic",
+      "filename": "key-specs.md",
+      "url": "/topics/key-specs/"
+    },
+    {
+      "id": "topic-keyspace",
+      "type": "topic",
+      "filename": "keyspace.md",
+      "url": "/topics/keyspace/"
+    },
+    {
+      "id": "topic-latency-monitor",
+      "type": "topic",
+      "filename": "latency-monitor.md",
+      "url": "/topics/latency-monitor/"
+    },
+    {
+      "id": "topic-latency",
+      "type": "topic",
+      "filename": "latency.md",
+      "url": "/topics/latency/"
+    },
+    {
+      "id": "topic-ldap",
+      "type": "topic",
+      "filename": "ldap.md",
+      "url": "/topics/ldap/"
+    },
+    {
+      "id": "topic-ldb",
+      "type": "topic",
+      "filename": "ldb.md",
+      "url": "/topics/ldb/"
+    },
+    {
+      "id": "topic-license",
+      "type": "topic",
+      "filename": "license.md",
+      "url": "/topics/license/"
+    },
+    {
+      "id": "topic-lists",
+      "type": "topic",
+      "filename": "lists.md",
+      "url": "/topics/lists/"
+    },
+    {
+      "id": "topic-lru-cache",
+      "type": "topic",
+      "filename": "lru-cache.md",
+      "url": "/topics/lru-cache/"
+    },
+    {
+      "id": "topic-lua-api",
+      "type": "topic",
+      "filename": "lua-api.md",
+      "url": "/topics/lua-api/"
+    },
+    {
+      "id": "topic-mass-insertion",
+      "type": "topic",
+      "filename": "mass-insertion.md",
+      "url": "/topics/mass-insertion/"
+    },
+    {
+      "id": "topic-memory-optimization",
+      "type": "topic",
+      "filename": "memory-optimization.md",
+      "url": "/topics/memory-optimization/"
+    },
+    {
+      "id": "topic-migration",
+      "type": "topic",
+      "filename": "migration.md",
+      "url": "/topics/migration/"
+    },
+    {
+      "id": "topic-modules-api-ref",
+      "type": "topic",
+      "filename": "modules-api-ref.md",
+      "url": "/topics/modules-api-ref/"
+    },
+    {
+      "id": "topic-modules-blocking-ops",
+      "type": "topic",
+      "filename": "modules-blocking-ops.md",
+      "url": "/topics/modules-blocking-ops/"
+    },
+    {
+      "id": "topic-modules-intro",
+      "type": "topic",
+      "filename": "modules-intro.md",
+      "url": "/topics/modules-intro/"
+    },
+    {
+      "id": "topic-modules-native-types",
+      "type": "topic",
+      "filename": "modules-native-types.md",
+      "url": "/topics/modules-native-types/"
+    },
+    {
+      "id": "topic-notifications",
+      "type": "topic",
+      "filename": "notifications.md",
+      "url": "/topics/notifications/"
+    },
+    {
+      "id": "topic-performance-on-cpu",
+      "type": "topic",
+      "filename": "performance-on-cpu.md",
+      "url": "/topics/performance-on-cpu/"
+    },
+    {
+      "id": "topic-persistence",
+      "type": "topic",
+      "filename": "persistence.md",
+      "url": "/topics/persistence/"
+    },
+    {
+      "id": "topic-pipelining",
+      "type": "topic",
+      "filename": "pipelining.md",
+      "url": "/topics/pipelining/"
+    },
+    {
+      "id": "topic-problems",
+      "type": "topic",
+      "filename": "problems.md",
+      "url": "/topics/problems/"
+    },
+    {
+      "id": "topic-programmability",
+      "type": "topic",
+      "filename": "programmability.md",
+      "url": "/topics/programmability/"
+    },
+    {
+      "id": "topic-protocol",
+      "type": "topic",
+      "filename": "protocol.md",
+      "url": "/topics/protocol/"
+    },
+    {
+      "id": "topic-pubsub",
+      "type": "topic",
+      "filename": "pubsub.md",
+      "url": "/topics/pubsub/"
+    },
+    {
+      "id": "topic-quickstart",
+      "type": "topic",
+      "filename": "quickstart.md",
+      "url": "/topics/quickstart/"
+    },
+    {
+      "id": "topic-RDMA",
+      "type": "topic",
+      "filename": "RDMA.md",
+      "url": "/topics/RDMA/"
+    },
+    {
+      "id": "topic-releases",
+      "type": "topic",
+      "filename": "releases.md",
+      "url": "/topics/releases/"
+    },
+    {
+      "id": "topic-replication",
+      "type": "topic",
+      "filename": "replication.md",
+      "url": "/topics/replication/"
+    },
+    {
+      "id": "topic-search-data-formats",
+      "type": "topic",
+      "filename": "search-data-formats.md",
+      "url": "/topics/search-data-formats/"
+    },
+    {
+      "id": "topic-search-expressions",
+      "type": "topic",
+      "filename": "search-expressions.md",
+      "url": "/topics/search-expressions/"
+    },
+    {
+      "id": "topic-search-monitoring",
+      "type": "topic",
+      "filename": "search-monitoring.md",
+      "url": "/topics/search-monitoring/"
+    },
+    {
+      "id": "topic-search-query",
+      "type": "topic",
+      "filename": "search-query.md",
+      "url": "/topics/search-query/"
+    },
+    {
+      "id": "topic-search",
+      "type": "topic",
+      "filename": "search.md",
+      "url": "/topics/search/"
+    },
+    {
+      "id": "topic-security",
+      "type": "topic",
+      "filename": "security.md",
+      "url": "/topics/security/"
+    },
+    {
+      "id": "topic-sentinel-clients",
+      "type": "topic",
+      "filename": "sentinel-clients.md",
+      "url": "/topics/sentinel-clients/"
+    },
+    {
+      "id": "topic-sentinel",
+      "type": "topic",
+      "filename": "sentinel.md",
+      "url": "/topics/sentinel/"
+    },
+    {
+      "id": "topic-server",
+      "type": "topic",
+      "filename": "server.md",
+      "url": "/topics/server/"
+    },
+    {
+      "id": "topic-sets",
+      "type": "topic",
+      "filename": "sets.md",
+      "url": "/topics/sets/"
+    },
+    {
+      "id": "topic-signals",
+      "type": "topic",
+      "filename": "signals.md",
+      "url": "/topics/signals/"
+    },
+    {
+      "id": "topic-sorted-sets",
+      "type": "topic",
+      "filename": "sorted-sets.md",
+      "url": "/topics/sorted-sets/"
+    },
+    {
+      "id": "topic-streams-intro",
+      "type": "topic",
+      "filename": "streams-intro.md",
+      "url": "/topics/streams-intro/"
+    },
+    {
+      "id": "topic-strings",
+      "type": "topic",
+      "filename": "strings.md",
+      "url": "/topics/strings/"
+    },
+    {
+      "id": "topic-tls",
+      "type": "topic",
+      "filename": "tls.md",
+      "url": "/topics/tls/"
+    },
+    {
+      "id": "topic-transactions",
+      "type": "topic",
+      "filename": "transactions.md",
+      "url": "/topics/transactions/"
+    },
+    {
+      "id": "topic-twitter-clone",
+      "type": "topic",
+      "filename": "twitter-clone.md",
+      "url": "/topics/twitter-clone/"
+    },
+    {
+      "id": "topic-valkey-bundle",
+      "type": "topic",
+      "filename": "valkey-bundle.md",
+      "url": "/topics/valkey-bundle/"
+    },
+    {
+      "id": "topic-valkey-json",
+      "type": "topic",
+      "filename": "valkey-json.md",
+      "url": "/topics/valkey-json/"
+    },
+    {
+      "id": "topic-valkey.conf",
+      "type": "topic",
+      "filename": "valkey.conf.md",
+      "url": "/topics/valkey.conf/"
+    }
+  ],
+  "pages": []
+}

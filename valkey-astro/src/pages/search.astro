@@ -1,0 +1,86 @@
+---
+// src/pages/search.astro
+// Global Search Explorer Page
+// Aggregates all content types and passes to React component
+
+import { getCollection } from 'astro:content';
+import MainLayout from '../layouts/MainLayout.astro';
+import GlobalSearchExplorer from '../components/GlobalSearchExplorer';
+
+// Aggregate all content from collection
+const docs = await getCollection('docs');
+
+// Build search index from content
+const searchIndex = {
+  version: '1.0.0',
+  generated: new Date().toISOString(),
+  commands: [] as any[],
+  blogs: [] as any[],
+  topics: [] as any[],
+  pages: [] as any[],
+};
+
+// Process all docs
+for (const doc of docs) {
+  const parentDir = doc.slug.split('/')[0];
+  const slug = doc.slug.split('/').slice(1).join('/') || doc.slug;
+
+  const entry = {
+    id: `doc-${doc.slug}`,
+    type: parentDir,
+    title: doc.data.title || slug.replace(/-/g, ' ').toUpperCase(),
+    description: doc.data.description || '',
+    url: `/docs/${doc.slug}/`,
+    keywords: doc.data.keywords || [],
+  };
+
+  // Categorize by parent directory
+  if (parentDir === 'reference') {
+    searchIndex.commands.push({
+      ...entry,
+      type: 'command',
+      name: slug,
+      module: doc.data.module || 'core',
+      group: doc.data.group || 'general',
+      complexity: doc.data.complexity || 'unknown',
+      acl_categories: doc.data.acl_categories || [],
+    });
+  } else if (parentDir === 'blog') {
+    searchIndex.blogs.push({
+      ...entry,
+      type: 'blog',
+      filename: slug,
+    });
+  } else if (parentDir === 'topics') {
+    searchIndex.topics.push({
+      ...entry,
+      type: 'topic',
+      filename: slug,
+    });
+  } else if (parentDir === 'guides') {
+    searchIndex.pages.push({
+      ...entry,
+      type: 'page',
+    });
+  }
+}
+
+// Console output for verification
+console.log(`🔍 Search Index Built:
+  Commands: ${searchIndex.commands.length}
+  Blog Posts: ${searchIndex.blogs.length}
+  Topics: ${searchIndex.topics.length}
+  Pages: ${searchIndex.pages.length}`);
+---
+
+<MainLayout title="Search - Valkey Docs">
+  <main>
+    <GlobalSearchExplorer client:load initialData={searchIndex} />
+  </main>
+</MainLayout>
+
+<style>
+  main {
+    padding: 2rem 1rem;
+  }
+</style>

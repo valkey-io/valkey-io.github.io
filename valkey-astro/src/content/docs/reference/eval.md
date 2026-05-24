@@ -1,0 +1,35 @@
+---
+title: "EVAL"
+description: "EVAL command reference documentation"
+---
+
+Invoke the execution of a server-side Lua script.
+
+The first argument is the script's source code.
+Scripts are written in [Lua](https://lua.org) and executed by the embedded [Lua 5.1](../topics/lua-api.md) interpreter in Valkey.
+
+The second argument is the number of input key name arguments, followed by all the keys accessed by the script.
+These names of input keys are available to the script as the [_KEYS_ global runtime variable](../topics/lua-api.md#the-keys-global-variable)
+Any additional input arguments **should not** represent names of keys.
+
+**Important:**
+to ensure the correct execution of scripts, both in standalone and clustered deployments, all names of keys that a script accesses must be explicitly provided as input key arguments.
+The script **should only** access keys whose names are given as input arguments.
+Scripts **should never** access keys with programmatically-generated names or based on the contents of data structures stored in the database.
+
+**Note:**
+in some cases, users will abuse Lua EVAL by embedding values in the script instead of providing them as argument, and thus generating a different script on each call to EVAL.
+These are added to the Lua interpreter and cached to valkey-server, consuming a large amount of memory over time.
+Starting from Valkey 8.0, scripts loaded with `EVAL` or [`EVAL_RO`](eval_ro.md) will be deleted from Valkey after a certain number (least recently used order).
+The number of evicted scripts can be viewed through the `evicted_scripts` field in the `stats` section of the [`INFO`](info.md) command.
+
+Please refer to the [Valkey Programmability](../topics/programmability.md) and [Introduction to Eval Scripts](../topics/eval-intro.md) for more information about Lua scripts.
+
+## Examples
+
+The following example will run a script that returns the first argument that it gets.
+
+```
+> EVAL "return ARGV[1]" 0 hello
+"hello"
+```

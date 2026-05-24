@@ -1,0 +1,57 @@
+/*
+Valkey Brand Color Palette Overrides for Starlight
+Ruby Red: #E31B23 | Charcoal: #1A1A1A | Accent Light: #FF4D5A
+*/
+
+:root {
+/* Light Mode Palette */
+--sl-color-accent-low: #fde8e9;
+--sl-color-accent: #e31b23;
+--sl-color-accent-high: #b31016;
+
+/* Gray Scale Theme Adjustments */
+--sl-color-text-accent: var(--sl-color-accent);
+}
+
+:root[data-theme='dark'] {
+/* Valkey Signature Dark Theme */
+--sl-color-accent-low: #3d070a;
+--sl-color-accent: #e31b23;
+--sl-color-accent-high: #ff4d5a;
+
+/* Dark Mode Gray Scale */
+--sl-color-gray-1: #f3f4f6;
+--sl-color-gray-2: #e5e7eb;
+--sl-color-gray-3: #9ca3af;
+--sl-color-gray-4: #4b5563;
+--sl-color-gray-5: #374151;
+--sl-color-gray-6: #1f2937;
+--sl-color-gray-7: #111827;
+
+/* Background gradients matching Valkey branding */
+--sl-color-bg: #0d0f12;
+--sl-color-bg-nav: #111317;
+--sl-color-bg-sidebar: #0d0f12;
+}
+
+/* Ensure the site forces the dark theme look */
+body {
+background-color: var(--sl-color-bg);
+}
+
+/* Custom header badge or links hover adjustments */
+a:hover {
+color: var(--sl-color-accent-high) !important;
+}
+
+/* Smooth custom styling overrides */
+.site-title {
+font-weight: 800 !important;
+letter-spacing: -0.025em;
+color: #fff !important;
+}
+
+/* Style the default search bar element to fit style */
+starlight-search button {
+border-radius: 8px !important;
+}
