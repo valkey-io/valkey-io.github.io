@@ -23,7 +23,7 @@ A few video tips:
     1. Acceptable Example: A video that describes the lessons learned about operating Valkey at scale gleaned from a Valkey service provider.
     2. Unacceptable Example: A video that describes the advantages of running Valkey through a specific service.
 4. Talk about Valkey. There are a ton of things to say about Valkey without venturing into comparisons with other products and projects.
-5. Have a call-to-action. What do you want your viewers to do next after they finish your video? The call-to-action can be something like asking a users to contribute, try some sample code, or come to an event. You can even just invite viewers to consume related content.
+5. Have a call-to-action. What do you want your viewers to do next after they finish your video? The call-to-action can be something like asking a user to contribute, try some sample code, or come to an event. You can even just invite viewers to consume related content.
 
 ## Step 3: Write about the video
 
