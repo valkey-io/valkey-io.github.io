@@ -134,7 +134,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Render all event cards once
-  var today = new Date().toISOString().substring(0, 10);
+  var nowLocal = new Date();
+  var today = nowLocal.getFullYear() + '-' +
+              String(nowLocal.getMonth() + 1).padStart(2, '0') + '-' +
+              String(nowLocal.getDate()).padStart(2, '0');
   var currentMonth = today.substring(0, 7);
   var thisMonthUpcoming = events.filter(function(e) { return e.date.substring(0, 7) === currentMonth && e.date >= today; })
                         .sort(function(a, b) { return a.date.localeCompare(b.date); });
@@ -149,12 +152,17 @@ document.addEventListener('DOMContentLoaded', function() {
     var dateObj = new Date(e.date + 'T00:00:00');
     var dateStr = monthNames[dateObj.getMonth()] + ' ' + dateObj.getDate() + ', ' + dateObj.getFullYear();
     var eventMonth = e.date.substring(0, 7);
-   
     listHtml += '<div class="event-card' + (e.date < today ? ' past' : '') + '" data-month="' + eventMonth + '">' +
       '<span class="event-card-badge ' + e.type + '">' + (e.type === 'first-party' ? 'Valkey Event' : 'Third Party') + '</span>' +
       '<h3><a href="' + e.url + '">' + e.title + '</a></h3>' +
       '<p class="event-card-date">' + dateStr + '</p>' +
-      (e.location ? '<p class="event-card-location"><a href="' + e.locationUrl + '" target="_blank">' + e.location + '</a></p>' : '') +
+      (e.location
+        ? '<p class="event-card-location">' +
+            (e.locationUrl
+              ? '<a href="' + e.locationUrl + '" target="_blank" rel="noopener noreferrer">' + e.location + '</a>'
+              : e.location) +
+          '</p>'
+        : '') +
       '</div>';
   });
   document.getElementById('events-list').innerHTML = listHtml;
