@@ -1,13 +1,13 @@
 +++
 title = "Managing Connection Storms in Valkey at Scale"
 description = "When Valkey metrics look fine but your app is failing, the problem is often connection storms, retry floods, and fleet-wide coordination."
-date = 2026-05-28
+date = 2026-06-02
 authors = ["allenhelton"]
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
-featured_image = "/assets/media/featured/random-04.webp"
+featured_image = "/assets/media/featured/random-07.webp"
 +++
 
 The alerts are firing. Users cannot complete requests. The cache dashboard shows CPU normal, memory normal, hit rate normal, p99 within SLA. The Valkey node metrics are all green. The cluster topology has not changed. Yet the application is still failing.
@@ -63,7 +63,7 @@ That setup achieved over 1 billion `SET` requests per second across a 2,000-node
 
 ### Cluster-level storms
 
-The connection storm problem is not limited to application clients. Uber observed it between service instances and Valkey nodes. Valkey 9.0 addressed an analogous problem inside the cluster itself.
+The connection storm problem is not limited to application clients — it can also occur inside the cluster itself, between Valkey nodes. Valkey 9.0 addressed exactly this scenario.
 
 When hundreds of nodes fail simultaneously, each surviving node was attempting to reconnect to all failed nodes every 100ms, consuming significant CPU on connection management rather than serving requests. Valkey 9.0 introduced a [throttling mechanism](https://github.com/valkey-io/valkey/pull/2154) scoped to the configured `cluster-node-timeout`, ensuring enough reconnect attempts occur within a reasonable window while preventing surviving nodes from being overwhelmed by their own recovery behavior. This is the same principle as Uber's `iptables` approach, applied natively inside the cluster bus.
 
