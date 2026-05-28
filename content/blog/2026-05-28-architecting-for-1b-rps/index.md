@@ -1,7 +1,7 @@
 +++
 title = "Managing Connection Storms in Valkey at Scale"
 description = "When Valkey metrics look fine but your app is failing, the problem is often connection storms, retry floods, and fleet-wide coordination."
-date = 2026-05-25
+date = 2026-05-28
 authors = ["allenhelton"]
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
@@ -67,15 +67,17 @@ The connection storm problem is not limited to application clients. Uber observe
 
 When hundreds of nodes fail simultaneously, each surviving node was attempting to reconnect to all failed nodes every 100ms, consuming significant CPU on connection management rather than serving requests. Valkey 9.0 introduced a [throttling mechanism](https://github.com/valkey-io/valkey/pull/2154) scoped to the configured `cluster-node-timeout`, ensuring enough reconnect attempts occur within a reasonable window while preventing surviving nodes from being overwhelmed by their own recovery behavior. This is the same principle as Uber's `iptables` approach, applied natively inside the cluster bus.
 
-### The proxy can be the storm too
+### A proxy is not automatically a safety net
 
-Uber's architecture includes a custom L4 proxy between application instances and Valkey. During the migration to native clusters, their team found a second form of connection storm originating at the proxy layer.
+Uber's architecture includes a custom L4 proxy between application instances and the cache clusters. During the migration, their team found a second form of connection storm originating at the proxy layer.
 
 During bursts of new connections, the proxy becomes a bottleneck. TLS setup, memory allocation for new connection state, and file descriptor management all compete for resources. Existing connections slow down. Slower connections trigger application timeouts. Timeouts trigger more retries. More retries create more new connections. The same feedback loop, one layer upstream.
 
-To address this issue, Uber added fairness algorithms in the proxy to explicitly prioritize traffic from established connections over new ones. Under pressure, the proxy serves the work it has already committed to before taking on new work.
+This is where proxy design makes all the difference. A thin proxy that only forwards requests moves the failure mode behind a smaller number of ingress points. But a [well-designed routing layer](https://www.gomomento.com/blog/why-large-cache-systems-need-routing-layers/) does the opposite. By multiplexing many client connections into a small, stable set of backend connections, it shifts connection count from multiplicative to roughly linear and decouples backend connection pressure from client-side deployment churn. When application pods restart, they reconnect to long-lived routing nodes and the backend never sees the storm. The same component that amplifies a storm when built carelessly is one of the most effective tools for absorbing it when built well.
 
-A proxy that explicitly delays new connections while existing ones flow smoothly will look worse in a benchmark, but it behaves far better during an incident. Accepting less work is often more reliable than accepting all work slowly.
+Uber addressed their proxy bottleneck by adding fairness algorithms to explicitly prioritize traffic from established connections over new ones. Under pressure, the proxy serves the work it has already committed to before taking on new work.
+
+A proxy that explicitly delays new connections while existing ones flow smoothly may look worse in a benchmark, but it behaves far better during an incident. Accepting less work is often more reliable than accepting all work slowly.
 
 ### Where the storms really come from
 
@@ -85,7 +87,11 @@ At Uber, each stateless service instance maintains a pool of `p` connections per
 
 This is not a misuse of the system. It is what direct-connect architectures look like at scale. The surface area for connection-related failure grows with every new service instance and every node added to the cluster.
 
-Uber's mitigations focused on reducing the effective connection rate through client-side caching for hot keys to reduce round trips, request deduplication, and batching operations like hash-field deletions into multi-key commands. They also looked at I/O multiplexing through Java's Lettuce client (also available in [Valkey GLIDE](https://glide.valkey.io/concepts/architecture/async-execution/#rust-core-multiplexing)), which lets a single connection carry many concurrent requests and directly reduces the `p` in the `n x p` equation. Fewer connections per node means fewer to reestablish when retries amplify, which shrinks the blast radius of a connection storm. The Lettuce results are what pushed Uber to evaluate the same multiplexing capability for its Go clients, and new client libraries with multiplexing are part of their Cache Platform 2.0 roadmap.
+Uber's mitigations focused on reducing the effective connection rate through client-side caching for hot keys to reduce round trips, request deduplication, and batching operations like hash-field deletions into multi-key commands. They also looked at I/O multiplexing through Java's Lettuce client (also available in [Valkey GLIDE](https://glide.valkey.io/concepts/architecture/async-execution/#rust-core-multiplexing)), which lets a single connection carry many concurrent requests and directly reduces the `p` in the `n x p` equation. Fewer connections per node means fewer to reestablish when retries amplify, which shrinks the blast radius of a connection storm.
+
+But there's a tradeoff. Multiplexing many requests onto a single connection introduces head-of-line blocking. So a single slow command can stall the requests queued behind it on the same connection. It's most pronounced when a single multiplexed connection fans out across multiple clusters, where one slow node can hold up traffic bound for healthy ones.
+
+For Uber's workload the connection-fanout reduction outweighed that risk, and the Lettuce results were enough to push them toward evaluating the same multiplexing capability for their Go clients. New client libraries with multiplexing are now part of their Cache Platform 2.0 roadmap.
 
 ## Build the safeguards before you need them
 
@@ -93,9 +99,13 @@ Snap moved 350 cache clusters off KeyDB, a multithreaded Redis 6.2 fork, to Valk
 
 But the interesting part of the story is what they built to make the migration safe.
 
-### Write throttling at 95% CPU
+### Load shedding at 95% CPU
 
-When a cluster's CPU utilization crosses 95%, Snap throttles write requests. This sounds counterintuitive. The team is deliberately degrading write throughput before the system is actually saturated. At 100%, administrative commands no longer reach the cluster. Administrators cannot reconfigure it, diagnose it, or intervene. Throttling at 95% preserves the headroom that operators and automation need to respond.
+When a cluster's CPU utilization crosses 95%, Snap throttles write requests. This sounds counterintuitive at first, but it is a textbook case of load shedding: deliberately dropping or degrading some work to keep the system as a whole alive.
+
+The power grid that supplies electricity to your house does the same thing. When demand threatens to exceed supply, utilities trigger controlled brownouts, intentionally reducing service to some customers because a partial, managed reduction is vastly preferable to an uncontrolled cascade that takes the entire grid down.
+
+The cache cluster faces the same choice. At 100% CPU, administrative commands no longer reach the cluster. Administrators cannot reconfigure it, diagnose it, or intervene. Throttling writes at 95% is the brownout: it deliberately degrades write throughput while the system is still controllable, preserving the headroom that operators and automation need to respond before the cluster becomes unreachable.
 
 Snap [contributed this behavior](https://github.com/valkey-io/valkey/issues/1688) to the Valkey project. It is not on by default, but the pattern of reserving a fixed percentage of capacity for operational access is directly applicable as an application-layer or proxy-layer control for any team running write-heavy workloads.
 
@@ -127,7 +137,11 @@ Valkey's architectural trajectory follows the same principle. I/O threading in 8
 
 ## What to carry out of this
 
-The questions you ask at this scale are about what happens when one node slows down and thousands of clients respond simultaneously. They are about whether the proxy prioritizes established connections under load. They are about whether write capacity is reserved for operational access before the cluster saturates. For teams running large memory workloads, they are about whether dual-channel replication is enabled and whether `replicas_repl_buffer_size` is being monitored and not just assumed to be fine.
+Werner Vogels famously said "*Everything fails, all the time.*" A benchmark measures the happy path, the ceiling you reach when nothing is going wrong. But how does your system behave when something goes wrong? When one node slows down and thousands of clients react in the same millisecond.
+
+Every technique helps you decide what to do before you are overwhelmed. Cut traffic to a degrading node before retries amplify into a storm. Prioritize established connections so the work already in flight survives the burst. Shed write load at 95% to keep the cluster reachable for the operators who have to save it. Enable dual-channel replication before a sync loop turns a large workload into an outage. These don't make your system faster, but they do make it survivable.
+
+That is the difference between a catastrophic outage and graceful degradation, and it is usually the difference between a team that planned for the failure and one that did not. Uber and Snap learned these lessons the hard way, in production, often in the hours after an outage. The point is not to copy their exact mitigations into your own system. The `iptables` rule, the 95% threshold, the 15-minute buffer window are all specific to their workloads. The point is to help you remember that failure is constant. So find where your system amplifies it, and decide your response before the incident, not during it.
 
 The benchmark tells you the ceiling. The safety net determines how far you fall when you exceed it, and whether recovery is possible.
 
