@@ -1,7 +1,7 @@
 ---
 title: Daniela Miao
 extra:
-    photo: '/assets/media/authors/dmiao.jpeg'
+    photo: '/assets/media/authors/dmiao.jpg'
    
 ---
 
