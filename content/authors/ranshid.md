@@ -3,6 +3,8 @@ title: Ran Shidlansik
 extra:
     photo: '/assets/media/authors/ranshid.png'
     github: ranshid
+    tsc:
+        affiliation: "AWS"
 ---
 
 Ran Shidlansik is a Software Engineer at AWS. 

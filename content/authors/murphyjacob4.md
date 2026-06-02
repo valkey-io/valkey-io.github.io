@@ -3,6 +3,8 @@ title: Jacob Murphy
 extra:
   photo: "/assets/media/authors/murphyjacob4.png"
   github: murphyjacob4
+  tsc:
+    affiliation: "Google Cloud"
 ---
 
 Jacob Murphy is a software engineer at Google Cloud based out of Kirkland, WA.

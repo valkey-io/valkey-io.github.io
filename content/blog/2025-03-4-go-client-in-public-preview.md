@@ -3,6 +3,8 @@ title= "Introducing the Valkey Glide Go Client: Now in Public Preview!"
 description = "Valkey Glide now supports GO. Read to learn more about the new client designed for performance and developer productivity"
 date= 2025-03-04 01:01:01
 authors= [ "niharikabhavaraju"]
+[taxonomies]
+blog_type = ["Announcements"]
 [extra]
 featured = false
 featured_image = "/assets/media/featured/default.webp"

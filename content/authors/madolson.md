@@ -3,6 +3,9 @@ title: Madelyn Olson
 extra:
     photo: '/assets/media/authors/madolson.jpeg'
     github: madolson
+    tsc:
+        affiliation: "AWS"
+        position: Committee Chair
 ---
 
 Madelyn Olson is a software engineer at AWS and a member of the Valkey Technical Steering Committee.

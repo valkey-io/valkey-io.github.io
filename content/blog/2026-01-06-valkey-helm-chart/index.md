@@ -3,6 +3,8 @@ title = "Valkey Helm: The new way to deploy Valkey on Kubernetes"
 date = 2026-01-06
 description = "A guide on why the new Valkey Helm chart exists, how it helps, and how to migrate from Bitnami." 
 authors =  ["sgissi","maheshcherukumilli"]
+[taxonomies]
+blog_type = ["Announcements"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/valkey-helm.webp"

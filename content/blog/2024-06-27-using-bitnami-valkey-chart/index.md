@@ -6,6 +6,8 @@ aliases= [
     "/blog/2024/06/using-bitnami-valkey-chart/"
 ]
 authors=["rafariossaa"]
+[taxonomies]
+blog_type = ["How-to"]
 [extra]
 featured = false
 featured_image = "/assets/media/featured/random-01.webp"

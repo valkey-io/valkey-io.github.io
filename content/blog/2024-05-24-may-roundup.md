@@ -7,6 +7,8 @@ aliases= [
 description= "It's become clear that people want to talk about Valkey and have been publishing blog posts/articles fervently. Here you'll find a collection of all the post I'm aware of in the last few weeks."
 authors= ["kyledvs"]
 
+[taxonomies]
+blog_type = ["Community Highlight"]
 [extra]
 categories= "update"
 featured = false

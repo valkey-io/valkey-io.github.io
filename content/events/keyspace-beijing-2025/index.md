@@ -1,11 +1,14 @@
 +++
 title = "Keyspace Beijing 北京"
-date= 2025-12-13 01:01:01
+date = 2025-12-13 01:01:01
 
 [extra]
 body_class = "keyspace-2025"
 event_logo = "/events/keyspace-beijing-2025/keyspace-logo-beijing.png"
 footer_add = "Header image: [The Horsehead Nebula and its surroundings. The reflection nebula NGC 2023 in the bottom left corner.](https://en.wikipedia.org/wiki/Horsehead_Nebula#/media/File:Horsehead_and_flame_Nebulea_384mm_scope_Ha-RGB.jpg) License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)"
+event_type = "first-party"
+location = "Dongsheng Building, Tower A, Haidian District, Beijing"
+location_url = "https://www.google.com/maps/place/Dongsheng+Building"
 +++
 
 Keyspace 北京峰会是开发者、SRE 和 DevOps 专家齐聚一堂，分享 Valkey 的技术、最佳实践和新用途的盛会。您将在为期一天的活动中与项目维护人员、社区爱好者和思想领袖见面交流。

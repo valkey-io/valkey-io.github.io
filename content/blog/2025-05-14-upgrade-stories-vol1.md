@@ -4,6 +4,8 @@ description = "Two new Valkey users describe what it's really like to upgrade"
 date= 2025-05-14 01:01:01 
 authors= ["kyledvs", "nigel"] 
 
+[taxonomies]
+blog_type = ["Community Highlight"]
 [extra]
 categories= "update"
 featured = false

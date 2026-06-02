@@ -1,5 +1,6 @@
 .DS_Store
 public
+package-lock.json
 build-bloom-command-json
 build-command-docs
 build-command-json
