@@ -1,6 +1,6 @@
 +++
 title = "Caching up with the Community: A Conversation with Daniela Miao on Valkey and Momento"
-date = 2026-05-26
+date = 2026-06-03
 description = "This segment features Daniela Miao, Co-founder and CTO of Momento, discussing her journey into open source, the technical advantages of building on Valkey, and how high-scale infrastructure supports some of the world's largest live events." 
 authors =  ["dmiao","crystalpham"]
 [taxonomies]
