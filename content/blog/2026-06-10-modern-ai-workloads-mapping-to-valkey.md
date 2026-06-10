@@ -29,7 +29,7 @@ def cache_key(params: dict) -> str:
     return "llm:" + hashlib.sha256(canonical.encode()).hexdigest()
 ```
 
-```
+```text
 SET llm:9f86d08... "{\"response\": \"...\"}" EX 3600
 GET llm:9f86d08...
 ```
@@ -38,7 +38,7 @@ The only subtlety is the canonicalization. Key order, float formatting, and tool
 
 **Semantic caching** applies when the inputs are near-duplicates rather than duplicates: "What's the capital of France?" and "Capital city of France?" should hit the same cached answer. This is a vector similarity problem, and it runs on the [`valkey-search`](https://valkey.io/topics/search/) module. The index is HNSW over the prompt embedding with COSINE distance:
 
-```
+```text
 FT.CREATE semcache ON HASH PREFIX 1 semcache: SCHEMA
     prompt TEXT
     response TEXT NOINDEX
@@ -48,7 +48,7 @@ FT.CREATE semcache ON HASH PREFIX 1 semcache: SCHEMA
 
 A lookup embeds the incoming prompt and runs a KNN query:
 
-```
+```text
 FT.SEARCH semcache "*=>[KNN 1 @embedding $vec AS score]"
     PARAMS 2 vec <float32 bytes> DIALECT 2
 ```
@@ -83,7 +83,7 @@ The Mem0 post on this blog covered one instance of a general pattern: scoped vec
 
 Consider RAG with multi-tenant data and freshness requirements. The index carries the filterable attributes alongside the vector:
 
-```
+```text
 FT.CREATE docs ON HASH PREFIX 1 doc: SCHEMA
     content TEXT
     tenant TAG
@@ -93,7 +93,7 @@ FT.CREATE docs ON HASH PREFIX 1 doc: SCHEMA
 
 And the retrieval is one query, not three systems stitched together in application code:
 
-```
+```text
 FT.SEARCH docs
     "@tenant:{acme} @published:[1717200000 +inf] =>[KNN 10 @embedding $vec AS score]"
     PARAMS 2 vec <float32 bytes> DIALECT 2
@@ -111,32 +111,33 @@ In front of the LLM sits the least glamorous layer of the stack, and it runs ent
 
 Token budgets are atomic counters. The unit is tokens rather than requests, and the increment happens after the response when actual usage is known, with a pre-check before dispatch:
 
-```
+```text
 INCRBY budget:org_42:2026-06 18540
 EXPIRE budget:org_42:2026-06 2678400 NX
 ```
 
 [`INCRBY`](https://valkey.io/commands/incrby/) is atomic, so concurrent requests cannot race the counter, and the `NX` flag on [`EXPIRE`](https://valkey.io/commands/expire/) pins the window without a read-modify-write.
 
-Sliding-window rate limits handle the per-minute shape that LLM providers enforce and that you likely want to mirror per tenant. A sorted set keyed by timestamp, trimmed and counted in one [`MULTI`](https://valkey.io/commands/multi/) block:
+Sliding-window rate limits handle the per-minute shape that LLM providers enforce and that you likely want to mirror per tenant. A sorted set keyed by timestamp, trimmed, written, and counted in one [`MULTI`](https://valkey.io/commands/multi/) block:
 
-```
+```text
 MULTI
 ZREMRANGEBYSCORE rl:user_7 0 <now_ms - 60000>
-ZCARD rl:user_7
 ZADD rl:user_7 <now_ms> <request_id>
+ZCARD rl:user_7
 PEXPIRE rl:user_7 60000
 EXEC
 ```
 
+The block records the request and returns the window count atomically; the application reads the `ZCARD` reply after `EXEC` and rejects when it exceeds the limit. Note that a rejected request still occupies a slot until it ages out of the window - usually acceptable, and arguably desirable under a retry storm, since hammering a saturated limit keeps it saturated. If rejected requests must not consume the window, the check has to happen server-side before the add, which is what a short Lua script via [`EVAL`](https://valkey.io/commands/eval/) is for.
+
 Deduplication covers the retry storm case: a client times out waiting on a slow completion, retries, and now two identical expensive requests are in flight. A Bloom filter via the [`valkey-bloom`](https://valkey.io/blog/introducing-bloom-filters/) module answers "have we seen this request hash recently" in constant space:
 
-```
+```text
 BF.ADD inflight 9f86d08...
-BF.EXISTS inflight 9f86d08...
 ```
 
-A false positive means one request gets needlessly deduplicated against the exact-match cache from the response caching section; a false negative cannot happen. For workloads where that asymmetry is acceptable, the memory savings over a plain set are substantial at high request volumes.
+[`BF.ADD`](https://valkey.io/commands/bf.add/) returns 1 when the hash is new and 0 when it has (probably) been seen, so a single round trip both checks and registers the request - no separate `BF.EXISTS` needed. A false positive means one request gets needlessly deduplicated against the exact-match cache from the response caching section; a false negative cannot happen. For workloads where that asymmetry is acceptable, the memory savings over a plain set are substantial at high request volumes.
 
 None of this is novel, and that is the point. The admission layer for AI workloads is well-understood primitives applied to a new cost model, and it shares an instance with the caching layers above it.
 
