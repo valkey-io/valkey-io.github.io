@@ -1,6 +1,6 @@
 +++
 title = "The secret life of data in Valkey"
-date = 2026-09-10
+date = 2026-06-10
 description = "If you’ve used Valkey for very long you’re probably aware of the different primary core data types: string, hashes, lists, sets, sorted sets, and streams. What if that was all a lie."
 authors = ["kyledvs"]
 [taxonomies]
@@ -71,7 +71,7 @@ In Valkey, the _data model_ is that of classical data structures but under-the-h
 
 ## Taking back control
 
-With the exception of strings, which use hard coded logic, encodings for each type are dictated by one or more configuration thresholds: anything at or below a threshold uses one encoding and anything above uses a different one. Take a look at the default configuration for the hash data type in Valkey 9.1:
+With the exception of strings, which use hard-coded logic, encodings for each type are dictated by one or more configuration thresholds: anything at or below a threshold uses one encoding and anything above uses a different one. Take a look at the default configuration for the hash data type in Valkey 9.1:
 
 ```bash
 hash-max-listpack-entries 512
@@ -102,7 +102,7 @@ Contextualizing an extreme example: having a 100gb cluster (5 nodes, 20gb each) 
 | Original | 100gb        | 95gb            |  212                            | 20gb        | 5              |
 | New      | 58.58gb      | 0               |  120 <br /> (56.6% of original) | 2gb         | 3              |
 
-So, you can take away two full primaries and whatever associated replicas. As previously mentioned, this is an extreme example, it's probably unlikely that you have 95% of your data falling outside this threshold. Let's say that you have 60% of your keys that reach above the wrong-sized configuration _and_ you can scale back your infrastructure to a smaller sized machine or instance that has only 16gb of RAM.
+So, you can take away two full primaries and whatever associated replicas. As previously mentioned, this is an extreme example, it's probably unlikely that you have 95% of your data falling outside this threshold. Let's say that you have 60% of your keys that reach above the wrong-sized configuration _and_ you can scale back your infrastructure to a smaller-sized machine or instance that has only 16gb of RAM.
 
 |          | Cluster size | gb wrong-sized  | Wrong-sized key size            | Primary size | # of Primaries |
 | -------- | ------------ | --------------- | ------------------------------- | ------------ | -------------- |
@@ -118,7 +118,7 @@ The actual savings here depends on the difference in price for the new vs the ol
 > This explains why, in the original example, a length of 64 increased 15.38% over a length of 63 and yet the encoding was still the same.
 
 
-All this comes back to understanding that these configurations aren't a sliver bullet and throwing wildly higher or lower values at the encoding configuration could result in suboptimal performance or efficiency. YMMV.
+All this comes back to understanding that these configurations aren't a silver bullet and throwing wildly higher or lower values at the encoding configuration could result in suboptimal performance or efficiency. YMMV.
 
 ## Tell your story
 
