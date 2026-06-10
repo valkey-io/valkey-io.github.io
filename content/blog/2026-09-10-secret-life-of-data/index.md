@@ -80,7 +80,7 @@ hash-max-listpack-value 64
 
 This means that any hash with all values less than or equal to 64 in length (`hash-max-listpack-value`) and have less than 512 field-value pairs (`hash-max-listpack-entries`) will be encoded as a 'listpack', everything else as a 'hashtable'. In the original example, key `hash2` had a length of 65, triggering an encoding of 'hashtable', which is much less compact accounting for the 76.67% increase in size. 
 
-There encoding configurations for:
+There are encoding configurations for:
 
 - Hashes (`hash-max-listpack-entries`, `hash-max-listpack-value`)
 - Lists (`list-max-listpack-size`)
