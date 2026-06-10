@@ -1,10 +1,10 @@
 +++
 title = "Managing Connection Storms in Valkey at Scale"
 description = "When Valkey metrics look fine but your app is failing, the problem is often connection storms, retry floods, and fleet-wide coordination."
-date = 2026-06-02
+date = 2026-06-10
 authors = ["allenhelton"]
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["Community Highlight"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-07.webp"
@@ -26,7 +26,7 @@ Uber's microservices run many instances, each using a client with a connection p
 
 The problem is that this happens across hundreds or thousands of instances simultaneously. Every instance that touched that node in the last few hundred milliseconds sees the same error. Every one of them closes its connection and immediately sends new connection requests to the already-stressed node. TCP handshakes, TLS negotiation, and authentication all land at once. The node, which might have recovered in seconds, instead hits 100% CPU and stops responding.
 
-![Connection storm diagram: many client instances simultaneously error, close, and reconnect to one Valkey node, driving it to 100% CPU and feeding a retry loop.](architecting_for_1b_1.webp)
+![Connection storm diagram: many client instances simultaneously error, close, and reconnect to one Valkey node, driving it to 100% CPU and feeding a retry loop.](managing_connection_storms_1.webp)
 
 The retry behavior that protects a single client destroys the cluster at fleet scale. Benchmarks never capture this because they do not model thousands of clients responding to shared state simultaneously.
 
@@ -42,7 +42,7 @@ Valkey 8.0 significantly [overhauled I/O threading](https://valkey.io/blog/valke
 
 The payoff showed up directly in the benchmarks. Against Valkey 7.2, throughput rose roughly 230% and average latency dropped 69.8%, measured with sequential [`SET`](https://valkey.io/commands/set/) commands on a single large instance.
 
-![Bar chart comparing Valkey 7.2 and 8.0. Throughput rises from 360K to 1.19M SET requests per second, a 230% increase; average latency falls from 1.792ms to 0.542ms, a 69.8% decrease.](architecting_for_1b_2.webp)
+![Bar chart comparing Valkey 7.2 and 8.0. Throughput rises from 360K to 1.19M SET requests per second, a 230% increase; average latency falls from 1.792ms to 0.542ms, a 69.8% decrease.](managing_connection_storms_2.webp)
 
 The main thread is the bottleneck during a storm, which is exactly what this threading work frees up. Valkey 8.1 went further, [offloading TLS negotiation to I/O threads](https://valkey.io/blog/valkey-8-1-0-ga/#i-o-threads-improvements). That change alone improved the rate of accepting new connections by around 300%, directly addressing the scenario where a burst of new connections during a storm previously blocked the main thread from serving existing ones. The same release also offloaded `SSL_pending()` and `ERR_clear_error()` calls to I/O threads, producing a measured 10% improvement in `SET` throughput and 22% in [`GET`](https://valkey.io/commands/get/) throughput for TLS workloads.
 
@@ -60,12 +60,6 @@ save ""
 ```
 
 That setup achieved over 1 billion `SET` requests per second across a 2,000-node cluster, with throughput scaling nearly linearly with primary count. For production sizing, the practical starting point is `io-threads` equal to the available core count minus 1 to 2, with the remainder reserved for OS and interrupt handling.
-
-### Cluster-level storms
-
-The connection storm problem is not limited to application clients — it can also occur inside the cluster itself, between Valkey nodes. Valkey 9.0 addressed exactly this scenario.
-
-When hundreds of nodes fail simultaneously, each surviving node was attempting to reconnect to all failed nodes every 100ms, consuming significant CPU on connection management rather than serving requests. Valkey 9.0 introduced a [throttling mechanism](https://github.com/valkey-io/valkey/pull/2154) scoped to the configured `cluster-node-timeout`, ensuring enough reconnect attempts occur within a reasonable window while preventing surviving nodes from being overwhelmed by their own recovery behavior. This is the same principle as Uber's `iptables` approach, applied natively inside the cluster bus.
 
 ### A proxy is not automatically a safety net
 
@@ -107,7 +101,7 @@ The power grid that supplies electricity to your house does the same thing. When
 
 The cache cluster faces the same choice. At 100% CPU, administrative commands no longer reach the cluster. Administrators cannot reconfigure it, diagnose it, or intervene. Throttling writes at 95% is the brownout: it deliberately degrades write throughput while the system is still controllable, preserving the headroom that operators and automation need to respond before the cluster becomes unreachable.
 
-Snap [contributed this behavior](https://github.com/valkey-io/valkey/issues/1688) to the Valkey project. It is not on by default, but the pattern of reserving a fixed percentage of capacity for operational access is directly applicable as an application-layer or proxy-layer control for any team running write-heavy workloads.
+Snap is working to [contribute this behavior](https://github.com/valkey-io/valkey/issues/1688) to the Valkey project. The maintainers are working with the team on polishing the idea and requirements around it.
 
 ### Replication buffer management and dual-channel replication
 
@@ -131,7 +125,7 @@ Snap's operational approach layered on top of this: they measured buffer fill ra
 
 These failure modes and their mitigations are variations on the idea that systems that hold up under pressure are the ones that make deliberate choices about what to do before they are overwhelmed.
 
-Uber's `iptables` approach does not help a node that is already at 100% CPU. It prevents the feedback loop from reaching 100% by stopping retry amplification early. Snap's write throttling does not kick in when the cluster is already unmanageable. It preserves management access by acting at 95%. The replication buffer threshold is configured before the first migration starts, not after a sync loop incident.
+Uber's `iptables` approach does not help a node that is already at 100% CPU. It prevents the feedback loop from reaching 100% by stopping retry amplification early. Snap's write throttling does not kick in when the cluster is already unmanageable. It preserves management access by acting at 95%. The replication buffer threshold is configured before the first migration starts, not after a sync loop incident. This functionality is also [being considered by the Valkey team](https://github.com/valkey-io/valkey/issues/1649).
 
 Valkey's architectural trajectory follows the same principle. I/O threading in 8.0 freed the main thread from socket polling. TLS offload in 8.1 removed a critical bottleneck in new connection acceptance. Dual-channel replication in 8.0 moved COB pressure off the primary. The cluster bus reconnection throttle in 9.0 prevented surviving nodes from overwhelming themselves during mass failure events. All of these are deliberate choices to keep the system manageable under load, not just fast in a benchmark.
 
