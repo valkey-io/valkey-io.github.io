@@ -2,7 +2,7 @@
 title= "Performance Optimization Methodology for Valkey - Part 1"
 date= 2025-05-27 00:00:00
 description= "Performance Optimization Methodology for Valkey"
-authors= ["lipzhu", "guowangy"]
+authors= ["zhulipeng", "guowangy"]
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
