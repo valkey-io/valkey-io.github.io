@@ -189,3 +189,14 @@
     company: >
       [Tencent Cloud](https://www.cloud.tencent.com) ([English](https://www.tencentcloud.com)), one of the world's leading cloud companies, is committed to creating innovative solutions to resolve real-world issues and enabling digital transformation for smart industries.
       Through our extensive global infrastructure, Tencent Cloud provides businesses across the globe with stable and secure industry-leading cloud products and services, leveraging technological advancements such as cloud computing, Big Data analytics, AI, communication and network security.
+
+- name: Freshworks
+  link: https://www.freshworks.com
+  image:
+    path: /img/freshworks.png
+    alt: Freshworks Logo
+  company: >
+    Freshworks (NASDAQ: FRSH) is a leading provider of uncomplicated, AI-powered software that delivers exceptional employee and customer experiences. Its service, IT, and CRM solutions are designed to be quick to deploy and easy to use, and are trusted by organizations of all sizes worldwide.
+  offering: >
+    Freshworks authored [valkey-glide-ruby](https://github.com/valkey-io/valkey-glide-ruby) (gem: `valkey-rb`), the official Ruby client for Valkey GLIDE, and contributed to the underlying GLIDE Rust core that powers it. Built on the same valkey-glide Rust FFI foundation as the Python, Java, Node.js, and Go clients, the Ruby client offers a redis-rb-compatible API, standalone and cluster modes, TLS/SSL, native OpenTelemetry tracing and metrics, client statistics, and comprehensive command coverage.
+    Beyond Ruby, Freshworks has contributed across the GLIDE ecosystem — extending the Java client and its Jedis compatibility layer, the Go client, and shared Rust core capabilities. After rigorous evaluation, Freshworks adopted Valkey in production for one of its major workloads.
