@@ -1,7 +1,7 @@
 ---
 title: Dragos Andriciuc
 extra:
-    photo: '/assets/media/authors/dragosandriciuc.png'
+    photo: '/assets/media/authors/dragosandriciuc.jpg'
     github: Andriciuc
 ---
 
