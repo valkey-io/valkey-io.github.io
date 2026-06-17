@@ -15,6 +15,10 @@ Modern AI inference stacks have split into layers, and each layer needs memory-s
 
 Valkey 8.x and [Valkey Search 1.2](https://valkey.io/blog/valkey-search-1_2/) cover all of these natively, but the coverage usually gets discussed one vertical at a time. A recent post on this blog walked through [agent memory with Mem0](https://valkey.io/blog/ai-agent-memory-with-valkey-and-mem0/) in depth - one workload, end to end. This post is the horizontal tour. Each section describes a workload, why it needs memory-speed access, and which Valkey primitive maps to it. The goal is a mental map of where Valkey fits across the AI stack, not a tutorial for any single piece.
 
+Here is the whole map, which the rest of the post walks through one layer at a time:
+
+![The AI inference stack mapped to Valkey primitives: admission control, exact-match and semantic caching, KV cache offload, the inference engine, and hybrid retrieval, with observability instrumenting the cache and retrieval layers.](ai-workloads-map.png)
+
 ## Response caching: exact-match and semantic on the same substrate
 
 Response caching for LLM applications gets framed as a choice between two systems. It is better understood as two points on a spectrum, and both run on the same Valkey instance.
@@ -79,7 +83,7 @@ The framing worth keeping: Valkey is not competing with GPU memory here. It is t
 
 ## Hybrid retrieval beyond agent memory
 
-The Mem0 post on this blog covered one instance of a general pattern: scoped vector retrieval, where a query combines semantic similarity with hard filters in a single round trip. Agent memory scopes by `user_id` and `run_id`. The general shape applies far more broadly, and [Valkey Search 1.2](https://valkey.io/blog/valkey-search-1_2/) widened what fits in that single round trip: vector similarity, tag filters, numeric ranges, full-text matching, and aggregations.
+Retrieval runs during inference, after a cache miss has fallen through to the model and the model needs to fetch context or tool results to answer. The Mem0 post on this blog covered one instance of a general pattern: scoped vector retrieval, where a query combines semantic similarity with hard filters in a single round trip. Agent memory scopes by `user_id` and `run_id`. The general shape applies far more broadly, and [Valkey Search 1.2](https://valkey.io/blog/valkey-search-1_2/) widened what fits in that single round trip: vector similarity, tag filters, numeric ranges, full-text matching, and aggregations.
 
 Consider RAG with multi-tenant data and freshness requirements. The index carries the filterable attributes alongside the vector:
 
