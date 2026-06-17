@@ -11,7 +11,7 @@ featured = false
 featured_image = "/assets/media/featured/random-02.webp"
 +++
 
-Modern AI inference stacks have split into layers, and each layer needs memory-speed access to something. Semantic caching needs vector similarity over recent prompts. Inference engines need a place to park KV tensors between requests. RAG pipelines need filtered retrieval in a single round trip. The layer in front of all of it needs counters and rate limits that hold up under concurrent load.
+Modern AI inference stacks have split into layers, and each layer needs memory-speed access to something. Semantic caching needs [vector similarity](https://valkey.io/topics/search/) over recent prompts. Inference engines need a place to park KV tensors between requests. Retrieval-augmented generation (RAG) pipelines need filtered retrieval in a single round trip. The layer in front of all of it needs counters and rate limits that hold up under concurrent load.
 
 Valkey 8.x and [Valkey Search 1.2](https://valkey.io/blog/valkey-search-1_2/) cover all of these natively, but the coverage usually gets discussed one vertical at a time. A recent post on this blog walked through [agent memory with Mem0](https://valkey.io/blog/ai-agent-memory-with-valkey-and-mem0/) in depth - one workload, end to end. This post is the horizontal tour. Each section describes a workload, why it needs memory-speed access, and which Valkey primitive maps to it. The goal is a mental map of where Valkey fits across the AI stack, not a tutorial for any single piece.
 
@@ -67,7 +67,7 @@ One layer below response caching sits a different kind of cache entirely. When a
 
 Inference engines such as vLLM and SGLang already reuse KV for shared prefixes within a single instance's GPU memory. The problem is capacity and locality. GPU HBM is small, so KV gets evicted under load, and a prefix computed on one replica is invisible to the others. KV cache offload solves this by treating the KV tensors as cacheable data with a storage hierarchy behind them: GPU memory, then local CPU memory, then a remote tier shared across the fleet.
 
-[LMCache](https://github.com/LMCache/LMCache) is the connector layer that implements this for vLLM and SGLang, and it supports Redis-protocol backends as the remote tier - which means Valkey works as the shared KV store across inference replicas. The configuration is a storage URL, not application code:
+[LMCache](https://github.com/LMCache/LMCache) is a popular connector layer that implements this for vLLM and SGLang, and it supports Redis-protocol backends as the remote tier - which means Valkey works as the shared KV store across inference replicas. The configuration is a storage URL, not application code:
 
 ```yaml
 # lmcache configuration (illustrative)
@@ -111,7 +111,7 @@ Aggregations close the loop for analytics-shaped questions over the same index -
 
 ## Admission control: token budgets, rate limiting, dedup
 
-In front of the LLM sits the least glamorous layer of the stack, and it runs entirely on primitives that predate the AI workload by a decade. It earns a section anyway, because "AI infrastructure" is not only the exotic new stuff, and because token-denominated cost makes admission control a correctness problem rather than a politeness problem.
+In front of the LLM - for any team managing token cost across its own tenants or users against a provider API, not only an inference provider - sits the least glamorous layer of the stack, and it runs entirely on primitives that predate the AI workload by a decade. It earns a section anyway, because "AI infrastructure" is not only the exotic new stuff, and because token-denominated cost makes admission control a correctness problem rather than a politeness problem.
 
 Token budgets are atomic counters. The unit is tokens rather than requests, and the increment happens after the response when actual usage is known, with a pre-check before dispatch:
 
