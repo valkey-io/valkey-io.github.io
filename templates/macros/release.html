@@ -1,4 +1,5 @@
-<strong>Release Date:</strong>  {{ release_date | date(format="%Y-%m-%d") }} <br/> 
+{% macro release_info(date, release) %}
+<strong>Release Date:</strong>  {{ date| date(format="%Y-%m-%d") }} <br/> 
 <strong>GitHub Release:</strong> <a href="https://github.com/valkey-io/valkey/releases/tag/{{release.tag}}">{{release.tag}}</a><br />
 <hr />
 
@@ -39,3 +40,6 @@
     {% endfor %}
 {% endfor  %}
 {% endif %}
+
+{% endmacro release_info %}
+
