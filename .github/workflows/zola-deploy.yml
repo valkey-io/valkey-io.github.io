@@ -21,12 +21,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: >-
-            ${{ github.event_name == 'pull_request' &&
-                github.head_ref || 'main' }}
-          repository: >-
-            ${{ github.event_name == 'pull_request' &&
-                github.event.pull_request.head.repo.full_name || 'valkey-io/valkey-io.github.io' }}
+          ref: ${{ github.event_name != 'pull_request' && 'main' || '' }}
           path: website
 
       - name: Checkout valkey-doc

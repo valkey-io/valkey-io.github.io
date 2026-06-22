@@ -4,6 +4,8 @@ description = "The new Swift client for Valkey is now in preview. Learn about it
 date= 2025-08-04 00:00:00
 authors= [ "adamfowler"]
 
+[taxonomies]
+blog_type = ["Announcements"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"

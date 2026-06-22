@@ -36,7 +36,7 @@ button_url = "/commands"
 [[extra.documentation_cards]]
 title = "Clients"
 description = "Official Valkey client libraries include support for:"
-features = ["Python", "Java", "Go", "Node.js", "PHP"]
+features = ["Python", "Java", "Go", "Node.js", "PHP", "C#"]
 button_text = "Learn More"
 button_url = "/clients"
 

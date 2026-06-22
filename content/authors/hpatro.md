@@ -3,9 +3,9 @@ title: Harkrishn Patro
 extra:
     photo: '/assets/media/authors/hpatro.jpeg'
     github: hpatro
+    tsc:
+        affiliation: "Apple"
 ---
-
-Harkrishn Patro is a Software Engineer at AWS.
 
 Harkrishn is passionate about distributed systems, databases, anything related to data.
 
