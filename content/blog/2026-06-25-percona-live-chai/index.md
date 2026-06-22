@@ -1,8 +1,11 @@
 +++
 title = "Percona Live Session Recap: Supercharging LLM Inference with Valkey KV Caching"
-date = 2026-06-11
+date = 2026-06-25
 description = "Supercharging LLM Inference - KV Caching with Valkey"
 authors = ["crystalpham"]
+[taxonomies]
+blog_type = ["Community Highlight"]
+[extra]
 +++
 
 At Percona Live 2026, Chaitanya Nuthalapati (Sr. Technical Product Manager at AWS) presented a technical session on optimizing Large Language Model (LLM) inference inside agentic workflows. The session highlighted the mechanics of Key-Value (KV) caching and detailed how an external, multi-tier caching layer using Valkey addresses the memory and compute bottlenecks of scaling multi-turn AI conversations.
@@ -110,4 +113,3 @@ Positive TCO Crossover: The time and network cost required to serialize, transfe
 Low Local Cache Miss Rates: Your local GPU/CPU memory is entirely sufficient to sustain your maximum concurrent user sessions without overflowing.
 
 Low Prefix/Context Reuse: Prompts are short, unique, or non-repeating, resulting in a low read-to-write ratio that fails to justify cache orchestration costs.
-```
