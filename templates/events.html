@@ -147,6 +147,14 @@ document.addEventListener('DOMContentLoaded', function() {
     return 'Third Party';
   }
 
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
   function render() {
     var key = months[currentIdx];
     var parts = key.split('-');
@@ -177,7 +185,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (hasEvents) {
         var labels = '';
         hasEvents.forEach(function(e) {
-          labels += '<a href="' + e.url + '" class="event-label ' + e.type + '" title="' + e.title + '">' + e.title + '</a>';
+          var safeTitle = escapeHtml(e.title);
+          labels += '<a href="' + e.url + '" class="event-label ' + e.type + '" title="' + safeTitle + '">' + safeTitle + '</a>';
         });
         html += '<div class="calendar-day has-event"><span class="day-num">' + d + '</span>' + labels + '</div>';
       } else {
@@ -211,9 +220,13 @@ document.addEventListener('DOMContentLoaded', function() {
               String(nowLocal.getMonth() + 1).padStart(2, '0') + '-' +
               String(nowLocal.getDate()).padStart(2, '0');
   var currentMonth = today.substring(0, 7);
-  var thisMonthUpcoming = events.filter(function(e) { return e.date.substring(0, 7) === currentMonth && eventEndDate(e) >= today; })
+  function touchesCurrentMonth(e) {
+    return eventMonthKeys(e).indexOf(currentMonth) !== -1;
+  }
+
+  var thisMonthUpcoming = events.filter(function(e) { return touchesCurrentMonth(e) && eventEndDate(e) >= today; })
                         .sort(function(a, b) { return a.date.localeCompare(b.date); });
-  var upcoming = events.filter(function(e) { return eventEndDate(e) >= today && e.date.substring(0, 7) !== currentMonth; })
+  var upcoming = events.filter(function(e) { return eventEndDate(e) >= today && !touchesCurrentMonth(e); })
                        .sort(function(a, b) { return a.date.localeCompare(b.date); });
   var past = events.filter(function(e) { return eventEndDate(e) < today; })
                    .sort(function(a, b) { return b.date.localeCompare(a.date); });

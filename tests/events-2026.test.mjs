@@ -129,11 +129,23 @@ assert.doesNotMatch(
 const eventsTemplate = readFileSync(join(repoRoot, "templates", "events.html"), "utf8");
 assert.match(eventsTemplate, /legend-dot meetup-hackathon/, "legend should show meetup/hackathon type");
 assert.match(eventsTemplate, /Meetup \/ Hackathon/, "cards should label meetup/hackathon events");
-assert.match(eventsTemplate, /title="' \+ e\.title \+ '"/, "calendar labels should expose full titles on hover");
+assert.match(eventsTemplate, /safeTitle/, "calendar labels should escape titles before rendering them");
+assert.match(eventsTemplate, /&quot;/, "calendar label title attributes should escape quotes");
 assert.match(eventsTemplate, /endDate:/, "template should expose event end dates");
 assert.match(eventsTemplate, /page\.extra\.end_date/, "template should read end_date from frontmatter");
 assert.match(eventsTemplate, /eventDateKeys/, "calendar should expand multi-day events onto every covered day");
 assert.match(eventsTemplate, /eventMonthKeys/, "cards should know every month touched by multi-day events");
+assert.match(eventsTemplate, /touchesCurrentMonth/, "event cards should split by every covered month");
+assert.match(
+  eventsTemplate,
+  /eventMonthKeys\(e\)\.indexOf\(currentMonth\) !== -1/,
+  "cross-month events like Laracon India should be included in each covered month",
+);
+assert.doesNotMatch(
+  eventsTemplate,
+  /thisMonthUpcoming = events\.filter\(function\(e\) \{ return e\.date\.substring\(0, 7\) === currentMonth/,
+  "this-month filtering should not rely only on the event start month",
+);
 assert.match(eventsTemplate, /data-months/, "event cards should expose every covered month");
 assert.match(eventsTemplate, /formatDateRange/, "cards should show date ranges for multi-day events");
 assert.match(eventsTemplate, /eventEndDate\(e\) < today \? ' past' : ''/, "past cards should be based on event end date");
