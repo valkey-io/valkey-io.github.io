@@ -1,9 +1,8 @@
 +++
-title: "Reducing Memory Overhead in Valkey 9.1"
-date: 2026-06-24
-description: "With Valkey 9.1, per-key memory overhead is quietly cut by up to 20% for strings and 7 bytes per sorted set member, without changing a single command or configuration."
-authors: ["Andriciuc", "rainsupreme"]
-
+title = "Reducing Memory Overhead in Valkey 9.1"
+date = 2026-06-24
+description = "With Valkey 9.1, per-key memory overhead is quietly cut by up to 20% for strings and 7 bytes per sorted set member, without changing a single command or configuration."
+authors = ["Andriciuc", "rainsupreme"]
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
 [extra]
