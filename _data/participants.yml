@@ -197,4 +197,7 @@
     alt: Freshworks Logo
   company: >
     Freshworks (NASDAQ: FRSH) is a leading provider of uncomplicated, AI-powered software that delivers exceptional employee and customer experiences. Its service, IT, and CRM solutions are designed to be quick to deploy and easy to use, and are trusted by organizations of all sizes worldwide.
-    Freshworks participates in the Valkey ecosystem through contributions to Valkey GLIDE, including work on the [valkey-glide-ruby](https://github.com/valkey-io/valkey-glide-ruby) Ruby client. Freshworks has also adopted Valkey in production for a major workload.
+
+    Freshworks authored [valkey-glide-ruby](https://github.com/valkey-io/valkey-glide-ruby) (gem: `valkey-rb`), the official Ruby client for Valkey GLIDE, and contributed to the underlying GLIDE Rust core that powers it. Built on the same valkey-glide Rust FFI foundation as the Python, Java, Node.js, and Go clients, the Ruby client offers a redis-rb-compatible API, standalone and cluster modes, TLS/SSL, native OpenTelemetry tracing and metrics, client statistics, and comprehensive command coverage.
+
+    Beyond Ruby, Freshworks has contributed across the GLIDE ecosystem, extending the Java client and its Jedis compatibility layer, the Go client, and shared Rust core capabilities. After rigorous evaluation, Freshworks adopted Valkey in production for one of its major workloads.
