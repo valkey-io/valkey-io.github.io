@@ -11,6 +11,9 @@ assignees: ''
 This is an issue created to propose a video posted to our YouTube page. Make sure to fill out all the fields so the team can best plan to sequence, edit, and publish your post in a timely manner.
 Please replace everything in `[]` before submitting.
 
+**Is this intended to be a short form or long form video?**
+[Short form includes YouTube Shorts, Instagram Reels, TikTok, etc.].
+
 **What is your proposed topic?**
 [Please include a 1-2 sentence description of the content of the video].
 
