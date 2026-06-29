@@ -48,6 +48,4 @@ Mark your calendar for October in Prague and visit the [ValkeyConf](https://even
 
 Help us make the first ValkeyConf one to remember.
 
-Note: We’ll also be hosting a Valkey Contributor Summit on October 6th alongside ValkeyConf. This invite-only gathering will bring together active contributors and maintainers to collaborate on the future of the project.
-
-More details will be shared soon. If you’re interested in attending, please reach out in the **#valkey-contributors** channel on Slack.  
+Note: We’ll also be hosting a [Valkey Contributor Summit](https://events.linuxfoundation.org/valkey-contributor-summit/) on October 6th alongside ValkeyConf. This invite-only gathering will bring together active contributors and maintainers to collaborate on the future of the project. If you’re interested in attending, please [sumbit registration for approval](https://events.linuxfoundation.org/valkey-contributor-summit/register/) or reach out in the **#valkey-contributors** channel on [Slack](valkey.io/slack).
