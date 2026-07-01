@@ -7,6 +7,7 @@
     <meta name="Copyright" content="" />
     <meta name="keywords" content="open-source, valkey" />
     <meta property="og:image" content="/img/valkey-logo-og.png" />
+    <meta name="algolia-site-verification"  content="D96477DE35118476" />
     {% if page and page.extra and page.extra.custom_meta%}
     {{ page.extra.custom_meta | safe }}
     {% endif %}
@@ -55,6 +56,7 @@
     {%- endif -%}">
 
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@4" /> 
     <link rel="alternate" type="application/atom+xml" title="Atom feed" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" />
 
     <!-- Nav JS -->
@@ -74,6 +76,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-MFFCB7SR');</script>
     <!-- End Google Tag Manager -->
+    
 
     {% if page and page.extra and page.extra.head_extra %}{{ page.extra.head_extra }}{% endif %}
 </head>
