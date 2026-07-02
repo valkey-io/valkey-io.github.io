@@ -190,6 +190,16 @@
       [Tencent Cloud](https://www.cloud.tencent.com) ([English](https://www.tencentcloud.com)), one of the world's leading cloud companies, is committed to creating innovative solutions to resolve real-world issues and enabling digital transformation for smart industries.
       Through our extensive global infrastructure, Tencent Cloud provides businesses across the globe with stable and secure industry-leading cloud products and services, leveraging technological advancements such as cloud computing, Big Data analytics, AI, communication and network security.
 
+- name: Vultr
+  link: https://www.vultr.com/products/managed-databases/valkey/
+  image:
+    path: /img/vultr.svg
+    alt: Vultr Logo
+  company: >
+    Vultr is the AI-first global cloud platform trusted by hundreds of thousands of active customers across 185 countries. It delivers flexible, scalable Cloud Compute, Cloud GPU, Bare Metal, and Cloud Storage solutions, enabling developers and enterprises to build, deploy, and scale modern applications and AI workloads with confidence.
+  offering: >
+    Vultr Managed Databases for Valkey provides a fully managed, Redis-compatible Valkey service with automated provisioning, high availability, automated backups, monitoring, and point-in-time recovery, enabling developers to deploy and operate production-ready Valkey clusters without managing the underlying infrastructure.
+
 - name: Freshworks
   link: https://www.freshworks.com
   image:
