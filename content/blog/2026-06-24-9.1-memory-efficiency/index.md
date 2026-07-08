@@ -9,8 +9,6 @@ blog_type = ["Technical Deep Dive"]
 featured = true
 +++
 
-## Reducing Memory Overhead in Valkey 9.1
-
 Valkey 9.1 introduces two behind the scenes optimizations that reduce the per-key memory overhead without requiring any new commands or configuration changes.
 
 The two conceptual changes delivered across three PR's below happen deep within Valkey's C data structures, reducing the memory required to store strings and sorted sets, by up to 20% overhead for string keys and 7 bytes for every sorted set member. These changes compound quickly when millions of keys are in use.
@@ -19,11 +17,13 @@ This blog explores these changes, and what they mean for your real-world deploym
 
 ## The Cost of Internal Recordkeeping
 
-In Valkey, the values live inside `robj`, a C structure Redis Object. This structure represents not only your data, but also metadata, flags, reference counts and a pointer to the actual value. In the case of `embstr` encoding, the optimized memory encoding for small strings, the string data is immediately allocated after the `robj` header under the form of a contiguous block of memory instead of having two separate memory allocations (for metadata and string value). The simplified layout before Valkey 9.1:
+In Valkey, the values live inside `robj`, a ref-counted object. This structure represents not only your data, but also metadata, flags, reference counts and a pointer to the actual value. In the case of `embstr` encoding, the optimized memory encoding for small strings, the string data is immediately allocated after the `robj` header under the form of a contiguous block of memory instead of having two separate memory allocations for metadata and string value. The simplified layout before Valkey 9.1:
 
-![embstr memory before](embstr_memory_before_9.1.svg)
+<p align="center">
+  <img src="embstr_memory_before_9.1.svg" width="500">
+</p>
 
-The `ptr` field pointed to the string data that followed the header, however the pointer's value was always deterministic due to the `embstr` encoding guaranteeing that the string is always adjacent to the header, storing this data was redundant.
+The `ptr` field pointed to the string data that followed the header, however the pointer's value was always deterministic due to the `embstr` encoding guaranteeing that the string is always adjacent to the header, so storing this data was redundant.
 
 ### Eliminating the Redundant Pointer
 
@@ -33,23 +33,19 @@ After the changes in Valkey 9.1, the `ptr` field is removed from the embedded st
 
 The practical result is that every value stored with `embstr` encoding now saves 8 bytes of overhead. For a workload using 16-byte keys and 16-byte values, this represents roughly a 20% reduction in per-item memory overhead.
 
-### Raising the Embstr Threshold from 64 to 128 Bytes
+### Raising the `embstr` Threshold from 64 to 128 Bytes
 
-Removing the above redundant pointer reduced the size of every embedded string object. Because the robj header itself got smaller, this means the same total allocation budget now accommodates more actual string content.
+Removing this redundant pointer reduced the size of every embedded string object. Because the robj header itself got smaller, this means the same total allocation budget now accommodates more actual string content.
 
-Raising this threshold to 128 bytes (including key, expiry metadata, and value) is additive and this allows the following general benefits:
-
-- fewer allocations per object
-- lower overhead
-- more workloads benefit automatically
+Raising this threshold to 128 bytes (including key, expiry metadata, and value) is additive and this allows several benefits such as fewer allocations per object, lower overhead and more workloads benefit automatically.
 
 Any key returning `embstr` benefits from both of the above optimizations with no extra configuration required.
 
 ### Optimizing Sorted Sets to Reduce Overhead
 
-The final improvement in Valkey 9.1 targets Sorted Sets (ZSETs), where the sets also received a memory reduction for workloads that use the `skiplist` representation.
+The final improvement in Valkey 9.1 targets Sorted Sets (`ZSET`), where the sets also received a memory reduction for workloads that use the `skiplist` representation.
 
-Once a sorted set grows beyond 128 elements, Valkey stores it internally as a `skiplist`. Before Valkey 9.1, each `skiplist` node contained a pointer to a separately allocated SDS string representing the member:
+In the default configuration, once a sorted set grows beyond 128 elements, Valkey stores it internally as a `skiplist`. Before Valkey 9.1, each `skiplist` node contained a pointer to a separately allocated SDS string representing the member:
 
 ```txt
 +------------------+-------+------------------+---------+-----+---------+
@@ -59,7 +55,10 @@ Once a sorted set grows beyond 128 elements, Valkey stores it internally as a `s
         +-------> element SDS
 ```
 
-In Valkey 9.1 however, the SDS representation is embedded directly inside the `skiplist` node instead of being stored a separate pointer:
+!!! note
+        SDS (Simple Dynamic String) is Valkey's internal  dynamic string implementation. Most keys, string values, and many internal data structures are stored as SDS objects.
+
+In Valkey 9.1 however, the SDS representation is embedded directly inside the `skiplist` node instead of being stored as a separate pointer:
 
 ```txt
 +-------+------------------+---------+-----+---------+--------------+
@@ -76,8 +75,8 @@ The above improvements effectiveness vary by workload, key sizes and data type m
 | Change | Affected encoding | Saving per item |
 |--------|--------------------|----------------:|
 | Remove `robj->ptr` | `embstr` strings | 8 bytes |
-| Raise `embstr` threshold to 128 bytes | Strings 65–128 bytes (newly eligible for `embstr`) | 8 bytes (newly applies) |
-| Embed element SDS inside skiplist node | ZSET members (skiplist encoding) | 7 bytes |
+| Raise `embstr` threshold to 128 bytes | Strings with lengths of 65–128 bytes (newly eligible for `embstr`) | 8 bytes (newly applies) |
+| Embed element SDS inside skiplist node | `ZSET` members (skiplist encoding) | 7 bytes |
 
 ## What This Means for Production
 
@@ -85,11 +84,13 @@ These improvements are transparent and you do not need to change your configurat
 
 For clusters that are operating near memory limits, these no configuration required reductions may bring you back into having a comfortable headroom. However the impact is most pronounced for workloads dominated by small strings or large sorted sets.
 
+If you are utilizing Valkey as a dedicated cache with an eviction policy such as `allkeys-lru`, these memory savings effectively increase your cache capacity. With more data fitting into the same amount of memory, your cache will achieve a higher hit rate without requiring any changes.
+
 With Valkey 9.1 available already, this is the right time to re-examine the `MEMORY USAGE` command and baselines on representative keys and compare them against your 9.0 measurements. The differences will tell you exactly what your specific workload reclaimed.
 
 ## Key Takeaways
 
-Valkey 9.1 reduces per-key memory overhead through two targeted internal changes. Embstr-encoded strings shed 8 bytes by eliminating a redundant pointer, and the threshold for embstr encoding doubles from 64 to 128 bytes, letting more values benefit from the compact layout. The sorted set skiplist nodes eliminate a separate heap allocation per member, saving 7 bytes each. None of these changes require configuration changes or application modifications, they take effect immediately on upgrade.
+Valkey 9.1 reduces per-key memory overhead through two targeted internal changes. `embstr`-encoded strings shed 8 bytes by eliminating a redundant pointer, and the threshold for `embstr` encoding doubles from 64 to 128 bytes, letting more values benefit from the compact layout. The sorted set skiplist nodes eliminate a separate heap allocation per member, saving 7 bytes each. None of these changes require configuration changes or application modifications, they take effect immediately on upgrade.
 
 [Valkey 9.1 is available now](https://valkey.io/download/releases/v9-1-0/).
 
@@ -97,4 +98,4 @@ Valkey 9.1 reduces per-key memory overhead through two targeted internal changes
 
 - [PR 2516 — Remove redundant robj->ptr for embstr encoding](https://github.com/valkey-io/valkey/pull/2516)
 - [PR 3397 — Raise embstr threshold from 64 to 128 bytes](https://github.com/valkey-io/valkey/pull/3397)
-- [PR 2508 — Embed ele in skiplist node for ZSET members](https://github.com/valkey-io/valkey/pull/2508)
+- [PR 2508 — Embed ele in skiplist node for `ZSET` members](https://github.com/valkey-io/valkey/pull/2508)
