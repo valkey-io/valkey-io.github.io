@@ -7,7 +7,11 @@ authors =  ["kyledvs","crystalpham"]
 blog_type = ["Community Highlight"]
 +++
 
-<iframe width="800" height="450" src="https://www.youtube.com/embed/cl3kwjG-Yzs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<style>
+.percona-spotlight-video { justify-content: center; display: flex;  }
+.percona-spotlight-video iframe { aspect-ratio: 16 / 9; width: 100% !important; }
+</style>
+{{ youtube(id="cl3kwjG-Yzs", class="percona-spotlight-video") }}
 
 Standard industry software consistently grows heavier, consuming more RAM with every minor update. Valkey reverses this trend entirely: upcoming engineering milestones drop the software's structural footprint, meaning a simple binary upgrade immediately hands back physical memory to the underlying infrastructure. Percona’s [General Manager of the Redis and Valkey Ecosystem, Kyle Davis](https://www.percona.com/press/percona-appoints-kyle-davis-as-general-manager-of-redis-valkey-ecosystem/), sat down to detail how the open source community drives these computational efficiencies, eliminates translation bottlenecks, and enforces database-level multi-tenancy.
 
