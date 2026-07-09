@@ -1,4 +1,5 @@
 {% extends "right-aside.html" %}
+{% import "macros/release.html" as release_macros %}
 
 {% block subhead_content%}
 <h1 class="page-title">Download Latest</h1>
@@ -31,7 +32,7 @@ The <a href="./releases/">releases</a> page contains links to download all curre
 
 
 <h3> Version {{major}}.x.x </h3>
-{% include "includes/release.html" %}
+{{ release_macros::release_info(date= most_recent_release_page[0].date, release= most_recent_release_page[0].extra ) }}
 
 <h2> Latest supported version of past releases</h2>
 
@@ -42,7 +43,7 @@ The <a href="./releases/">releases</a> page contains links to download all curre
         {% set_global major = older_major %}
         {% set release = older_release.extra %}
         <h3> Version {{major}}.x.x </h3>
-        {% include "includes/release.html" %}
+        {{ release_macros::release_info(date= older_release.date, release= older_release.extra ) }}
     {% endif %}
 {% endfor %}
 
