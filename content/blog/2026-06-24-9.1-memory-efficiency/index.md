@@ -19,9 +19,7 @@ This blog explores these changes, and what they mean for your real-world deploym
 
 In Valkey, the values live inside `robj`, a ref-counted object. This structure represents not only your data, but also metadata, flags, reference counts and a pointer to the actual value. In the case of `embstr` encoding, the optimized memory encoding for small strings, the string data is immediately allocated after the `robj` header under the form of a contiguous block of memory instead of having two separate memory allocations for metadata and string value. The simplified layout before Valkey 9.1:
 
-<p align="center">
-  <img src="embstr_memory_before_9.1.svg" width="500">
-</p>
+![embstr memory before](embstr_memory_before_9.1.svg)
 
 The `ptr` field pointed to the string data that followed the header, however the pointer's value was always deterministic due to the `embstr` encoding guaranteeing that the string is always adjacent to the header, so storing this data was redundant.
 
@@ -35,17 +33,30 @@ The practical result is that every value stored with `embstr` encoding now saves
 
 ### Raising the `embstr` Threshold from 64 to 128 Bytes
 
-Removing this redundant pointer reduced the size of every embedded string object. Because the robj header itself got smaller, this means the same total allocation budget now accommodates more actual string content.
+Removing this redundant pointer reduced the size of every embedded string object. Because the `robj` header itself got smaller, this means the same total allocation budget now accommodates more actual string content.
 
-Raising this threshold to 128 bytes (including key, expiry metadata, and value) is additive and this allows several benefits such as fewer allocations per object, lower overhead and more workloads benefit automatically.
+Raising this threshold to 128 bytes (including key, expiry metadata, and value) means more string sizes now qualify for the more compact `embstr` layout instead of falling through the `raw` encoding.
+
+You can check which encoding a given key is using with `OBJECT ENCODING`:
+
+```bash
+> OBJECT ENCODING key
+"embstr"
+```
 
 Any key returning `embstr` benefits from both of the above optimizations with no extra configuration required.
 
+The saving per key is not a flat number. Because Valkey allocates memory through jemalloc, requests are rounded up to fixed size classes rather than granting the exact byte count requested. In practice this produces overhead reductions ranging from roughly 17% to 44%, averaging around 26%.
+
+ _Note: Measured across a range of key+value sizes (16-byte keys), 5 million items per test, Valkey 9.0 compared to 9.1._
+
+The exact saving depends on where your key+value sizes fall relative to jemalloc's size class boundaries.
+
 ### Optimizing Sorted Sets to Reduce Overhead
 
-The final improvement in Valkey 9.1 targets Sorted Sets (`ZSET`), where the sets also received a memory reduction for workloads that use the `skiplist` representation.
+The final improvement in Valkey 9.1 targets Sorted Sets (`ZSET`), where the sets also received a memory reduction for workloads that use the `skiplist` encoding representation.
 
-In the default configuration, once a sorted set grows beyond 128 elements, Valkey stores it internally as a `skiplist`. Before Valkey 9.1, each `skiplist` node contained a pointer to a separately allocated SDS string representing the member:
+In the default configuration, once a sorted set grows beyond 128 elements, Valkey stores it internally as a `skiplist` encoding. Before Valkey 9.1, each `skiplist` node contained a pointer to a separately allocated SDS string representing the member:
 
 ```txt
 +------------------+-------+------------------+---------+-----+---------+
@@ -55,8 +66,7 @@ In the default configuration, once a sorted set grows beyond 128 elements, Valke
         +-------> element SDS
 ```
 
-!!! note
-        SDS (Simple Dynamic String) is Valkey's internal  dynamic string implementation. Most keys, string values, and many internal data structures are stored as SDS objects.
+_Note: SDS (Simple Dynamic String) is Valkey's internal  dynamic string implementation. Most keys, string values, and many internal data structures are stored as SDS objects._
 
 In Valkey 9.1 however, the SDS representation is embedded directly inside the `skiplist` node instead of being stored as a separate pointer:
 
@@ -66,7 +76,7 @@ In Valkey 9.1 however, the SDS representation is embedded directly inside the `s
 +-------+------------------+---------+-----+---------+--------------+
 ```
 
-For sorted sets with thousands or millions of members, this compounds significantly. A `ZSET` with 100,000 members saves roughly 700KB (arithmetic estimate) of memory from this change alone. This change produces a net saving of 7 bytes per sorted set member by removing the pointer.
+For sorted sets with thousands or millions of members, this compounds significantly. A `ZSET` with 100,000 members saves roughly 700KB of memory from this change alone. This change produces a net saving of 7 bytes per sorted set member by removing the pointer.
 
 ## Quantifying the Impact
 
@@ -84,15 +94,24 @@ These improvements are transparent and you do not need to change your configurat
 
 For clusters that are operating near memory limits, these no configuration required reductions may bring you back into having a comfortable headroom. However the impact is most pronounced for workloads dominated by small strings or large sorted sets.
 
-If you are utilizing Valkey as a dedicated cache with an eviction policy such as `allkeys-lru`, these memory savings effectively increase your cache capacity. With more data fitting into the same amount of memory, your cache will achieve a higher hit rate without requiring any changes.
+If you are utilizing Valkey as a dedicated cache running near full capacity with an eviction policy such as `allkeys-lru`, these memory savings effectively increase your cache capacity. With more data fitting into the same amount of memory, your cache will achieve a higher hit rate without requiring any changes.
 
-With Valkey 9.1 available already, this is the right time to re-examine the `MEMORY USAGE` command and baselines on representative keys and compare them against your 9.0 measurements. The differences will tell you exactly what your specific workload reclaimed.
+## Try This Against Your Own Workload
 
-## Key Takeaways
+None of the above matters until you check it against real keys. Here's how to find out what Valkey 9.1 is worth to you specifically.
 
-Valkey 9.1 reduces per-key memory overhead through two targeted internal changes. `embstr`-encoded strings shed 8 bytes by eliminating a redundant pointer, and the threshold for `embstr` encoding doubles from 64 to 128 bytes, letting more values benefit from the compact layout. The sorted set skiplist nodes eliminate a separate heap allocation per member, saving 7 bytes each. None of these changes require configuration changes or application modifications, they take effect immediately on upgrade.
+Pick a handful of representative keys from your production deployment and run `MEMORY USAGE` on a 9.0 instance versus a 9.1 instance:
 
-[Valkey 9.1 is available now](https://valkey.io/download/releases/v9-1-0/).
+```bash
+> MEMORY USAGE session:abc123
+> OBJECT ENCODING session:abc123
+```
+
+If a string key that used to report `raw` now reports `embstr`, that key just got cheaper to store. No code change, no config change, just a straight upgrade. Multiply the byte difference by your key count and you have the real number, not just an estimate.
+
+For sorted sets, the math is even more direct: 7 bytes times the number of members stored across your skiplist-backed sorted sets gives you a concrete memory reclaim figure. On a sorted set workload with 500K members, that's roughly 3.5MB back. On a cluster running thousands of sorted sets, it adds up to real headroom, allowing you to defer a scale-up or right-size to a smaller node depending on your needs.
+
+The memory you get back by simply moving to 9.1 and measuring what has changed is the real upgrade.
 
 ## Reference PRs
 
