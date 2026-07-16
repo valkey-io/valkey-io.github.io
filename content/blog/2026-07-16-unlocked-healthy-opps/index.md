@@ -79,7 +79,7 @@ If you run Valkey in production, contribute code, or work on real-time data infr
 
 The CFP is open for sessions and lightning talks on: architecture and performance, use cases and adoption stories, integrations and tooling, and more. First-time speakers are encouraged to submit. The audience is practitioners: developers, SREs, DBAs, and platform engineers doing the actual work.
 
-ValkeyConf 2026 is October 5 in Prague. CFP closes August 2 at 11:59 PM GMT+2. Speaker notifications go out August 12.
+ValkeyConf 2026 is October 5 in Prague. CFP closes August 2 at 11:59 PM GMT+2.
 
 [Submit your session now >>](https://sessionize.com/valkeyconf-2026/)
 
