@@ -85,7 +85,7 @@ The above improvements effectiveness vary by workload, key sizes and data type m
 | Change | Affected encoding | Saving per item |
 |--------|--------------------|----------------:|
 | Remove `robj->ptr` | `embstr` strings | 8 bytes |
-| Raise `embstr` threshold to 128 bytes | Strings with lengths of 65–128 bytes (newly eligible for `embstr`) | 8 bytes (newly applies) |
+| Raise `embstr` threshold to 128 bytes | Objects newly eligible under the raised threshold | 8 bytes (newly applies) |
 | Embed element SDS inside skiplist node | `ZSET` members (skiplist encoding) | 7 bytes |
 
 ## What This Means for Production
@@ -94,7 +94,7 @@ These improvements are transparent and you do not need to change your configurat
 
 For clusters that are operating near memory limits, these no configuration required reductions may bring you back into having a comfortable headroom. However the impact is most pronounced for workloads dominated by small strings or large sorted sets.
 
-If you are utilizing Valkey as a dedicated cache running near full capacity with an eviction policy such as `allkeys-lru`, these memory savings effectively increase your cache capacity. With more data fitting into the same amount of memory, your cache will achieve a higher hit rate without requiring any changes.
+If you are utilizing Valkey as a dedicated cache running near full capacity with an eviction policy such as `allkeys-lru`, these memory savings effectively increase your cache capacity. With more data fitting into the same amount of memory, your cache may achieve a higher hit rate without requiring any changes.
 
 ## Try This Against Your Own Workload
 
