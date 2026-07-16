@@ -11,7 +11,7 @@ featured_image = "/assets/media/featured/random-05.webp"
 +++
 
 
-If you’ve used Valkey for very long you’re probably aware of the different primary data types in the core: strings, hashes, lists, sets, sorted sets, and streams. Each data type has an accompanying set of commands that manipulate that data type. For example, you use [`HSET`](/commands/hset/) to set a field and value pair to a hash, but you don’t use, for example, HSET to add an element to a list. What if I told you that there is an entire hidden layer that you never see unless you use a specific `OBJECT` command and can’t control unless you start tinkering with the configuration? And that this could have a profound effect on your total usable storage: enough that misconfiguration could mean that you’re wasting much of your infrastructure. Read on to find out how you can understand and tweak the _real_ underlying structures.  
+If you’ve used Valkey for very long you’re probably aware of the different primary data types in the core: strings, hashes, lists, sets, sorted sets, and streams. Each data type has an accompanying set of commands that manipulate that data type. For example, you use [`HSET`](/commands/hset/) to set a field and value pair to a hash, but you don’t use, for example, HSET to add an element to a list. What if I told you that there is an entire hidden layer that you never see unless you use a specific `OBJECT` command and can’t control unless you start tinkering with the configuration? And that this could have a profound effect on your total usable storage: enough that careful configuring could mean significant savings in your infrastructure. Read on to find out how you can understand and tweak the _real_ underlying structures.  
 
 ## Engineering tradeoffs
 
@@ -91,9 +91,9 @@ Streams still use an encoding but there isn’t a threshold because there is onl
 
 ### Should you change these settings?
 
-Maybe. It depends on what you’re optimizing for and what your data looks like. Valkey's default encoding configuration values are fine for many use cases, but if you're strategy is to cost-optimize or maximize your infrastructure, it's worth at least evaluating. 
+Maybe. It depends on what you’re optimizing for and what your data looks like. Valkey's default encoding configuration values are fine for many use cases, but if your strategy is to cost-optimize or maximize your infrastructure, it's worth at least evaluating the configuration compared to your specific data/usage.
 
-There are no-brainer situations: let’s say you store data in hashes and they tend to have values in length of 65 bytes, right above the threshold, and you have lower throughput needs. Upping the configuration value for `hash-max-listpack-value` to match a realistic length for your data could deliver huge savings either by lowering the infrastructure requirements or [letting you cache more with the same cluster](https://www.youtube.com/watch?v=cd4-UnU8lWY). 
+For the most basic evaluation, you can sample keys using `OBJECT ENCODING` to identify spots where the data is using the more voluminous encoding, then understand what is triggering it and make a call on the configuration. Of course, there are no-brainer situations: let’s say you store data in hashes and they tend to have values in length of 65 bytes, right above the threshold, and you have lower throughput needs. Upping the configuration value for `hash-max-listpack-value` to match a realistic length for your data could deliver huge savings either by lowering the infrastructure requirements or [letting you cache more with the same cluster](https://www.youtube.com/watch?v=cd4-UnU8lWY). 
 
 Contextualizing an extreme example: having a 100gb cluster (5 nodes, 20gb each) packed with 95% of the keys reaching 1 over the `hash-max-listpack-value`. 
 
@@ -102,14 +102,14 @@ Contextualizing an extreme example: having a 100gb cluster (5 nodes, 20gb each) 
 | Original | 100gb        | 95gb            |  212                            | 20gb        | 5              |
 | New      | 58.58gb      | 0               |  120 <br /> (56.6% of original) | 20gb        | 3              |
 
-So, you can take away two full primaries and whatever associated replicas. As previously mentioned, this is an extreme example, it's unlikely that you have 95% of your data falling outside this threshold. Let's say that you have 60% of your keys that reach above the wrong-sized configuration _and_ you can scale back your infrastructure to a smaller-sized machine or instance that has only 16gb of RAM.
+So, you can take away two full primaries and whatever associated replicas. As previously mentioned, this is an extreme example, it's unlikely that you have 95% of your data falling outside this threshold. Let's say that you have 60% of your keys that reach above configuration threshold _and_ you can scale back your infrastructure to a smaller-sized machine or instance that has only 16gb of RAM.
 
-|          | Cluster size | gb wrong-sized  | Wrong-sized key size            | Primary size | # of Primaries |
+|          | Cluster size | gb above threshold  | Above threshold key size            | Primary size | # of Primaries |
 | -------- | ------------ | --------------- | ------------------------------- | ------------ | -------------- |
 | Original | 100gb        | 60gb            |  212                            | 20gb         | 5              |
 | New      | 74gb         | 0               |  120 <br /> (56.6% of original) | 14.8gb       | 5              |
 
-The actual savings here depends on the difference in price for the new vs the old infrastructure, but typically in the cloud or on-prem, there are always break points in price at different specs and this sort of optimization can help you get your cost down when you needs just crest over the top of a break point. Of course, in either case, you can always use the new-found space for heretofore uncache data, reduce eviction, or allowing longer TTLs.
+The actual savings here depends on the difference in price for the new vs the old infrastructure, but typically in the cloud or on-prem, there are always break points in price at different specs and this sort of optimization can help you get your cost down when you need just crest over the top of a break point. Of course, in either case, you can always use the new-found space for heretofore uncached data, reduce eviction, or allowing longer TTLs.
 
 > **Wait! How do both a 65 and 64 length value result in a key size of 120?** <br />
 > The eagle-eyed amongst you might have noticed that the original example of `hash1` having a size of 64 bytes and a memory footprint of 120 then in this example we're showing keys that have a value length of 65 that also have 120 bytes memory footprint. 
@@ -117,9 +117,8 @@ The actual savings here depends on the difference in price for the new vs the ol
 > The overhead for hashes with listpack encoding and various sized values isn't entirely linear, it's a stair step. Using the same key pattern and field name, a value length of 49 to 63 was 104 bytes and lengths 64 to 79 was 120 bytes.
 > This explains why, in the original example, a length of 64 increased 15.38% over a length of 63 and yet the encoding was still the same.
 
-
-All this comes back to understanding that these configurations aren't a silver bullet and throwing wildly higher or lower values at the encoding configuration could result in suboptimal performance or efficiency. YMMV.
+All this comes back to understanding that these configurations aren't a silver bullet and throwing wildly higher or lower values at the encoding configuration could result in suboptimal performance or efficiency. YMMV: knowing your data types, sizes, and usage patterns, and (now) how encoding works in Valkey you have the tools to hone your configuration appropriately.
 
 ## Tell your story
 
-Did you save a bunch of RAM or opsmaxxing your throughput by tweaking a configuration in Valkey? [Share the knowledge by submitting an issue to write a blog](https://github.com/valkey-io/valkey-io.github.io/issues/new?template=blog_post_template.md) or write an presentation abstract for the upcoming [ValkeyConf](https://events.linuxfoundation.org/valkeyconf/).
+Did you save a bunch of RAM or opsmaxxing your throughput by tweaking a configuration in Valkey? [Share the knowledge by submitting an issue to write a blog](https://github.com/valkey-io/valkey-io.github.io/issues/new?template=blog_post_template.md) or write a presentation abstract for the upcoming [ValkeyConf](https://events.linuxfoundation.org/valkeyconf/).
