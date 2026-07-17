@@ -1,6 +1,6 @@
 +++
 title = "The secret life of data in Valkey"
-date = 2026-06-24
+date = 2026-07-21
 description = "If you’ve used Valkey for very long you’re probably well aware of the different data types, however what lies under the surface of these types could be the missing piece of your cost optimization strategy."
 authors = ["kyledvs"]
 [taxonomies]
@@ -49,7 +49,10 @@ Take a look at the results of the [`OBJECT ENCODING`](/commands/object-encoding/
 "hashtable"
 ```
 
-The 'hashtable' result might be expected, after all you’re using a hash command, but what’s a 'listpack'? Describing the intricacies of the 'listpack' encoding isn’t the point of this post (see [the code](https://github.com/valkey-io/valkey/blob/unstable/src/listpack.c)). The point is understanding how you interact with data is abstracted from the actual way it’s stored (an encoding). Let’s explore something else:
+The 'hashtable' result might be expected, after all you’re using a hash command, but what’s a 'listpack'? 
+A listpack is a memory-efficient data structure that stores elements sequentially in a single contiguous chunk of memory. When the data stored is not very large, it saves memory by minimizing the overhead of pointers.  Don't worry about the intricacies of 'listpack' encoding though, the point is understanding how you interact with data is abstracted from the actual way it’s stored: an encoding (see [the code](https://github.com/valkey-io/valkey/blob/unstable/src/listpack.c) for a deep dive on listpacks, if you're really interested). 
+
+Let’s explore something else:
 
 ```bash
 > LPUSH list1 foo
