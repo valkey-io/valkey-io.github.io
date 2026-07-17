@@ -97,10 +97,10 @@ For the most basic evaluation, you can sample keys using `OBJECT ENCODING` to id
 
 Contextualizing an extreme example: having a 100gb cluster (5 nodes, 20gb each) packed with 95% of the keys reaching 1 over the `hash-max-listpack-value`. 
 
-|          | Cluster size | gb wrong-sized  | Wrong-sized key size            | Primary size | # of Primaries |
-| -------- | ------------ | --------------- | ------------------------------- | ------------ | -------------- |
-| Original | 100gb        | 95gb            |  212                            | 20gb        | 5              |
-| New      | 58.58gb      | 0               |  120 <br /> (56.6% of original) | 20gb        | 3              |
+|          | Cluster Size | GB Over Threshold | Memory Usage per Key    | Primary Node Size | # of Primaries |
+| -------- | ------------ | ----------------- | ------------------------------- | ----------------- | -------------- |
+| Original | 100 GB       | 95 GB             |  212 B                            | 20 GB             | 5              |
+| New      | 58.8 GB      | 0                 |  120 B <br /> (56.6% of original) | 20 GB             | 3              |
 
 So, you can take away two full primaries and whatever associated replicas. As previously mentioned, this is an extreme example, it's unlikely that you have 95% of your data falling outside this threshold. Let's say that you have 60% of your keys that reach above configuration threshold _and_ you can scale back your infrastructure to a smaller-sized machine or instance that has only 16gb of RAM.
 
