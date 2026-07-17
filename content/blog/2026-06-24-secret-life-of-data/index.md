@@ -78,7 +78,7 @@ hash-max-listpack-entries 512
 hash-max-listpack-value 64
 ```
 
-This means that any hash with all values less than or equal to 64 in length (`hash-max-listpack-value`) and have less than 512 field-value pairs (`hash-max-listpack-entries`) will be encoded as a 'listpack', everything else as a 'hashtable'. In the original example, key `hash2` had a length of 65, triggering an encoding of 'hashtable', which is much less compact accounting for the 76.67% increase in size. 
+This means that a hash is encoded as a `listpack` if all its values are at most 64 bytes long (`hash-max-listpack-value`) and it contains fewer than 512 field-value pairs (`hash-max-listpack-entries`). If either threshold is exceeded, Valkey uses a `hashtable` encoding. In the original example, the value in `hash2` was 65 bytes long, triggering a transition to the `hashtable` encoding, which is significantly less compact and accounts for the 76.67% increase in memory usage.
 
 There are encoding configurations for:
 
