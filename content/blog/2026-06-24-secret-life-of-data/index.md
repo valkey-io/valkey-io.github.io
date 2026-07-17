@@ -71,7 +71,7 @@ While Valkey presents a _data model_ based on classical data structures, it make
 
 ## Taking back control
 
-With the exception of strings, which use hard-coded logic, encodings for each type are dictated by one or more configuration thresholds: anything at or below a threshold uses one encoding and anything above uses a different one. Take a look at the default configuration for the hash data type in [Valkey 9.1](https://github.com/valkey-io/valkey/releases/tag/9.1.0):
+Except for strings, which use hard-coded logic, encodings for other data types are dictated by one or more configuration thresholds: values at or below a threshold use one encoding, while values exceeding it use another. For example, consider the default configuration for the hash data type in [Valkey 9.1](https://github.com/valkey-io/valkey/releases/tag/9.1.0):
 
 ```bash
 hash-max-listpack-entries 512
