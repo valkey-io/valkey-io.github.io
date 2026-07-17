@@ -27,7 +27,7 @@ In this case, the balance is achieved by an _encoding_. All data in Valkey has a
 
 At first glance you might observe that each value is one character longer than the previous. However, what you probably don’t see is that despite the single character difference, the memory used changes dramatically. You can see it by running [`MEMORY USAGE`](/commands/memory-usage/) over each key:
 
-| Key   | Length of value | `MEMORY USAGE` | Size difference than previous |
+| Key   | Length of value | `MEMORY USAGE` | Change from previous |
 | ----- | --------------- | -------------- | ----------------------------- |
 | `hash0` | 63 | 104 | n/a |
 | `hash1` | 64 | 120 | +15.38% |
