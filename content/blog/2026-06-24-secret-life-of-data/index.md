@@ -109,7 +109,7 @@ So, you can take away two full primaries and whatever associated replicas. As pr
 | Original | 100 GB       | 60 GB              |  212 B                            | 20 GB             | 5              |
 | New      | 74 GB        | 0                  |  120 B <br /> (56.6% of original) | 14.8 GB           | 5              |```
 
-The actual savings here depends on the difference in price for the new vs the old infrastructure, but typically in the cloud or on-prem, there are always break points in price at different specs and this sort of optimization can help you get your cost down when you need just crest over the top of a break point. Of course, in either case, you can always use the new-found space for heretofore uncached data, reduce eviction, or allowing longer TTLs.
+The actual savings depend on the price difference between the new and old infrastructure. In both cloud and on-premises environments, pricing often has distinct breakpoints based on hardware specifications. This optimization can help you drop below a higher pricing tier if you were previously just cresting over it. Alternatively, you can use the reclaimed space to cache previously uncached data, reduce evictions, or allow longer TTLs.
 
 > **Wait! How do both a 65 and 64 length value result in a key size of 120?** <br />
 > The eagle-eyed amongst you might have noticed that the original example of `hash1` having a size of 64 bytes and a memory footprint of 120 then in this example we're showing keys that have a value length of 65 that also have 120 bytes memory footprint. 
