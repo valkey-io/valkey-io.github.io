@@ -36,7 +36,7 @@ At first glance you might observe that each value is one character longer than t
 _Note:  Your numbers may vary slightly depending on platform and architecture_
 
 
-So, between a value length of 64 and 65 bytes what changed to account for over a 75% increase in memory usage? 
+So, between a value length of 64 and 65 bytes, what changed to account for over a 75% increase in memory usage?
 
 Take a look at the results of the [`OBJECT ENCODING`](/commands/object-encoding/) command for the keys in question:
 
