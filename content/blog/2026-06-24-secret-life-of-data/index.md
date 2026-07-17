@@ -67,7 +67,7 @@ So, we have a list key using the same encoding as a hash and a set encoded as a 
 
 Turns out: no.
 
-In Valkey, the _data model_ is that of classical data structures but under-the-hood, Valkey is making choices for you so you only need to worry about using the right commands for the data type and not caring about the underlying encoding. Instead, Valkey sorts out the difference between the data model and the encoding. 
+While Valkey presents a _data model_ based on classical data structures, it makes optimization decisions under the hood. This allows you to use the appropriate commands for your data type without needing to worry about how that data is stored in memory. Valkey automatically manages the mapping between the data model and the encoding.
 
 ## Taking back control
 
