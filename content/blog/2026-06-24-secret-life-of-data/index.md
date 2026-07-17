@@ -104,10 +104,10 @@ Contextualizing an extreme example: having a 100gb cluster (5 nodes, 20gb each) 
 
 So, you can take away two full primaries and whatever associated replicas. As previously mentioned, this is an extreme example, it's unlikely that you have 95% of your data falling outside this threshold. Let's say that you have 60% of your keys that reach above configuration threshold _and_ you can scale back your infrastructure to a smaller-sized machine or instance that has only 16gb of RAM.
 
-|          | Cluster size | gb above threshold  | Above threshold key size            | Primary size | # of Primaries |
-| -------- | ------------ | --------------- | ------------------------------- | ------------ | -------------- |
-| Original | 100gb        | 60gb            |  212                            | 20gb         | 5              |
-| New      | 74gb         | 0               |  120 <br /> (56.6% of original) | 14.8gb       | 5              |
+|          | Cluster Size | GB Above Threshold | Memory Usage per Key    | Primary Node Size | # of Primaries |
+| -------- | ------------ | ------------------ | ------------------------------- | ----------------- | -------------- |
+| Original | 100 GB       | 60 GB              |  212 B                            | 20 GB             | 5              |
+| New      | 74 GB        | 0                  |  120 B <br /> (56.6% of original) | 14.8 GB           | 5              |```
 
 The actual savings here depends on the difference in price for the new vs the old infrastructure, but typically in the cloud or on-prem, there are always break points in price at different specs and this sort of optimization can help you get your cost down when you need just crest over the top of a break point. Of course, in either case, you can always use the new-found space for heretofore uncached data, reduce eviction, or allowing longer TTLs.
 
