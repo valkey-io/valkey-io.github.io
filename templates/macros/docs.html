@@ -58,6 +58,10 @@
 {{config.extra.client_json_path }}{{ client_path }}
 {%- endmacro client_json_path -%}
 
+{%- macro ai_json_path(ai_path) -%}
+{{config.extra.ai_json_path }}{{ ai_path }}
+{%- endmacro ai_json_path -%}
+
 
 {%- macro boolean_to_checkmark(value) -%}
     {% if value == true %}
