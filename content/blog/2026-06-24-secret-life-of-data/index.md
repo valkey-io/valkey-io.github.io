@@ -91,7 +91,7 @@ Streams still use an encoding but there isn’t a threshold because there is onl
 
 ### Should you change these settings?
 
-Maybe. It depends on what you’re optimizing for and what your data looks like. Valkey's default encoding configuration values are fine for many use cases, but if your strategy is to cost-optimize or maximize your infrastructure, it's worth at least evaluating the configuration compared to your specific data/usage.
+Maybe. It depends on what you’re optimizing for and what your data looks like. Valkey's default encoding configurations are suitable for many use cases, but if your strategy is to cost-optimize or maximize infrastructure efficiency, it's worth evaluating these settings against your specific data patterns and usage.
 
 For the most basic evaluation, you can sample keys using `OBJECT ENCODING` to identify spots where the data is using the more voluminous encoding, then understand what is triggering it and make a call on the configuration. Of course, there are no-brainer situations: let’s say you store data in hashes and they tend to have values in length of 65 bytes, right above the threshold, and you have lower throughput needs. Upping the configuration value for `hash-max-listpack-value` to match a realistic length for your data could deliver huge savings either by lowering the infrastructure requirements or [letting you cache more with the same cluster](https://www.youtube.com/watch?v=cd4-UnU8lWY). 
 
