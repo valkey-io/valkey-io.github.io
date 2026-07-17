@@ -87,7 +87,7 @@ There are encoding configurations for:
 - Sets (`set-max-intset-entries`, `set-max-listpack-entries`, `set-max-listpack-value`)
 - Sorted Sets (`zset-max-listpack-entries`, `zset-max-listpack-value`)
 
-Streams still use an encoding but there isn’t a threshold because there is only one encoding option. Module types also use encodings but it would vary depending on the logic and/or configuration of the module in question.
+Streams also use encodings, but they do not have configuration thresholds because they use a single encoding. Module types also use encodings, but their behavior depends on the specific module's logic and configuration.
 
 ### Should you change these settings?
 
