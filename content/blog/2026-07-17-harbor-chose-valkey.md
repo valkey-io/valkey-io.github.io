@@ -37,8 +37,7 @@ What makes it the right choice for Harbor:
 - **Production ready**: already the recommended in-memory store on AWS ElastiCache, and Google Cloud offers it as a fully managed service through Memorystore for Valkey.
 - **Performance**: 
     - Valkey has improved significantly since its 7.2 baseline, [Valkey 9.1](https://valkey.io/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/) delivers up to 2M requests per second in [official benchmarks](https://valkey.io/performance/), more than double the throughput of Valkey 7.2.
-    - A [redesigned hash table](https://valkey.io/blog/new-hash-table/) in Valkey 8.1 reduces memory usage by ~20 bytes per key-value pair.
-    - Small string memory overhead was reduced by ~20% by reusing internal memory to store small values more efficiently. See [PR #2516](https://github.com/valkey-io/valkey/pull/2516).
+    - Multiple memory optimizations across Valkey 8.x and 9.x, including a redesigned hash table and small string optimization, can reduce memory usage by up to 38% compared to Valkey 7.2.
 
 For Harbor, the migration was clean. Same protocol, few application code changes, and a dependency that is fully aligned with open source principles.
 
