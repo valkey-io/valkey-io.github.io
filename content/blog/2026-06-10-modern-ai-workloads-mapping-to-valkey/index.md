@@ -113,14 +113,19 @@ Aggregations close the loop for analytics-shaped questions over the same index -
 
 In front of the LLM sits the layer that decides which requests are allowed to spend tokens at all - the least glamorous layer of the stack, and it runs entirely on primitives that predate the AI workload by a decade. It applies to any team managing token cost across its own tenants or users against a provider API, not only inference providers. It earns a section anyway, because "AI infrastructure" is not only the exotic new stuff, and because token-denominated cost makes admission control a correctness problem rather than a politeness problem.
 
-Token budgets are atomic counters. The unit is tokens rather than requests, and the increment happens after the response when actual usage is known, with a pre-check before dispatch:
+Token budgets are atomic counters, and the unit is tokens rather than requests. The subtlety is ordering. If you check the budget before dispatch but only increment after the response, concurrent in-flight requests all clear the same check and blow past the cap together - the counter is atomic, but admission is not. The fix is to reserve an estimated cost before dispatch, then reconcile against actual usage once the response returns. Because [`INCRBY`](https://valkey.io/commands/incrby/) returns the post-increment total, the reservation and the check are a single atomic step:
 
 ```text
-INCRBY budget:org_42:2026-06 18540
+# before dispatch: reserve an estimated cost and read the running total in one step
+INCRBY budget:org_42:2026-06 2000
 EXPIRE budget:org_42:2026-06 2678400 NX
+# if the returned total is over the cap, reject and hand the reservation back:
+DECRBY budget:org_42:2026-06 2000
+# after the response: reconcile the estimate against actual usage (the delta may be negative)
+INCRBY budget:org_42:2026-06 -146
 ```
 
-[`INCRBY`](https://valkey.io/commands/incrby/) is atomic, so concurrent requests cannot race the counter, and the `NX` flag on [`EXPIRE`](https://valkey.io/commands/expire/) pins the window without a read-modify-write.
+Every concurrent request sees its own reservation reflected in the total the reserve returns, so no two can clear the same check, and the `NX` flag on [`EXPIRE`](https://valkey.io/commands/expire/) pins the window without a read-modify-write.
 
 Sliding-window rate limits handle the per-minute shape that LLM providers enforce and that you likely want to mirror per tenant. A sorted set keyed by timestamp, trimmed, written, and counted in one [`MULTI`](https://valkey.io/commands/multi/) block:
 
