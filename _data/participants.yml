@@ -201,3 +201,13 @@
     Freshworks authored [valkey-glide-ruby](https://github.com/valkey-io/valkey-glide-ruby) (gem: `valkey-rb`), the official Ruby client for Valkey GLIDE, and contributed to the underlying GLIDE Rust core that powers it. Built on the same valkey-glide Rust FFI foundation as the Python, Java, Node.js, and Go clients, the Ruby client offers a redis-rb-compatible API, standalone and cluster modes, TLS/SSL, native OpenTelemetry tracing and metrics, client statistics, and comprehensive command coverage.
 
     Beyond Ruby, Freshworks has contributed across the GLIDE ecosystem, extending the Java client and its Jedis compatibility layer, the Go client, and shared Rust core capabilities. After rigorous evaluation, Freshworks adopted Valkey in production for one of its major workloads.
+
+- name: IONOS Cloud
+  link: https://cloud.ionos.de
+  image:
+    path: /img/ionos-cloud.svg
+    alt: IONOS Cloud logo
+  company: >
+    [IONOS Cloud](https://cloud.ionos.de) delivers highly scalable, European-engineered public and private cloud infrastructure. It provides GDPR-compliant data protection, flexible pay-as-you-go pricing without vendor lock-in, and custom visual deployment through its Data Center Designer, all backed by 24/7 expert support.
+  offering: >
+    [IONOS Cloud In-Memory DB](https://cloud.ionos.de/managed/dbaas/in-memory-db) now runs on Valkey, supporting versions 8, 8.1, and 9, while staying compatible with legacy Redis® OSS. It is a fully managed key-value store for caching, real-time data, and session management, with data persistence and TLS-secured connections.
