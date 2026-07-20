@@ -61,9 +61,9 @@ helm install harbor harbor/harbor \
   --set expose.type=nodePort \
   --set expose.tls.enabled=false \
   --set externalURL=http://localhost:30003 \
-  --set harborAdminPassword="Harbor12345" \
+  --set harborAdminPassword="your-secure-password" \
   --set redis.internal.image.repository=goharbor/valkey-photon \
-  --set redis.internal.image.tag=v2.15.2-rc2
+  --set redis.internal.image.tag=v2.15.2
 ```
 
 The first lines are basic setup so Harbor can start and be accessible. The last two lines tell the Helm chart to use the `valkey-photon` image from Docker Hub instead of the default Redis one.
