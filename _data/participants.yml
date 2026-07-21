@@ -198,7 +198,7 @@
   company: >
     Vultr is the AI-first global cloud platform trusted by hundreds of thousands of active customers across 185 countries. It delivers flexible, scalable Cloud Compute, Cloud GPU, Bare Metal, and Cloud Storage solutions, enabling developers and enterprises to build, deploy, and scale modern applications and AI workloads with confidence.
   offering: >
-    Vultr Managed Databases for Valkey provides a fully managed, Redis-compatible Valkey service with automated provisioning, high availability, automated backups, monitoring, and point-in-time recovery, enabling developers to deploy and operate production-ready Valkey clusters without managing the underlying infrastructure.
+    Vultr Managed Databases for Valkey provides a fully managed, It is built on open source Valkey and compatible with legacy Redis® OSS-compatible Valkey service with automated provisioning, high availability, automated backups, monitoring, and point-in-time recovery, enabling developers to deploy and operate production-ready Valkey clusters without managing the underlying infrastructure.
 
 - name: Freshworks
   link: https://www.freshworks.com
