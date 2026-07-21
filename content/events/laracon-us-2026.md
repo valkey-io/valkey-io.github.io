@@ -4,7 +4,6 @@ date = 2026-07-28 01:01:01
 
 [extra]
 event_type = "third-party"
-end_date = "2026-07-29"
 location = "Boston, MA, USA"
 external_url = "https://laracon.us/"
 +++

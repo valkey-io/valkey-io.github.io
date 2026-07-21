@@ -4,7 +4,6 @@ date = 2026-05-18 01:01:01
 
 [extra]
 event_type = "third-party"
-end_date = "2026-05-20"
 location = "Minneapolis, MN, USA"
 external_url = "https://events.linuxfoundation.org/open-source-summit-north-america/"
 +++

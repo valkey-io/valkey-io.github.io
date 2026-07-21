@@ -41,7 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
     {
       title: "{{ page.title | safe }}",
       date: "{{ page.date | date(format='%Y-%m-%d') }}",
-      endDate: "{% if page.extra.end_date %}{{ page.extra.end_date | safe }}{% else %}{{ page.date | date(format='%Y-%m-%d') }}{% endif %}",
       type: "{{ page.extra.event_type | default(value='first-party') }}",
       location: "{{ page.extra.location | default(value='') | safe }}",
       locationUrl: "{{ page.extra.location_url | default(value='') | safe }}",
@@ -78,42 +77,12 @@ document.addEventListener('DOMContentLoaded', function() {
     return '#';
   }
 
-  function padDay(day) {
-    return String(day).padStart(2, '0');
-  }
-
-  function localDateFromKey(dateKey) {
-    var parts = dateKey.split('-');
-    return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-  }
-
-  function displayDate(dateKey) {
-    return localDateFromKey(dateKey).toLocaleDateString(undefined, {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  }
-
-  function dateRangeLabel(startKey, endKey) {
-    if (startKey === endKey) return displayDate(startKey);
-    return displayDate(startKey) + ' - ' + displayDate(endKey);
-  }
-
-  function rangesOverlap(startA, endA, startB, endB) {
-    return startA <= endB && endA >= startB;
-  }
-
   events = events.map(function(e) {
     var type = Object.prototype.hasOwnProperty.call(eventTypeLabels, e.type) ? e.type : 'third-party';
-    var endDate = e.endDate || e.date;
-    if (endDate < e.date) endDate = e.date;
     return {
       title: e.title,
       safeTitle: escapeHtml(e.title),
       date: e.date,
-      endDate: endDate,
-      dateLabel: dateRangeLabel(e.date, endDate),
       eventClass: type,
       typeLabel: eventTypeLabels[type],
       location: e.location,
@@ -123,13 +92,16 @@ document.addEventListener('DOMContentLoaded', function() {
     };
   });
 
-  // Build all months from first to last event
-  var eventDates = [];
+  // Collect events by month
+  var monthSet = {};
   events.forEach(function(e) {
-    eventDates.push(e.date);
-    eventDates.push(e.endDate);
+    var key = e.date.substring(0, 7);
+    if (!monthSet[key]) monthSet[key] = [];
+    monthSet[key].push(e);
   });
-  eventDates.sort();
+
+  // Build all months from first to last event
+  var eventDates = events.map(function(e) { return e.date; }).sort();
   var first = eventDates[0].split('-');
   var last = eventDates[eventDates.length - 1].split('-');
   var months = [];
@@ -161,22 +133,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var month = Number(parts[1]) - 1;
     var total = daysInMonth(year, month);
     var start = startDay(year, month);
-    var monthStart = key + '-01';
-    var monthEnd = key + '-' + padDay(total);
-    var evts = events.filter(function(e) {
-      return rangesOverlap(e.date, e.endDate, monthStart, monthEnd);
-    });
+    var evts = monthSet[key] || [];
 
     // Build event lookup by day
     var byDay = {};
-    evts.forEach(function(e) {
-      for (var d = 1; d <= total; d++) {
-        var dayKey = key + '-' + padDay(d);
-        if (!rangesOverlap(e.date, e.endDate, dayKey, dayKey)) continue;
-        if (!byDay[d]) byDay[d] = [];
-        byDay[d].push(e);
-      }
-    });
+    evts.forEach(function(e) { var d = Number(e.date.substring(8, 10)); if (!byDay[d]) byDay[d] = []; byDay[d].push(e); });
 
     document.getElementById('cal-title').textContent = monthNames[month] + ' ' + year;
 
@@ -201,7 +162,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var allCards = document.querySelectorAll('.event-card');
     var firstMatch = null;
     allCards.forEach(function(card) {
-      if (rangesOverlap(card.getAttribute('data-start'), card.getAttribute('data-end'), monthStart, monthEnd)) {
+      var cardMonth = card.getAttribute('data-month');
+      if (cardMonth === key) {
         card.classList.add('active');
         if (!firstMatch) firstMatch = card;
       } else {
@@ -221,26 +183,23 @@ document.addEventListener('DOMContentLoaded', function() {
               String(nowLocal.getMonth() + 1).padStart(2, '0') + '-' +
               String(nowLocal.getDate()).padStart(2, '0');
   var currentMonth = today.substring(0, 7);
-  var currentMonthParts = currentMonth.split('-');
-  var currentMonthEnd = currentMonth + '-' + padDay(daysInMonth(Number(currentMonthParts[0]), Number(currentMonthParts[1]) - 1));
-  function isInCurrentMonth(e) {
-    return rangesOverlap(e.date, e.endDate, currentMonth + '-01', currentMonthEnd);
-  }
-
-  var thisMonthUpcoming = events.filter(function(e) { return isInCurrentMonth(e) && e.endDate >= today; })
+  var thisMonthUpcoming = events.filter(function(e) { return e.date.substring(0, 7) === currentMonth && e.date >= today; })
                         .sort(function(a, b) { return a.date.localeCompare(b.date); });
-  var upcoming = events.filter(function(e) { return e.endDate >= today && !isInCurrentMonth(e); })
+  var upcoming = events.filter(function(e) { return e.date > today && e.date.substring(0, 7) !== currentMonth; })
                        .sort(function(a, b) { return a.date.localeCompare(b.date); });
-  var past = events.filter(function(e) { return e.endDate < today; })
+  var past = events.filter(function(e) { return e.date < today; })
                    .sort(function(a, b) { return b.date.localeCompare(a.date); });
   var allEvents = thisMonthUpcoming.concat(upcoming).concat(past);
 
   var listHtml = '';
   allEvents.forEach(function(e) {
-    listHtml += '<div class="event-card' + (e.endDate < today ? ' past' : '') + '" data-start="' + e.date + '" data-end="' + e.endDate + '">' +
+    var dateObj = new Date(e.date + 'T00:00:00');
+    var dateStr = monthNames[dateObj.getMonth()] + ' ' + dateObj.getDate() + ', ' + dateObj.getFullYear();
+    var eventMonth = e.date.substring(0, 7);
+    listHtml += '<div class="event-card' + (e.date < today ? ' past' : '') + '" data-month="' + eventMonth + '">' +
       '<span class="event-card-badge ' + e.eventClass + '">' + e.typeLabel + '</span>' +
       '<h3><a href="' + e.safeUrl + '">' + e.safeTitle + '</a></h3>' +
-      '<p class="event-card-date">' + e.dateLabel + '</p>' +
+      '<p class="event-card-date">' + dateStr + '</p>' +
       (e.location
         ? '<p class="event-card-location">' +
             (e.safeLocationUrl
