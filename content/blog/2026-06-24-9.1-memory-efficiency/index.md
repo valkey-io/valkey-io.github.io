@@ -9,11 +9,11 @@ blog_type = ["Technical Deep Dive"]
 featured = true
 +++
 
-Valkey 9.1 introduces two behind the scenes optimizations that reduce the per-key memory overhead without requiring any new commands or configuration changes.
+Valkey 9.1 introduces two optimizations that reduce the per-key memory overhead without requiring any new commands or configuration changes.
 
-The two conceptual changes delivered across three PR's below happen deep within Valkey's C data structures, reducing the memory required to store strings and sorted sets, by up to 20% overhead for string keys and 7 bytes for every sorted set member. These changes compound quickly when millions of keys are in use.
+The three changes reduce the memory required to store strings and sorted sets, by up to 20% overhead for string keys and 7 bytes for every sorted set member. These savings add up quickly when millions of keys are in use.
 
-This blog explores these changes, and what they mean for your real-world deployments.
+This blog post explores how these optimizations work and what they mean for your real-world deployments.
 
 ## The Cost of Internal Recordkeeping
 
@@ -29,7 +29,7 @@ After the changes in Valkey 9.1, the `ptr` field is removed from the embedded st
 
 ![embstr memory after](embstr_memory_after_9.1.svg)
 
-The practical result is that every value stored with `embstr` encoding now saves 8 bytes of overhead. For a workload using 16-byte keys and 16-byte values, this represents roughly a 20% reduction in per-item memory overhead.
+The result is that every value stored with `embstr` encoding now saves 8 bytes of overhead. For a workload using 16-byte keys and 16-byte values, this represents roughly a 20% reduction in per-item memory overhead.
 
 ### Raising the `embstr` Threshold from 64 to 128 Bytes
 
@@ -54,7 +54,7 @@ The exact saving depends on where your key+value sizes fall relative to jemalloc
 
 ### Optimizing Sorted Sets to Reduce Overhead
 
-The final improvement in Valkey 9.1 targets Sorted Sets (`ZSET`), where the sets also received a memory reduction for workloads that use the `skiplist` encoding representation.
+The final improvement in Valkey 9.1 targets Sorted Sets, where the sets also received a memory reduction for workloads that use the `skiplist` encoding representation.
 
 In the default configuration, once a sorted set grows beyond 128 elements, Valkey stores it internally as a `skiplist` encoding. Before Valkey 9.1, each `skiplist` node contained a pointer to a separately allocated SDS string representing the member:
 
@@ -76,7 +76,7 @@ In Valkey 9.1 however, the SDS representation is embedded directly inside the `s
 +-------+------------------+---------+-----+---------+--------------+
 ```
 
-For sorted sets with thousands or millions of members, this compounds significantly. A `ZSET` with 100,000 members saves roughly 700KB of memory from this change alone. This change produces a net saving of 7 bytes per sorted set member by removing the pointer.
+For sorted sets with thousands or millions of members, this compounds significantly. A sorted set with 100,000 members saves roughly 700KB of memory from this change alone. This change produces a net saving of 7 bytes per sorted set member by removing the pointer.
 
 ## Quantifying the Impact
 
@@ -86,7 +86,7 @@ The above improvements effectiveness vary by workload, key sizes and data type m
 |--------|--------------------|----------------:|
 | Remove `robj->ptr` | `embstr` strings | 8 bytes |
 | Raise `embstr` threshold to 128 bytes | Objects newly eligible under the raised threshold | 8 bytes (newly applies) |
-| Embed element SDS inside skiplist node | `ZSET` members (skiplist encoding) | 7 bytes |
+| Embed element SDS inside skiplist node | Sorted set members (skiplist encoding) | 7 bytes |
 
 ## What This Means for Production
 
@@ -100,14 +100,14 @@ If you are utilizing Valkey as a dedicated cache running near full capacity with
 
 None of the above matters until you check it against real keys. Here's how to find out what Valkey 9.1 is worth to you specifically.
 
-Pick a handful of representative keys from your production deployment and run `MEMORY USAGE` on a 9.0 instance versus a 9.1 instance:
+Pick a handful of representative keys from your production deployment and run `MEMORY USAGE` and `OBJECT ENCODING` on a 9.0 instance versus a 9.1 instance where `MEMORY USAGE` gives you the byte count, `OBJECT ENCODING` tells you which layout produced it:
 
 ```bash
 > MEMORY USAGE session:abc123
 > OBJECT ENCODING session:abc123
 ```
 
-If a string key that used to report `raw` now reports `embstr`, that key just got cheaper to store. No code change, no config change, just a straight upgrade. Multiply the byte difference by your key count and you have the real number, not just an estimate.
+If a string key that used to report `raw` now reports `embstr`, that key just got cheaper to store. Multiply the byte difference by your key count and you have the real number, not just an estimate.  
 
 For sorted sets, the math is even more direct: 7 bytes times the number of members stored across your skiplist-backed sorted sets gives you a concrete memory reclaim figure. On a sorted set workload with 500K members, that's roughly 3.5MB back. On a cluster running thousands of sorted sets, it adds up to real headroom, allowing you to defer a scale-up or right-size to a smaller node depending on your needs.
 
