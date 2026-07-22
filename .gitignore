@@ -21,3 +21,4 @@ _data/modules.json
 .idea/*
 tmp/*
 static/debug
+build-ai
