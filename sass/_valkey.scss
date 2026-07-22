@@ -2560,6 +2560,7 @@ blockquote {
 
     &.first-party { background-color: #6983ff; }
     &.third-party { background-color: $yellow-100; }
+    &.meetup-hackathon { background-color: $green-200; }
   }
 }
 
@@ -2645,11 +2646,14 @@ blockquote {
   line-height: 1.2;
   color: $white;
   text-decoration: none;
-  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   margin-top: 2px;
 
   &.first-party { background-color: #6983ff; }
   &.third-party { background-color: $yellow-100; }
+  &.meetup-hackathon { background-color: $green-200; }
   &:hover { opacity: 0.85; }
   &, &:visited { color: $white; }
 }
@@ -2691,6 +2695,7 @@ blockquote {
 
       &.first-party { background-color: #6983ff; }
       &.third-party { background-color: $yellow-100; }
+      &.meetup-hackathon { background-color: $green-200; }
     }
 
     .event-card-date {
