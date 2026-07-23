@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 178" width="1000" height="178">
+<style>
+  .fd-background      { fill: #ffffff; fill: var(--fd-background, #ffffff); }
+  .fd-title   { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-field-box   { fill: #6983ff; fill: var(--fd-field-fill, #6983ff); stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; }
+  .fd-padding-box     { fill: url(#fd-hatch); stroke: #b9c2cc; stroke: var(--fd-padding-stroke, #b9c2cc); stroke-width: 1; }
+  .fd-flexible-array    { fill: none; stroke: #666666; stroke: var(--fd-muted, #666666); stroke-width: 1; stroke-dasharray: 4 3; }
+  .fd-extra-box   { fill: #6983ff; fill: var(--fd-field-fill, #6983ff); fill-opacity: 0.55; stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; stroke-dasharray: 5 3; }
+  .fd-slack-box   { fill: #666666; fill: var(--fd-muted, #666666); fill-opacity: 0.10; stroke: #666666; stroke: var(--fd-muted, #666666); stroke-width: 1; stroke-dasharray: 2 3; }
+  .fd-slack-label { fill: #666666; fill: var(--fd-muted, #666666); }
+  .fd-allocation-plus    { fill: #666666; fill: var(--fd-muted, #666666); }
+  .fd-field-label   { fill: #ffffff; fill: var(--fd-field-text, #ffffff); }
+  .fd-padding-label  { fill: #666666; fill: var(--fd-muted, #666666); }
+  .fd-callout-label { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-leader-line  { stroke: #666666; stroke: var(--fd-muted, #666666); stroke-width: 1; fill: none; }
+  .fd-ruler-line   { stroke: #666666; stroke: var(--fd-muted, #666666); stroke-width: 1; }
+  .fd-cache-line   { stroke: #002a3a; stroke: var(--fd-text, #002a3a); stroke-width: 3; stroke-dasharray: 7 4; opacity: 0.8; }
+  .fd-cache-line-label    { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-pointer-arrow  { stroke: #002a3a; stroke: var(--fd-text, #002a3a); stroke-width: 1.5; fill: none; }
+  .fd-pointer-head   { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-ruler-label    { fill: #666666; fill: var(--fd-muted, #666666); }
+  .fd-note  { fill: #1e8e3e; fill: var(--fd-highlight, #1e8e3e); }
+  .fd-note-plain { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  text        { font-family: 'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace; font-family: var(--fd-font, 'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace); }
+  .fd-hatch-background { fill: #f5f7f7; fill: var(--fd-padding-fill, #f5f7f7); }
+  .fd-hatch-lines { stroke: #b9c2cc; stroke: var(--fd-padding-stroke, #b9c2cc); stroke-width: 1.5; }
+  .fd-subdivision-line  { stroke: #ffffff; stroke: var(--fd-field-text, #ffffff); stroke-width: 1; stroke-dasharray: 2 3; opacity: 0.45; }
+</style>
+<rect class="fd-background" fill="#ffffff" width="100%" height="100%" rx="8"/>
+<defs><pattern id="fd-hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect class="fd-hatch-background" fill="#f5f7f7" width="6" height="6"/><line class="fd-hatch-lines" stroke="#b9c2cc" stroke-width="1.5" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<text class="fd-title" fill="#002a3a" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="24.0" y="38.0" font-size="15" font-weight="700" text-anchor="start">Valkey 9.1: the member is embedded at the end of the node</text>
+<rect class="fd-field-box" fill="#6983ff" stroke="#30176e" stroke-width="1" x="24.0" y="58.0" width="112.0" height="56" rx="4"/>
+<rect class="fd-field-box" fill="#6983ff" stroke="#30176e" stroke-width="1" x="136.0" y="58.0" width="112.0" height="56" rx="4"/>
+<rect class="fd-field-box" fill="#6983ff" stroke="#30176e" stroke-width="1" x="248.0" y="58.0" width="224.0" height="56" rx="4"/>
+<line class="fd-subdivision-line" stroke="#ffffff" stroke-width="1" stroke-dasharray="2 3" opacity="0.45" x1="360.0" y1="61.0" x2="360.0" y2="111.0"/>
+<rect class="fd-extra-box" fill="#6983ff" fill-opacity="0.55" stroke="#30176e" stroke-width="1" stroke-dasharray="5 3" x="472.0" y="58.0" width="224.0" height="56" rx="4"/>
+<rect class="fd-extra-box" fill="#6983ff" fill-opacity="0.55" stroke="#30176e" stroke-width="1" stroke-dasharray="5 3" x="696.0" y="58.0" width="280.0" height="56" rx="4"/>
+<line class="fd-subdivision-line" stroke="#ffffff" stroke-width="1" stroke-dasharray="2 3" opacity="0.45" x1="738.0" y1="61.0" x2="738.0" y2="111.0"/>
+<line class="fd-subdivision-line" stroke="#ffffff" stroke-width="1" stroke-dasharray="2 3" opacity="0.45" x1="962.0" y1="61.0" x2="962.0" y2="111.0"/>
+<text class="fd-field-label" fill="#ffffff" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="80.0" y="91.0" font-size="15" font-weight="700" text-anchor="middle">score</text>
+<text class="fd-field-label" fill="#ffffff" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="192.0" y="91.0" font-size="15" font-weight="700" text-anchor="middle">*backward</text>
+<text class="fd-field-label" fill="#ffffff" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="360.0" y="91.0" font-size="15" font-weight="700" text-anchor="middle">level-0</text>
+<text class="fd-callout-label" fill="#002a3a" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="584.0" y="91.0" font-size="15" font-weight="700" text-anchor="middle">level-1 … level-N</text>
+<text class="fd-callout-label" fill="#002a3a" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="836.0" y="91.0" font-size="15" font-weight="700" text-anchor="middle">member sds (16B + hdr)</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="24.0" y1="122" x2="976.0" y2="122"/>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="24.0" y1="122" x2="24.0" y2="128"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="24.0" y="142.0" font-size="11" font-weight="600" text-anchor="middle">0</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="136.0" y1="122" x2="136.0" y2="128"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="136.0" y="142.0" font-size="11" font-weight="600" text-anchor="middle">8</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="248.0" y1="122" x2="248.0" y2="128"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="248.0" y="142.0" font-size="11" font-weight="600" text-anchor="middle">16</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="360.0" y1="122" x2="360.0" y2="128"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="360.0" y="142.0" font-size="11" font-weight="600" text-anchor="middle">24</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="472.0" y1="122" x2="472.0" y2="128"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="472.0" y="142.0" font-size="11" font-weight="600" text-anchor="middle">32</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="584.0" y1="122" x2="584.0" y2="128"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="584.0" y="142.0" font-size="11" font-weight="600" text-anchor="middle">40</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="696.0" y1="122" x2="696.0" y2="128"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="696.0" y="142.0" font-size="11" font-weight="600" text-anchor="middle">48</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="808.0" y1="122" x2="808.0" y2="128"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="808.0" y="142.0" font-size="11" font-weight="600" text-anchor="middle">56</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="920.0" y1="122" x2="920.0" y2="128"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="920.0" y="142.0" font-size="11" font-weight="600" text-anchor="middle">64</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="976.0" y1="122" x2="976.0" y2="128"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="976.0" y="142.0" font-size="11" font-weight="600" text-anchor="middle">68</text>
+<text class="fd-note" fill="#1e8e3e" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="24.0" y="166.0" font-size="13" font-weight="700" text-anchor="start">▼ one allocation, no pointer — 7 bytes net saved per sorted set member</text>
+</svg>
