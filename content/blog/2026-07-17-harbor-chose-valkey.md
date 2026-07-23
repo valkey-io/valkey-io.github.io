@@ -28,7 +28,7 @@ All of this needs a fast in-memory store. That is why Redis has been part of Har
 ## What makes it the right choice for Harbor:
 
 - **BSD 3-Clause license**: permissive, with fewer legal risks and fewer restrictions than non-open-source alternatives.
-- **Wire compatible**: same RESP protocol as Redis; no code changes needed in Harbor.
+- **Wire compatible**: same RESP protocol as Redis; no application-level RESP changes were required, while Harbor’s image/build templates were updated to valkey-photon.
 - **Actively maintained**: governed by the Linux Foundation with a clear release cadence.
 - **Production ready**: available as a fully managed service on Amazon ElastiCache and Google Cloud Memorystore for Valkey.
 - **Performance**: Valkey has continued improving beyond its 7.2 foundation. [Valkey 9.1](https://valkey.io/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/) delivers up to 2 million requests per second in [official benchmarks](https://valkey.io/performance/), more than double the throughput of Valkey 7.2
@@ -54,7 +54,7 @@ helm install harbor harbor/harbor \
   --create-namespace \
   --set expose.type=nodePort \
   --set expose.tls.enabled=false \
-  --set externalURL=http://localhost:30002 \
+  --set externalURL=http://<node-ip>:30002 \
   --set harborAdminPassword="your-secure-password" \
   --set redis.internal.image.repository=goharbor/valkey-photon \
   --set redis.internal.image.tag=v2.15.2
