@@ -7,7 +7,7 @@ authors = ["edithpuclla", "orlinvasilev"]
 blog_type = ["Community Highlight"]
 +++
 
-With **Harbor v2.15.2**, the Harbor team replaced Redis with Valkey as its internal cache backend. This was a deliberate open source choice, and it is worth celebrating.
+With **Harbor v2.15.2**, the Harbor team replaced Redis with Valkey as its internal cache backend. This was a deliberate open source choice that highlights the flexibility and resilience of the open source ecosystem.
 
 [Harbor](https://goharbor.io/) is a CNCF graduated open source container registry, a place where organizations can store, manage, and secure container images, Helm charts, OCI artifacts, CNAB (Cloud Native Application Bundles), and AI models via ModelPack. Among organizations that self-host their container registries for production Kubernetes, Harbor is one of the most widely adopted solutions. What you might not know is that Harbor has always depended on Redis under the hood. With v2.15.2, that changed.
 
