@@ -109,7 +109,7 @@ Pick a handful of representative keys from your production deployment and run `M
 > OBJECT ENCODING session:abc123
 ```
 
-If a string key that used to report `raw` now reports `embstr`, that key just got cheaper to store. Multiply the byte difference by your key count and you have the real number, not just an estimate.  
+A key converts from `raw` to `embstr` once its combined key+expiry+value size falls within the new 128-byte budget. A restart alone is enough to trigger it, since RDB and AOF reload re-applies encoding logic on 9.1. If a key reports `embstr` where it used to report `raw`, that key just got cheaper to store. Multiply the byte difference by your key count and you have the real number, not just an estimate.
 
 For sorted sets, the math is even more direct: 7 bytes times the number of members stored across your skiplist-backed sorted sets gives you a concrete memory reclaim figure. On a sorted set workload with 500K members, that's roughly 3.5MB back. On a cluster running thousands of sorted sets, it adds up to real headroom, allowing you to defer a scale-up or right-size to a smaller node depending on your needs.
 
