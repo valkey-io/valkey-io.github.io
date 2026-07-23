@@ -17,8 +17,9 @@ The Harbor team opened [issue #22935](https://github.com/goharbor/harbor/issues/
 
 Harbor is not a simple file server. Every time someone pushes or pulls an image, Harbor is doing a lot of work simultaneously. Things like:
 
-- **Session storage** that serves OCI manifest data without hitting the database on every pull.
-- **Job queue** that manages background tasks like vulnerability scans, garbage collection, and replication jobs.
+- **Session storage** stores user login sessions
+- **Manifest cache** serves OCI manifest data without hitting the database on every pull.
+- **Job queue** manages background tasks like vulnerability scans, garbage collection, and replication jobs.
 - **Quota counter** for tracking push concurrency per project.
 
 All of this needs a fast in-memory store. That is why Redis has been part of Harbor since the beginning; it is the engine behind every interaction with the registry. Now with Valkey, Harbor keeps doing exactly the same work, with a better open source foundation underneath.
