@@ -61,7 +61,7 @@ helm install harbor harbor/harbor \
   --create-namespace \
   --set expose.type=nodePort \
   --set expose.tls.enabled=false \
-  --set externalURL=http://localhost:30003 \
+  --set externalURL=http://localhost:30002 \
   --set harborAdminPassword="your-secure-password" \
   --set redis.internal.image.repository=goharbor/valkey-photon \
   --set redis.internal.image.tag=v2.15.2
