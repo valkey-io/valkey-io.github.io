@@ -31,7 +31,7 @@ It was created in March 2024 under the Linux Foundation, backed by a broad coali
 
 What makes it the right choice for Harbor:
 
-- **BSD 3-Clause license**: permissive, no legal risk, no restrictions.
+- **BSD 3-Clause license**: permissive, with fewer legal risks and fewer restrictions than non-open-source alternatives.
 - **Wire compatible**: same RESP protocol as Redis; no code changes needed in Harbor.
 - **Actively maintained**: governed by the Linux Foundation with a clear release cadence.
 - **Production ready**: already the recommended in-memory store on AWS ElastiCache, and Google Cloud offers it as a fully managed service through Memorystore for Valkey.
