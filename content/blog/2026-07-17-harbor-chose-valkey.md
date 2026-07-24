@@ -7,11 +7,11 @@ authors = ["edithpuclla", "orlinvasilev"]
 blog_type = ["Community Highlight"]
 +++
 
-With Harbor v2.15.2, the Harbor team replaced Redis with Valkey as its internal cache backend. This was a deliberate open source choice that highlights the flexibility and resilience of the open source ecosystem.
+With Harbor v2.15.2, the Harbor team replaced Redis with Valkey as its internal cache backend. This was a deliberate open-source choice that highlights the flexibility and resilience of the open-source ecosystem.
 
-[Harbor](https://goharbor.io/) is a CNCF graduated open source container registry, a place where organizations can store, manage, and secure container images, Helm charts, OCI artifacts, CNAB (Cloud Native Application Bundles), and AI models via ModelPack. Among organizations that self-host their container registries for production Kubernetes environments, Harbor is one of the most widely adopted solutions. What you might not know is that Harbor has always depended on Redis under the hood. With v2.15.2, that changed.
+[Harbor](https://goharbor.io/) is a CNCF graduated open-source container registry, a place where organizations can store, manage, and secure container images, Helm charts, OCI artifacts, CNAB (Cloud Native Application Bundles), and AI models via ModelPack. Among organizations that self-host their container registries for production Kubernetes environments, Harbor is one of the most widely adopted solutions. What you might not know is that Harbor has always depended on Redis under the hood. With v2.15.2, that changed.
 
-The Harbor team opened [issue #22935](https://github.com/goharbor/harbor/issues/22935) in March 2026, merged [PR #23157](https://github.com/goharbor/harbor/pull/23157) on April 28, and shipped the change in [v2.15.2](https://github.com/goharbor/harbor/releases/tag/v2.15.2). The reason is simple: **open source projects benefit from dependencies with clear governance models that align with their own community values.**
+The Harbor team opened [issue #22935](https://github.com/goharbor/harbor/issues/22935) in March 2026, merged [PR #23157](https://github.com/goharbor/harbor/pull/23157) on April 28, and shipped the change in [v2.15.2](https://github.com/goharbor/harbor/releases/tag/v2.15.2). The reason is simple: **open-source projects benefit from dependencies with clear governance models that align with their own community values.**
 
 ## Why Harbor uses a cache
 
@@ -22,7 +22,7 @@ Harbor is not a simple file server. Every time someone pushes or pulls an image,
 - **Job queue** manages background tasks like vulnerability scans, garbage collection, and replication jobs.
 - **Quota counter** for tracking push concurrency per project.
 
-All of this needs a fast in-memory store. That is why Redis has been part of Harbor since the beginning; it is the engine behind every interaction with the registry. Now with Valkey, Harbor keeps doing exactly the same work, with a better open source foundation underneath.
+All of this needs a fast in-memory store. That is why Redis has been part of Harbor since the beginning; it is the engine behind every interaction with the registry. Now with Valkey, Harbor keeps doing exactly the same work, with a better open-source foundation underneath.
 
 
 ## What makes it the right choice for Harbor:
@@ -33,7 +33,7 @@ All of this needs a fast in-memory store. That is why Redis has been part of Har
 - **Production ready**: available as a fully managed service on Amazon ElastiCache and Google Cloud Memorystore for Valkey.
 - **Performance**: Valkey has continued improving beyond its 7.2 foundation. [Valkey 9.1](https://valkey.io/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/) delivers up to 2 million requests per second in [official benchmarks](https://valkey.io/performance/), more than double the throughput of Valkey 7.2
 
-For Harbor, the migration was clean. Same protocol, few application code changes, and a dependency that is fully aligned with open source principles.
+For Harbor, the migration was clean. Same protocol, few application code changes, and a dependency that is fully aligned with open-source principles.
 
 ## Install Harbor with Valkey
 
@@ -62,6 +62,6 @@ helm install harbor harbor/harbor \
 
 The first lines are basic setup so Harbor can start and be accessible. The last two lines tell the Helm chart to use the `valkey-photon` image from Docker Hub instead of the default Redis one.
 
-The Harbor team chose Valkey not only for technical compatibility, but also because it aligns with Harbor's commitment to open source sustainability. And it is a reminder that the open source ecosystem can respond quickly and effectively when a foundational dependency changes direction.
+The Harbor team chose Valkey not only for technical compatibility, but also because it aligns with Harbor's commitment to open-source sustainability. And it is a reminder that the open source ecosystem can respond quickly and effectively when a foundational dependency changes direction.
 
 Harbor v2.15.2 is out. [Try the latest release of Harbor](https://github.com/goharbor/harbor/releases/tag/v2.15.2) today!
