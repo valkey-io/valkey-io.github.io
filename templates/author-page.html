@@ -5,11 +5,13 @@
     {% include "includes/author_panel.html" %}
     {% set blog_section = get_section(path="blog/_index.md") %}
     <h4>Posts by {{page.title}}</h4>
+    <ul>
     {% for blogpost in blog_section.pages %}
         {% if page.slug in blogpost.authors  %}
         <li><a href="{{ blogpost.permalink }}">{{ blogpost.title }}</a></li>
         {% endif %}
-    {% endfor %}   
+    {% endfor %}
+    </ul>
 {% endblock main_content %}
 
 {% block related_content %}
