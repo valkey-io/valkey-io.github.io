@@ -129,7 +129,7 @@
 <code>ERROR. Command description not loaded</code><br />
 {% endif %}
 {% if command_data_obj.replaced_by %}
-<h3>Deprecation advice</h3>
+<h3 id="deprecation-advice">Deprecation advice</h3>
 Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{{ command_data_obj.replaced_by | markdown | safe  }}</div>
 
 {% endif %}
