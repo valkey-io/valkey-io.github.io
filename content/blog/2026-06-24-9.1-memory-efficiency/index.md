@@ -1,7 +1,7 @@
 +++
 title = "Reducing Memory Overhead in Valkey 9.1"
 date = 2026-07-28
-description = "With Valkey 9.1, per-key memory overhead is cut by up to 44% (averaging 26%) for strings and 7 bytes per sorted set member, without changing a single command or configuration."
+description = ""With Valkey 9.1, per-key memory overhead is cut by up to 44% (averaging 26%) for strings and up to 8.5 bytes per sorted set member, without changing a single command or configuration."
 authors = ["dragosandriciuc"]
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
@@ -11,7 +11,7 @@ featured = true
 
 Valkey 9.1 introduces two optimizations that reduce the per-key memory overhead without requiring any new commands or configuration changes.
 
-These reduce the memory required to store strings and sorted sets, averaging 26% overhead for string keys and 7 bytes for every sorted set member. These savings add up quickly when millions of keys are in use.
+These reduce the memory required to store strings and sorted sets, averaging 26% overhead for string keys and up to 8.5 bytes per sorted set member for typical short members. These savings add up quickly when millions of keys are in use.
 
 This blog post explores how these optimizations work and what they mean for your real-world deployments.
 
@@ -56,7 +56,7 @@ Any key returning `embstr` benefits from both of the above optimizations with no
 
 The saving per key is not a flat number. Because Valkey allocates memory through jemalloc, requests are rounded up to fixed size classes rather than granting the exact byte count requested. In practice this produces overhead reductions ranging from roughly 17% to 44%, averaging around 26%.
 
- _Note: Measured across a range of key+value sizes (16-byte keys), 5 million items per test, Valkey 9.0 compared to 9.1._
+ _(Note: Measured across a range of key+value sizes, 5 million items per test, Valkey 9.0 compared to 9.1.)_
 
 ![jemalloc waste chart](jemalloc_waste_chart.svg)
 
@@ -66,19 +66,19 @@ The exact saving depends on where your key+value sizes fall relative to jemalloc
 
 The final improvement in Valkey 9.1 targets Sorted Sets, where the sets also received a memory reduction for workloads that use the `skiplist` encoding representation.
 
-In the default configuration, once a sorted set grows beyond 128 elements, Valkey stores it internally as a `skiplist` encoding. Before Valkey 9.1, each `skiplist` node contained a pointer to a separately allocated SDS string representing the member:
+In the default configuration, once a sorted set grows beyond 128 elements, or if a single member exceeds 64 bytes (the default thresholds), Valkey stores it internally using the skiplist encoding. Before Valkey 9.1, each skiplist node contained a pointer to a separately allocated SDS string representing the member.
 
 ![sorted sets before](optimize_sorted_sets_before.svg)
 
 _Note: SDS (Simple Dynamic String) is Valkey's internal  dynamic string implementation. Most keys, string values, and many internal data structures are stored as SDS objects._
 
-Sorted set members are typically short and immutable. Once a member is added to a sorted set, its value never changes in place, so there is no risk of the embedded string needing to grow and disrupt a nodes layout later. Because the embedded data now sits at the end of the allocation, it does not shift the position of the other fields (score, backward pointer) that the rest of the skiplist logic depends upon.
+Sorted set members are typically short and immutable. Once a member is added to a sorted set, its value never changes in place, so there is no risk of the embedded string needing to grow and disrupt a node's layout later. Because the embedded data now sits at the end of the allocation, it does not shift the position of the other fields (score, backward pointer) that the rest of the skiplist logic depends upon.  
 
 In Valkey 9.1, the SDS representation is embedded directly inside the `skiplist` node instead of being stored as a separate pointer:
 
 ![sorted sets after](optimize_sorted_sets_after.svg)
 
-For sorted sets with thousands or millions of members, this compounds significantly. A sorted set with 100,000 members saves roughly 700KB of memory from this change alone. This change produces a net saving of 7 bytes per sorted set member by removing the pointer.
+The actual saving depends on member length, for the same reason string savings varied earlier: merging the separate member allocation into the skiplist node changes how jemalloc rounds the resulting allocation size. For typical short members (10-40 bytes), 9.1 saves roughly 6-8.5 bytes per member which is about 11-15% of per-member overhead. A handful of specific lengths see little or no benefit, and a few see a small regression, so the real number for your workload depends on your actual member sizes.
 
 ## Quantifying the Impact
 
@@ -86,9 +86,9 @@ The above improvements effectiveness vary by workload, key sizes and data type m
 
 | Change | Affected encoding | Struct-level change | Measured overhead reduction |
 |--------|--------------------|---:|---:|
-| Remove `robj->ptr` | `embstr` strings | -8 bytes | 17–44% (avg. 26%) |
+| Remove `robj->ptr` | `embstr` strings | -8 bytes | 17-44% (avg. 26%) |
 | Raise `embstr` threshold to 128 bytes | Objects newly eligible under the raised threshold | -8 bytes (newly applies) | included in range above |
-| Embed element SDS inside skiplist node | Sorted set members (skiplist encoding) | -7 bytes | not separately measured |
+| Embed element SDS inside skiplist node | Sorted set members (skiplist encoding) | -8.5 bytes (max) | 11-15% for members 10-40B |
 
 ## What This Means for Production
 
@@ -111,7 +111,7 @@ Pick a handful of representative keys from your production deployment and run `M
 
 A key converts from `raw` to `embstr` once its combined key+expiry+value size falls within the new 128-byte budget. A restart alone is enough to trigger it, since RDB and AOF reload re-applies encoding logic on 9.1. If a key reports `embstr` where it used to report `raw`, that key just got cheaper to store. Multiply the byte difference by your key count and you have the real number, not just an estimate.
 
-For sorted sets, the math is even more direct: 7 bytes times the number of members stored across your skiplist-backed sorted sets gives you a concrete memory reclaim figure. On a sorted set workload with 500K members, that's roughly 3.5MB back. On a cluster running thousands of sorted sets, it adds up to real headroom, allowing you to defer a scale-up or right-size to a smaller node depending on your needs.
+For sorted sets, the savings depend on your member lengths where short members (10 to 40 bytes) see the most benefit, roughly 11-15% of per-member overhead. Compare `MEMORY USAGE` on a representative sorted set before and after upgrading to see what your actual member sizes yield, since the exact number varies by length in the same allocator-rounding way string savings do.
 
 The memory you get back by simply moving to 9.1 and measuring what has changed is the real upgrade.
 
