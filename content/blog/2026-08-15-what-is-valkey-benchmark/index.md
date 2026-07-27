@@ -41,17 +41,17 @@ That's a real number, given how simple this default run is, but it's worth askin
 
 ### The default run isn't your workload
 
-A bare run like the above result rarely reflects how your system behaves under real load. The 67k req/s hit the same single key. There is no real key-space pressure, no cache-miss behavior and no memory access patterns resembling real life production environments.
+A bare run like the above result rarely reflects how your system behaves under real load. The 67k req/s hit the same single key. There is no real key-space pressure, no cache-miss behavior and no memory access patterns resembling real-life production environments.
 
 The actual payload was 3 bytes, which is certainly smaller than anything most applications actually store. With no pipelining, one in-flight request per connection, it resembles a network-bound worst case rather than anything a real pipelining client would produce.
 
-However, it answers a more focused question that most people assume, "how fast can 50, unpipelined connections hit one key?", not "how will my application perform".
+However, it answers a more focused question that most people assume, "how fast can 50 unpipelined connections hit one key?", not "how will my application perform".
 
 And the default run is not bad, it's just not representative of a realistic workload.
 
 ## Three ways to make your benchmark resemble production
 
-The golden rule of a useful benchmark before moving forward, a useful benchmark compares apples to apples. In this case, you can compare different versions of Valkey on the same workload or the same version of Valkey, but with different options.
+Before diving in, it's worth stating the golden rule of a useful benchmark: compare apples to apples. In this case, you can compare different versions of Valkey on the same workload or the same version of Valkey, but with different options.
 
 ### Simulate a real keyspace
 
@@ -85,17 +85,15 @@ _NOTE: The exact numbers vary from run to run, the point is the change in what's
 
 The default `valkey-benchmark` stores values that are 3 bytes long. It keeps the benchmark lightweight, but realistically session data, cached API responses and serialized objects are often much larger.
 
-However, the payload size often does not matter until you cross a certain threshold once you're pipelining. Because 10-byte, 100-byte, and 1000-byte payloads all produce roughly the same throughput under pipelining, with the effect breaking down once payloads approach the ethernet packet size (~1500 bytes).
+However, the payload size often does not matter until you cross a certain threshold once you're pipelining because 10-byte, 100-byte, and 1000-byte payloads all produce roughly the same throughput under pipelining, with the effect breaking down once payloads approach the ethernet packet size (~1500 bytes).
 
-These larger values not only affect memory consumption, but also increase network bandwidth requiring more memory to copy and allocate, which expose more performance characteristics than the default payloads.
+These larger values not only affect memory consumption, but also increase network bandwidth usage requiring more memory to copy and allocate, which expose more performance characteristics than the default payloads.
 
 You can change the generated value size with the `-d` option. Combining this with a realistic keyspace (-r) allows you to simulate a workload that is representative of a realistic application rather than the benchmark's default configuration:
 
 ```text
 valkey-benchmark -t set -r 100000 -n 1000000 -d 1024
 ```
-
-The result numbers vary, but a 1024-byte payload often has only a modest impact on throughput because it often remains below the Ethernet MTU in some environments.
 
 ```text
 Summary:
@@ -104,6 +102,8 @@ Summary:
                 avg       min       p50       p95       p99       max
                 0.263     0.088     0.215     0.559     1.175     5.119
 ```
+
+The result numbers show a modest change from adding a 1024-byte payload. A similar effect under pipelining: 10-byte, 100-byte, and 1000-byte payloads all produce roughly the same throughput, with the effect breaking down near the ethernet packet size (~1500 bytes). Let's see pipelining's actual effect next.
 
 ### Pipeline requests like a real client
 
@@ -127,9 +127,11 @@ Summary:
                 1.632     0.224     1.311     3.455     5.943    13.991
 ```
 
-As with every benchmark parameter, realism is more valuable than chasing the highest requests-per-second number. Choose a pipeline depth that reflects what your client library actually uses.
+The trade-off is that the throughput roughly quadruples, but per-request latency also rises: p50 climbs from 0.215ms to 1.311ms. That's expected as pipelining trades individual request latency for aggregate throughput, since each request waits in a batch before being sent.
 
-Together, these three settings, keyspace size (-r), pipeline depth (-P), and payload size (-d) move `valkey-benchmark` away from an ordinary benchmark and toward a workload that more closely resembles production.
+This is exactly why matching your pipeline depth to your actual client matters: a pipeline depth that's unrealistically deep shows great throughput numbers while your real requests wait longer than your application can tolerate.
+
+Together, these three settings: keyspace size (-r), pipeline depth (-P), and payload size (-d), move `valkey-benchmark` away from an ordinary benchmark and toward a workload that more closely resembles production.
 
 ## Using the `--cluster` argument
 
@@ -137,7 +139,7 @@ If you want to benchmark your application against data that is automatically sha
 
 Compared to a standalone benchmark, two things change:
 
-- `-c` (client connections) must be at least the number of nodes in your cluster, with fewer clients than nodes, some nodes will never get contacted.
+- `-c` (client connections) must be at least the number of nodes in your cluster; with fewer clients than nodes, some nodes will never get contacted.
 - Custom commands need `{tag}` in the key name, a placeholder that ensures the command routes to the correct node.
 
 If you also want to stress read replicas, add the `--rfr` (read-from-replicas) argument, with a mode of `no`, `yes`, or `all`. Use this only with read commands as writes sent to a replica are rejected.
@@ -154,8 +156,10 @@ _NOTE: This example requires an actual Valkey cluster deployment, it does not ru
 
 Between a realistic keyspace, representative payloads, and pipelining that matches your client, `valkey-benchmark` can move from a synthetic microbenchmark to something that actually predicts how your application behaves under load. The tool's own goal is reproducibility, so anchor your numbers to a fixed set of options, and compare against your own past runs rather than other benchmark tools.
 
-You can copy and paste this following benchmark command as your starting point:
+Before actually trusting any of the above numbers for planning capacity, run the commands against your own staging environment with values that match your actual traffic. Here's a starting point you can adapt:
 
 ```text
 valkey-benchmark -t set,get -r 100000 -d 1024 -P 16 -n 1000000 -q
 ```
+
+_NOTE: Add `-q` for quiet output once you're running this repeatedly rather than reading the full summary each time._
