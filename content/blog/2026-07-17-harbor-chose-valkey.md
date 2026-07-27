@@ -1,6 +1,6 @@
 +++
 title = "Harbor Chose Valkey"
-date = 2026-07-17 01:01:01
+date = 2026-07-28 01:01:01
 description = "With v2.15.2, Harbor replaced Redis with Valkey as its internal cache backend. Here is why the CNCF graduated container registry made the switch and how you can run it today."
 authors = ["edithpuclla", "orlinvasilev"]
 [taxonomies]
