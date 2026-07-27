@@ -109,7 +109,7 @@ Pick a handful of representative keys from your production deployment and run `M
 > OBJECT ENCODING session:abc123
 ```
 
-A key converts from `raw` to `embstr` once its combined key+expiry+value size falls within the new 128-byte budget. A restart alone is enough to trigger it, since RDB and AOF reload re-applies encoding logic on 9.1. If a key reports `embstr` where it used to report `raw`, that key just got cheaper to store. Multiply the byte difference by your key count and you have the real number, not just an estimate.
+A key converts from `raw` to `embstr` once its combined key+expiry+value size falls within the new 128-byte budget. A restart alone is enough to trigger it, since RDB and AOF reload re-applies encoding logic. If a key reports `embstr` where it used to report `raw`, that key just got cheaper to store. Multiply the byte difference by your key count and you have the real number, not just an estimate.
 
 For sorted sets, the savings depend on your member lengths where short members (10 to 40 bytes) see the most benefit, roughly 11-15% of per-member overhead. Compare `MEMORY USAGE` on a representative sorted set before and after upgrading to see what your actual member sizes yield, since the exact number varies by length in the same allocator-rounding way string savings do.
 
