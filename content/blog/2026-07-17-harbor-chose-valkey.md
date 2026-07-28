@@ -30,7 +30,7 @@ All of this needs a fast in-memory store. That was why Redis has been part of Ha
 - **BSD 3-Clause license**: permissive, with fewer legal risks and fewer restrictions than non open source alternatives.
 - **Wire compatible**: same RESP protocol as Redis; no application-level RESP changes were required, while Harbor’s image/build templates were updated to valkey-photon.
 - **Actively maintained**: governed by the Linux Foundation with a clear release cadence.
-- **Production ready**: available self-managed on your own infrastructure, or as a fully managed service from many cloud and database vendors listed among the [Valkey participants](/participants/).
+- **Production ready**:  available as a fully managed service on Amazon ElastiCache, Google Cloud Memorystore, OCI Cache, Aiven, DigitalOcean, Momento, Vultr, and [other providers](https://valkey.io/participants/), or self-hosted on your own infrastructure.
 - **Performance**: Valkey has continued improving beyond its 7.2 foundation. [Valkey 9.1](https://valkey.io/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/) delivers up to 2 million requests per second in [official benchmarks](https://valkey.io/performance/), more than double the throughput of Valkey 7.2
 
 For Harbor, the migration was clean. Same protocol, few application code changes, and a dependency that is fully aligned with open source principles.
