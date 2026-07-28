@@ -1,6 +1,6 @@
 +++
 title = "Harbor Chose Valkey"
-date = 2026-07-28 01:01:01
+date = 2026-07-29 01:01:01
 description = "With v2.15.2, Harbor replaced Redis with Valkey as its internal cache backend. Here is why the CNCF graduated container registry made the switch and how you can run it today."
 authors = ["edithpuclla", "orlinvasilev"]
 [taxonomies]
@@ -22,7 +22,7 @@ Harbor is not a simple file server. Every time someone pushes or pulls an image,
 - **Job queue** manages background tasks like vulnerability scans, garbage collection, and replication jobs.
 - **Quota counter** for tracking push concurrency per project.
 
-All of this needs a fast in-memory store. That is why Redis has been part of Harbor since the beginning; it is the engine behind every interaction with the registry. Now with Valkey, Harbor keeps doing exactly the same work, with a better open source foundation underneath.
+All of this needs a fast in-memory store. That was why Redis has been part of Harbor since the beginning; it is the engine behind every interaction with the registry. Now with Valkey, Harbor keeps doing exactly the same work, with a better open source foundation underneath.
 
 
 ## What makes it the right choice for Harbor:
@@ -30,7 +30,7 @@ All of this needs a fast in-memory store. That is why Redis has been part of Har
 - **BSD 3-Clause license**: permissive, with fewer legal risks and fewer restrictions than non open source alternatives.
 - **Wire compatible**: same RESP protocol as Redis; no application-level RESP changes were required, while Harbor’s image/build templates were updated to valkey-photon.
 - **Actively maintained**: governed by the Linux Foundation with a clear release cadence.
-- **Production ready**: available as a fully managed service on Amazon ElastiCache and Google Cloud Memorystore for Valkey.
+- **Production ready**: available self-managed on your own infrastructure, or as a fully managed service from many cloud and database vendors listed among the [Valkey participants](/participants/).
 - **Performance**: Valkey has continued improving beyond its 7.2 foundation. [Valkey 9.1](https://valkey.io/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/) delivers up to 2 million requests per second in [official benchmarks](https://valkey.io/performance/), more than double the throughput of Valkey 7.2
 
 For Harbor, the migration was clean. Same protocol, few application code changes, and a dependency that is fully aligned with open source principles.
