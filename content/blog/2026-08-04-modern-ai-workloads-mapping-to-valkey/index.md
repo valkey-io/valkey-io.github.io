@@ -1,6 +1,6 @@
 +++
 title = "How modern AI workloads map to Valkey primitives"
-date = 2026-06-10
+date = 2026-08-04
 description = "A horizontal tour of the AI inference stack - semantic caching, KV cache offload, hybrid retrieval, admission control, and observability - and the Valkey primitives each layer maps to."
 authors = ["kivanow"]
 
