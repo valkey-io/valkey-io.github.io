@@ -1,6 +1,6 @@
 +++
 title = "The Power of Community: Driving Innovation across the Valkey Ecosystem"
-date = 2026-07-16
+date = 2026-07-30
 description = "The community gathered at the Valkey Unlocked Conference to celebrate two years of innovation and ecosystem growth. In a keynote titled, *The Power of Community*, Sailesh Krishnamurthy (VP of Engineering at Google)"
 authors = ["crystalpham"]
 [taxonomies]
