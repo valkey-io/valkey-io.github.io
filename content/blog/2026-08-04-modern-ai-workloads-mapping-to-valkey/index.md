@@ -73,7 +73,7 @@ Inference engines such as vLLM and SGLang already reuse KV for shared prefixes w
 # lmcache configuration (illustrative)
 chunk_size: 256
 local_cpu: true
-remote_url: "redis://valkey-host:6379"
+remote_url: "valkey://valkey-host:6379"
 remote_serde: "naive"
 ```
 
@@ -118,14 +118,15 @@ Token budgets are atomic counters, and the unit is tokens rather than requests. 
 ```text
 # before dispatch: reserve an estimated cost and read the running total in one step
 INCRBY budget:org_42:2026-06 2000
-EXPIRE budget:org_42:2026-06 2678400 NX
+# expire at the next calendar-month boundary, not a fixed 31-day TTL:
+EXPIRE budget:org_42:2026-06 <seconds_until_next_month> NX
 # if the returned total is over the cap, reject and hand the reservation back:
 DECRBY budget:org_42:2026-06 2000
 # after the response: reconcile the estimate against actual usage (the delta may be negative)
 INCRBY budget:org_42:2026-06 -146
 ```
 
-Every concurrent request sees its own reservation reflected in the total the reserve returns, so no two can clear the same check, and the `NX` flag on [`EXPIRE`](https://valkey.io/commands/expire/) pins the window without a read-modify-write.
+Every concurrent request sees its own reservation reflected in the total the reserve returns, so no two clear the same check. Two caveats keep this honest. First, it is a reservation budget, not a hard cap: because reservations are estimates, in-flight requests can still overshoot the configured cap by up to the sum of outstanding estimates, so reserve a conservative upper bound or define explicit overdraft behavior. Second, the key names a calendar month, so expire it to the next month boundary rather than a fixed 31-day TTL, and gate the post-response reconciliation on the key still existing (the `NX` on [`EXPIRE`](https://valkey.io/commands/expire/) pins the window without a read-modify-write, but a late `INCRBY` after the window has rolled over would otherwise recreate a fresh counter for a closed month).
 
 Sliding-window rate limits handle the per-minute shape that LLM providers enforce and that you likely want to mirror per tenant. A sorted set keyed by timestamp, trimmed, written, and counted in one [`MULTI`](https://valkey.io/commands/multi/) block:
 
