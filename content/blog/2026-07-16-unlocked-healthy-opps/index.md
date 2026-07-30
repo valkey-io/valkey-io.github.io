@@ -18,13 +18,29 @@ The community gathered at the Valkey Unlocked Conference to celebrate two years 
 
 .unlocked-healthy-opps-video iframe {
   width: 100% !important;
+  max-width: 1200px;
   aspect-ratio: 16 / 9;
+}
+
+.unlocked-healthy-opps-video-caption {
+  text-align: center;
+  margin-top: 10px;
 }
 </style>
 
-{{ youtube(id="oAAVULuODtI", class="unlocked-healthy-opps-video") }}
+<div>
+  <div class="unlocked-healthy-opps-video">
+    <iframe
+      title="Unlocked Health shares its experience migrating to Valkey"
+      src="https://www.youtube.com/embed/oAAVULuODtI"
+      allowfullscreen>
+    </iframe>
+  </div>
 
-Here is a recap of the key themes, design philosophies, and technological advancements discussed during the session.
+  <p class="unlocked-healthy-opps-video-caption">
+    <strong>Video:</strong> Unlocked Conference: Google's dedication to the Valkey progress—Sailesh Krishnamurthy
+  </p>
+</div>
 
 ## 1. The Open Source Ecosystem: Contributors vs. Users
 Open source projects thrive on a delicate balance, operating much like a natural ecological community. They are highly fragile and can easily stall or fizzle out if company or vendor dynamics take over and fracture the community.
