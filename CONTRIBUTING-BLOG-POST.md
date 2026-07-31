@@ -83,7 +83,7 @@ description= "It's become clear that people want to talk about Valkey and have b
 # 'authors' are the folks who wrote or contributed to the post.
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "maury", "jacobim" ]
-# 'draft' holds the post back from being published.
+# 'draft' holds a finished post back until its 'date' arrives.
 # While this is true, the post is not built, listed, or included in the feed.
 # Leave it out unless you are scheduling; see "Scheduling a post" below.
 draft = true
@@ -165,12 +165,19 @@ Merging to `main` rebuilds and publishes [Valkey.io](http://valkey.io/), so a po
 
 ## Scheduling a post
 
-To merge a post before it should be public, set `draft = true` in the frontmatter and set `date` to the intended publish date and time (UTC).
+Scheduling is for posts that are *finished and approved* but should not be public yet, such as a release announcement tied to a date.
+Work-in-progress should stay in a pull request, not be merged as a draft.
+
+To schedule a post, set `draft = true` in the frontmatter and set `date` to the day it should go live.
 Zola excludes drafts entirely: the post is not built, does not appear in the blog listing, and stays out of the sitemap and RSS feed.
 
-An hourly job (`.github/workflows/publish-scheduled-blogs.yml`) checks the drafts under `content/blog`.
-Once a draft's `date` has passed, the job removes the `draft` line and commits to `main`, which publishes the post.
-Expect the post to go live within an hour of its `date`.
+**Dates are UTC, and the time of day in `date` does not control when the post appears.**
+A job (`.github/workflows/publish-scheduled-blogs.yml`) runs once a day at 16:00 UTC (08:00 PST / 09:00 PDT).
+On the first run at or after a draft's `date`, it removes the `draft` line and commits to `main`, which publishes the post.
 
-A draft with no `date` is never published automatically, so it is safe to park work-in-progress on `main`.
-Maintainers can also publish immediately by removing the `draft` line by hand, or run the workflow from the Actions tab with **Run workflow** (tick `dry_run` to preview what would be published).
+In practice that means a post dated `2026-08-15` goes live during the morning of the 15th, Pacific time.
+Because posts are conventionally dated `00:00:00` or `01:01:01`, the job deliberately ignores the time and publishes during PT working hours rather than at whatever hour is written in the file.
+If a post must go out at an exact time, publish it by hand instead.
+
+A draft with no `date` is never published automatically.
+Maintainers can publish immediately by removing the `draft` line by hand, or run the workflow early from the Actions tab with **Run workflow** (tick `dry_run` to preview what would be published without committing).

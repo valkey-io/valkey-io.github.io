@@ -2,8 +2,11 @@ name: Publish scheduled blogs
 
 on:
   schedule:
-    # Hourly at :05. Posts go live within an hour of their frontmatter date.
-    - cron: '5 * * * *'
+    # Once a day at 16:00 UTC, which is 08:00 PST / 09:00 PDT.
+    # Running once during PT working hours avoids the middle-of-the-night
+    # publishing that an hourly job would cause, since posts are conventionally
+    # dated 00:00:00 or 01:01:01.
+    - cron: '0 16 * * *'
   workflow_dispatch:
     inputs:
       dry_run:

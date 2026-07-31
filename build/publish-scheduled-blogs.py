@@ -2,54 +2,81 @@
 """Release blog posts whose publish date has arrived.
 
 Scans `content/blog` for posts marked `draft = true` in their TOML frontmatter.
-When a post's `date` is now in the past (UTC), the `draft` line is removed so
-Zola will render it on the next build.
+When a post's `date` is now in the past, the `draft` line is removed so Zola
+will render it on the next build.
 
-Only the `draft` line is touched; the rest of the file is left byte-for-byte
-intact. Writes the list of released files to $GITHUB_OUTPUT as `published`.
+Dates without a timezone are read as UTC. Frontmatter is parsed with `tomllib`
+rather than pattern matching, so a `draft` key inside a table, in a comment, or
+within a string value is never mistaken for the real one.
+
+Only the `draft` line is removed; the rest of the file, including its line
+endings, is left byte-for-byte intact. Writes the released paths to
+$GITHUB_OUTPUT as `published`.
 """
 
 import datetime
 import os
 import pathlib
-import re
 import sys
 import tomllib
 
 UTC = datetime.timezone.utc
-FRONTMATTER = re.compile(r"^\+\+\+[^\S\n]*\n(.*?)\n\+\+\+[^\S\n]*$", re.S | re.M)
-DRAFT_LINE = re.compile(r"^\s*draft\s*=\s*true\s*(#.*)?$")
+FENCE = "+++"
 
 
-def as_utc(value, path):
-    """Coerce a frontmatter `date` into an aware UTC datetime."""
+def split_frontmatter(text):
+    """Return (start, end) offsets of the TOML between the leading `+++` fences.
+
+    Returns None when the file does not open with a frontmatter block.
+    """
+    body = text.lstrip()
+    if not body.startswith(FENCE):
+        return None
+
+    start = text.index(FENCE) + len(FENCE)
+    end = text.find(FENCE, start)
+    if end == -1:
+        return None
+    return start, end
+
+
+def as_utc(value):
+    """Coerce a parsed TOML `date` into an aware datetime, or None if unusable.
+
+    `tomllib` yields a date, a datetime, or a string when the value was quoted.
+    Quoted values are re-parsed as bare TOML so the same rules apply to both.
+    """
+    if isinstance(value, str):
+        try:
+            value = tomllib.loads(f"date = {value.strip()}")["date"]
+        except tomllib.TOMLDecodeError:
+            return None
+
     if isinstance(value, datetime.datetime):
         return value if value.tzinfo else value.replace(tzinfo=UTC)
     if isinstance(value, datetime.date):
         return datetime.datetime(value.year, value.month, value.day, tzinfo=UTC)
-    if isinstance(value, str):
-        text = value.strip().replace("T", " ")
-        text = re.split(r"[+]|\bZ$", text)[0].strip()
-        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d"):
-            try:
-                return datetime.datetime.strptime(text, fmt).replace(tzinfo=UTC)
-            except ValueError:
-                continue
-    print(f"::warning file={path}::unrecognized date {value!r}; leaving as draft")
     return None
 
 
 def strip_draft(frontmatter):
-    """Remove the top-level `draft` line, ignoring lines inside TOML tables.
+    """Remove the top-level `draft` line, or None if there isn't one.
 
-    Keeps line endings intact so a CRLF-authored post yields a one-line diff.
+    Each candidate line is validated with `tomllib`, so only a line that really
+    is the top-level `draft = true` assignment is removed. Line endings are
+    preserved so a CRLF-authored post still yields a one-line diff.
     """
     lines = frontmatter.splitlines(keepends=True)
     for index, line in enumerate(lines):
-        if line.lstrip().startswith("["):
+        stripped = line.strip()
+        if stripped.startswith("["):
             break  # a table header; `draft` past this point is not top-level
-        if DRAFT_LINE.match(line):
-            return "".join(lines[:index] + lines[index + 1 :])
+        try:
+            if tomllib.loads(stripped).get("draft") is not True:
+                continue
+        except tomllib.TOMLDecodeError:
+            continue  # part of a multi-line value, not a standalone assignment
+        return "".join(lines[:index] + lines[index + 1 :])
     return None
 
 
@@ -67,13 +94,15 @@ def main():
         # newline="" keeps CRLF intact instead of translating it to LF.
         with open(path, "r", encoding="utf-8", newline="") as handle:
             text = handle.read()
-        match = FRONTMATTER.search(text)
-        if not match or match.start() != 0:
+
+        bounds = split_frontmatter(text)
+        if bounds is None:
             continue
+        start, end = bounds
 
         try:
             # A CRLF file leaves a lone trailing `\r` that tomllib rejects.
-            data = tomllib.loads(match.group(1).rstrip("\r"))
+            data = tomllib.loads(text[start:end].strip("\r"))
         except tomllib.TOMLDecodeError as error:
             print(f"::warning file={path}::could not parse frontmatter: {error}")
             continue
@@ -85,21 +114,25 @@ def main():
             print(f"::warning file={path}::draft has no date; leaving as draft")
             continue
 
-        publish_at = as_utc(data["date"], path)
+        publish_at = as_utc(data["date"])
         if publish_at is None:
+            print(
+                f"::warning file={path}::unrecognized date "
+                f"{data['date']!r}; leaving as draft"
+            )
             continue
         if publish_at > now:
-            print(f"holding {path} until {publish_at:%Y-%m-%d %H:%M} UTC")
+            print(f"holding {path} until {publish_at:%Y-%m-%d %H:%M %Z}")
             continue
 
-        stripped = strip_draft(match.group(1))
+        stripped = strip_draft(text[start:end])
         if stripped is None:
             print(f"::warning file={path}::draft is set but no `draft` line found")
             continue
 
         with open(path, "w", encoding="utf-8", newline="") as handle:
-            handle.write(text[: match.start(1)] + stripped + text[match.end(1) :])
-        print(f"releasing {path} (dated {publish_at:%Y-%m-%d %H:%M} UTC)")
+            handle.write(text[:start] + stripped + text[end:])
+        print(f"releasing {path} (dated {publish_at:%Y-%m-%d %H:%M %Z})")
         released.append(str(path))
 
     output = os.environ.get("GITHUB_OUTPUT")
