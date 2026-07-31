@@ -40,6 +40,9 @@ jobs:
           ref: main
           token: ${{ steps.generate-token.outputs.token }}
 
+      - name: Install dependencies
+        run: pip install --disable-pip-version-check 'tomlkit==0.15.1'
+
       - name: Release posts whose date has arrived
         id: release
         run: python3 build/publish-scheduled-blogs.py
