@@ -2,10 +2,11 @@
 """Release blog posts whose publish date has arrived.
 
 Scans `content/blog` for posts marked `draft = true` in their TOML frontmatter.
-When a post's `date` is now in the past, the `draft` key is removed so Zola will
-render it on the next build.
+Once a post's `date` has arrived, the `draft` key is removed so Zola will render
+it on the next build.
 
-Dates without a timezone are read as UTC. Frontmatter is edited with `tomlkit`,
+Only the calendar date is compared, in UTC, so any time of day in `date` is
+ignored. Frontmatter is edited with `tomlkit`,
 which preserves the original formatting, comments, and line endings, so only the
 `draft` line changes.
 
@@ -38,11 +39,14 @@ def split_frontmatter(text):
     return start, end
 
 
-def as_utc(value):
-    """Coerce a parsed TOML `date` into an aware datetime, or None if unusable.
+def publish_date(value):
+    """Return the UTC calendar date a `date` value schedules, or None if unusable.
 
     TOML dates arrive as a date or datetime. A quoted value arrives as a string,
     so it is re-parsed as bare TOML to hold both forms to the same rules.
+
+    Only the date is kept. The job runs once a day, so a post scheduled for
+    today publishes on today's run whatever time of day it carries.
     """
     if isinstance(value, str):
         try:
@@ -51,14 +55,17 @@ def as_utc(value):
             return None
 
     if isinstance(value, datetime.datetime):
-        return value if value.tzinfo else value.replace(tzinfo=UTC)
+        # An offset like +02:00 can land on a different UTC day.
+        if value.tzinfo:
+            value = value.astimezone(UTC)
+        return value.date()
     if isinstance(value, datetime.date):
-        return datetime.datetime(value.year, value.month, value.day, tzinfo=UTC)
+        return value
     return None
 
 
 def main():
-    now = datetime.datetime.now(UTC)
+    today = datetime.datetime.now(UTC).date()
     root = pathlib.Path("content/blog")
     if not root.is_dir():
         sys.exit(f"{root} not found; run from the repository root")
@@ -96,17 +103,17 @@ def main():
         if "date" not in frontmatter:
             sys.exit(f"{path}: draft has no `date`, so it can never publish")
 
-        publish_at = as_utc(frontmatter["date"])
-        if publish_at is None:
+        scheduled = publish_date(frontmatter["date"])
+        if scheduled is None:
             sys.exit(f"{path}: unrecognized `date` value {frontmatter['date']!r}")
-        if publish_at > now:
-            print(f"holding {path} until {publish_at:%Y-%m-%d %H:%M %Z}")
+        if scheduled > today:
+            print(f"holding {path} until {scheduled:%Y-%m-%d}")
             continue
 
         del frontmatter["draft"]
         with open(path, "w", encoding="utf-8", newline="") as handle:
             handle.write(text[:start] + tomlkit.dumps(frontmatter) + text[end:])
-        print(f"releasing {path} (dated {publish_at:%Y-%m-%d %H:%M %Z})")
+        print(f"releasing {path} (dated {scheduled:%Y-%m-%d})")
         released.append(str(path))
 
     output = os.environ.get("GITHUB_OUTPUT")

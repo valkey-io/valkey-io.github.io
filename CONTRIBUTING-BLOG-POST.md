@@ -72,8 +72,7 @@ Here is an example of the frontmatter:
 # `title` is how your post will be listed and what will appear at the top of the post
 title=  "Using Valkey for mind control experiments"
 # `date` is when your post will be published. Use a date with no time.
-# For the most part, you can leave this as the day you _started_ the post.
-# The maintainers will update this value before publishing.
+# Put the date you expect it to go out; maintainers will adjust it if needed.
 date= 2024-07-01
 # 'description' is what is shown as a snippet/summary in various contexts.
 # You can make this the first few lines of the post or (better) a hook for readers.
