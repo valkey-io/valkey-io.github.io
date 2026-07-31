@@ -40,13 +40,16 @@ def as_utc(value, path):
 
 
 def strip_draft(frontmatter):
-    """Remove the top-level `draft` line, ignoring lines inside TOML tables."""
-    lines = frontmatter.split("\n")
+    """Remove the top-level `draft` line, ignoring lines inside TOML tables.
+
+    Keeps line endings intact so a CRLF-authored post yields a one-line diff.
+    """
+    lines = frontmatter.splitlines(keepends=True)
     for index, line in enumerate(lines):
         if line.lstrip().startswith("["):
             break  # a table header; `draft` past this point is not top-level
         if DRAFT_LINE.match(line):
-            return "\n".join(lines[:index] + lines[index + 1 :])
+            return "".join(lines[:index] + lines[index + 1 :])
     return None
 
 
@@ -61,13 +64,16 @@ def main():
         if path.name == "_index.md":
             continue
 
-        text = path.read_text(encoding="utf-8")
+        # newline="" keeps CRLF intact instead of translating it to LF.
+        with open(path, "r", encoding="utf-8", newline="") as handle:
+            text = handle.read()
         match = FRONTMATTER.search(text)
         if not match or match.start() != 0:
             continue
 
         try:
-            data = tomllib.loads(match.group(1))
+            # A CRLF file leaves a lone trailing `\r` that tomllib rejects.
+            data = tomllib.loads(match.group(1).rstrip("\r"))
         except tomllib.TOMLDecodeError as error:
             print(f"::warning file={path}::could not parse frontmatter: {error}")
             continue
@@ -91,10 +97,8 @@ def main():
             print(f"::warning file={path}::draft is set but no `draft` line found")
             continue
 
-        path.write_text(
-            text[: match.start(1)] + stripped + text[match.end(1) :],
-            encoding="utf-8",
-        )
+        with open(path, "w", encoding="utf-8", newline="") as handle:
+            handle.write(text[: match.start(1)] + stripped + text[match.end(1) :])
         print(f"releasing {path} (dated {publish_at:%Y-%m-%d %H:%M} UTC)")
         released.append(str(path))
 

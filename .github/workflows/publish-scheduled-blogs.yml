@@ -28,6 +28,8 @@ jobs:
         with:
           app-id: ${{ secrets.VALKEYRIE_BOT_APP_ID }}
           private-key: ${{ secrets.VALKEYRIE_BOT_PRIVATE_KEY }}
+          # workflow `permissions` only scopes GITHUB_TOKEN, not this token.
+          permission-contents: write
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,7 +48,9 @@ jobs:
         run: |
           git config user.name 'valkeyrie-bot[bot]'
           git config user.email '${{ steps.generate-token.outputs.app-slug }}[bot]@users.noreply.github.com'
-          printf '%s\n' "$PUBLISHED" | grep . | xargs -r git add --
+          # Stage by directory: the script only edits files under content/blog,
+          # and this is safe for paths containing spaces.
+          git add -- content/blog
           git commit --signoff -m 'Publish scheduled blog posts' \
             -m "$(printf '%s\n' "$PUBLISHED" | grep . | sed 's/^/- /')"
           git push origin HEAD:main
