@@ -71,11 +71,10 @@ Here is an example of the frontmatter:
 +++
 # `title` is how your post will be listed and what will appear at the top of the post
 title=  "Using Valkey for mind control experiments"
-# `date` is when your post will be published.
+# `date` is when your post will be published. Use a date with no time.
 # For the most part, you can leave this as the day you _started_ the post.
-# The maintainers will update this value before publishing
-# The time is generally irrelevant in how Valkey published, so '01:01:01' is a good placeholder
-date= 2024-07-01 01:01:01
+# The maintainers will update this value before publishing.
+date= 2024-07-01
 # 'description' is what is shown as a snippet/summary in various contexts.
 # You can make this the first few lines of the post or (better) a hook for readers.
 # Aim for 2 short sentences.
@@ -84,7 +83,6 @@ description= "It's become clear that people want to talk about Valkey and have b
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "maury", "jacobim" ]
 # 'draft' holds a finished post back until its 'date' arrives.
-# While this is true, the post is not built, listed, or included in the feed.
 # Leave it out unless you are scheduling; see "Scheduling a post" below.
 draft = true
 [extra]
@@ -165,19 +163,13 @@ Merging to `main` rebuilds and publishes [Valkey.io](http://valkey.io/), so a po
 
 ## Scheduling a post
 
-Scheduling is for posts that are *finished and approved* but should not be public yet, such as a release announcement tied to a date.
-Work-in-progress should stay in a pull request, not be merged as a draft.
+Scheduling is for finished, approved posts that shouldn't be public yet.
+Work-in-progress stays in a pull request.
 
-To schedule a post, set `draft = true` in the frontmatter and set `date` to the day it should go live.
-Zola excludes drafts entirely: the post is not built, does not appear in the blog listing, and stays out of the sitemap and RSS feed.
+Set `draft = true` and set `date` to the day it should go live.
+Drafts are not built, listed, or included in the feed.
 
-**Dates are UTC, and the time of day in `date` does not control when the post appears.**
-A job (`.github/workflows/publish-scheduled-blogs.yml`) runs once a day at 16:00 UTC (08:00 PST / 09:00 PDT).
-On the first run at or after a draft's `date`, it removes the `draft` line and commits to `main`, which publishes the post.
-
-In practice that means a post dated `2026-08-15` goes live during the morning of the 15th, Pacific time.
-Because posts are conventionally dated `00:00:00` or `01:01:01`, the job deliberately ignores the time and publishes during PT working hours rather than at whatever hour is written in the file.
-If a post must go out at an exact time, publish it by hand instead.
-
-A draft with no `date` is never published automatically.
-Maintainers can publish immediately by removing the `draft` line by hand, or run the workflow early from the Actions tab with **Run workflow** (tick `dry_run` to preview what would be published without committing).
+A job runs daily at 16:00 UTC (08:00 PST / 09:00 PDT) and publishes any draft whose `date` has arrived.
+Dates are UTC, and the time of day is ignored, so use a date with no time.
+A post dated `2026-08-15` goes live that morning, Pacific time.
+Publish by hand if you need an exact time.
