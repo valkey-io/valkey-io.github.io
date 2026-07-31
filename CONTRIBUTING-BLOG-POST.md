@@ -167,7 +167,8 @@ Scheduling is for finished, approved posts that shouldn't be public yet.
 Work-in-progress stays in a pull request.
 
 Set `draft = true` and set `date` to the day it should go live.
-Drafts are not built, listed, or included in the feed.
+Until it publishes, the post is not built, listed, or included in the feed.
+Once it publishes, it behaves like any other post.
 
 A job runs daily at 16:00 UTC (08:00 PST / 09:00 PDT) and publishes any draft whose `date` has arrived.
 Dates are UTC, and the time of day is ignored, so use a date with no time.
