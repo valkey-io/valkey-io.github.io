@@ -83,6 +83,10 @@ description= "It's become clear that people want to talk about Valkey and have b
 # 'authors' are the folks who wrote or contributed to the post.
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "maury", "jacobim" ]
+# 'draft' holds the post back from being published.
+# While this is true, the post is not built, listed, or included in the feed.
+# Leave it out unless you are scheduling; see "Scheduling a post" below.
+draft = true
 [extra]
     # 'featured' controls whether the blog post appears in the featured section on the main blog page
     featured = true
@@ -157,6 +161,16 @@ Make sure to communicate your change fully in the body of the pull request.
 After your contribution is made, the website maintainers will review the post.
 They may have feedback for you and ask you to make changes.
 Once everyone is satisfied with the post, the maintainers will merge it into the `main` branch.
-The `main` branch of the repo represents the *future* state of all integrated changes before publishing.
-At this point, the maintainers make further changes to your post to properly schedule or link the post.
-Once this occurs, the maintainers will make move the changes into ‘production’ which will trigger a rebuild and publishing of the content website to [Valkey.io](http://valkey.io/)
+Merging to `main` rebuilds and publishes [Valkey.io](http://valkey.io/), so a post without `draft = true` goes live as soon as it is merged.
+
+## Scheduling a post
+
+To merge a post before it should be public, set `draft = true` in the frontmatter and set `date` to the intended publish date and time (UTC).
+Zola excludes drafts entirely: the post is not built, does not appear in the blog listing, and stays out of the sitemap and RSS feed.
+
+An hourly job (`.github/workflows/publish-scheduled-blogs.yml`) checks the drafts under `content/blog`.
+Once a draft's `date` has passed, the job removes the `draft` line and commits to `main`, which publishes the post.
+Expect the post to go live within an hour of its `date`.
+
+A draft with no `date` is never published automatically, so it is safe to park work-in-progress on `main`.
+Maintainers can also publish immediately by removing the `draft` line by hand, or run the workflow from the Actions tab with **Run workflow** (tick `dry_run` to preview what would be published).
