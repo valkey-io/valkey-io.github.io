@@ -170,7 +170,7 @@ Set `draft = true` and set `date` to the day it should go live.
 Until it publishes, the post is not built, listed, or included in the feed.
 Once it publishes, it behaves like any other post.
 
-A job runs daily at 16:00 UTC (08:00 PST / 09:00 PDT) and publishes any draft whose `date` has arrived.
+A job runs daily at 15:00 UTC (07:00 PST / 08:00 PDT) and publishes any draft whose `date` has arrived.
 Dates are UTC, and the time of day is ignored, so use a date with no time.
 A post dated `2026-08-15` goes live that morning, Pacific time.
 Publish by hand if you need an exact time.
