@@ -25,6 +25,9 @@ However, if you don’t get the feedback from the maintainers you run the risk o
 
 Write your blog post in markdown.
 Generally, you’ll be better off sticking to headings, links, paragraphs and code blocks (there is no prohibition of using other markdown features though).
+
+### What to write about
+
 A few writing tips:
 
 1. Blog posts should be consumable in one sitting.
@@ -44,6 +47,38 @@ You can even just invite readers to consume related content.
 7. Speak for yourself.
 Blog posts are attributed to a person, not the project, so feel free to have opinions and write in the first (I) or second (you) grammatical person.
 Unless you have specific authority (and you probably don’t!), avoid speaking for groups of people.
+
+### How to write it
+
+Reviewers use these as the basis for suggestions, so knowing them up front saves a round trip.
+This document follows them, so read its source as an example.
+
+1. Put one sentence per line in the markdown source.
+Markdown joins the lines back into a paragraph, so nothing changes about how the post renders.
+GitHub anchors suggestions to lines, so a reviewer can rewrite one sentence instead of rewriting the paragraph.
+2. Cut weasel words.
+“Significantly faster” and “various improvements” imply a claim without making one.
+Replace them with the number, name, or link they stood in for, or delete them.
+    1. The same goes for padding: “basically”, “quite”, “simply”, “very”, “actually”, “of course”.
+    2. You can hedge when there is uncertainty, but say where it comes from: “we have not measured this on ARM”, not “this should probably be fine”.
+3. Make every claim checkable.
+Give numbers with their units and the setup that produced them, link behavior claims to a pull request or the docs, and name the version a behavior applies to.
+4. Use default or stock Valkey when possible.
+Run the latest version of Valkey with the default configuration.
+If you aren't running the latest version or the default configuration, discuss why.
+5. Credit contributors by name when you describe their work.
+If applicable, include a link to their github or blog profile.
+6. Prefer active voice and one idea per sentence.
+“The replica requests a full sync” beats “a full sync is requested by the replica”.
+7. Write descriptive headings, not clever ones.
+Make sure each header is clear to the end user.
+Feel free to make creative jokes and puns, but not at the expense of reading for our global audience.
+8. Use inclusive terminology in prose, diagrams, and code: primary and replica, allowlist and denylist.
+9. Use uppercase backticks for commands like `SET` and `XADD`.
+10. Use lowercase backticks when describing executable names, configs, and info fields like `valkey-server` and `cluster-node-timeout`.
+11. Tag code blocks with a language so that they render correctly.
+12. Give images alt text describing what they show to make them more inclusive.
+13. Expand an acronym on first use with the acronym in parentheses.
 
 ## Step 3: Write about yourself
 
