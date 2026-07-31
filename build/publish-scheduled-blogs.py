@@ -59,24 +59,28 @@ def as_utc(value):
     return None
 
 
-def strip_draft(frontmatter):
-    """Remove the top-level `draft` line, or None if there isn't one.
+def strip_draft(frontmatter, data):
+    """Remove the `draft` line from `frontmatter`, or None if it can't be found.
 
-    Each candidate line is validated with `tomllib`, so only a line that really
-    is the top-level `draft = true` assignment is removed. Line endings are
-    preserved so a CRLF-authored post still yields a one-line diff.
+    Rather than trying to recognize the line by eye, each candidate is removed
+    and the result re-parsed: the edit is accepted only if it drops `draft` and
+    changes nothing else. That rules out a `draft = true` sitting inside a
+    multi-line string, where deleting the line would corrupt the value.
+
+    Line endings are preserved so a CRLF-authored post yields a one-line diff.
     """
+    expected = {key: value for key, value in data.items() if key != "draft"}
     lines = frontmatter.splitlines(keepends=True)
+
     for index, line in enumerate(lines):
-        stripped = line.strip()
-        if stripped.startswith("["):
-            break  # a table header; `draft` past this point is not top-level
+        if "draft" not in line:
+            continue
+        candidate = "".join(lines[:index] + lines[index + 1 :])
         try:
-            if tomllib.loads(stripped).get("draft") is not True:
-                continue
+            if tomllib.loads(candidate.strip("\r")) == expected:
+                return candidate
         except tomllib.TOMLDecodeError:
-            continue  # part of a multi-line value, not a standalone assignment
-        return "".join(lines[:index] + lines[index + 1 :])
+            continue  # removing this line broke the TOML, so it wasn't the one
     return None
 
 
@@ -100,35 +104,30 @@ def main():
             continue
         start, end = bounds
 
+        # Invalid TOML already fails `zola build`, so treat it as an error here
+        # rather than skipping the file and publishing nothing.
         try:
             # A CRLF file leaves a lone trailing `\r` that tomllib rejects.
             data = tomllib.loads(text[start:end].strip("\r"))
         except tomllib.TOMLDecodeError as error:
-            print(f"::warning file={path}::could not parse frontmatter: {error}")
-            continue
+            sys.exit(f"{path}: invalid TOML frontmatter: {error}")
 
         if data.get("draft") is not True:
             continue
 
         if "date" not in data:
-            print(f"::warning file={path}::draft has no date; leaving as draft")
-            continue
+            sys.exit(f"{path}: draft has no `date`, so it can never publish")
 
         publish_at = as_utc(data["date"])
         if publish_at is None:
-            print(
-                f"::warning file={path}::unrecognized date "
-                f"{data['date']!r}; leaving as draft"
-            )
-            continue
+            sys.exit(f"{path}: unrecognized `date` value {data['date']!r}")
         if publish_at > now:
             print(f"holding {path} until {publish_at:%Y-%m-%d %H:%M %Z}")
             continue
 
-        stripped = strip_draft(text[start:end])
+        stripped = strip_draft(text[start:end], data)
         if stripped is None:
-            print(f"::warning file={path}::draft is set but no `draft` line found")
-            continue
+            sys.exit(f"{path}: could not remove the `draft` line")
 
         with open(path, "w", encoding="utf-8", newline="") as handle:
             handle.write(text[:start] + stripped + text[end:])
