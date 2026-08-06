@@ -1,0 +1,74 @@
++++
+# Reference example for CONTRIBUTING-BLOG-POST.md, not a real post.
+# The `.example` suffix matches `ignored_content` in config.toml, so Zola never publishes it.
+# To start a post, copy this to `content/blog/YYYY-MM-DD-your-slug.md` and delete these notes.
+# Frontmatter must begin at the very first character of the file, as it does here.
+#
+# Two deliberate deviations, so you don't copy them by mistake:
+# this is ~300 words rather than the 500-1,200 a real post should aim for, and it credits
+# no contributor because it describes no one's work. Credit people by name when it does.
+#
+# Descriptive, not clever. This is the page title and the blog listing entry.
+title = "When a Valkey hash stops being a listpack"
+# The day you started writing is fine; maintainers set the real publish date.
+# The time is irrelevant to publishing, so '01:01:01' is the usual placeholder.
+date = 2026-01-15 01:01:01
+# Two short sentences, written as a hook rather than a copy of your first paragraph.
+description = "A Valkey hash changes its encoding once it passes 512 fields, and it never changes back. Here is how to watch it happen and what the switch costs you."
+# One entry per author, each matching a file in content/authors/.
+authors = ["madolson"]
+
+[taxonomies]
+# One of: Technical Deep Dive, Announcements, Community Highlight, How-to, Events
+blog_type = ["Technical Deep Dive"]
+
+[extra]
+featured = false
+featured_image = "/assets/media/featured/random-01.webp"
++++
+
+Valkey stores a small hash as a listpack, a flat array of field-value pairs.
+Once the hash grows past a threshold, Valkey converts it to a hash table.
+The conversion runs one way only: deleting fields afterward does not convert it back.
+
+## Watching the conversion
+
+`hash-max-listpack-entries` sets the threshold and defaults to 512.
+`OBJECT ENCODING` reports the encoding a key uses right now:
+
+```bash
+valkey-cli DEL h
+valkey-cli HSET h field1 value1
+valkey-cli OBJECT ENCODING h    # listpack
+```
+
+Push the hash past 512 fields and the encoding changes:
+
+```bash
+for i in $(seq 1 513); do echo "HSET h f$i v$i"; done | valkey-cli --pipe
+valkey-cli OBJECT ENCODING h    # hashtable
+```
+
+A field value longer than `hash-max-listpack-value`, 64 bytes by default, also forces the conversion.
+
+A hash table costs more memory because each field-value pair gets its own entry, and those entries hang off a bucket array:
+
+![A four slot bucket array, with slot 2 pointing to an entry holding a key, a value, and a next pointer](/assets/media/pictures/dictionary_bucket_and_entry_overview.png)
+
+## What the switch costs
+
+I compared two hashes holding the same 512 field-value pairs.
+One stayed a listpack.
+The other I converted by adding a 513th field and deleting it again.
+Both ran on Valkey 9.1.1, built from the release tag with a default configuration:
+
+- listpack: 6,176 bytes
+- hash table: 16,952 bytes
+
+That is 2.7 times the memory for identical contents.
+`MEMORY USAGE` reports one object, not the resident set size (RSS) of the whole process, so treat it as a per-key comparison rather than a capacity estimate.
+
+## Next steps
+
+Run `OBJECT ENCODING` against the hashes in your own keyspace before you raise the threshold.
+Reproduce the numbers above with the commands in this post, and if your results disagree, [open an issue](https://github.com/valkey-io/valkey/issues) with your version and configuration.

@@ -11,6 +11,9 @@ taxonomies = [
     { name = "blog_type", render = false },
 ]
 
+# Reference files that live alongside content but should not be published
+ignored_content = ["*.example"]
+
 [markdown.highlighting]
 theme = "github-dark-default"
 
