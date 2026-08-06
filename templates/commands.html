@@ -38,11 +38,17 @@
             {% if command_data_obj.container %}
                 {% set command_display = command_data_obj.container ~ " " ~ command_display %}
             {% endif %}
+            {% if command_data_obj.replaced_by %}
+                {% set deprecated = true %}
+            {% else %}
+                {% set deprecated = false %}
+            {% endif %}
             {% set command_entry = [
                 command_display,
                 page.permalink | safe,
                 command_data_obj.summary,
-                command_data_obj.group
+                command_data_obj.group,
+                deprecated
             ] %}
             {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
         {% endif %}
@@ -58,7 +64,13 @@
             <span>{{ group_descriptions[command_group_description_name].description }}</span>
         </h2>
         {% for entry in command_group | sort(attribute="0") %}
-            <div class="command-entry"><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code> {{entry[2]}}</div>
+            <div class="command-entry">
+                {% if entry[4] == true %}
+                    <a href="{{ entry[1] }}#deprecation-advice" class="deprecated-notice">deprecated</a>
+                {% endif %}
+                <code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code> {{entry[2]}} 
+                
+            </div>
         {% endfor %}
         <div class="command-group-meta">
             <small><a href="#top">Back to top</a></small>
