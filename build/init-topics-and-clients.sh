@@ -13,6 +13,11 @@ if [ -z "$2" ]; then
     exit 1
 fi
 
+if [ -z "$3" ]; then
+    echo "You must supply a path to the AI libraries directory as the third argument"
+    exit 1
+fi
+
 # check for validity of these arguments as paths
 if [ ! -d "$1" ]; then
     echo "The topics directory must exist and be a valid path"
@@ -21,6 +26,11 @@ fi
 
 if [ ! -d "$2" ]; then
     echo "The clients directory must exist and be a valid path"
+    exit 1
+fi
+
+if [ ! -d "$3" ]; then
+    echo "The AI libraries directory must exist and be a valid path"
     exit 1
 fi
 
@@ -72,4 +82,10 @@ if [ ! -L build-clients -o "$(readlink build-clients)" != "$2" ]; then
     ln -s $2 ./build-clients
 fi
 echo "Symlink to clients has been created at ./build-clients "
+
+#create symlink to AI libraries, except if it already exists
+if [ ! -L build-ai -o "$(readlink build-ai)" != "$3" ]; then
+    ln -s $3 ./build-ai
+fi
+echo "Symlink to AI libraries has been created at ./build-ai "
 

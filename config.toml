@@ -30,6 +30,7 @@ command_bloom_json_path = "../build-bloom-command-json/"
 command_json_json_path = "../build-json-command-json/"
 command_search_json_path = "../build-search-command-json/"
 client_json_path = "../build-clients/"
+ai_json_path = "../build-ai/"
 doc_topic_path = "../build-topics/"
 
 review_list = [

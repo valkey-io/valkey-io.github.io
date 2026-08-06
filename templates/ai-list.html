@@ -1,0 +1,55 @@
+{% extends "fullwidth.html" %}
+{% import "macros/docs.html" as docs %}
+
+{% block main_content %}
+    {%- set ai_path = section.extra.recommended_ai_paths | first -%}
+    {%- set first_ai = load_data(path = docs::ai_json_path(ai_path=ai_path), format="json", required = false) -%}
+    {%- if not first_ai %}
+        <strong>AI Libraries page not found.</strong> You likely need to build the AI libraries page. See "Building additional content" in the README.md file.
+    {%- else %}
+        <div class="markdown-content">
+            {{ section.content | markdown | safe }}
+        </div>
+
+        <div class="client-list">
+            <h2>Table of Contents</h2>
+            <ul>              
+                {%- set languages = [] -%}
+                {%- for path in section.extra.recommended_ai_paths -%}
+                    {%- set language = path | split(pat="/") | nth(n=1) -%}
+                    {%- if language not in languages -%}
+                        {%- set_global languages = languages | concat(with=language) -%}
+                    {%- endif -%}
+                {%- endfor -%}
+                {%- for language in languages %}
+                    <li><a href="#{{ language | slugify }}">{{ docs::format_language(language=language) }}</a></li>
+                {%- endfor %}
+            </ul>
+            {%- for language in languages %}
+                <div class="language-clients">
+                    <h2 id="{{ language | slugify }}">{{ docs::format_language(language=language) }}</h2>
+                    {%- for path in section.extra.recommended_ai_paths -%}
+                        {%- set ai_lib = load_data(path = docs::ai_json_path(ai_path= path), format="json") -%}
+                        {%- if ai_lib.language == language %}
+                        <div class="client-item" >
+                            <h3 id="{{ ai_lib.name | slugify }}">{{ ai_lib.name }}</h3>
+                            <ul>
+                                <li><strong>Repo:</strong> <a href="{{ ai_lib.repo }}">{{ ai_lib.name }}</a></li>
+                                <li><strong>Description:</strong> {{ ai_lib.description }}</li>
+                                <li><strong>Valkey Uses:</strong> {{ ai_lib.valkey_uses }}</li>
+                                <li>
+                                    <strong>Installation:</strong>
+                                    <code>{{ ai_lib.installation }}</code>
+                                </li>
+                                <li><strong>Version:</strong> {{ ai_lib.version }}</li>
+                                <li><strong>Version Released:</strong> {{ ai_lib.version_released }}</li>
+                                <li><strong>License:</strong> {{ ai_lib.license }}</li>
+                            </ul>
+                        </div>                    
+                        {%- endif -%}
+                    {%- endfor %}
+                </div>
+            {%- endfor %}
+        </div>
+    {%- endif %}
+{% endblock main_content %}
