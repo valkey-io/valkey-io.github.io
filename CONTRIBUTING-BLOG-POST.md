@@ -62,7 +62,7 @@ Markdown joins the lines back into a paragraph, so nothing changes about how the
 GitHub anchors suggestions to lines, so a reviewer can rewrite one sentence instead of rewriting the paragraph.
 This is a convention for the source file, not a style directive: write sentences of whatever length the idea needs.
 2. Cut weasel words.
-“Significantly faster” and “various improvements” imply a claim without making one.
+"Significantly faster" and "various improvements" imply a claim without making one.
 Replace them with the number, name, or link they stood in for, or delete them.
     1. The same goes for padding: “basically”, “quite”, “simply”, “very”, “actually”, “of course”.
     2. You can hedge when there is uncertainty, but say where it comes from: “we have not measured this on ARM”, not “this should probably be fine”.
