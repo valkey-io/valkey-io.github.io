@@ -1,22 +1,21 @@
 +++
-# This file is a reference example for CONTRIBUTING-BLOG-POST.md, not a real post.
+# Reference example for CONTRIBUTING-BLOG-POST.md, not a real post.
 # The `.example` suffix matches `ignored_content` in config.toml, so Zola never publishes it.
-# Copy it to `content/blog/YYYY-MM-DD-your-slug.md` and delete these notes to start a post.
-# The frontmatter must begin at the very first character of the file, as it does here.
+# To start a post, copy this to `content/blog/YYYY-MM-DD-your-slug.md` and delete these notes.
+# Frontmatter must begin at the very first character of the file, as it does here.
 #
-# The topic, benchmark numbers, pull request link, and contributor credit are all invented
-# placeholders. Everything else demonstrates a rule from the guide: one sentence per line,
-# checkable claims, backtick casing, alt text, tagged code blocks, acronym expansion,
-# inclusive terminology, and a call to action.
+# Two deliberate deviations, so you don't copy them by mistake:
+# this is ~300 words rather than the 500-1,200 a real post should aim for, and it credits
+# no contributor because it describes no one's work. Credit people by name when it does.
 #
 # Descriptive, not clever. This is the page title and the blog listing entry.
-title = "How Valkey splits request handling across I/O threads"
-# The date you started writing is fine; maintainers set the real publish date.
+title = "When a Valkey hash stops being a listpack"
+# The day you started writing is fine; maintainers set the real publish date.
 # The time is irrelevant to publishing, so '01:01:01' is the usual placeholder.
 date = 2026-01-15 01:01:01
 # Two short sentences, written as a hook rather than a copy of your first paragraph.
-description = "Valkey can hand socket reads and writes to dedicated threads instead of doing everything on one thread. Here is how the split works and what to measure before you change it."
-# One entry per author, matching a file in content/authors/.
+description = "A Valkey hash changes its encoding once it passes 512 fields, and it never changes back. Here is how to watch it happen and what the switch costs you."
+# One entry per author, each matching a file in content/authors/.
 authors = ["madolson"]
 
 [taxonomies]
@@ -28,68 +27,48 @@ featured = false
 featured_image = "/assets/media/featured/random-01.webp"
 +++
 
-Valkey runs commands on a single thread.
-That design keeps the data structures free of locks, and it is the reason a command like [`INCR`](/commands/incr/) is atomic without any coordination between clients.
-It also means that one thread has to do everything else too: reading bytes off sockets, parsing them, running the command, and writing the reply back.
+Valkey stores a small hash as a listpack, a flat array of field-value pairs.
+Once the hash grows past a threshold, Valkey converts it to a hash table.
+The conversion runs one way only: deleting fields afterward does not convert it back.
 
-On a machine with many cores, that single thread becomes the limit long before the cores do.
-I/O threading changes the split.
-This post covers what moves off the main thread, how to turn it on, and what to measure before and after.
+## Watching the conversion
 
-## What the main thread does
-
-Every client connection is a socket.
-For each event loop iteration, the server waits for sockets to become readable, reads the pending bytes, parses each request, executes it, and queues the reply.
-
-Reading and writing are the parts that scale with connection count rather than with the work each command does.
-A `GET` against a small string costs the same regardless of how many clients are connected, but the socket handling in front of it does not.
-
-## How the work is split
-
-With I/O threads enabled, the main thread stops doing socket reads and writes itself and hands them to a pool of worker threads.
-
-![The main thread waits on epoll, sends read jobs to two I/O threads, prefetches command keys, processes commands, then sends write and free jobs back to the I/O threads](/assets/media/pictures/io_threads.png)
-
-The main thread still runs every command, in order, by itself.
-The I/O threads only move bytes and free objects.
-Command execution stays single threaded, so the atomicity guarantees do not change.
-
-## Turning it on
-
-Set `io-threads` at startup.
-The value includes the main thread, so `io-threads 4` starts three I/O threads alongside it:
+`hash-max-listpack-entries` sets the threshold and defaults to 512.
+`OBJECT ENCODING` reports the encoding a key uses right now:
 
 ```bash
-valkey-server --io-threads 4
+valkey-cli DEL h
+valkey-cli HSET h field1 value1
+valkey-cli OBJECT ENCODING h    # listpack
 ```
 
-You can confirm the setting took effect with [`CONFIG GET`](/commands/config-get/):
+Push the hash past 512 fields and the encoding changes:
 
 ```bash
-valkey-cli CONFIG GET io-threads
+for i in $(seq 1 513); do echo "HSET h f$i v$i"; done | valkey-cli --pipe
+valkey-cli OBJECT ENCODING h    # hashtable
 ```
 
-Start at 4 and increase it while watching throughput.
-Past the point where socket handling stops being the bottleneck, more threads add scheduling overhead without adding requests per second (RPS).
+A field value longer than `hash-max-listpack-value`, 64 bytes by default, also forces the conversion.
 
-## What to measure
+A hash table costs more memory because each field-value pair gets its own entry, and those entries hang off a bucket array:
 
-Measure before you change anything, and measure requests per second alongside latency.
-Throughput that climbs while p99 latency climbs faster is not usually a win.
+![A four slot bucket array, with slot 2 pointing to an entry holding a key, a value, and a next pointer](/assets/media/pictures/dictionary_bucket_and_entry_overview.png)
 
-A checkable result names the setup that produced it, like this (the figures here are invented for the example):
-on a 16 core instance running `valkey-benchmark` with 512 connections against Valkey 9.0 with an otherwise default configuration, moving from `io-threads 1` to `io-threads 4` took throughput from 250,000 to 610,000 RPS.
-Compare that to "I/O threads made it significantly faster", which asserts a result without giving the reader anything to check.
+## What the switch costs
 
-Two things that will not show up in a benchmark but will show up in production:
+I compared two hashes holding the same 512 field-value pairs.
+One stayed a listpack.
+The other I converted by adding a 513th field and deleting it again.
+Both ran on Valkey 9.1.1, built from the release tag with a default configuration:
 
-1. Each I/O thread has its own stack and buffers, so memory use rises with the thread count.
-2. A primary and its replicas do not need the same setting.
-Replicas handle a different traffic shape, so tune them separately.
+- listpack: 6,176 bytes
+- hash table: 16,952 bytes
+
+That is 2.7 times the memory for identical contents.
+`MEMORY USAGE` reports one object, not the resident set size (RSS) of the whole process, so treat it as a per-key comparison rather than a capacity estimate.
 
 ## Next steps
 
-Try it on a workload you already have numbers for, and compare against your existing baseline rather than against the figures in this post.
-If you find a case where more threads make things worse, [open an issue](https://github.com/valkey-io/valkey/issues) with your configuration and workload.
-
-Thanks to [Contributor Name](https://github.com/octocat) for the prefetching work in [pull request #1234](https://github.com/valkey-io/valkey/pull/1234) that made much of this possible.
+Run `OBJECT ENCODING` against the hashes in your own keyspace before you raise the threshold.
+Reproduce the numbers above with the commands in this post, and if your results disagree, [open an issue](https://github.com/valkey-io/valkey/issues) with your version and configuration.
