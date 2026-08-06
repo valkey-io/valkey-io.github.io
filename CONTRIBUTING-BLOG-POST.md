@@ -71,11 +71,9 @@ Here is an example of the frontmatter:
 +++
 # `title` is how your post will be listed and what will appear at the top of the post
 title=  "Using Valkey for mind control experiments"
-# `date` is when your post will be published.
-# For the most part, you can leave this as the day you _started_ the post.
-# The maintainers will update this value before publishing
-# The time is generally irrelevant in how Valkey published, so '01:01:01' is a good placeholder
-date= 2024-07-01 01:01:01
+# `date` is when your post will be published. Use a date with no time.
+# Put the date you expect it to go out; maintainers will adjust it if needed.
+date= 2024-07-01
 # 'description' is what is shown as a snippet/summary in various contexts.
 # You can make this the first few lines of the post or (better) a hook for readers.
 # Aim for 2 short sentences.
@@ -83,6 +81,9 @@ description= "It's become clear that people want to talk about Valkey and have b
 # 'authors' are the folks who wrote or contributed to the post.
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "maury", "jacobim" ]
+# 'draft' holds a finished post back until its 'date' arrives.
+# Leave it out unless you are scheduling; see "Scheduling a post" below.
+draft = true
 [extra]
     # 'featured' controls whether the blog post appears in the featured section on the main blog page
     featured = true
@@ -157,6 +158,18 @@ Make sure to communicate your change fully in the body of the pull request.
 After your contribution is made, the website maintainers will review the post.
 They may have feedback for you and ask you to make changes.
 Once everyone is satisfied with the post, the maintainers will merge it into the `main` branch.
-The `main` branch of the repo represents the *future* state of all integrated changes before publishing.
-At this point, the maintainers make further changes to your post to properly schedule or link the post.
-Once this occurs, the maintainers will make move the changes into ‘production’ which will trigger a rebuild and publishing of the content website to [Valkey.io](http://valkey.io/)
+Merging to `main` rebuilds and publishes [Valkey.io](http://valkey.io/), so a post without `draft = true` goes live as soon as it is merged.
+
+## Scheduling a post
+
+Scheduling is for finished, approved posts that shouldn't be public yet.
+Work-in-progress stays in a pull request.
+
+Set `draft = true` and set `date` to the day it should go live.
+Until it publishes, the post is not built, listed, or included in the feed.
+Once it publishes, it behaves like any other post.
+
+A job runs daily at 15:00 UTC (07:00 PST / 08:00 PDT) and publishes any draft whose `date` has arrived.
+Dates are UTC, and the time of day is ignored, so use a date with no time.
+A post dated `2026-08-15` goes live that morning, Pacific time.
+Publish by hand if you need an exact time.
