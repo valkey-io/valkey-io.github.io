@@ -36,11 +36,13 @@ Aim for 500-1,200 words.
     1. If you start writing and realize that your post will be super long, consider refining your topic.
     2. Sometimes there are very good reasons to link multiple posts together, but length is not one; aim to make each post independent and not part of a series.
 3. Highly technical is fine but understand that [valkey.io](http://valkey.io/) is read by a variety of skill levels: the best posts make complex topics easy to understand.
+Start by setting context for technical readers who are unfamiliar with the topic.
 4. [Valkey.io](http://valkey.io/) is not a commercial space; you can write about services and products as long as a) you’re not actively selling/promoting and b) the subject matter is directly related to the use of Valkey.
     1. Acceptable Example: A post that describes the lessons learned about operating Valkey at scale gleaned from a Valkey service provider.
     2. Unacceptable Example: A post that describes the advantages of running Valkey through a specific service.
 5. Write about Valkey.
 There is a ton of things to say about Valkey without venturing into comparisons with other products and projects.
+Comparing Valkey against earlier Valkey versions is fine; head-to-head comparisons against other products belong on other platforms, not [valkey.io](http://valkey.io/).
 6. Have a call-to-action.
 What do you want your readers to do next after they finish your blog post? The call-to-action can be something like asking a users to contribute, try some sample code, or come to an event.
 You can even just invite readers to consume related content.
@@ -52,10 +54,13 @@ Unless you have specific authority (and you probably don’t!), avoid speaking f
 
 Reviewers use these as the basis for suggestions, so knowing them up front saves a round trip.
 This document follows them, so read its source as an example.
+[`content/blog/example-post.md.example`](content/blog/example-post.md.example) is a short post that applies every rule below, with frontmatter, a tagged code block, and an image with alt text.
+Copy it as a starting point.
 
 1. Put one sentence per line in the markdown source.
 Markdown joins the lines back into a paragraph, so nothing changes about how the post renders.
 GitHub anchors suggestions to lines, so a reviewer can rewrite one sentence instead of rewriting the paragraph.
+This is a convention for the source file, not a style directive: write sentences of whatever length the idea needs.
 2. Cut weasel words.
 “Significantly faster” and “various improvements” imply a claim without making one.
 Replace them with the number, name, or link they stood in for, or delete them.
@@ -63,8 +68,8 @@ Replace them with the number, name, or link they stood in for, or delete them.
     2. You can hedge when there is uncertainty, but say where it comes from: “we have not measured this on ARM”, not “this should probably be fine”.
 3. Make every claim checkable.
 Give numbers with their units and the setup that produced them, link behavior claims to a pull request or the docs, and name the version a behavior applies to.
-4. Use default or stock Valkey when possible.
-Run the latest version of Valkey with the default configuration.
+4. Use the latest version of Valkey with default configurations when possible.
+Record the exact version you tested so the result stays reproducible after the next release.
 If you aren't running the latest version or the default configuration, discuss why.
 5. Credit contributors by name when you describe their work.
 If applicable, include a link to their github or blog profile.
@@ -73,23 +78,28 @@ If applicable, include a link to their github or blog profile.
 7. Write descriptive headings, not clever ones.
 Make sure each header is clear to the end user.
 Feel free to make creative jokes and puns, but not at the expense of reading for our global audience.
-8. Use inclusive terminology in prose, diagrams, and code: primary and replica, allowlist and denylist.
-9. Use uppercase backticks for commands like `SET` and `XADD`.
-10. Use lowercase backticks when describing executable names, configs, and info fields like `valkey-server` and `cluster-node-timeout`.
-11. Tag code blocks with a language so that they render correctly.
-12. Give images alt text describing what they show to make them more inclusive.
+8. Use primary instead of master, replica instead of slave, allowlist instead of whitelist, and denylist instead of blacklist.
+This applies to prose, diagrams, and code you control.
+Keep the exact spelling where Valkey itself still uses the old term, such as the `SLAVEOF` command.
+9. Enclose commands in backticks and write them in uppercase, like `SET` and `XADD`.
+10. Enclose executable names, configs, and info fields in backticks and write them in lowercase, like `valkey-server` and `cluster-node-timeout`.
+11. Tag code blocks with a language so that they render correctly: write `bash`, `python`, or `text` immediately after the opening fence.
+12. Give images alt text that conveys what the reader would miss without the image, not just a caption of what is visible.
+For example, `![Throughput rises linearly to 8 threads, then flattens](/assets/media/pictures/scaling.png)` rather than `![benchmark chart](/assets/media/pictures/scaling.png)`.
+Use empty alt text (`![]`) for purely decorative images.
 13. Expand an acronym on first use with the acronym in parentheses.
 
 ## Step 3: Write about yourself
 
 Blog posts on [valkey.io](http://valkey.io/) need to have at least one author.
 This needs to be a person: it does not need to be birth name or even a traditional name, but it can’t be a collective (e.g. “The Good Code Team” would be unacceptable).
-Ideally, this you write under a transparent and accountable name where you can be identified in the Valkey community.
+Ideally you write under a transparent and accountable name, one the Valkey community can connect to your other contributions.
 
 Each author needs to have a biography.
 The bio should be 1-2 paragraphs in length and should tell the reader who you are.
 Additionally, use the space to link yourself to the community: what makes you a person the reader should read and spend time on.
 If you already have a bio from a previous post, you don’t need to do a new one.
+If you identify yourself as an employee of a company, make sure your employer is okay with you doing so.
 
 It’s optional, but blog posts are even better when you have a bio *and* a photo.
 This personalizes the content further and conveys that you’re a real person.
