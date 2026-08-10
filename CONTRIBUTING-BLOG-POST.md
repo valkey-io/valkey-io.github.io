@@ -48,6 +48,7 @@ What do you want your readers to do next after they finish your blog post? The c
 You can even just invite readers to consume related content.
 7. Speak for yourself.
 Blog posts are attributed to a person, not the project, so feel free to have opinions and write in the first (I) or second (you) grammatical person.
+If the post has more than one author, use the plural: “we ran the benchmark”, not “I ran the benchmark”.
 Unless you have specific authority (and you probably don’t!), avoid speaking for groups of people.
 
 ### How to write it
@@ -61,6 +62,8 @@ Copy it as a starting point.
 Markdown joins the lines back into a paragraph, so nothing changes about how the post renders.
 GitHub anchors suggestions to lines, so a reviewer can rewrite one sentence instead of rewriting the paragraph.
 This is a convention for the source file, not a style directive: write sentences of whatever length the idea needs.
+    1. If you have already written a draft in paragraphs, `sed -E 's/([.!?]) +/\1\n/g' post.md` splits it for you.
+    It breaks on abbreviations like “e.g.”, so read the result before you commit it.
 2. Cut weasel words.
 "Significantly faster" and "various improvements" imply a claim without making one.
 Replace them with the number, name, or link they stood in for, or delete them.
@@ -68,6 +71,9 @@ Replace them with the number, name, or link they stood in for, or delete them.
     2. You can hedge when there is uncertainty, but say where it comes from: “we have not measured this on ARM”, not “this should probably be fine”.
 3. Make every claim checkable.
 Give numbers with their units and the setup that produced them, link behavior claims to a pull request or the docs, and name the version a behavior applies to.
+    1. When you link a line of source code, pin the link to a tag or a commit SHA.
+    A link into `unstable` points at a different line every time the branch moves.
+    On GitHub, press `y` while viewing a file to rewrite the URL to the current commit.
 4. Use the latest version of Valkey with default configurations when possible.
 Record the exact version you tested so the result stays reproducible after the next release.
 If you aren't running the latest version or the default configuration, discuss why.
@@ -78,15 +84,28 @@ If applicable, include a link to their github or blog profile.
 7. Write descriptive headings, not clever ones.
 Make sure each header is clear to the end user.
 Feel free to make creative jokes and puns, but not at the expense of reading for our global audience.
-8. Use primary instead of master, replica instead of slave, allowlist instead of whitelist, and denylist instead of blacklist.
+8. Use the term in the "Use this" column.
 This applies to prose, diagrams, and code you control.
-Keep the exact spelling where Valkey itself still uses the old term, such as the `SLAVEOF` command.
+Where Valkey itself still emits the old term, keep its exact spelling in code and output, and use the new term in the surrounding prose.
+
+    | Don't use | Use this | Notes |
+    | --- | --- | --- |
+    | master | primary | `SLAVEOF`, `master_repl_offset`, and `ROLE` still report `master` |
+    | slave | replica | `SLAVEOF`, `slave_read_only`, and `ROLE` still report `slave` |
+    | whitelist | allowlist | |
+    | blacklist | denylist | |
+    | QPS | RPS | Valkey serves commands, not queries; `valkey-benchmark` reports "requests per second" |
+
 9. Enclose commands in backticks and write them in uppercase, like `SET` and `XADD`.
 10. Enclose executable names, configs, and info fields in backticks and write them in lowercase, like `valkey-server` and `cluster-node-timeout`.
-11. Tag code blocks with a language so that they render correctly: write `bash`, `python`, or `text` immediately after the opening fence.
-12. Give images alt text that conveys what the reader would miss without the image, not just a caption of what is visible.
-For example, `![Throughput rises linearly to 8 threads, then flattens](/assets/media/pictures/scaling.png)` rather than `![benchmark chart](/assets/media/pictures/scaling.png)`.
-Use empty alt text (`![]`) for purely decorative images.
+11. Tag code blocks with a language so that they render and highlight correctly: write `bash`, `python`, or `text` immediately after the opening fence.
+The [Giallo grammar list](https://github.com/getzola/giallo?tab=readme-ov-file#built-in) has the tags Zola accepts.
+12. Write alt text using the [W3C alt decision tree](https://www.w3.org/WAI/tutorials/images/decision-tree/).
+The two cases that come up most in Valkey posts:
+    1. A chart, graph, or architecture diagram is a *complex* image, and alt text alone cannot carry it.
+    Put the information it conveys in the body of the post, where every reader gets it, and keep the alt text to a short identification such as `![Throughput against thread count](/assets/media/pictures/scaling.png)`.
+    If you find you have nothing to write in the body, the image is not carrying information worth showing.
+    2. Use empty alt text (`![]`) for a purely decorative image, and for one whose content the adjacent text already states in full.
 13. Expand an acronym on first use with the acronym in parentheses.
 
 ## Step 3: Write about yourself

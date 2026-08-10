@@ -51,9 +51,11 @@ valkey-cli OBJECT ENCODING h    # hashtable
 
 A field value longer than `hash-max-listpack-value`, 64 bytes by default, also forces the conversion.
 
-A hash table costs more memory because each field-value pair gets its own entry, and those entries hang off a bucket array:
+A hash table costs more memory because of what it has to allocate.
+It keeps an array of buckets, and each bucket points to an entry holding a key, a value, and a `next` pointer to the following entry in that bucket.
+A listpack stores the same pairs back to back in a single allocation, with no bucket array and no pointers.
 
-![A four slot bucket array, with slot 2 pointing to an entry holding a key, a value, and a next pointer](/assets/media/pictures/dictionary_bucket_and_entry_overview.png)
+![Bucket array and entry layout of a hash table](/assets/media/pictures/dictionary_bucket_and_entry_overview.png)
 
 ## What the switch costs
 
