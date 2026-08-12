@@ -11,7 +11,7 @@ featured = true
 
 Valkey 9.1 introduces two optimizations that reduce the per-key memory overhead without requiring any new commands or configuration changes.
 
-These reduce the memory required to store strings and sorted sets, averaging 26% overhead for string keys and up to 8.5 bytes per sorted set member for typical short members. These savings add up quickly when millions of keys are in use.
+These reduce the memory required to store strings and sorted sets, up to 44% overhead for string keys and up to 8.5 bytes per sorted set member for typical short members. These savings add up quickly when millions of keys are in use.
 
 This blog post explores how these optimizations work and what they mean for your real-world deployments.
 
