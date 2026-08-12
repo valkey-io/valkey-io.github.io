@@ -221,3 +221,13 @@
     [IONOS Cloud](https://cloud.ionos.de) delivers highly scalable, European-engineered public and private cloud infrastructure. It provides GDPR-compliant data protection, flexible pay-as-you-go pricing without vendor lock-in, and custom visual deployment through its Data Center Designer, all backed by 24/7 expert support.
   offering: >
     [IONOS Cloud In-Memory DB](https://cloud.ionos.de/managed/dbaas/in-memory-db) now runs on Valkey, supporting versions 8, 8.1, and 9, while staying compatible with legacy Redis® OSS. It is a fully managed key-value store for caching, real-time data, and session management, with data persistence and TLS-secured connections.
+
+- name: 'Solanica'
+  link: 'https://solanica.io/'
+  image:
+    path: /img/solanica.svg
+    alt: 'Solanica Logo'
+  company: >
+    Solanica is a core contributor to the OpenEverest project and a pioneer in cloud-native data platform automation. The Solanica Platform delivers seamless deployment, observability, and expert support for teams. Designed for AI, analytics, and modern workloads, Solanica helps organizations unlock the full potential of their database infrastructure.
+  offering: >
+    With the Solanica Platform, you can run your Valkey workloads on any Kubernetes cluster without pain. No more struggling with day-2 operations: you can now deploy, provision, and manage your instances, and you don’t have to worry about backups, monitoring, etc.; everything can be controlled from one GUI. [Learn more](https://solanica.io/platform).
