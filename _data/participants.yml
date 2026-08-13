@@ -159,11 +159,10 @@
     The [core](https://github.com/BetterDB-inc/monitor) is open source under the MIT license, with commercial features for teams that need enterprise-grade analytics, compliance, and support.
   offering: >
     BetterDB is the first monitoring platform built specifically for Valkey.
-    It persists the operational data Valkey exposes but doesn't retain - slowlogs, command patterns, client activity, and anomaly signals - so teams can debug what happened at 3am, not just what's happening now.
-    Built for Valkey 8.x with native support for COMMANDLOG, CLUSTER SLOT-STATS (per-slot metrics), and per-thread async I/O, alongside real-time dashboards, client analytics, and ACL audit trails.
-    It works both ways with OpenTelemetry - emitting its own metrics and traces, and consuming your application's traces to tie each request to live Valkey state - and exposes Prometheus metrics too.
-    Built-in migration tooling moves you from Redis or KeyDB to Valkey, and from cloud to self-hosted or vice versa, with pre-migration analysis, live replication, and post-cutover validation.
-    Run it [self-hosted](https://hub.docker.com/r/betterdb/monitor), including fully air-gapped so your data never leaves your infrastructure, or as [managed cloud](https://betterdb.com/login) - and it stays Redis 6+ compatible for older or mixed fleets.
+    It persists the operational data Valkey exposes but doesn't retain - COMMANDLOG, per-slot metrics, per-thread I/O, and more - then actively analyzes client activity and ACL audit trails to surface anomalies, so teams can debug what happened at 3am, understand what's happening now, and forecast what will come next.
+    It works both ways with OpenTelemetry, exports to Prometheus, and fires webhooks on anomalies - correlating your app's traces with live Valkey state.
+    Migrate freely between Redis and Valkey, from self-hosted to cloud, or vice versa.
+    Run it [self-hosted](https://hub.docker.com/r/betterdb/monitor), including fully air-gapped, or as [managed cloud](https://betterdb.com/login).
   image:
     path: /img/betterdb.svg
     alt: BetterDB Logo
