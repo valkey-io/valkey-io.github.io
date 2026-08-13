@@ -9,7 +9,7 @@ blog_type = ["Technical Deep Dive"]
 featured = true
 +++
 
-Valkey 9.1 introduces two optimizations that reduce the per-key memory overhead without requiring any new commands or configuration changes.
+Valkey 9.1 introduces three optimizations that reduce the per-key memory overhead without requiring any new commands or configuration changes.
 
 These reduce the memory required to store strings and sorted sets, up to 44% overhead for string keys and up to 8.5 bytes per sorted set member for typical short members. These savings add up quickly when millions of keys are in use.
 
@@ -119,4 +119,4 @@ The memory you get back by simply moving to 9.1 and measuring what has changed i
 
 - [PR 2516 — Remove redundant robj->ptr for embstr encoding](https://github.com/valkey-io/valkey/pull/2516)
 - [PR 3397 — Raise embstr threshold from 64 to 128 bytes](https://github.com/valkey-io/valkey/pull/3397)
-- [PR 2508 — Embed ele in skiplist node for `ZSET` members](https://github.com/valkey-io/valkey/pull/2508)
+- [PR 2508 — Optimize memory usage by embedding element in skiplist](https://github.com/valkey-io/valkey/pull/2508)
