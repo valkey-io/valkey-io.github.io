@@ -15,7 +15,7 @@ This blog post walks through pairing Valkey with Prometheus, it compares two pop
 
 ## What is Prometheus?
 
-Prometheus is an open-source systems monitoring and alerting toolkit designed for reliability, multi-dimensional data collection and querying even during outages or broken architectures. It scrapes and periodically pulls metrics from instrumented jobs exposed by the systems it monitors, storing them as time series (changes over time) in its own local database, which allows you to query, graph, and alert on that data using its flexible query language, PromQL.
+Prometheus is an open source systems monitoring and alerting toolkit designed for reliability, multi-dimensional data collection and querying even during outages or broken architectures. It scrapes and periodically pulls metrics from instrumented jobs exposed by the systems it monitors, storing them as time series (changes over time) in its own local database, which allows you to query, graph, and alert on that data using its flexible query language, PromQL.
 
 Each Prometheus server is standalone and runs independently, it relies only on:
 
@@ -170,8 +170,7 @@ Create a project directory with these files:
 
 1. Create the **`docker-compose.yml`** file:
 
-  ```text
-  version: "3.8"
+  ```yaml
 
   services:
     valkey:
@@ -239,7 +238,7 @@ For the above examples:
 
 If you want to add BetterDB to the same stack instead of, or alongside, redis_exporter then add this service and point Prometheus at it too:
 
-  ```text
+  ```yaml
     betterdb:
       image: betterdb/monitor
       container_name: betterdb
@@ -253,7 +252,7 @@ If you want to add BetterDB to the same stack instead of, or alongside, redis_ex
         - valkey
   ```
 
-  ```text
+  ```yaml
     # add to prometheus.yml scrape_configs:
     - job_name: betterdb
       static_configs:
@@ -265,7 +264,7 @@ Then open `http://localhost:3001` to access BetterDB's own dashboard, in additio
 
 You can also generate some traffic to see the dashboards move:
 
-  ```text
+  ```shell
   docker exec -it valkey valkey-cli --no-raw
   > SET foo bar
   > GET foo
@@ -274,7 +273,7 @@ You can also generate some traffic to see the dashboards move:
 
 Or, for a sustained load, run `valkey-benchmark` from inside the container:
 
-  ```text
+  ```shell
   docker exec -it valkey valkey-benchmark -q -n 100000
   ```
 
