@@ -198,7 +198,7 @@ Since ASM is pushing data to the target Valkey instance, it needs write permissi
 So the replication user (specified by the config parameter `primaryuser`) will need the following ACL permissions:
 
 ```
-+psync +replconf +ping +cluster|syncslots +select +@write ~*
++psync +replconf +ping +cluster|syncslots +select +@write ~* -flushall -flushdb -restore -del -unlink -restore
 ```
 
 ## Conclusion
