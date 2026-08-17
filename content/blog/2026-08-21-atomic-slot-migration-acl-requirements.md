@@ -1,7 +1,7 @@
 +++
 title = "Analyzing Atomic Slot Migration ACL requirements"
 date = 2026-08-21
-description = "Valkey 9.0 introduces Atomic Slot Migration, which requires different ACL permissions compared to normal replication. This blog will explain why"
+description = "Explains the ACL permissions required by Atomic Slot Migration and how to debug permission failures"
 authors = ["hieun"]
 
 [taxonomies]
@@ -189,10 +189,10 @@ $20 = {
 
 ## So what permissions does ASM actually need?
 
-Since ASM is pushing data to the target Valkey instance, it needs write permission like a normal client. It will also need to be grant permission for `SELECT`, as starting with version 9.0, Valkey cluster supports multiple databases:
+Since ASM is pushing data to the target Valkey instance, it needs write permission like a normal client. It will also need to be granted permission for `SELECT`, as starting with version 9.0, Valkey cluster supports multiple databases. Also, as the `@write` category also includes destructive commands like `FLUSHDB` and `FLUSHALL`, we need to exclude them:
 
 ```
-+select +@write ~*
++select +@write ~* -flushall -flushdb -restore -del -unlink -restore
 ```
 
 So the replication user (specified by the config parameter `primaryuser`) will need the following ACL permissions:
@@ -205,4 +205,4 @@ So the replication user (specified by the config parameter `primaryuser`) will n
 
 Although ASM reuses Valkey’s replication infrastructure, its ACL requirements differ from normal replication because migrated commands are executed on the target as the authenticated `primaryuser`, rather than an internal super-user client. This means migrating populated slots requires write access in addition to the usual replication permissions.
 
-For ASM to work correctly, the replication user therefore needs `+psync +replconf +ping +cluster|syncslots +select +@write ~*`.
+For ASM to work correctly, the replication user therefore needs `+psync +replconf +ping +cluster|syncslots +select +@write ~* -flushall -flushdb -restore -del -unlink -restore`.
