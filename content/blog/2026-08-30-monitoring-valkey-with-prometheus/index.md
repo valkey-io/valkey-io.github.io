@@ -15,7 +15,7 @@ Enter Prometheus. This post covers two popular ways to get Valkey metrics into P
 
 ## What is Prometheus?
 
-[Prometheus](https://prometheus.io/) is an open-source systems monitoring and alerting toolkit designed for reliability, multi-dimensional data collection and querying even during outages or broken architectures. It scrapes and periodically pulls metrics from instrumented jobs exposed by the systems it monitors, storing them as time series (changes over time) in its own local database, which allows you to query, graph, and alert on that data using its flexible query language, PromQL.
+[Prometheus](https://prometheus.io/) is an open-source systems monitoring and alerting toolkit designed for reliability, multi-dimensional data collection and querying even during outages or broken architectures. It scrapes and periodically pulls metrics from instrumented jobs exposed by the systems it monitors, storing them as time series (changes over time) in its own local database, which allows you to query, graph, and alert on that data using its flexible query language, [PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/).
 
 Each Prometheus server is standalone and runs independently, it relies only on:
 
