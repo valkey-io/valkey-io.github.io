@@ -4,13 +4,13 @@
     path: /img/percona.svg
     alt: Percona Logo
   company: >
-    Percona is an open source database software, support, and services company that believes organizations should have full control over their data infrastructure. 
+    Percona is an open source database software, support, and services company that believes organizations should have full control over their data infrastructure.
     Percona helps businesses run databases through open source software, 24/7 expert support, and hands-on database expertise.
     The way is open. For more information, visit [www.percona.com](http://www.percona.com/).
   offering: >
     Valkey expertise, where and when you need it.
 
-    From day-to-day operational support to hands-on assistance for complex projects, Percona can meet your Valkey database needs. 
+    From day-to-day operational support to hands-on assistance for complex projects, Percona can meet your Valkey database needs.
     We offer offering support and project-based consulting, so together, we can tackle any challenge and continue to keep open source, open.
 
 - name: Alibaba Cloud
@@ -43,7 +43,7 @@
     Founded in 2012 and headquartered in Helsinki, Finland, our international team ensures uninterrupted services with a 100% SLA, empowering businesses worldwide to thrive with our reliable, cloud-native product portfolio.
   offering: >
     Valkey on UpCloud simplifies database management with a fully managed service hosted on our GDPR-compliant cloud.
-    Enjoy seamless deployment, expert maintenance, and high performance with minimal downtime. 
+    Enjoy seamless deployment, expert maintenance, and high performance with minimal downtime.
     Backed by UpCloud’s global reach, Valkey ensures reliability and scalability, freeing developers to focus on building great applications.
 
 - name: Amazon Web Services
@@ -51,7 +51,7 @@
   image:
     path: /img/aws.svg
     alt: AWS logo
-  company: > 
+  company: >
     [Amazon Web Services (AWS)](https://aws.amazon.com/what-is-aws/?nc1=f_cc) is the world’s most comprehensive and broadly adopted cloud, offering over 200 fully featured services from data centers globally.
     Millions of customers—including the fastest-growing startups, largest enterprises, and leading government agencies—are using AWS to lower costs, become more agile, and innovate faster.
   offering: >
@@ -107,7 +107,7 @@
 
 - name: k0rdent
   link: https://k0rdent.io
-  company: > 
+  company: >
     k0rdent provides a way to manage distributed infrastructure at massive scale leveraging kubernetes.
     The goal of the k0rdent project is to provide platform engineers with the means to deliver a distributed container management environment (DCME) and enable them to compose unique internal developer platforms (IDP) to support a diverse range of complex modern application workloads.
   offering: >
@@ -120,7 +120,7 @@
 
 - name: Momento
   link:  https://www.gomomento.com/platform/cache/
-  company: > 
+  company: >
     Momento is relied on for mission-critical products by global leaders including Snap Inc, FOX, and Coinbase to serve millions of users.
     We provide caching and a low-latency pub/sub event bus at web scale.
     Momento eliminates operational overhead and delivers enterprise-grade reliability, liberating developers to focus on innovation, not maintenance.
@@ -179,13 +179,13 @@
 
 -   name: Tencent Cloud
     link: http://www.cloud.tencent.com/product/tcdc
-    image: 
+    image:
       path: /img/tencent-cloud.svg
       alt: Tencent Cloud
     offering: >
-      [Tencent Cloud Distributed Cache](https://www.cloud.tencent.com/product/tcdc) ([English](https://www.tencentcloud.com/products/tcdc)) is a caching and storage service developed by Tencent Cloud, compatible with Redis® OSS, Valkey, and Memcached engines. 
-      Its rich data structures help you develop various business scenarios. 
-      It supports primary-replica hot standby and provides a full suite of database services including automatic disaster recovery failover, data backup, fault migration, instance monitoring, online scaling, and data rollback. 
+      [Tencent Cloud Distributed Cache](https://www.cloud.tencent.com/product/tcdc) ([English](https://www.tencentcloud.com/products/tcdc)) is a caching and storage service developed by Tencent Cloud, compatible with Redis® OSS, Valkey, and Memcached engines.
+      Its rich data structures help you develop various business scenarios.
+      It supports primary-replica hot standby and provides a full suite of database services including automatic disaster recovery failover, data backup, fault migration, instance monitoring, online scaling, and data rollback.
     company: >
       [Tencent Cloud](https://www.cloud.tencent.com) ([English](https://www.tencentcloud.com)), one of the world's leading cloud companies, is committed to creating innovative solutions to resolve real-world issues and enabling digital transformation for smart industries.
       Through our extensive global infrastructure, Tencent Cloud provides businesses across the globe with stable and secure industry-leading cloud products and services, leveraging technological advancements such as cloud computing, Big Data analytics, AI, communication and network security.
@@ -231,3 +231,11 @@
     Solanica is a core contributor to the OpenEverest project and a pioneer in cloud-native data platform automation. The Solanica Platform delivers seamless deployment, observability, and expert support for teams. Designed for AI, analytics, and modern workloads, Solanica helps organizations unlock the full potential of their database infrastructure.
   offering: >
     With the Solanica Platform, you can run your Valkey workloads on any Kubernetes cluster without pain. No more struggling with day-2 operations: you can now deploy, provision, and manage your instances, and you don’t have to worry about backups, monitoring, etc.; everything can be controlled from one GUI. [Learn more](https://solanica.io/platform).
+
+- name: 'CodeRabbit'
+  link: 'https://coderabbit.link/valkey'
+  image:
+    path: /img/coderabbit.svg
+    alt: 'CodeRabbit Logo'
+  company: >
+    CodeRabbit is an AI-powered code review platform that helps engineering teams ship higher-quality code faster. Through its free OSS tier, CodeRabbit integrates directly with Valkey’s pull request workflow and automatically provides context-aware, line-by-line feedback. It catches bugs, suggests improvements, and speeds up reviews for contributors and maintainers. [Learn more](https://coderabbit.link/valkey).
