@@ -155,14 +155,14 @@
 - name: BetterDB
   link: https://betterdb.com
   company: >
-    BetterDB provides Valkey-native observability and monitoring tools. Backed by Open Core Ventures under an Open Charter, BetterDB is committed to maintaining an open source platform for the benefit of the public,
-    BetterDB helps teams migrating from Redis gain deep visibility into their Valkey
-    deployments with enterprise-grade analytics and compliance features.
+    BetterDB Inc. is a public benefit corporation operating under the OCV Open Charter, building open observability, monitoring, and migration tooling for Valkey.
+    The [core](https://github.com/BetterDB-inc/monitor) is open source under the MIT license, with commercial features for teams that need enterprise-grade analytics, compliance, and support.
   offering: >
-    BetterDB is the first monitoring platform built specifically for Valkey, leveraging
-    Valkey-exclusive features like COMMANDLOG, per-slot metrics, and async I/O threading
-    visibility. It provides real-time dashboards, slowlog analysis, client analytics,
-    ACL audit trails, and Prometheus integration - capabilities existing Redis tools cannot offer.
+    BetterDB is the first monitoring platform built specifically for Valkey.
+    It persists the operational data Valkey exposes but doesn't retain - COMMANDLOG, per-slot metrics, per-thread I/O, and more - then actively analyzes client activity and ACL audit trails to surface anomalies, so teams can debug what happened at 3am, understand what's happening now, and forecast what will come next.
+    It works both ways with OpenTelemetry, exports to Prometheus, and fires webhooks on anomalies - correlating your app's traces with live Valkey state.
+    Migrate freely between Redis and Valkey, from self-hosted to cloud, or vice versa.
+    Run it [self-hosted](https://hub.docker.com/r/betterdb/monitor), including fully air-gapped, or as [managed cloud](https://betterdb.com/login).
   image:
     path: /img/betterdb.svg
     alt: BetterDB Logo
