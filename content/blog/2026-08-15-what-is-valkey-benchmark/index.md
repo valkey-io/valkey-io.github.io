@@ -131,7 +131,7 @@ The trade-off is that the throughput roughly quadruples, but per-request latency
 
 This is exactly why matching your pipeline depth to your actual client matters: a pipeline depth that's unrealistically deep shows great throughput numbers while your real requests wait longer than your application can tolerate.
 
-Together, these three settings: keyspace size (-r), pipeline depth (-P), and payload size (-d), move `valkey-benchmark` away from an ordinary benchmark and toward a workload that more closely resembles production.
+Together, these three settings: keyspace size (-r), pipeline depth (-P), and payload size (-d), move `valkey-benchmark` away from an unrealistic benchmark and toward a workload that more closely resembles production.
 
 ## Using the `--cluster` argument
 
@@ -163,3 +163,5 @@ valkey-benchmark -t set,get -r 100000 -d 1024 -P 16 -n 1000000 -q
 ```
 
 _NOTE: Add `-q` for quiet output once you're running this repeatedly rather than reading the full summary each time._
+
+For the full set of options, including `--csv` for tracking results over time, `--dataset` for benchmarking against real data files, and more on cluster mode, see the [Valkey benchmarking tool documentation](https://valkey.io/topics/benchmark/).
