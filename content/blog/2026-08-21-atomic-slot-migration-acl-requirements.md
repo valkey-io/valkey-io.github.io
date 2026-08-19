@@ -202,3 +202,5 @@ So the replication user (specified by the config parameter `primaryuser`) will n
 Although ASM reuses Valkey’s replication infrastructure, its ACL requirements differ from normal replication because migrated commands are executed on the target as the authenticated `primaryuser`, rather than an internal super-user client. This means migrating populated slots requires write access in addition to the usual replication permissions.
 
 For ASM to work correctly, the replication user therefore needs `+psync +replconf +ping +cluster|syncslots +select +@write ~* -flushall -flushdb -restore -del -unlink -restore`.
+
+Have thoughts on how `CLUSTER MIGRATESLOTS` should authenticate across shards? Join the discussion in [Issue 2392 in Valkey GitHub repository](https://github.com/valkey-io/valkey/issues/2392).
