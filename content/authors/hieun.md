@@ -1,7 +1,7 @@
 ---
 title: Hieu Nguyen
 extra:
-    photo: '/assets/media/authors/hieun.png'
+    photo: '/assets/media/authors/hieun.jpg'
     github: hieu2102
 ---
 

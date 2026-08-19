@@ -9,15 +9,15 @@ blog_type = ["Technical Deep Dive"]
 +++
 
 
-Valkey 9.0 introduced Atomic Slot Migration (ASM), a new resharding mechanism that replaces the traditional key-by-key migration process with a replication-inspired approach. Instead of copying individual keys using MIGRATE, the source node establishes a dedicated connection to the target node and streams the contents of the migrating hash slots, followed by incremental updates until both nodes are synchronized. Once synchronization completes, ownership of the slot is transferred atomically.
+Valkey 9.0 introduced Atomic Slot Migration (ASM), a new resharding mechanism that replaces the traditional key-by-key migration process with a replication-inspired approach. Instead of copying individual keys using [`MIGRATE`](https://valkey.io/commands/migrate/), the source node establishes a dedicated connection to the target node and streams the contents of the migrating hash slots, followed by incremental updates until both nodes are synchronized. Once synchronization completes, ownership of the slot is transferred atomically.
 
-Since ASM internally reuses much of the replication infrastructure, it is natural to assume that it can reuse the same ACL permissions as a replica (which includes permission to execute the command `CLUSTER SYNCSLOTS` also introduced in Valkey 9.0):
+Since ASM internally reuses much of the replication infrastructure, it is natural to assume that it can reuse the same ACL permissions as a replica (which includes permission to execute the command [`CLUSTER SYNCSLOTS`](https://valkey.io/commands/cluster-syncslots/) also introduced in Valkey 9.0):
 
 ```
 +psync +replconf +ping +cluster|syncslots
 ```
 
-And with these permissions, when you execute `CLUSTER MIGRATESLOTS` on a fresh cluster, it will complete successfully:
+And with these permissions, when you execute [`CLUSTER MIGRATESLOTS`](https://valkey.io/commands/cluster-migrateslots/) on a fresh cluster, it will complete successfully:
 
 ```
 127.0.0.1:30001> CLUSTER MIGRATESLOTS SLOTSRANGE 0 0 NODE c5937fede5fa8d4e8aaf04070f2f95cbc0682793
@@ -60,20 +60,16 @@ But if the slot contains data, the operation will fail:
    12# "remaining_repl_size" => (integer) 0
 ```
 
-And the log of the target node will report that the operation failed due to the replication user not being permitted to write data (running `SET` commands):
+And the log of the target node will report that the operation failed due to the replication user not being permitted to write data (running [`SET`](https://valkey.io/commands/set/) command):
 
-```
-5737:M 07 Aug 2026 04:22:14.205 *New slot import job created: {name: 4da2c12235bc1c9a9efebe1fd99a885e805ea081, operation: import, source_node_id: ff4819d483cf6aa47e76bc6e709f42f0bacee339, slots: 866-866}.
-5737:M 07 Aug 2026 04:22:14.206* Slot migration {name: 4da2c12235bc1c9a9efebe1fd99a885e805ea081, operation: import, source_node_id: ff4819d483cf6aa47e76bc6e709f42f0bacee339, slots: 866-866} state transition: waiting-for-ack -> receiving-snapshot
-5737:M 07 Aug 2026 04:22:14.247 # == CRITICAL == This slot-import-target is sending an error to its slot-import-source: '-NOPERM User replicator has no permissions to run the 'set' command' after processing the command 'set'
-```
+`# == CRITICAL == This slot-import-target is sending an error to its slot-import-source: '-NOPERM User replicator has no permissions to run the 'set' command' after processing the command 'set'`
 
 This raises the question:
 > If ASM behaves like replication, why does it require write access while replication does not?
 
 ## Why does ASM require write access to Valkey?
 
-To understand this issue, we need to know what the difference is between ASM and a normal replication process. Specifically, about where the ASM and replication requests originate from.
+To understand this issue, you need to know what the difference is between ASM and a normal replication process. Specifically, about where the ASM and replication requests originate from.
 
 ### How the (normal) replication process works
 
@@ -85,7 +81,7 @@ REPLCONF
 PSYNC
 ```
 
-Once the primary accepts the request, it begins streaming an RDB snapshot followed by incremental replication data. In the source code (specifically, function `replicationCreatePrimaryClientWithHandler`), we can see that the user associated with this link is NULL:
+Once the primary accepts the request, it begins streaming an RDB snapshot followed by incremental replication data. In the source code (specifically, function `replicationCreatePrimaryClientWithHandler`), you can see that the user associated with this link is NULL:
 
 ```c
 void replicationCreatePrimaryClientWithHandler(connection *conn, int dbid, ConnectionCallbackFunc handler) {
@@ -99,7 +95,7 @@ void replicationCreatePrimaryClientWithHandler(connection *conn, int dbid, Conne
 }
 ```
 
-As noted in the comment above, when no user is associated with a connection, it is treated as a superuser client and can do everything. We can also verify this client's capability by looking at the function `ACLCheckAllUserCommandPerm`:
+As noted in the comment above, when no user is associated with a connection, it is treated as a superuser client and can do everything. You can also verify this client's capability by looking at the function `ACLCheckAllUserCommandPerm`:
 
 ```c
 /* Lower level API that checks if a specified user is able to execute a given command.
@@ -116,12 +112,12 @@ int ACLCheckAllUserCommandPerm(user *u, struct serverCommand*cmd, robj **argv, i
 }
 ```
 
-So, the replication user only needs permission to keep the connection alive (`PING`) and fetch the data from the primary (`PSYNC`, `REPLCONF`). Those data are then applied to the replica as a superuser; thus, the replication user does not need any write permissions.
+So, the replication user only needs permission to keep the connection alive ([`PING`](https://valkey.io/commands/ping)) and fetch the data from the primary ([`PSYNC`](https://valkey.io/commands/psync), [`REPLCONF`](https://valkey.io/commands/replconf)). Those data are then applied to the replica as a superuser; thus, the replication user does not need any write permissions.
 
 ### How ASM connection works
 
 While ASM also copies data using the replication process (and using the `primaryuser` credentials), instead of having the target node pulling data from the current owner, it is the current slot owner pushing data to the target.
-We can verify this by attaching a GDB debug session to the target valkey-server process, and setting a breakpoint at the function `afterErrorReply` (where the log entry `== CRITICAL == This slot-import-target...` is created):
+You can verify this by attaching a GDB debug session to the target valkey-server process, and setting a breakpoint at the function `afterErrorReply` (where the log entry `== CRITICAL == This slot-import-target...` is created):
 
 ```c
 gdb -ex 'break afterErrorReply' -ex 'continue' -p <target valkey-server PID>
@@ -137,7 +133,7 @@ OK
 OK
 ```
 
-Go back to the GDB session, and we see that the process has hit the breakpoint we set earlier
+Go back to the GDB session, the process has hit the breakpoint that was set earlier:
 
 ```c
 Thread 1 "valkey-server" hit Breakpoint 1.5, afterErrorReply (flags=0, len=62, s=0xffff9ea47203 "-NOPERM User replicator has no permissions to run the 'set' command", c=0xffff9e49a500) at /opt/valkey/src/networking.c:848
@@ -145,7 +141,7 @@ Thread 1 "valkey-server" hit Breakpoint 1.5, afterErrorReply (flags=0, len=62, s
 (gdb)
 ```
 
-Going down the stacktrace, we can find that the hash slot data is being imported in the function `processCommand` (being the frame right before the error `NOPERM`):
+Going down the stacktrace, you can find that the hash slot data is being imported in the function `processCommand` (being the frame right before the error `NOPERM`):
 
 ```c
 (gdb) backtrace
@@ -164,7 +160,7 @@ Going down the stacktrace, we can find that the hash slot data is being imported
 # 12 0x0000aaaab5b080fc in main (argc=35, argv=<optimized out>) at /opt/valkey/src/server.c:7765
 ```
 
-By printing the argument of processCommand, we can see what is being sent from the current slot owner
+By printing the argument of `processCommand`, you can see what is being sent from the current slot owner:
 
 ```c
 (gdb) frame 3
@@ -189,7 +185,7 @@ $20 = {
 
 ## So what permissions does ASM actually need?
 
-Since ASM is pushing data to the target Valkey instance, it needs write permission like a normal client. It will also need to be granted permission for `SELECT`, as starting with version 9.0, Valkey cluster supports multiple databases. Also, as the `@write` category also includes destructive commands like `FLUSHDB` and `FLUSHALL`, we need to exclude them:
+Since ASM is pushing data to the target Valkey instance, it needs write permission like a normal client. It will also need to be granted permission for [`SELECT`](https://valkey.io/commands/select), as starting with version 9.0, Valkey cluster supports multiple databases. Also, as the `@write` category also includes destructive commands like [`FLUSHDB`](https://valkey.io/commands/flushdb) and [`FLUSHALL`](https://valkey.io/commands/flushall), you need to exclude them:
 
 ```
 +select +@write ~* -flushall -flushdb -restore -del -unlink -restore
