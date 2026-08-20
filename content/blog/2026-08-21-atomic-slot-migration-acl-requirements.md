@@ -185,22 +185,22 @@ $20 = {
 
 ## So what permissions does ASM actually need?
 
-Since ASM is pushing data to the target Valkey instance, it needs write permission like a normal client. It will also need to be granted permission for [`SELECT`](https://valkey.io/commands/select), as starting with version 9.0, Valkey cluster supports multiple databases. Also, as the `@write` category also includes destructive commands like [`FLUSHDB`](https://valkey.io/commands/flushdb) and [`FLUSHALL`](https://valkey.io/commands/flushall), you need to exclude them:
+Since ASM is pushing data to the target Valkey instance, it needs write permission like a normal client. It will also need to be granted permission for [`SELECT`](https://valkey.io/commands/select), as starting with version 9.0, Valkey cluster supports multiple databases. Also, as the `@write` category also includes destructive commands like [`FLUSHDB`](https://valkey.io/commands/flushdb) and [`FLUSHALL`](https://valkey.io/commands/flushall), you need to exclude them ([`DEL`](https://valkey.io/commands/del) and [`UNLINK`](https://valkey.io/commands/unlink)  are not excluded because they can still appear in AOF file):
 
 ```
-+select +@write ~* -flushall -flushdb -restore -del -unlink -restore
++select +@write ~* -flushall -flushdb -restore -restore
 ```
 
 So the replication user (specified by the config parameter `primaryuser`) will need the following ACL permissions:
 
 ```
-+psync +replconf +ping +cluster|syncslots +select +@write ~* -flushall -flushdb -restore -del -unlink -restore
++psync +replconf +ping +cluster|syncslots +select +@write ~* -flushall -flushdb -restore -restore
 ```
 
 ## Conclusion
 
 Although ASM reuses Valkey’s replication infrastructure, its ACL requirements differ from normal replication because migrated commands are executed on the target as the authenticated `primaryuser`, rather than an internal super-user client. This means migrating populated slots requires write access in addition to the usual replication permissions.
 
-For ASM to work correctly, the replication user therefore needs `+psync +replconf +ping +cluster|syncslots +select +@write ~* -flushall -flushdb -restore -del -unlink -restore`.
+For ASM to work correctly, the replication user therefore needs `+psync +replconf +ping +cluster|syncslots +select +@write ~* -flushall -flushdb -restore -restore`.
 
 Have thoughts on how `CLUSTER MIGRATESLOTS` should authenticate across shards? Join the discussion in [Issue 2392 in Valkey GitHub repository](https://github.com/valkey-io/valkey/issues/2392).
