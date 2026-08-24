@@ -194,7 +194,8 @@ From the cache side, watch the key count grow as requests flow with `valkey-cli 
 
 We recreated what a busy production fleet looks like.
 **100 concurrent conversations that keep growing** (12K to 28K tokens of context) arrived at 8 requests per second across **two GPU nodes** (8 H100 each) serving **Llama-3.1-70B** with vLLM plus LMCache.
-The only difference between the two arms was whether a shared L2 on Valkey, a right-sized three-shard cluster in the same Availability Zone, was attached.
+The only difference between the two arms was whether a shared L2 was attached, a right-sized three-shard **Valkey 9** cluster in the same availability zone.
+We changed one setting away from the default, the eviction policy, for the reason explained under best practices below.
 The traffic is synthetic but shaped like production multi-turn chat, so every turn appends to the history and nothing is truncated.
 The three-shard cluster sustained about 7.4 GB/s of reads, peaking near 9.4 GB/s, without a single throttled command, and with headroom to scale by adding shards.
 
@@ -240,7 +241,7 @@ When your peaks approach the ceiling, add a shard.
 **Pick the instance family, the placement, and the transport.**
 Prefer a **memory-optimized instance family**, because the L2 exists precisely because local memory is not enough, so RAM is the resource you are buying.
 When we compared a memory-optimized family against a network-optimized one, the extra RAM per node won end to end, because fewer evictions and a higher hit rate beat faster per-fetch transfers.
-Keep the cache in the **same Availability Zone** as the GPU fleet, because the L2 sits on the first-token path, so same-zone placement trims round-trip latency on every fetch.
+Keep the cache in the **same availability zone** as the GPU fleet, because the L2 sits on the first-token path, so same-zone placement trims round-trip latency on every fetch.
 Crossing zones adds latency and, on most clouds, a per-GB transfer charge in each direction.
 The connector supports **TLS** (`tls_enable: true`).
 KV chunks derive from user conversations, so turn TLS on when your security or compliance requirements call for encrypting them in transit, and budget for the CPU on both ends and the added per-fetch latency of encrypting multi-megabyte transfers.
