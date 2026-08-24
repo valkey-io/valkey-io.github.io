@@ -135,7 +135,7 @@ Together, these three settings: keyspace size (-r), pipeline depth (-P), and pay
 
 ## Using the `--cluster` argument
 
-If you want to benchmark your application against data that is automatically sharded across multiple Valkey cluster nodes, use the `--cluster` argument.
+If you want to benchmark a Valkey cluster that is automatically sharded across multiple Valkey cluster nodes, use the `--cluster` argument.
 
 Compared to a standalone benchmark, two things change:
 
@@ -147,7 +147,7 @@ If you also want to stress read replicas, add the `--rfr` (read-from-replicas) a
 For example, against a 6-node cluster (3 primaries and 3 replicas), reading from replicas only:
 
 ```text
-valkey-benchmark --cluster -c 6 -n 100000 --rfr yes get key-{tag}
+valkey-benchmark --cluster -h 127.0.0.1 -p 6371 -c 6 -n 100000 --rfr yes get key-{tag}
 ```
 
 _NOTE: This example requires an actual Valkey cluster deployment, it does not run against a standalone instance._
