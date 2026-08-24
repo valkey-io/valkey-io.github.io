@@ -1,6 +1,6 @@
 +++
 title = "Simulating Real Workloads with valkey-benchmark"
-date = 2026-07-31
+date = 2026-08-25
 description = "A practical guide to shaping valkey-benchmark's default run into a realistic workload simulation"
 authors = ["dragosandriciuc"]
 [taxonomies]
@@ -85,7 +85,7 @@ _NOTE: The exact numbers vary from run to run, the point is the change in what's
 
 The default `valkey-benchmark` stores values that are 3 bytes long. It keeps the benchmark lightweight, but realistically session data, cached API responses and serialized objects are often much larger.
 
-However, the payload size often does not matter until you cross a certain threshold once you're pipelining because 10-byte, 100-byte, and 1000-byte payloads all produce roughly the same throughput under pipelining, with the effect breaking down once payloads approach the ethernet packet size (~1500 bytes).
+The payload size often has little effect until you cross a certain threshold once you're pipelining, because 10-byte, 100-byte, and 1000-byte payloads all produce roughly the same throughput when accessing Valkey over an ethernet network, with the effect breaking down once payloads approach the ethernet packet size (~1500 bytes).
 
 These larger values not only affect memory consumption, but also increase network bandwidth usage requiring more memory to copy and allocate, which expose more performance characteristics than the default payloads.
 
@@ -103,7 +103,7 @@ Summary:
                 0.263     0.088     0.215     0.559     1.175     5.119
 ```
 
-The result numbers show a modest change from adding a 1024-byte payload. A similar effect under pipelining: 10-byte, 100-byte, and 1000-byte payloads all produce roughly the same throughput, with the effect breaking down near the ethernet packet size (~1500 bytes). Let's see pipelining's actual effect next.
+The result numbers show a modest change from adding a 1024-byte payload. A similar effect applies over ethernet networks specifically: 10-byte, 100-byte, and 1000-byte payloads all produce roughly the same throughput, with the effect breaking down near the ethernet packet size (~1500 bytes). Let's see pipelining's actual effect next.
 
 ### Pipeline requests like a real client
 
