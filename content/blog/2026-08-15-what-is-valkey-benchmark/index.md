@@ -65,7 +65,7 @@ valkey-benchmark -t set -r 100000 -n 1000000
 
 Instead of repeatedly updating a single key, each operation selects a random key from a space of 100,000 possible keys. After one million requests you end up with roughly 100,000 keys stored, closely resembling an application repeatedly writing into an existing dataset.
 
-_NOTE: On an empty database, the above command produces approximately 100,000 stored keys. Existing keys may be overwritten, you can verify this with the `DBSIZE` command._
+> On an empty database, the above command produces approximately 100,000 stored keys for a total of about 100mb of data. Existing keys may be overwritten, you can verify this with the `DBSIZE` command. While 100mb is fine for getting to know the benchmarking tool it could possibly fit into a large L3 cache. Going up to 1,000,000 stored keys will reliably avoid any hardware caches.
 
 The important point isn't the exact number of keys. It is choosing a keyspace that resembles your own application. A session cache, leaderboard, and job queue all exercise memory differently.
 
