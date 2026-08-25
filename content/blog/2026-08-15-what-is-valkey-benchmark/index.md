@@ -127,7 +127,9 @@ Summary:
                 1.632     0.224     1.311     3.455     5.943    13.991
 ```
 
-The trade-off is that the throughput roughly quadruples, but per-request latency also rises: p50 climbs from 0.215ms to 1.311ms. That's expected as pipelining trades individual request latency for aggregate throughput, since each request waits in a batch before being sent.
+The trade-off is that the throughput roughly quadruples, but per-request latency also rises: p50 climbs from 0.215ms to 1.311ms. 
+The rise in throughput is expected: Valkey is more efficient at parsing four packets at one time rather than one.
+As for latency, keep in mind that the benchmark sends as much as possible all at once, paired with pipelining, it results in latency spikes from queuing.
 
 This is exactly why matching your pipeline depth to your actual client matters: a pipeline depth that's unrealistically deep shows great throughput numbers while your real requests wait longer than your application can tolerate.
 
