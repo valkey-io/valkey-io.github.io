@@ -7,6 +7,7 @@ authors = ["dragosandriciuc"]
 blog_type = ["How-to"]
 [extra]
 featured = true
+featured_image = "/assets/media/featured/random-05.webp"
 +++
 
 Benchmarking your Valkey deployment allows you to understand how your infrastructure behaves under load and where its limits are. And Valkey leverages this with an easy-to-use tool that allows you to get actionable figures for your deployment and to evaluate that performance.
