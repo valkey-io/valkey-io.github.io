@@ -7,6 +7,7 @@ authors = ["dragosandriciuc"]
 blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
+featured_image = "/assets/media/featured/random-07.webp"
 +++
 
 Valkey 9.1 introduces three optimizations that reduce the per-key memory overhead without requiring any new commands or configuration changes.
