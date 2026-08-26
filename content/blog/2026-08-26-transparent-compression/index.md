@@ -1,9 +1,11 @@
 +++
 title= "Transparent Compression in Valkey GLIDE: Reduce Memory With a Single Line of Code"
 description= "Learn how to enable automatic compression in Valkey GLIDE to reduce memory usage by up to 49% without modifying your application code."
-date= 2025-07-01 01:01:01
+date= 2026-08-26 01:01:01
 authors= ["dknowles"]
 
+[taxonomies]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = false
 featured_image = "/assets/media/featured/random-03.webp"
@@ -13,13 +15,14 @@ If you're caching JSON API responses, storing user sessions, or buffering HTML f
 
 Transparent compression in [Valkey GLIDE](https://github.com/valkey-io/valkey-glide) is available for all GLIDE-supported languages and offers a seamless solution to reducing Valkey's storage and bandwidth requirements for compatible workloads. When you write data with a `SET` command, GLIDE compresses it before sending it to the server. When you read it back with `GET`, GLIDE decompresses it automatically. You can enable the feature with a single flag in your client configuration and no modifications to your application's logic. In this post, you'll learn how to configure [Valkey GLIDE](https://github.com/valkey-io/valkey-glide) using the Go client for transparent client-side compression and deep-dive into how the compression works. The performance benchmarking data and best practices guidance will help you understand if your caching workload is a good fit for compression and how to get started on savings.
 
-The single configuration change shown below sets up LZ4, the default compression backend, and delivers memory savings of 28.1% with effectively zero throughput/latency impact on our benchmarked 2KB JSON workload.
+The configuration change shown below enables compression with the LZ4 backend and delivers memory savings of 28.1% with effectively zero throughput/latency impact on our benchmarked 2KB JSON workload. (The default backend is zstd, which trades some write throughput for roughly double the memory savings — more on choosing between them below.)
 
 ```go
 cfg := config.NewClientConfiguration().
     WithAddress(&config.NodeAddress{Host: "localhost", Port: 6379}).
     WithCompressionConfiguration(
-        config.NewCompressionConfiguration(),
+        config.NewCompressionConfiguration().
+            WithBackend(config.LZ4),
     )
 
 client, err := glide.NewClient(cfg)
@@ -161,7 +164,7 @@ cfg := config.NewClientConfiguration().
     WithCompressionConfiguration(
         config.NewCompressionConfiguration().
             WithBackend(config.LZ4).          // or config.ZSTD
-            WithCompressionLevel(0).          // 0 is the default for both; higher = better ratio, more CPU
+            WithCompressionLevel(0).          // LZ4 defaults to 0; zstd defaults to 3. Higher = better ratio, more CPU
             WithMinCompressionSize(100),      // Skip values smaller than 100 bytes
     )
 
