@@ -135,6 +135,8 @@ redis_exporter_scrapes_total 1
 redis_exporter_last_scrape_error{err=""} 0
 ```
 
+**Note:** The `redis_` metric prefix is just the exporter's default Prometheus namespace. The prefix is configurable using `--namespace=valkey` (or any string) if you want `valkey_` metric names instead. For more information, see the `namespace` flag in [redis_exporter's command line flags table](https://github.com/oliver006/redis_exporter/blob/master/README.md#command-line-flags).
+
 This is an example of a minimal Prometheus scrape configuration for it:
 
 ```yaml
@@ -144,7 +146,7 @@ scrape_configs:
       - targets: ['redis-exporter:9121']
 ```
 
-## Pros and cons
+## Where each one fits
 
 BetterDB and redis_exporter operate at different layers of the monitoring stack. While BetterDB is an integrated monitoring application that collects, stores, analyzes, and presents Valkey data, redis_exporter focuses on exposing Valkey metrics to Prometheus so you can build your own dashboards and alerts around them. The comparison below focuses on what each tool provides rather than treating the absence of a built-in UI or analysis feature as a lack of underlying metrics.
 
