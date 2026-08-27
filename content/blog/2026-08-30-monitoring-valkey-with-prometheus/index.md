@@ -107,6 +107,7 @@ Most items from Valkey's `INFO` command are exported directly:
 - **Persistence**: RDB save status, AOF status, last save time and duration.
 - **Keyspace hits/misses**: The raw data needed for a cache hit-ratio panel.
 - **Cluster support**: With `--is-cluster`, it can discover and scrape every node in a Valkey Cluster using the `/discover-cluster-nodes` endpoint in the Prometheus configuration.
+- **Availability Zone awareness**: Support for Valkey's AZ-aware replica routing metrics is available in [PR 1177](https://github.com/oliver006/redis_exporter/pull/1177). When Valkey reports an `availability_zone` field in its `INFO` output, the exporter includes it automatically.
 - **Custom and key-level metrics**: Using `--check-keys`, `--check-single-keys`, and `--check-key-groups`, you can export the size or length of specific keys or key patterns (handy for tracking the size of a specific queue or sorted set), and even aggregate memory usage by key-naming convention using Lua scripts run on the server-side.
 
 **Example**
