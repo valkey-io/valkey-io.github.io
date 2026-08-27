@@ -15,7 +15,7 @@ If you're caching JSON API responses, storing user sessions, or buffering HTML f
 
 Transparent compression in [Valkey GLIDE](https://github.com/valkey-io/valkey-glide) is available for all GLIDE-supported languages and offers a seamless solution to reducing Valkey's storage and bandwidth requirements for compatible workloads. When you write data with a `SET` command, GLIDE compresses it before sending it to the server. When you read it back with `GET`, GLIDE decompresses it automatically. You can enable the feature with a single flag in your client configuration and no modifications to your application's logic. In this post, you'll learn how to configure [Valkey GLIDE](https://github.com/valkey-io/valkey-glide) using the Go client for transparent client-side compression and deep-dive into how the compression works. The performance benchmarking data and best practices guidance will help you understand if your caching workload is a good fit for compression and how to get started on savings.
 
-The configuration change shown below enables compression with the LZ4 backend and delivers memory savings of 28.1% with effectively zero throughput/latency impact on our benchmarked 2KB JSON workload. (The default backend is zstd, which trades some write throughput for roughly double the memory savings — more on choosing between them below.)
+The configuration change shown below enables compression with the LZ4 backend and delivers memory savings of 28.1% with minimal throughput and latency impact in our benchmarks — most configurations measured between 0.95x and 1.07x of uncompressed SET throughput on the benchmarked 2KB JSON workload. (The default backend is zstd, which trades some write throughput for roughly double the memory savings — more on choosing between them below.)
 
 ```go
 cfg := config.NewClientConfiguration().
@@ -48,17 +48,17 @@ GLIDE uses a 5-byte header (`[Magic Prefix: 3 bytes][Version: 1 byte][Backend ID
 A few safety-by-default choices keep compression from ever getting in the way: if compression fails for any reason, GLIDE silently falls back to uncompressed data. Data that already carries the GLIDE header won't be double-compressed. And after compressing, GLIDE compares sizes — if compression didn't help, the original goes through unchanged.
 
 ### Important Note:
-Compression is NOT compatible with commands that manipulate string data on the server. Since the client handles the compression, the server is unable to mutate the string data and will corrupt the data.
+Compression is NOT compatible with commands that read or manipulate string data on the server. The server only ever sees the compressed bytes, so these commands operate on the compressed representation rather than your original value. The failure mode depends on the command:
 
 **Unsupported Commands:**
 
-* APPEND, GETRANGE, SETRANGE, STRLEN, LCS
+* APPEND, SETRANGE, SETBIT, BITFIELD, BITOP — mutate the compressed bytes in place, corrupting the stored value so it can no longer be decompressed
 
-* INCR, INCRBY, INCRBYFLOAT, DECR, DECRBY
+* INCR, INCRBY, INCRBYFLOAT, DECR, DECRBY — return an error because the compressed bytes are not a valid number
 
-* GETBIT, SETBIT, BITCOUNT, BITPOS, BITFIELD, BITFIELD_RO, BITOP
+* GETRANGE, STRLEN, LCS, GETBIT, BITCOUNT, BITPOS, BITFIELD_RO — read the compressed bytes and return results that are meaningless for your original value
 
-You can replicate these commands on the client-side, but it will come at a performance cost. If you rely on these commands, you may not find compression suitable for your workload.
+If you rely on these commands, keep the affected keys uncompressed — for example by splitting them onto a separate client without compression configured (see Best Practices below).
 
 
 ## Memory Savings
@@ -102,7 +102,7 @@ A few patterns jump out:
 ## The Core Tradeoff: Memory vs Throughput
 ### Methodology
 
-Benchmarks were generated using the Go GLIDE client on Amazon EC2 r7g.2xlarge instances (8 ARM vCPUs, 64 GB RAM, AWS Graviton3) with the client and Valkey 8.0 server running on separate hosts in the same AWS VPC. The test corpus was JSON payloads averaging ~1,884 bytes per value. This value size was chosen to drive compression to its limits by giving the compression algorithms enough data to work with while still being sensibly-sized. A benchmark script swept a matrix of 80 configurations across goroutine counts (1, 2, 4, 8, 10, 25, 100, 1000) and pipeline batch sizes (1, 5, 10, 20, 50).
+Benchmarks were generated using the Go GLIDE client on Amazon EC2 r7g.2xlarge instances (8 ARM vCPUs, 64 GB RAM, AWS Graviton3) with the client and Valkey 9.0.3 server running on separate hosts in the same AWS VPC. The test corpus was JSON payloads averaging ~1,884 bytes per value. This value size was chosen to drive compression to its limits by giving the compression algorithms enough data to work with while still being sensibly-sized. A benchmark script swept a matrix of 80 configurations across goroutine counts (1, 2, 4, 8, 10, 25, 100, 1000) and pipeline batch sizes (1, 5, 10, 20, 50).
 
 Here's how throughput scales with goroutines for batch sizes 1 and 10 for SET and GET operations:
 
@@ -175,7 +175,7 @@ Compression works identically with `ClusterClient` when you pass the same compre
 
 ## Gradual Rollout
 
-One of the most practical aspects of GLIDE's compression design is that you don't need to plan a migration. Compression-enabled clients read uncompressed data transparently. Clients configured with zstd can read LZ4-compressed data and vice versa. This means you can roll out incrementally: deploy your application clients with compression enabled, and as keys expire or get updated through normal application flow, data naturally migrates to compressed format — no migration scripts, no downtime.
+GLIDE's compression design supports incremental rollout without a data migration. Compression-enabled clients read uncompressed data transparently, and clients configured with zstd can read LZ4-compressed data and vice versa. There is one ordering requirement: every client that reads a keyspace must have compression configured before any client starts writing compressed data to it — a client without compression configured has no decompression path and will return compressed values as raw bytes (see Best Practices below). Once all readers are covered, deploy writers with compression enabled and data naturally migrates to compressed format as keys expire or get updated through normal application flow — no migration scripts required.
 
 ## Best Practices
 
@@ -193,7 +193,7 @@ One of the most practical aspects of GLIDE's compression design is that you don'
 
 ## Conclusion
 
-Transparent compression gives you a meaningful reduction in memory usage with minimal effort. LZ4 is effectively free at 28% savings; zstd nearly halves memory at a moderate write throughput cost. The feature is available today across all GLIDE language bindings and requires only a single configuration change.
+Transparent compression gives you a meaningful reduction in memory usage with minimal effort. LZ4 delivered 28% savings with low overhead in our benchmarks (0.76x–1.10x SET throughput vs uncompressed, with most configurations between 0.95x and 1.07x); zstd nearly halves memory at a moderate write throughput cost. The feature is available today across all GLIDE language bindings and requires only a single configuration change.
 
 We'd love to hear about your experience with compression — what data types you're compressing, what savings you're seeing, and what would make the feature more useful. Join the conversation on [GitHub Discussions](https://github.com/valkey-io/valkey-glide/discussions).
 
