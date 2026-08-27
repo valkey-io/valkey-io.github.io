@@ -31,11 +31,13 @@ It walks the entire keyspace in a single call and blocks the server for the dura
 On a keyspace with millions of keys that is a stall every other client sees.
 
 `SCAN` exists for this reason.
-It is cursor based, it returns a bounded batch per call, and other commands run in between.
+It is cursor based, and other commands run in between the calls.
+`COUNT` is a hint and not a batch size: a single call can come back with more keys than that, with fewer, or with none at all, and it is the cursor returning to zero rather than an empty reply that tells you the scan is over.
 The guarantee is weaker, which is the point: a key present for the whole scan is returned at least once, but a scan that overlaps with writes samples a moving keyspace rather than photographing a still one.
 
 The key explorer is built on that.
-It issues `SCAN` with `COUNT 100`, stops after 1000 keys, groups what it saw by the text before the first colon, and shows the groups as rows:
+It issues `SCAN` with `COUNT 100` and keeps following the cursor until it has collected 1000 keys or the scan finishes, whichever comes first.
+It groups what it collected by the text before the first colon and shows the groups as rows:
 
 ```text
 user:*      2
@@ -46,7 +48,7 @@ queue:*     1
 Two things about that display are worth stating, because a table of names invites the wrong reading.
 `user:*` is a grouping derived from key names the scan happened to see, not an object on the server, so nothing can be addressed by it.
 And the counts are the sample, not the keyspace.
-The total key count shown elsewhere comes from `DBSIZE`, which is the real number.
+The total key count shown elsewhere comes from `DBSIZE`, which is the count for the database you have selected on the node you are connected to.
 
 The effect is that opening the explorer against a busy server costs a bounded number of `SCAN` calls.
 To look inside one prefix you send `SCAN 0 MATCH session:* COUNT 50` yourself rather than asking anything to enumerate the keyspace for you.
@@ -63,16 +65,22 @@ A client that authenticates with a username and password rather than a password 
 Here is a grant that covers everything the interface reads:
 
 ```bash
-valkey-cli ACL SETUSER studio on '>your-password' '~*' '+@read' '+info' '+slowlog|get' '+client|list' '+ping'
+valkey-cli ACL SETUSER studio reset on '>your-password' '~*' '+@read' '-keys' '+info' '+slowlog|get' '+client|list' '+ping'
 ```
 
 Each piece of it maps to something on screen:
 
 - `+@read` covers `SCAN`, `TYPE` and `DBSIZE` for the key explorer, and the value reads behind it.
+- `-keys` takes `KEYS` back out. It is a read command, so `+@read` grants it, and the whole point of the first half of this post is that nothing should be sending it. The interface does not, and after this neither can anything else holding these credentials.
 - `+info` is the overview: uptime, connected clients, `maxclients`, `used_memory`, and the keyspace hit and miss counters behind the cache hit ratio.
 - `+slowlog|get` is the slow command list, read with `SLOWLOG GET 10`.
 - `+client|list` is the session list.
 - `+ping` is the connection check the client runs when it opens the connection.
+
+`reset` at the front is doing more work than it looks like.
+Without it the rules are added to whatever the user already had, so running this against an existing `studio` leaves every earlier permission in place and you get a user that reads the list above and still writes.
+With it the line is the whole grant, which is the only form worth copying into a runbook.
+One thing it does not cover: the password crosses the network on every `AUTH`, so anywhere but a local socket the connection wants transport layer security (TLS) underneath it.
 
 Connected as `studio`, every panel fills in.
 A write does not:
@@ -107,7 +115,7 @@ It also means anything on screen can be checked against `valkey-cli` in a few se
 Two limits are worth stating rather than leaving to be found.
 The session list reads the `name` field from `CLIENT LIST`, which stays empty until a client calls `CLIENT SETNAME`, so the user column reads `default` even when the connection belongs to another ACL user.
 Run `CLIENT LIST` directly when you need to know which user a connection belongs to.
-And the connection goes to a single standalone node: transport layer security (TLS) is supported, Cluster and Sentinel are not.
+And the connection goes to a single standalone node: TLS is supported, Cluster and Sentinel are not.
 
 One practical note if you try this.
 There is no separate Valkey entry in the connection dialog, and Valkey is reached by choosing Redis, because one protocol implementation serves every server that speaks the protocol.
