@@ -50,11 +50,11 @@ Valkey 9.0 flips the script. Instead of copying 10MB, the main thread writes a 1
 
 **AFTER (Valkey 9.0)**
 
-![Flowchart of the Valkey 9.0 reply path with copy avoidance. The main thread writes only a 16-byte bulkStrRef into the reply buffer instead of the object itself. An I/O thread builds an iovec from that reference and calls writev, so the 10MB payload travels straight from the object store to the socket along a zero-copy data path, never being copied into the reply buffer.](./copy-avoidance-9.webp)
+![Flowchart of the Valkey 9.0 reply path with copy avoidance. Instead of the object itself, the main thread writes only a 16-byte bulkStrRef into the reply buffer. An I/O thread builds an iovec from that reference and calls writev. A dashed line labeled "no reply-buffer copy" runs from the 10MB object in the object store directly to the socket: the payload is sent from where it already lives rather than being staged through the reply buffer.](./copy-avoidance-9.webp)
 
 *Main-thread copy bandwidth: ~0 — just pointer/reference management.*
 
-The reply path builds an `iovec`, a pointer-and-length pair describing one region of memory, aimed straight at `obj->ptr`. It hands an array of them to [`writev()`](https://man7.org/linux/man-pages/man2/writev.2.html), which writes every region to the socket in a single syscall. No copy is performed because the 10MB object clears the size threshold. With I/O threads enabled, the write also moves off the main thread, so the heavy lifting overlaps command execution.
+The reply path builds an `iovec`, a pointer-and-length pair describing one region of memory, aimed straight at `obj->ptr`. It hands an array of them to [`writev()`](https://man7.org/linux/man-pages/man2/writev.2.html), so the payload never gets copied into Valkey's reply buffer at all. The kernel still copies it to the socket, and `writevToClient()` loops over partial writes, yielding after 64KB per event so a single large reply can't monopolize the loop. With I/O threads enabled, that work also moves off the main thread and overlaps command execution.
 
 For reference, all of this lives in `networking.c`. [`isCopyAvoidPreferred()`](https://github.com/valkey-io/valkey/blob/df7cdc1d998bcc2f4ab86ac0e8a1c51fa0a7d6c1/src/networking.c#L253) decides whether a reply is eligible, [`_addBulkStrRefToBufferOrList()`](https://github.com/valkey-io/valkey/blob/df7cdc1d998bcc2f4ab86ac0e8a1c51fa0a7d6c1/src/networking.c#L753) writes the reference instead of the bytes, and [`writevToClient()`](https://github.com/valkey-io/valkey/blob/df7cdc1d998bcc2f4ab86ac0e8a1c51fa0a7d6c1/src/networking.c#L2711) performs the gather-write.
 
