@@ -1,52 +1,83 @@
 {% extends "fullwidth.html" %}
-
 {% block subhead_content %}
 <h1 class="page-title">Events</h1>
 {% endblock subhead_content %}
-
 {% block main_content %}
-
 <div class="events-intro">
   <p>Come meet us at an upcoming Valkey event!</p>
   <p>Get involved: <a href="/community/meetup-groups/">Host a Meetup</a> | <a href="https://form.asana.com/?k=FA6ZlbUBbiaE4b7LJ9EXqQ&amp;d=9283783873717">Share an event</a></p>
 </div>
-
 <div class="events-calendar">
   <div class="events-legend">
     <span class="legend-item"><span class="legend-dot first-party"></span> Valkey Events</span>
     <span class="legend-item"><span class="legend-dot third-party"></span> Third Party</span>
+    <span class="legend-item"><span class="legend-dot meetup-hackathon"></span> Meetup / Hackathon</span>
   </div>
-
   <div class="calendar-nav">
     <button class="calendar-nav-btn" id="cal-prev" aria-label="Previous month">&#9664;</button>
     <span class="calendar-nav-title" id="cal-title"></span>
     <button class="calendar-nav-btn" id="cal-next" aria-label="Next month">&#9654;</button>
   </div>
-
   <div class="calendar-grid" id="cal-grid">
     <div class="calendar-header">
       <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
     </div>
     <div class="calendar-days" id="cal-days"></div>
   </div>
-
   <div class="events-list" id="events-list"></div>
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   var events = [
     {% for page in section.pages %}
     {
-      title: "{{ page.title | safe }}",
+      title: {{ page.title | json_encode() | safe }},
       date: "{{ page.date | date(format='%Y-%m-%d') }}",
-      type: "{{ page.extra.event_type | default(value='first-party') }}",
-      location: "{{ page.extra.location | default(value='') | safe }}",
-      locationUrl: "{{ page.extra.location_url | default(value='') | safe }}",
-      url: "{% if page.extra.external_url %}{{ page.extra.external_url | safe }}{% else %}{{ page.permalink | safe }}{% endif %}"
+      type: {{ page.extra.event_type | default(value='first-party') | json_encode() | safe }},
+      location: {{ page.extra.location | default(value='') | json_encode() | safe }},
+      locationUrl: {{ page.extra.location_url | default(value='') | json_encode() | safe }},
+      url: {% if page.extra.external_url %}{{ page.extra.external_url | json_encode() | safe }}{% else %}{{ page.permalink | json_encode() | safe }}{% endif %}
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   ];
+
+  var eventTypeLabels = {
+    'first-party': 'Valkey Event',
+    'third-party': 'Third Party',
+    'meetup-hackathon': 'Meetup / Hackathon'
+  };
+
+  function escapeHtml(value) {
+    if (!value) return '';
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function safeHref(value) {
+    if (!value) return '';
+    try {
+      var url = new URL(value, window.location.origin);
+      if (url.protocol === 'http:' || url.protocol === 'https:') return escapeHtml(url.href);
+    } catch (error) {}
+    return '#';
+  }
+
+  events = events.map(function(e) {
+    var type = eventTypeLabels[e.type] ? e.type : 'third-party';
+    return {
+      safeTitle: escapeHtml(e.title),
+      date: e.date,
+      eventClass: type,
+      typeLabel: eventTypeLabels[type],
+      safeLocation: escapeHtml(e.location),
+      safeLocationUrl: safeHref(e.locationUrl),
+      safeUrl: safeHref(e.url)
+    };
+  });
 
   // Collect events by month
   var monthSet = {};
@@ -68,8 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
     m++;
     if (m > 12) { m = 1; y++; }
   }
-  var currentIdx = 0;
 
+  var currentIdx = 0;
   // Start on current month if it exists, otherwise first month
   var now = new Date();
   var currentKey = now.getFullYear() + '-' + (now.getMonth() + 1 < 10 ? '0' + (now.getMonth() + 1) : '' + (now.getMonth() + 1));
@@ -105,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (hasEvents) {
         var labels = '';
         hasEvents.forEach(function(e) {
-          labels += '<a href="' + e.url + '" class="event-label ' + e.type + '">' + e.title + '</a>';
+          labels += '<a href="' + e.safeUrl + '" class="event-label ' + e.eventClass + '" title="' + e.safeTitle + '">' + e.safeTitle + '</a>';
         });
         html += '<div class="calendar-day has-event"><span class="day-num">' + d + '</span>' + labels + '</div>';
       } else {
@@ -136,31 +167,32 @@ document.addEventListener('DOMContentLoaded', function() {
   // Render all event cards once
   var nowLocal = new Date();
   var today = nowLocal.getFullYear() + '-' +
-              String(nowLocal.getMonth() + 1).padStart(2, '0') + '-' +
-              String(nowLocal.getDate()).padStart(2, '0');
+    String(nowLocal.getMonth() + 1).padStart(2, '0') + '-' +
+    String(nowLocal.getDate()).padStart(2, '0');
   var currentMonth = today.substring(0, 7);
+
   var thisMonthUpcoming = events.filter(function(e) { return e.date.substring(0, 7) === currentMonth && e.date >= today; })
-                        .sort(function(a, b) { return a.date.localeCompare(b.date); });
+                          .sort(function(a, b) { return a.date.localeCompare(b.date); });
   var upcoming = events.filter(function(e) { return e.date > today && e.date.substring(0, 7) !== currentMonth; })
                        .sort(function(a, b) { return a.date.localeCompare(b.date); });
   var past = events.filter(function(e) { return e.date < today; })
                    .sort(function(a, b) { return b.date.localeCompare(a.date); });
-  var allEvents = thisMonthUpcoming.concat(upcoming).concat(past);
 
+  var allEvents = thisMonthUpcoming.concat(upcoming).concat(past);
   var listHtml = '';
   allEvents.forEach(function(e) {
     var dateObj = new Date(e.date + 'T00:00:00');
     var dateStr = monthNames[dateObj.getMonth()] + ' ' + dateObj.getDate() + ', ' + dateObj.getFullYear();
     var eventMonth = e.date.substring(0, 7);
     listHtml += '<div class="event-card' + (e.date < today ? ' past' : '') + '" data-month="' + eventMonth + '">' +
-      '<span class="event-card-badge ' + e.type + '">' + (e.type === 'first-party' ? 'Valkey Event' : 'Third Party') + '</span>' +
-      '<h3><a href="' + e.url + '">' + e.title + '</a></h3>' +
+      '<span class="event-card-badge ' + e.eventClass + '">' + e.typeLabel + '</span>' +
+      '<h3><a href="' + e.safeUrl + '">' + e.safeTitle + '</a></h3>' +
       '<p class="event-card-date">' + dateStr + '</p>' +
-      (e.location
+      (e.safeLocation
         ? '<p class="event-card-location">' +
-            (e.locationUrl
-              ? '<a href="' + e.locationUrl + '" target="_blank" rel="noopener noreferrer">' + e.location + '</a>'
-              : e.location) +
+          (e.safeLocationUrl
+            ? '<a href="' + e.safeLocationUrl + '" target="_blank" rel="noopener noreferrer">' + e.safeLocation + '</a>'
+            : e.safeLocation) +
           '</p>'
         : '') +
       '</div>';
@@ -169,7 +201,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   document.getElementById('cal-prev').addEventListener('click', function() { if (currentIdx > 0) { currentIdx--; render(); } });
   document.getElementById('cal-next').addEventListener('click', function() { if (currentIdx < months.length - 1) { currentIdx++; render(); } });
-
   render();
 });
 </script>
