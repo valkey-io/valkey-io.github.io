@@ -1,6 +1,7 @@
 ---
 title: Nas Nassery
 extra:
+    photo: '/assets/media/authors/nassery318.jpeg'
     github: nassery318
 ---
 
