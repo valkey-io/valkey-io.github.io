@@ -31,7 +31,7 @@ It walks the entire keyspace in a single call and blocks the server for the dura
 On a keyspace with millions of keys that is a stall every other client sees.
 
 `SCAN` exists for this reason.
-It is cursor based, and other commands run in between the calls.
+It is cursor-based, and other commands run in between the calls.
 `COUNT` is a hint and not a batch size: a single call can come back with more keys than that, with fewer, or with none at all, and it is the cursor returning to zero rather than an empty reply that tells you the scan is over.
 The guarantee is weaker, which is the point: a key present for the whole scan is returned at least once, but a scan that overlaps with writes samples a moving keyspace rather than photographing a still one.
 
@@ -71,8 +71,11 @@ valkey-cli ACL SETUSER studio reset on '>your-password' '~*' '+@read' '-@dangero
 Each piece of it maps to something on screen:
 
 - `+@read` covers `SCAN`, `TYPE` and `DBSIZE` for the key explorer, and the value reads behind it.
-- `-@dangerous` takes back the risky commands as a category instead of one at a time. `KEYS` is in it, which is the command the first half of this post is about, and so are `SORT`, `FLUSHALL` and the rest of the set Valkey itself marks as dangerous. Order matters here: a specific grant placed after a category revocation still applies, which is why `+info`, `+slowlog|get` and `+client|list` below keep working even though `@dangerous` lists those commands too.
-- `+select` lets the connection switch between the numbered databases a server keeps. Without it, a connection configured for anything past database 0 cannot reach it.
+- `-@dangerous` takes back the risky commands as a category instead of one at a time.
+`KEYS` is in it, which is the command the first half of this post is about, and so are `SORT`, `FLUSHALL` and the rest of the set Valkey itself marks as dangerous.
+Order matters here: a specific grant placed after a category revocation still applies, which is why `+info`, `+slowlog|get` and `+client|list` below keep working even though `@dangerous` lists those commands too.
+- `+select` lets the connection switch between the numbered databases a server keeps.
+Without it, a connection configured for anything past database 0 cannot reach it.
 - `+info` is the overview: uptime, connected clients, `maxclients`, `used_memory`, and the keyspace hit and miss counters behind the cache hit ratio.
 - `+slowlog|get` is the slow command list, read with `SLOWLOG GET 10`.
 - `+client|list` is the session list.
