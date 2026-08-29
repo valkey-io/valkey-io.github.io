@@ -1,6 +1,7 @@
 ---
 title: Abdullah Kaya
 extra:
+    photo: '/assets/media/authors/kaya-abdullah.png'
     github: kaya-abdullah
 ---
 

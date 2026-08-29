@@ -1,7 +1,7 @@
 +++
 title = "Browsing a Valkey keyspace safely: SCAN, INFO, and a read-only ACL user"
 date = 2026-08-28 01:01:01
-description = "Pointing a graphical client at a Valkey server that is taking traffic raises two questions, and neither is answered by the client. Here is how the keyspace listing and the access control list decide whether it is safe."
+description = "Pointing a graphical client at a Valkey server that is taking traffic raises two questions: how to safely collect data from the server, and how to properly authorize the access. This post covers how LibreDB Studio answers the first and best practices for the second."
 authors = ["kaya-abdullah"]
 
 [taxonomies]
@@ -65,13 +65,14 @@ A client that authenticates with a username and password rather than a password 
 Here is a grant that covers everything the interface reads:
 
 ```bash
-valkey-cli ACL SETUSER studio reset on '>your-password' '~*' '+@read' '-keys' '+info' '+slowlog|get' '+client|list' '+ping'
+valkey-cli ACL SETUSER studio reset on '>your-password' '~*' '+@read' '-@dangerous' '+select' '+info' '+slowlog|get' '+client|list' '+ping'
 ```
 
 Each piece of it maps to something on screen:
 
 - `+@read` covers `SCAN`, `TYPE` and `DBSIZE` for the key explorer, and the value reads behind it.
-- `-keys` takes `KEYS` back out. It is a read command, so `+@read` grants it, and the whole point of the first half of this post is that nothing should be sending it. The interface does not, and after this neither can anything else holding these credentials.
+- `-@dangerous` takes back the risky commands as a category instead of one at a time. `KEYS` is in it, which is the command the first half of this post is about, and so are `SORT`, `FLUSHALL` and the rest of the set Valkey itself marks as dangerous. Order matters here: a specific grant placed after a category revocation still applies, which is why `+info`, `+slowlog|get` and `+client|list` below keep working even though `@dangerous` lists those commands too.
+- `+select` lets the connection switch between the numbered databases a server keeps. Without it, a connection configured for anything past database 0 cannot reach it.
 - `+info` is the overview: uptime, connected clients, `maxclients`, `used_memory`, and the keyspace hit and miss counters behind the cache hit ratio.
 - `+slowlog|get` is the slow command list, read with `SLOWLOG GET 10`.
 - `+client|list` is the session list.
@@ -112,12 +113,10 @@ That is worth knowing because it tells you what a number means and when it will 
 If `INFO` does not publish a field, the panel behind it has nothing to show.
 It also means anything on screen can be checked against `valkey-cli` in a few seconds, which is the right relationship between a graphical client and a server.
 
-Two limits are worth stating rather than leaving to be found.
-The session list reads the `name` field from `CLIENT LIST`, which stays empty until a client calls `CLIENT SETNAME`, so the user column reads `default` even when the connection belongs to another ACL user.
-Run `CLIENT LIST` directly when you need to know which user a connection belongs to.
-And the connection goes to a single standalone node: TLS is supported, Cluster and Sentinel are not.
+One limit is worth stating rather than leaving to be found.
+The connection goes to a single standalone node: TLS is supported, Cluster and Sentinel are not.
 
-One practical note if you try this.
+A quick practical note if you try this.
 There is no separate Valkey entry in the connection dialog, and Valkey is reached by choosing Redis, because one protocol implementation serves every server that speaks the protocol.
 A second identical entry would suggest a difference in the client that does not exist.
 
