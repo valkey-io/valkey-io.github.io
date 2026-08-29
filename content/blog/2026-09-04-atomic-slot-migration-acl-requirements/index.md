@@ -1,11 +1,14 @@
 +++
 title = "Analyzing Atomic Slot Migration ACL requirements"
-date = 2026-08-21
+date = 2026-09-04
 description = "Explains the ACL permissions required by Atomic Slot Migration and how to debug permission failures"
 authors = ["hieun"]
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
+[extra]
+featured = true
+featured_image = "/blog/atomic-slot-migration-acl-requirements/images/hero.png"
 +++
 
 
