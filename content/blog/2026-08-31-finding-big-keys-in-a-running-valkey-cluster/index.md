@@ -27,7 +27,7 @@ Command Logs, which shipped in 1.0 and needs Valkey 8.1 or later, surfaces those
 
 Parsing an RDB file offline tells you what the keyspace looked like when the file was written, not now.
 `valkey-cli --bigkeys` covers only the node you point it at and only the database you select, and it reports one key per type and sizes collections by element count, so you never get a list ranked by bytes.
-`--memkeys` calls `MEMORY USAGE` for every type, so it compares more directly.
+`--memkeys` calls `MEMORY USAGE` for every key it scans, so it compares more directly.
 Big Keys ranks the largest keys across every primary in one pass, and it complements these tools rather than replacing them.
 
 ## How the scan works
