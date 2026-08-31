@@ -87,8 +87,7 @@ Splitting also costs you the atomicity of `HGETALL` and friends.
 Valkey Admin gives Valkey users a single place to monitor, inspect, and troubleshoot Valkey clusters, and 1.1 adds finding the keys that cost you memory and tail latency.
 We invite you to try it out.
 You can download desktop builds for macOS and Linux from the releases page, and pull container images from GitHub Container Registry, Docker Hub and the Amazon Elastic Container Registry (ECR) Public Gallery.
-Valkey Admin 1.1.0 and 1.1.1 also shipped numbered databases beyond 0 to 15, command name autocomplete in Send Command, state that survives a page refresh, non-root container images, and an Electron server bound to localhost.
-The [1.1.0](https://github.com/valkey-io/valkey-admin/releases/tag/v1.1.0) and [1.1.1](https://github.com/valkey-io/valkey-admin/releases/tag/v1.1.1) release notes have the rest.
+Learn more about what else is in 1.1.0 and 1.1.1 (numbered databases, command autocomplete, and persisted state across refresh etc) in the [release notes](https://github.com/valkey-io/valkey-admin/releases).
 
 The project lives at [github.com/valkey-io/valkey-admin](https://github.com/valkey-io/valkey-admin) under the Apache 2.0 license.
 To propose new features or significant changes, open a GitHub Issue with the `[RFC]` prefix.
