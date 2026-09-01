@@ -1,6 +1,6 @@
 +++
 title = "Analyzing Atomic Slot Migration ACL requirements"
-date = 2026-09-04
+date = 2026-09-01
 description = "Explains the ACL permissions required by Atomic Slot Migration and how to debug permission failures"
 authors = ["hieun"]
 
