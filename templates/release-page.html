@@ -1,11 +1,103 @@
 {% extends "right-aside.html" %}
+{% import "macros/release.html" as release_macros %}
 
 {% block subhead_content%}
 <h1 class="page-title">Download Valkey {{page.title}}</h1>
 {% endblock subhead_content%}
-{% block main_content %}
-{% set release = page.extra %}
-{% set release_date = page.date %}
 
-{% include "includes/release.html" %}
+{% block main_content %}
+{% set page_ver_parts = page.extra.tag | split(pat=".") %}
+{% set page_major = page_ver_parts.0 %}
+{% set page_major_number = page_major | int %}
+{% set page_minor = page_ver_parts.1 %}
+{% set page_patch = page_ver_parts.2 %}
+{% set this_minor_line = [] %}
+{% set this_major_line = [] %}
+{% set section_file = page.ancestors.1 %}
+{% set section = get_section(path= section_file) %}
+{% set sorted_section_pages = section.pages | sort(attribute="extra.tag") %}
+{% set highest_major_version = 0 %}
+
+{% for page in sorted_section_pages %}
+    {% set this_version_parts = page.extra.tag | split(pat=".") %}
+    {% set this_version_major = this_version_parts.0 %}
+    {% set this_version_major_num = this_version_parts.0 | int %}
+    {% set this_version_minor = this_version_parts.1 %}
+    {% set this_version_patch = this_version_parts.2 %}
+    {% set this_version_rc = this_version_patch | split(pat="-") | length %}
+
+    {% set ver = [ page.date, page.extra.tag, this_version_major, this_version_minor, this_version_patch, page.slug]  %}
+    {% if (page_major == this_version_major) and (page_minor == this_version_minor) %}
+        {% set_global this_minor_line  = this_minor_line | concat(with= [ ver ] ) %}
+    {% endif %}
+    {% if (page_major == this_version_major) %}
+        {% set_global this_major_line  = this_major_line | concat(with= [ ver ] ) %}
+    {% endif %}
+    {% if (highest_major_version <= this_version_major_num) and (this_version_rc == 1) %}
+        {% set_global highest_major_version = this_version_major_num %}
+        {% set_global latest_major  = ver  %}
+    {% endif %}    
+{% endfor %}
+
+{% set latest_patch = this_minor_line | sort(attribute="0") | last %}
+{% set latest_minor = this_major_line | sort(attribute="0") | last %}
+
+{% set new_patch = (latest_patch.3 == page_minor) and (latest_patch.4 != page_patch) %}
+{% set new_minor = (latest_minor.2 == page_major) and (latest_minor.3 != page_minor) %}
+{% set new_major = page_major_number != highest_major_version %}
+
+{% if new_patch or new_minor or new_major %}
+<h2>Available updates for {{page.extra.tag}} </h2>
+<ul>
+{% if new_patch %}
+    {% set_global latest_patch_url = "/download/releases/" ~ latest_patch.5 ~ "/" %}
+    <li>There is a <strong>patch</strong> update: <a href="{{ latest_patch_url | safe }}">{{latest_patch.2}}.{{latest_patch.3}}.{{latest_patch.4}}</a>.</li>
+{% endif %}
+{% if new_minor %}
+    {% set_global latest_minor_url = "/download/releases/" ~ latest_minor.5 ~ "/"%}
+    <li>There is a <strong>minor</strong> update: <a href="{{ latest_minor_url | safe }}">{{latest_minor.2}}.{{latest_minor.3}}.{{latest_minor.4}}</a>.</li>
+{% endif %}
+{% if new_major %}
+    {% set_global latest_major_url = "/download/releases/" ~ latest_major.5 ~ "/" %}
+    <li>The latest <strong>major</strong> version: <a href="{{ latest_major_url | safe }}">{{latest_major.2}}.{{latest_major.3}}.{{latest_major.4}}</a>.</li>
+{% endif %}
+</ul>
+<hr />
+{%endif%}
+
+
+{{ release_macros::release_info(date= page.date, release= page.extra ) }}
+{# 
+
+The `script` tag below facilitates a forward based on a URL hashtag. For example, as of writing:
+
+- `/download/releases/v8-0-0/#latest-patch` autoforwards to `/download/releases/v8-0-6/`
+- `/download/releases/v8-0-0/#latest-minor` autoforwards to `/download/releases/v8-1-5/`
+- `/download/releases/v8-0-0/#latest-major` autoforwards to `/download/releases/v9-0-1/`
+
+If there isn't a new patch/minor/major then it just becomes a noop when you add the respective hash to the URL
+
+#}
+<script>
+const latest = () => {
+    const lower_hash = window.location.hash.toLowerCase(window.location.hash);
+    {% if new_patch %}
+    if (lower_hash == '#latest_patch') {
+        window.location.href = '{{ latest_patch_url | safe }}';
+    }
+    {% endif %}
+    {% if new_minor %}
+    if (lower_hash == '#latest_minor') {
+        window.location.href = '{{ latest_minor_url | safe }}';
+    }
+    {% endif %}
+    {% if new_major %}
+    if (lower_hash == '#latest_major') {
+        window.location.href = '{{ latest_major_url | safe }}';
+    }
+    {% endif %}
+}
+document.addEventListener("DOMContentLoaded", latest);
+window.addEventListener("hashchange", latest);
+</script>
 {% endblock main_content %}
