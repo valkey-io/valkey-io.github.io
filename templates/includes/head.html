@@ -6,7 +6,7 @@
     <meta name="MSSmartTagsPreventParsing" content="true" />
     <meta name="Copyright" content="" />
     <meta name="keywords" content="open-source, valkey" />
-    <meta property="og:image" content="/img/valkey-logo-og.png" />
+    <meta property="og:image" content="{{ config.base_url }}{% if page and page.extra and page.extra.featured_image %}{{ page.extra.featured_image }}{% else %}/img/valkey-logo-og.png{% endif %}" />
     {% if page and page.extra and page.extra.custom_meta%}
     {{ page.extra.custom_meta | safe }}
     {% endif %}
