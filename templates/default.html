@@ -1,4 +1,5 @@
-{%- block head -%}{%- endblock -%}<!DOCTYPE html>
+{%- block head -%}
+{%- endblock -%}<!DOCTYPE html>
 <html lang="{{ page.lang | default(value=config.default_language) }}">
 {% include "includes/head.html" %}
 <script>
@@ -44,7 +45,6 @@
       ></div>
       <nav role="navigation" aria-label="Main">
         <a role="menuitem" href="/download/">Download</a>
-
         <div class="has-submenu">
           <a role="menuitem" href="/docs/">Documentation</a>
           <div class="submenu">
@@ -67,7 +67,7 @@
           GitHub
           <!-- Star count will be injected here by JS -->
         </a>
-        
+        <div id="docsearch"></div>
       </nav>
     </div>
   </div>
@@ -140,6 +140,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager (noscript) -->
     </div>
     
-
+<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@4"></script>
+<script type="text/javascript">
+  docsearch({
+    container: '#docsearch',
+    appId: 'CU4W5N30P1',
+    indexName: 'valkey documentation',
+    apiKey: 'bfe4dd082414b50b74e3cbcc490034d9',
+  });
+</script>
 </body>
 </html>
