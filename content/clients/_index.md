@@ -15,6 +15,7 @@ recommended_clients_paths = [
     "/php/valkey-GLIDE.json",
     "/php/phpredis.json",
     "/php/predis.json",
+    "/php/valkey-GLIDE.json",
     "/swift/valkey-swift.json",
     "/csharp/valkey-GLIDE.json",
     "/ruby/valkey-GLIDE.json"
