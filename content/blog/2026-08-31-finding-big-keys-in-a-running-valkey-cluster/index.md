@@ -12,22 +12,19 @@ featured = true
 featured_image = "/assets/media/featured/valkey-admin-key-size-distribution.webp"
 +++
 
-When Valkey Admin 1.0 shipped in May, we named big key detection as one of three features we were exploring.
-Big key detection landed in 1.1 on July 31, so you can now find the largest keys across every shard of a running cluster from a single view, without parsing an RDB file offline or writing your own SCAN loop.
-The 1.1.1 patch that followed made the scan itself much faster, cutting the time to sample 250,000 keys on a 25-shard cluster from 41.86 seconds to 2.01 seconds.
+Nobody goes looking for a big key until something else breaks.
+One shard hits its memory limit while the others sit half idle, or p99 climbs with no change in traffic, and somewhere in the keyspace is a multi-megabyte hash nobody remembers creating.
+Valkey Admin 1.1 adds Big Keys, which ranks the largest keys across every primary of a running cluster in one view, so you can find it without parsing an RDB offline or writing your own SCAN loop.
 
 In this post, we'll walk through why oversized keys are hard to find, how the scan works across shards, and what to do once you have the results.
 
 ## Why big keys are hard to find
 
-Nobody goes looking for a big key until something else breaks.
-A multi-megabyte hash reads fast, so the first symptom shows up somewhere else.
-One shard hits its memory limit while the others are half idle, or p99 goes up with no change in traffic.
 Command Logs, which shipped in 1.0 and needs Valkey 8.1 or later, surfaces those large replies once they cross your threshold.
 
 Parsing an RDB file offline tells you what the keyspace looked like when the file was written, not now.
 `valkey-cli --bigkeys` covers only the node you point it at and only the database you select, and it reports one key per type and sizes collections by element count, so you never get a list ranked by bytes.
-`--memkeys` calls `MEMORY USAGE` for every key it scans, so it compares more directly.
+`valkey-cli --memkeys` calls `MEMORY USAGE` for every key it scans, so it compares more directly.
 Big Keys ranks the largest keys across every primary in one pass, and it complements these tools rather than replacing them.
 
 ## How the scan works
@@ -61,9 +58,6 @@ We also manually seeded 50 outliers, ranging from 100 KB to 1 MB, to test discov
 | 2,000,000 | not recorded | 10.34s |
 
 Pipelining removes round trips, so larger keys, mixed types, or higher network latency will not improve by the same factor.
-At high scan limits the volume of in-flight commands can crash the per-primary metrics server processes ([#450](https://github.com/valkey-io/valkey-admin/issues/450)).
-
-Note: if you are running 1.1.0, upgrade to 1.1.1 before scanning at a high limit.
 
 ![Big Keys scan parameters dialog showing the scan limit input, with a tooltip explaining that the limit is the maximum number of keys sampled per node](valkey-admin_02-scan-settings.png)
 
@@ -71,12 +65,11 @@ Note: if you are running 1.1.0, upgrade to 1.1.1 before scanning at a high limit
 
 Each row carries the key name, its type, its size, its TTL and the node it lives on, and clicking a row copies the key name.
 Valkey Admin does not render a value that large anyway: above a configurable threshold, 2 KB by default, the Key Browser shows the memory footprint and, for collection types, the element count, and does not pull the contents over the wire.
-We plan to add paging through large collections in a later release ([#454](https://github.com/valkey-io/valkey-admin/issues/454)).
 
 ![Key Browser showing a large hash where a warning replaces the element list, alongside the element count and memory footprint](valkey-admin_03-key-browser-large-hash.png)
 
 `OBJECT ENCODING` reports whether a hash or list has outgrown its compact `listpack` encoding.
-That conversion is a common reason a key grows faster than the data inside it.
+That conversion is a common reason a key grows faster than the data inside it, and [The secret life of data in Valkey](/blog/secret-life-of-data/) goes deeper on encodings.
 Check whether the key has a TTL.
 Data you never meant to keep usually just needs one.
 You can also split a single collection across several keys, but decide first whether to spread the pieces across slots to balance memory or hold them together with a hash tag so related reads stay on one node.
@@ -87,6 +80,7 @@ Splitting also costs you the atomicity of `HGETALL` and friends.
 Valkey Admin gives Valkey users a single place to monitor, inspect, and troubleshoot Valkey clusters, and 1.1 adds finding the keys that cost you memory and tail latency.
 We invite you to try it out.
 You can download desktop builds for macOS and Linux from the releases page, and pull container images from GitHub Container Registry, Docker Hub and the Amazon Elastic Container Registry (ECR) Public Gallery.
+Run the latest release.
 Learn more about what else is in 1.1.0 and 1.1.1 (numbered databases, command autocomplete, and persisted state across refresh etc) in the [release notes](https://github.com/valkey-io/valkey-admin/releases).
 
 The project lives at [github.com/valkey-io/valkey-admin](https://github.com/valkey-io/valkey-admin) under the Apache 2.0 license.
