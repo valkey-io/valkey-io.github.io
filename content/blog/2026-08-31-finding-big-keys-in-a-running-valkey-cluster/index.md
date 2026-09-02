@@ -1,6 +1,9 @@
 +++
 title= "Finding big keys in a running Valkey cluster with Valkey Admin"
-description = "Valkey Admin 1.1 adds big key detection, so you can find the largest keys across every shard of a running cluster from a single view, without parsing an RDB file offline or writing your own SCAN loop. The 1.1.1 patch cuts the time to sample 250,000 keys on a 25-shard cluster from 41.86 seconds to 2.01 seconds."
+description = """
+Valkey Admin 1.1 adds big key detection, so you can find the largest keys across every shard of a running cluster from a single view, without parsing an RDB file offline or writing your own SCAN loop.
+The 1.1.1 patch cuts the time to sample 250,000 keys on a 25-shard cluster from 41.86 seconds to 2.01 seconds.
+"""
 date= 2026-09-01
 draft = true
 authors= ["bblan0803", "nassery318"]
@@ -20,12 +23,13 @@ In this post, we'll walk through why oversized keys are hard to find, how the sc
 
 ## Why big keys are hard to find
 
+A multi-megabyte hash reads fast, so the first symptom shows up somewhere else.
 Command Logs, which shipped in 1.0 and needs Valkey 8.1 or later, surfaces those large replies once they cross your threshold.
 
 Parsing an RDB file offline tells you what the keyspace looked like when the file was written, not now.
 `valkey-cli --bigkeys` covers only the node you point it at and only the database you select, and it reports one key per type and sizes collections by element count, so you never get a list ranked by bytes.
 `valkey-cli --memkeys` calls `MEMORY USAGE` for every key it scans, so it compares more directly.
-Big Keys ranks the largest keys across every primary in one pass, and it complements these tools rather than replacing them.
+Big Keys does it in one pass across the whole cluster, and it complements these tools without replacing them.
 
 ## How the scan works
 
@@ -37,7 +41,7 @@ A key larger than all 10,000 sampled on a node stays hidden, so the default tell
 Nothing caps the limit, so raising it above a node key count lets `SCAN` reach every key that node holds.
 Since 1.1.1 that full pass is fast: 2 million keys across 25 shards took 10.34 seconds.
 It is not cheap, the scan sends hundreds of thousands of commands to your servers inside that window.
-Start at the default to catch the obvious offenders, and raise the limit when you need the definitive answer.
+Start at the default to catch the obvious offenders, and raise the limit when you need the ranking to cover every key.
 
 ![Big Keys results listing the largest keys found across a multi-shard Valkey cluster, ranked by size, each row showing the type, memory footprint, TTL and owning node](valkey-admin_01-big-keys-results.png)
 
@@ -78,9 +82,8 @@ Spreading the pieces across slots costs you atomicity, since a transaction canno
 
 Valkey Admin gives Valkey users a single place to monitor, inspect, and troubleshoot Valkey clusters, and 1.1 adds finding the keys that cost you memory and tail latency.
 We invite you to try it out.
-You can download desktop builds for macOS and Linux from the releases page, and pull container images from GitHub Container Registry, Docker Hub and the Amazon Elastic Container Registry (ECR) Public Gallery.
-Run the latest release.
-Learn more about what else is in 1.1.0 and 1.1.1 (numbered databases, command autocomplete, and persisted state across refresh etc) in the [release notes](https://github.com/valkey-io/valkey-admin/releases).
+You can download the latest desktop builds for macOS and Linux from the releases page, and pull container images from GitHub Container Registry, Docker Hub and the Amazon Elastic Container Registry (ECR) Public Gallery.
+The [release notes](https://github.com/valkey-io/valkey-admin/releases) have everything else in 1.1.0 and 1.1.1.
 
 The project lives at [github.com/valkey-io/valkey-admin](https://github.com/valkey-io/valkey-admin) under the Apache 2.0 license.
 
