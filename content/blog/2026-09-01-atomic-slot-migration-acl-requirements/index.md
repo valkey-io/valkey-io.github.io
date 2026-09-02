@@ -185,6 +185,9 @@ $20 = {
   acl_string = 0x0
 }
 ```
+### Why the data from ASM is being applied as the replication user
+
+ASM apply the replicated data using the replication user so that it can acts as a privilege escalation guardrail. If the target implicitly treated any inbound connection issuing `CLUSTER SYNCSLOTS` as a superuser, any client who can run `CLUSTER SYNCSLOTS` could execute arbitrary commands without ACL checks. Thus, to maintain security boundaries, the target node enforces the client's ACL on pushed write commands.
 
 ## So what permissions does ASM actually need?
 
