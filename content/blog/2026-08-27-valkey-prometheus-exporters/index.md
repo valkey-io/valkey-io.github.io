@@ -7,7 +7,8 @@ authors = ["edithpuclla", "kivanow"]
 blog_type = ["How-to"]
 +++
 
-Everything you need to monitor **Valkey** is already in the **Prometheus ecosystem**. This post is about how [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus), [redis_exporter](https://github.com/oliver006/redis_exporter), and [BetterDB](https://github.com/BetterDB-inc/monitor) Monitor come together to give you a complete picture of a running Valkey cluster, one tool per observability dimension.
+Everything you need to monitor **Valkey** is already in the **Prometheus ecosystem**.
+This post is about how [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus), [redis_exporter](https://github.com/oliver006/redis_exporter), and [BetterDB](https://github.com/BetterDB-inc/monitor) Monitor come together to give you a complete picture of a running Valkey cluster, one tool per observability dimension.
 
 A Valkey cluster has two distinct observability dimensions: what's happening inside each individual pod, and what's happening across the cluster as a whole. That's where running two complementary exporters side by side makes sense.
 
