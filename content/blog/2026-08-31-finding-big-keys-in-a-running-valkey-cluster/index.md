@@ -6,10 +6,10 @@ draft = true
 authors= ["bblan0803", "nassery318"]
 
 [taxonomies]
-blog_type = ["Announcements"]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
-featured_image = "/assets/media/featured/valkey-admin-key-size-distribution.webp"
+featured_image = "/assets/media/featured/valkey-admin-key-size-distribution-flat.svg"
 +++
 
 Nobody goes looking for a big key until something else breaks.
@@ -70,10 +70,9 @@ Valkey Admin does not render a value that large anyway: above a configurable thr
 
 `OBJECT ENCODING` reports whether a hash or list has outgrown its compact `listpack` encoding.
 That conversion is a common reason a key grows faster than the data inside it, and [The secret life of data in Valkey](/blog/secret-life-of-data/) goes deeper on encodings.
-Check whether the key has a TTL.
-Data you never meant to keep usually just needs one.
+Check whether the key has a TTL, since data you never meant to keep usually just needs one.
 You can also split a single collection across several keys, but decide first whether to spread the pieces across slots to balance memory or hold them together with a hash tag so related reads stay on one node.
-Splitting also costs you the atomicity of `HGETALL` and friends.
+Spreading the pieces across slots costs you atomicity, since a transaction cannot span slots, while a hash tag keeps them together and lets `MULTI` and `EXEC` still cover them.
 
 ## Join the community
 
@@ -84,11 +83,7 @@ Run the latest release.
 Learn more about what else is in 1.1.0 and 1.1.1 (numbered databases, command autocomplete, and persisted state across refresh etc) in the [release notes](https://github.com/valkey-io/valkey-admin/releases).
 
 The project lives at [github.com/valkey-io/valkey-admin](https://github.com/valkey-io/valkey-admin) under the Apache 2.0 license.
-To propose new features or significant changes, open a GitHub Issue with the `[RFC]` prefix.
-The maintainers review RFCs and guide them through design and implementation.
-We welcome bug reports, documentation improvements, and pull requests of all sizes.
 
 [@nassery318](https://github.com/nassery318) built Big Keys.
 [@ravjotbrar](https://github.com/ravjotbrar) traced the scan cost to round trips and pipelined the per-key commands, and [@ArgusLi](https://github.com/ArgusLi) replaced the numbered database dropdown.
 Thank you to everyone who filed issues and tested pre-release builds.
-We are exploring slot heat maps that visualize hot-slot distribution across the cluster and Prometheus integration, and we look forward to building them together.
