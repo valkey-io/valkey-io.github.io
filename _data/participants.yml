@@ -155,14 +155,14 @@
 - name: BetterDB
   link: https://betterdb.com
   company: >
-    BetterDB provides Valkey-native observability and monitoring tools. Backed by Open Core Ventures under an Open Charter, BetterDB is committed to maintaining an open source platform for the benefit of the public,
-    BetterDB helps teams migrating from Redis gain deep visibility into their Valkey
-    deployments with enterprise-grade analytics and compliance features.
+    BetterDB Inc. is a public benefit corporation operating under the OCV Open Charter, building open observability, monitoring, and migration tooling for Valkey.
+    The [core](https://github.com/BetterDB-inc/monitor) is open source under the MIT license, with commercial features for teams that need enterprise-grade analytics, compliance, and support.
   offering: >
-    BetterDB is the first monitoring platform built specifically for Valkey, leveraging
-    Valkey-exclusive features like COMMANDLOG, per-slot metrics, and async I/O threading
-    visibility. It provides real-time dashboards, slowlog analysis, client analytics,
-    ACL audit trails, and Prometheus integration - capabilities existing Redis tools cannot offer.
+    BetterDB is the first monitoring platform built specifically for Valkey.
+    It persists the operational data Valkey exposes but doesn't retain - COMMANDLOG, per-slot metrics, per-thread I/O, and more - then actively analyzes client activity and ACL audit trails to surface anomalies, so teams can debug what happened at 3am, understand what's happening now, and forecast what will come next.
+    It works both ways with OpenTelemetry, exports to Prometheus, and fires webhooks on anomalies - correlating your app's traces with live Valkey state.
+    Migrate freely between Redis and Valkey, from self-hosted to cloud, or vice versa.
+    Run it [self-hosted](https://hub.docker.com/r/betterdb/monitor), including fully air-gapped, or as [managed cloud](https://betterdb.com/login).
   image:
     path: /img/betterdb.svg
     alt: BetterDB Logo
@@ -190,6 +190,16 @@
       [Tencent Cloud](https://www.cloud.tencent.com) ([English](https://www.tencentcloud.com)), one of the world's leading cloud companies, is committed to creating innovative solutions to resolve real-world issues and enabling digital transformation for smart industries.
       Through our extensive global infrastructure, Tencent Cloud provides businesses across the globe with stable and secure industry-leading cloud products and services, leveraging technological advancements such as cloud computing, Big Data analytics, AI, communication and network security.
 
+- name: Vultr
+  link: https://www.vultr.com/products/managed-databases/valkey/
+  image:
+    path: /img/vultr.svg
+    alt: Vultr Logo
+  company: >
+    Vultr is the AI-first global cloud platform trusted by hundreds of thousands of active customers across 185 countries. It delivers flexible, scalable Cloud Compute, Cloud GPU, Bare Metal, and Cloud Storage solutions, enabling developers and enterprises to build, deploy, and scale modern applications and AI workloads with confidence.
+  offering: >
+    Vultr Managed Databases for Valkey provides a fully managed, It is built on open source Valkey and compatible with legacy Redis® OSS-compatible Valkey service with automated provisioning, high availability, automated backups, monitoring, and point-in-time recovery, enabling developers to deploy and operate production-ready Valkey clusters without managing the underlying infrastructure.
+
 - name: Freshworks
   link: https://www.freshworks.com
   image:
@@ -201,3 +211,23 @@
     Freshworks authored [valkey-glide-ruby](https://github.com/valkey-io/valkey-glide-ruby) (gem: `valkey-rb`), the official Ruby client for Valkey GLIDE, and contributed to the underlying GLIDE Rust core that powers it. Built on the same valkey-glide Rust FFI foundation as the Python, Java, Node.js, and Go clients, the Ruby client offers a redis-rb-compatible API, standalone and cluster modes, TLS/SSL, native OpenTelemetry tracing and metrics, client statistics, and comprehensive command coverage.
 
     Beyond Ruby, Freshworks has contributed across the GLIDE ecosystem, extending the Java client and its Jedis compatibility layer, the Go client, and shared Rust core capabilities. After rigorous evaluation, Freshworks adopted Valkey in production for one of its major workloads.
+
+- name: IONOS Cloud
+  link: https://cloud.ionos.de
+  image:
+    path: /img/ionos-cloud.svg
+    alt: IONOS Cloud logo
+  company: >
+    [IONOS Cloud](https://cloud.ionos.de) delivers highly scalable, European-engineered public and private cloud infrastructure. It provides GDPR-compliant data protection, flexible pay-as-you-go pricing without vendor lock-in, and custom visual deployment through its Data Center Designer, all backed by 24/7 expert support.
+  offering: >
+    [IONOS Cloud In-Memory DB](https://cloud.ionos.de/managed/dbaas/in-memory-db) now runs on Valkey, supporting versions 8, 8.1, and 9, while staying compatible with legacy Redis® OSS. It is a fully managed key-value store for caching, real-time data, and session management, with data persistence and TLS-secured connections.
+
+- name: 'Solanica'
+  link: 'https://solanica.io/'
+  image:
+    path: /img/solanica.svg
+    alt: 'Solanica Logo'
+  company: >
+    Solanica is a core contributor to the OpenEverest project and a pioneer in cloud-native data platform automation. The Solanica Platform delivers seamless deployment, observability, and expert support for teams. Designed for AI, analytics, and modern workloads, Solanica helps organizations unlock the full potential of their database infrastructure.
+  offering: >
+    With the Solanica Platform, you can run your Valkey workloads on any Kubernetes cluster without pain. No more struggling with day-2 operations: you can now deploy, provision, and manage your instances, and you don’t have to worry about backups, monitoring, etc.; everything can be controlled from one GUI. [Learn more](https://solanica.io/platform).
