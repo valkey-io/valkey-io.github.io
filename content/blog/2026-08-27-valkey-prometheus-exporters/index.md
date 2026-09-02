@@ -1,13 +1,13 @@
 +++
 title = "Valkey Metrics in Prometheus: redis_exporter and BetterDB"
 date = 2026-08-27
-description = "A starting point for monitoring Valkey with Prometheus: two open exporters, per-pod and cluster-wide metrics."
+description = "A starting point for monitoring Valkey with Prometheus: two exporters, per-pod and cluster-wide metrics."
 authors = ["edithpuclla", "kivanow"]
 [taxonomies]
 blog_type = ["How-to"]
 +++
 
-Everything you need to monitor **Valkey** is already in the **Prometheus ecosystem**. This post is about how [Prometheus](https://github.com/prometheus-operator/kube-prometheus), [redis_exporter](oliver006/redis_exporter), and [BetterDB](https://github.com/BetterDB-inc/monitor) Monitor come together to give you a complete picture of a running Valkey cluster, one tool per observability dimension.
+Everything you need to monitor **Valkey** is already in the **Prometheus ecosystem**. This post is about how [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus), [redis_exporter](https://github.com/oliver006/redis_exporter), and [BetterDB](https://github.com/BetterDB-inc/monitor) Monitor come together to give you a complete picture of a running Valkey cluster, one tool per observability dimension.
 
 A Valkey cluster has two distinct observability dimensions: what's happening inside each individual pod, and what's happening across the cluster as a whole. That's where running two complementary exporters side by side makes sense.
 
@@ -36,12 +36,13 @@ From **redis_exporter**, one series per pod:
 One flag is worth knowing about: `--append-instance-role-label` adds an `instance_role` label of master or replica, making it easy to separate primaries from replicas in a query or alert.
 
 
-From B**etterDB**, cluster-wide: 
+From **BetterDB**, cluster-wide: 
 - betterdb_commandlog_large_request
 - betterdb_commandlog_large_reply
 - betterdb_slowlog_pattern_count
 - betterdb_acl_denied
-- betterdb_cluster_slot_keys, betterdb_cluster_slot_reads_total, and 
+- betterdb_cluster_slot_keys
+- betterdb_cluster_slot_reads_total, and 
 - betterdb_cluster_slot_writes_total, per-slot statistics from `CLUSTER SLOT-STATS` that redis_exporter has no equivalent for. Finding your hottest slot is one query: topk(10, rate(betterdb_cluster_slot_writes_total[5m]))
 
 The **commandlog** metrics require Valkey 8.1+ (they have no Redis equivalent), slot statistics require Valkey 8.0+ with cluster-slot-stats-enabled, and betterdb_acl_denied requires ACL LOG (available since version 6, though some managed providers block it).
