@@ -185,9 +185,11 @@ $20 = {
   acl_string = 0x0
 }
 ```
-### Why the data from ASM is being applied as the replication user
+### Why doesn't ASM use the superuser?
 
-ASM apply the replicated data using the replication user so that it can acts as a privilege escalation guardrail. If the target implicitly treated any inbound connection issuing `CLUSTER SYNCSLOTS` as a superuser, any client who can run `CLUSTER SYNCSLOTS` could execute arbitrary commands without ACL checks. Thus, to maintain security boundaries, the target node enforces the client's ACL on pushed write commands.
+One might naturally expect ASM to simply operate with superuser privileges. However, there is no technical mechanism to differentiate a legitimate ASM link from any arbitrary connection that has been granted permission to execute `CLUSTER SYNCSLOTS`. To give ASM superuser access under this constraint, the `CLUSTER SYNCSLOTS` command itself would have to implicitly escalate the connection's privileges.
+
+Hidden privilege escalations like this are a common attack vector in database systems, where a simple misconfiguration can lead to a full database compromise. While it requires more upfront configuration, utilizing a dedicated replication user produces a significantly more secure feature. This design adheres to the **Principle of Least Privilege** by ensuring entities only operate with the minimum permissions necessary to function, rather than implicitly upgrading a client's authority.
 
 ## So what permissions does ASM actually need?
 
