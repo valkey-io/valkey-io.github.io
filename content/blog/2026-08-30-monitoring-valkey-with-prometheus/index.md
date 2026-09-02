@@ -1,6 +1,6 @@
 +++
 title = "Monitoring Valkey with Prometheus"
-date = 2026-08-30
+date = 2026-09-07
 description = "Learn how to expose Valkey metrics to Prometheus, visualize them in Grafana, and choose the right exporter for your deployment." 
 authors =  ["dragosandriciuc"]
 [taxonomies]
@@ -155,7 +155,7 @@ BetterDB and redis_exporter operate at different layers of the monitoring stack.
 |---|---|---|
 | **What it is** | Full monitoring application including dashboard, a Prometheus endpoint, an audit trail and anomaly detection | Single-purpose Prometheus exporter with no UI |
 | **Setup** | One Docker container or `npx @betterdb/monitor`; configurable storage backend | One Docker container; typically paired with your own Grafana dashboards |
-| **Valkey-specific features** | The `COMMANDLOG`, `CLUSTER SLOT-STATS` | Exposes many Valkey metrics through INFO and dedicated collectors, including `COMMANDLOG`; does not provide BetterDB's higher-level analysis of those features |
+| **Valkey-specific features** | Native support for `COMMANDLOG` and `CLUSTER SLOT-STATS` | Exposes many Valkey metrics through INFO and dedicated collectors, including `COMMANDLOG`; does not provide BetterDB's higher-level analysis of those features |
 | **Vector/AI search visibility** | Dedicated tab and metrics for `valkey-search` | Optional, using the `--include-search-indexes-metrics` flag, less purpose-built |
 | **Slowlog analysis** | Grouped by query pattern, with duration and percentage breakdowns | Exported by default but no detailed slowlog entry analysis |
 | **Maturity / ecosystem** | Newer project, smaller community, actively evolving | Long-established (originally for Redis), ~3.6k GitHub stars, huge base of existing Grafana dashboards and alerting "mixins" |
@@ -284,6 +284,18 @@ Or, for a sustained load, run `valkey-benchmark` from inside the container:
 
 The above is a complete, disposable local loop with Valkey, an exporter, Prometheus scraping it, and Grafana visualizing it. This is a hypothetical mirror of what you'd run in production, just without the TLS, ACLs, and persistence you'd want to layer on before shipping it anywhere real.
 
+For a quick walkthrough, here's a one-minute video on exporting Valkey metrics to Prometheus with redis_exporter and BetterDB:
+<div style="max-width: 315px;">
+  <iframe
+    src="https://www.youtube.com/embed/0lPlmuK-aTw"
+    title="Exporting Valkey metrics to Prometheus"
+    style="width: 100%; aspect-ratio: 9 / 16; border: 0;"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen></iframe>
+</div>
+
+## What's next?
+
 Monitoring is one of the easiest ways to improve the reliability of your Valkey deployment. Whether you choose a lightweight exporter such as redis_exporter or a more feature-rich platform like BetterDB, exposing metrics to Prometheus lets you detect memory pressure, replication issues, and performance regressions before they affect your applications and architecture.
 
-Start by deploying the local Docker Compose stack from this guide, explore the available metrics, then adapt the configuration for your own environment by adding authentication, TLS, alerting rules, and dashboards.Historical Valkey metrics collected by Prometheus make troubleshooting and capacity planning far easier than relying on isolated `INFO` snapshots.
+Start by deploying the local Docker Compose stack from this guide, explore the available metrics, then adapt the configuration for your own environment by adding authentication, TLS, alerting rules, and dashboards. Historical Valkey metrics collected by Prometheus make troubleshooting and capacity planning far easier than relying on isolated `INFO` snapshots.
