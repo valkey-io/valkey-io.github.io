@@ -1,6 +1,6 @@
 +++
 title= "Finding big keys in a running Valkey cluster with Valkey Admin"
-description = "Valkey Admin 1.1 adds big key detection, so you can find the largest keys across every shard of a running cluster from a single view, without parsing an RDB file offline or writing your own SCAN loop. Valkey Admin 1.1.1 cuts the time to sample 250,000 keys on a 25-shard cluster from 41.86 seconds to 2.01 seconds."
+description = "Valkey Admin 1.1 adds big key detection, so you can find the largest keys across every shard of a running cluster from a single view, without parsing an RDB file offline or writing your own SCAN loop. The 1.1.1 patch cuts the time to sample 250,000 keys on a 25-shard cluster from 41.86 seconds to 2.01 seconds."
 date= 2026-09-01
 draft = true
 authors= ["bblan0803", "nassery318"]
@@ -14,7 +14,7 @@ featured_image = "/assets/media/featured/valkey-admin-key-size-distribution.webp
 
 When Valkey Admin 1.0 shipped in May, we named big key detection as one of three features we were exploring.
 Big key detection landed in 1.1 on July 31, so you can now find the largest keys across every shard of a running cluster from a single view, without parsing an RDB file offline or writing your own SCAN loop.
-Valkey Admin 1.1.1 cuts the time to sample 250,000 keys on a 25-shard cluster from 41.86 seconds to 2.01 seconds.
+The 1.1.1 patch that followed made the scan itself much faster, cutting the time to sample 250,000 keys on a 25-shard cluster from 41.86 seconds to 2.01 seconds.
 
 In this post, we'll walk through why oversized keys are hard to find, how the scan works across shards, and what to do once you have the results.
 
@@ -44,7 +44,7 @@ Start at the default to catch the obvious offenders, and raise the limit when yo
 
 ![Big Keys results listing the largest keys found across a multi-shard Valkey cluster, ranked by size, each row showing the type, memory footprint, TTL and owning node](valkey-admin_01-big-keys-results.png)
 
-### Faster scans in 1.1.1
+### How fast the scan is
 
 Valkey Admin 1.1.0 issued three commands for every sampled key, one key at a time, or 30,000 round trips per primary at the default limit and 750,000 across a 25-shard cluster.
 Valkey Admin 1.1.1 pipelines the per-key commands into one batch per `SCAN` iteration.
