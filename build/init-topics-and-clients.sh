@@ -13,6 +13,11 @@ if [ -z "$2" ]; then
     exit 1
 fi
 
+if [ -z "$3" ]; then
+    echo "You must supply a path to the AI libraries directory as the third argument"
+    exit 1
+fi
+
 # check for validity of these arguments as paths
 if [ ! -d "$1" ]; then
     echo "The topics directory must exist and be a valid path"
@@ -24,6 +29,11 @@ if [ ! -d "$2" ]; then
     exit 1
 fi
 
+if [ ! -d "$3" ]; then
+    echo "The AI libraries directory must exist and be a valid path"
+    exit 1
+fi
+
 # check for old style /docs/topics
 if [ -e "content/docs/topics" ]; then
     echo "Documentation topic files have moved. Delete content/docs/topics before proceeding."
@@ -31,8 +41,8 @@ if [ -e "content/docs/topics" ]; then
 fi
 
 # Create symlink to topics, except if it already exists and points to the same directory.
-if [ ! -L build-topics -o "$(readlink build-topics)" != "$1" ]; then
-    ln -s $1 ./build-topics
+if [ ! -L build-topics ] || [ "$(readlink build-topics)" != "$1" ]; then
+    ln -sfn "$1" ./build-topics
 fi
 
 for fname in $(find $1 -maxdepth 1  -iname "*.md")
@@ -68,8 +78,14 @@ echo "Copied images to topics directory."
 
 
 #create symlink to clients, expect if it already exists
-if [ ! -L build-clients -o "$(readlink build-clients)" != "$2" ]; then
-    ln -s $2 ./build-clients
+if [ ! -L build-clients ] || [ "$(readlink build-clients)" != "$2" ]; then
+    ln -sfn "$2" ./build-clients
 fi
 echo "Symlink to clients has been created at ./build-clients "
+
+#create symlink to AI libraries, except if it already exists
+if [ ! -L build-ai ] || [ "$(readlink build-ai)" != "$3" ]; then
+    ln -sfn "$3" ./build-ai
+fi
+echo "Symlink to AI libraries has been created at ./build-ai "
 
