@@ -1,12 +1,9 @@
 +++
-title= "Finding big keys in a running Valkey cluster with Valkey Admin"
-description = """
-Valkey Admin 1.1 adds big key detection, so you can find the largest keys across every shard of a running cluster from a single view, without parsing an RDB file offline or writing your own SCAN loop.
-The 1.1.1 patch cuts the time to sample 250,000 keys on a 25-shard cluster from 41.86 seconds to 2.01 seconds.
-"""
-date= 2026-09-03
+title = "Finding big keys in a running Valkey cluster with Valkey Admin"
+description = "Valkey Admin 1.1 adds big key detection, so you can find the largest keys across every shard of a running cluster from a single view, without parsing an RDB file offline or writing your own SCAN loop. The 1.1.1 patch cuts the time to sample 250,000 keys on a 25-shard cluster from 41.86 seconds to 2.01 seconds."
+date = 2026-09-03
 draft = true
-authors= ["bblan0803", "nassery318"]
+authors = ["bblan0803", "nassery318"]
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
@@ -36,6 +33,8 @@ Big Keys does it in one pass across the whole cluster, and it complements these 
 Valkey Admin runs `SCAN` on every primary, collects `MEMORY USAGE`, `TYPE` and `TTL` for each key it samples, ranks those by size, and shows you the largest along with the node each one sits on.
 It samples 10,000 keys per primary by default and returns the top 50 of that sample by bytes.
 
+![Big Keys results listing the largest keys found across a multi-shard Valkey cluster, ranked by size, each row showing the type, memory footprint, TTL and owning node](valkey-admin_01-big-keys-results.png)
+
 The ranking covers the sample, not the keyspace.
 A key larger than all 10,000 sampled on a node stays hidden, so the default tells you where your outliers are rather than which key is biggest.
 Nothing caps the limit, so raising it above a node key count lets `SCAN` reach every key that node holds.
@@ -43,13 +42,14 @@ Since 1.1.1 that full pass is fast: 2 million keys across 25 shards took 10.34 s
 It is not cheap, the scan sends hundreds of thousands of commands to your servers inside that window.
 Start at the default to catch the obvious offenders, and raise the limit when you need the ranking to cover every key.
 
-![Big Keys results listing the largest keys found across a multi-shard Valkey cluster, ranked by size, each row showing the type, memory footprint, TTL and owning node](valkey-admin_01-big-keys-results.png)
+![Big Keys scan parameters dialog showing the scan limit input, with a tooltip explaining that the limit is the maximum number of keys sampled per node](valkey-admin_02-scan-settings.png)
 
-### How fast the scan is
+## How fast the scan is
 
 Valkey Admin 1.1.0 issued three commands for every sampled key, one key at a time, or 30,000 round trips per primary at the default limit and 750,000 across a 25-shard cluster.
 Valkey Admin 1.1.1 pipelines the per-key commands into one batch per `SCAN` iteration.
 We measured this on a 25-shard Amazon ElastiCache for Valkey 9.1.0 cluster with TLS and AWS Identity and Access Management (IAM) authentication enabled.
+Neither is on by default, and we left both enabled so the numbers include their overhead instead of excluding it.
 The keyspace held 2 million string keys of 10 to 5,000 bytes.
 We also manually seeded 50 outliers, ranging from 100 KB to 1 MB, to test discovery.
 
@@ -62,8 +62,6 @@ We also manually seeded 50 outliers, ranging from 100 KB to 1 MB, to test discov
 | 2,000,000 | not recorded | 10.34s |
 
 Pipelining removes round trips, so larger keys, mixed types, or higher network latency will not improve by the same factor.
-
-![Big Keys scan parameters dialog showing the scan limit input, with a tooltip explaining that the limit is the maximum number of keys sampled per node](valkey-admin_02-scan-settings.png)
 
 ## What to do once you have the results
 
