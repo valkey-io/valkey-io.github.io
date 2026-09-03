@@ -1,6 +1,7 @@
 +++
 title = "ValkeyConf 2026"
 date = 2026-10-05 01:01:01
+aliases = ["/events/valkeyconf"]
 
 [extra]
 event_type = "first-party"
