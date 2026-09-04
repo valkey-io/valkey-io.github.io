@@ -1,0 +1,454 @@
+// Community landing page (templates/community-home.html)
+//
+// The "Ways to contribute" tiles reuse the shared .community-card styles
+// from _valkey.scss. Everything here is specific to the landing page:
+// participant logo strip, photo hero, connect bar, photo carousel, and the
+// Code of Conduct block.
+
+$community-purple-900: #2d2471;
+$community-purple-800: #35247e;
+$community-blue-500: #5b6fff;
+$community-ink: #072150;
+
+// Shared pieces --------------------------------------------------------------
+
+.community-home-kicker {
+  display: inline-block;
+  margin: 0;
+  color: $community-blue-500;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+
+  &:hover {
+    color: $community-purple-800;
+  }
+}
+
+.community-home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 1.3rem;
+  border: 1px solid $community-ink;
+  border-radius: 24px;
+  background: #fff;
+  color: $community-ink;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border 0.15s;
+
+  &:hover {
+    background: $community-ink;
+    color: #fff;
+  }
+
+  &-light {
+    border-color: #fff;
+    background: #fff;
+    color: $community-purple-900;
+
+    &:hover {
+      background: transparent;
+      color: #fff;
+    }
+  }
+}
+
+// Participant logo strip ----------------------------------------------------
+
+.community-logo-band {
+  padding: 1.7rem 2rem 1.6rem;
+  background: #fff;
+  border-bottom: 1px solid #e9ebf4;
+}
+
+.community-logo-band-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+
+  .community-home-kicker {
+    margin-bottom: 1.1rem;
+  }
+}
+
+.community-logo-row {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  mask-image: linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
+}
+
+.community-logo-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: community-logo-marquee 55s linear infinite;
+  will-change: transform;
+}
+
+// Pause only for keyboard users tabbing through the logos; a hover pause
+// made the strip feel stalled whenever the cursor rested on it.
+.community-logo-row:focus-within .community-logo-track {
+  animation-play-state: paused;
+}
+
+.community-logo-set {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 3.4rem;
+  padding-right: 3.4rem;
+}
+
+// Each cell is the same height so the row stays level; the image inside is
+// sized per logo (--logo-height, set at build time from the image's aspect
+// ratio) so square marks and long wordmarks carry similar visual weight.
+.community-logo-cell {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+
+  img {
+    display: block;
+    width: auto;
+    height: var(--logo-height, 24px);
+    max-width: 160px;
+    max-height: var(--logo-height, 24px);
+    object-fit: contain;
+  }
+}
+
+@keyframes community-logo-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .community-logo-row {
+    overflow-x: auto;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .community-logo-track {
+    animation: none;
+    transform: none;
+  }
+
+  .community-logo-set[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+// Hero -----------------------------------------------------------------------
+
+.community-home-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  padding: 6rem 2rem;
+  overflow: hidden;
+  background-color: #30186e;
+  background-position: center;
+  background-size: cover;
+  color: #fff;
+  text-align: center;
+
+  @include respond-min(768px) {
+    min-height: 420px;
+  }
+}
+
+.community-home-hero-copy {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+
+  h1 {
+    margin: 0 0 2rem;
+    color: #fff;
+    font-size: 3.6rem;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+
+    @include respond-min(480px) {
+      font-size: 4rem;
+      letter-spacing: -0.04em;
+    }
+
+    @include respond-min(768px) {
+      font-size: 6.1rem;
+      line-height: 1.02;
+    }
+  }
+
+  p {
+    max-width: 760px;
+    margin: 0 auto;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 1.8rem;
+    line-height: 1.55;
+
+    @include respond-min(768px) {
+      font-size: 2rem;
+    }
+  }
+}
+
+// Connect with us and photo carousel sit on a faint blue canvas so the white
+// Connect card and its shadow read against the page.
+.community-home-canvas {
+  padding: 0.1px 0; // keeps child margins inside the tinted area
+  background: #f8faff;
+}
+
+// Connect with us -----------------------------------------------------------
+
+.community-home-connect {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1160px;
+  margin: 3.4rem auto;
+  padding: 2.7rem 3.4rem;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(60, 60, 130, 0.08);
+
+  @include respond-min(900px) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  @media (max-width: 1200px) {
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+
+  h2 {
+    margin: 0 0 0.6rem;
+    color: $community-purple-800;
+    font-size: 3rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    color: #47506b;
+    font-size: 1.6rem;
+  }
+}
+
+.community-home-connect-actions {
+  display: flex;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  gap: 1.1rem;
+}
+
+// Photo carousel ------------------------------------------------------------
+
+.community-home-photos {
+  max-width: 1160px;
+  margin: 4.4rem auto 4.8rem;
+
+  @media (max-width: 1200px) {
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+}
+
+.community-home-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+
+.community-home-carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.community-home-carousel-button {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid #bfc6dd;
+  border-radius: 50%;
+  background: #fff;
+  color: $community-purple-800;
+  font-size: 1.9rem;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: $community-purple-800;
+  }
+
+  &:disabled {
+    opacity: 0.38;
+    cursor: default;
+  }
+}
+
+.community-home-carousel-status {
+  min-width: 34px;
+  color: #606985;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.community-home-photo-viewport {
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.community-home-photo-track {
+  display: flex;
+  gap: 18px;
+  transition: transform 0.45s ease;
+  will-change: transform;
+
+  figure {
+    position: relative;
+    flex: 0 0 calc((100% - 36px) / 3);
+    margin: 0;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgba(47, 36, 113, 0.13);
+
+    @media (max-width: 1024px) {
+      flex-basis: calc((100% - 18px) / 2);
+    }
+
+    @media (max-width: 640px) {
+      flex-basis: 100%;
+    }
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .community-home-photo-track {
+    transition: none;
+  }
+}
+
+// Ways to contribute --------------------------------------------------------
+
+// Section band colour and heading rhythm match the mockup; the shared
+// .community-section used by event subpages keeps its own colour.
+.community-section-home {
+  background: #edf2ff;
+  padding-bottom: 6rem; // band continues below the last row of tiles, as in the mockup
+
+  .community-header {
+    padding: 5.2rem 2rem 0;
+
+    h2 {
+      margin: 0 0 0.8rem;
+      color: $community-purple-800;
+      font-size: 3.6rem;
+    }
+
+    p {
+      color: #576077;
+      font-size: 1.6rem;
+    }
+  }
+}
+
+// The landing page centres tile copy like the mockup and uses the mockup's
+// lighter type; the shared card style used elsewhere keeps left-aligned
+// text. All nine tiles share one height so the grid reads as a clean 3x3.
+.community-card-grid-centered {
+  grid-auto-rows: 1fr;
+  margin-top: 2.8rem;
+
+  @media (max-width: 1100px) {
+    padding: 0 2rem;
+  }
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+
+  .community-card {
+    padding: 3rem 2.6rem;
+
+    h3 {
+      margin-bottom: 1rem;
+      font-size: 1.9rem;
+    }
+
+    p {
+      color: #53586b;
+      font-size: 1.5rem;
+      line-height: 1.48;
+      text-align: center;
+    }
+
+    .btn {
+      padding: 0.6rem 1.1rem;
+      font-size: 1.3rem;
+    }
+  }
+}
+
+// Code of Conduct -----------------------------------------------------------
+
+.community-home-conduct {
+  max-width: 1100px;
+  margin: 4.8rem auto;
+  padding: 4.2rem 3rem;
+  border-radius: 18px;
+  background: linear-gradient(110deg, #332079, #5668e8);
+  color: #fff;
+  text-align: center;
+
+  @media (max-width: 1100px) {
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+
+  h2 {
+    margin: 0 0 1rem;
+    color: #fff;
+    font-size: 3.2rem;
+    font-weight: 700;
+  }
+
+  p {
+    max-width: 680px;
+    margin: 0 auto 1.9rem;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 1.6rem;
+  }
+}

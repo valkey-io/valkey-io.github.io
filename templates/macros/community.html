@@ -1,0 +1,40 @@
+{#
+  Participant logo strip helpers for the community page.
+
+  Logos come in very different shapes (square icons, tall lockups, long
+  wordmarks). Rendering them all at one fixed height makes the wide ones
+  dominate and the square ones look tiny, so each logo gets a display height
+  based on its aspect ratio: the wider the logo, the shorter it renders.
+  Dimensions are read at build time from the image file itself.
+#}
+
+{% macro logo_height(src) %}
+  {%- set meta = get_image_metadata(path="static" ~ src, allow_missing=true) -%}
+  {%- if meta and meta.height > 0 -%}
+    {%- set ratio = meta.width / meta.height -%}
+    {%- if ratio < 1.6 -%}44
+    {%- elif ratio < 2.6 -%}34
+    {%- elif ratio < 4.2 -%}28
+    {%- elif ratio < 5.5 -%}25
+    {%- else -%}22
+    {%- endif -%}
+  {%- else -%}24
+  {%- endif -%}
+{% endmacro logo_height %}
+
+{# One full set of logos. The marquee renders it twice; the copy is hidden from assistive tech. #}
+{% macro logo_set(participants, duplicate=false) %}
+<div class="community-logo-set"{% if duplicate %} aria-hidden="true"{% endif %}>
+  {%- for participant in participants -%}
+    {%- if participant.name and participant.link and participant.image and participant.image.path -%}
+      {%- set src = participant.image.strip | default(value=participant.image.path) -%}
+      {%- set height = self::logo_height(src=src) | trim -%}
+      {%- set alt = participant.image.alt | default(value=participant.name ~ " logo") -%}
+      <a class="community-logo-cell" href="{{ participant.link }}" target="_blank" rel="noopener" title="{{ participant.name }}"
+         style="--logo-height: {{ height }}px"{% if duplicate %} tabindex="-1"{% endif %}>
+        <img src="{{ src }}" alt="{% if not duplicate %}{{ alt }}{% endif %}" loading="eager" decoding="async">
+      </a>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+{% endmacro logo_set %}
