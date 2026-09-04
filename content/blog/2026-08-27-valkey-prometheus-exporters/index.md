@@ -1,6 +1,6 @@
 +++
 title = "Valkey Metrics in Prometheus: redis_exporter and BetterDB"
-date = 2026-09-03
+date = 2026-09-05
 description = "A starting point for monitoring Valkey with Prometheus: two exporters, per-pod and cluster-wide metrics."
 authors = ["edithpuclla", "kivanow"]
 [taxonomies]
@@ -44,8 +44,9 @@ From **BetterDB**, cluster-wide:
 - betterdb_slowlog_pattern_count
 - betterdb_acl_denied
 - betterdb_cluster_slot_keys
-- betterdb_cluster_slot_reads_total, and 
-- betterdb_cluster_slot_writes_total, per-slot statistics from `CLUSTER SLOT-STATS` that redis_exporter has no equivalent for. Finding your hottest slot is one query: topk(10, rate(betterdb_cluster_slot_writes_total[5m]))
+- betterdb_cluster_slot_reads_total
+- betterdb_cluster_slot_writes_total, and
+- per-slot statistics from `CLUSTER SLOT-STATS` that redis_exporter has no equivalent for. Finding your hottest slot is one query: topk(10, rate(betterdb_cluster_slot_writes_total[5m]))
 
 The **commandlog** metrics require Valkey 8.1+ (they have no Redis equivalent), slot statistics require Valkey 8.0+ with cluster-slot-stats-enabled, and betterdb_acl_denied requires ACL LOG (available since version 6, though some managed providers block it).
 
