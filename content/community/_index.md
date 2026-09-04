@@ -11,7 +11,21 @@ connect = { title = "Connect with us", description = "Ask questions, share ideas
   { url = "https://github.com/orgs/valkey-io/discussions", text = "GitHub Discussions" }
 ] }
 
-photos = []
+photos = [
+  { src = "/img/community/community-photo-01.jpg", alt = "Two Valkey speakers presenting on a conference stage" },
+  { src = "/img/community/community-photo-02.jpg", alt = "Valkey maintainers at the KeySpace Beijing community meetup" },
+  { src = "/img/community/community-photo-08.jpg", alt = "Valkey China community members at the Tencent Cloud booth" },
+  { src = "/img/community/community-photo-12.jpg", alt = "A speaker presenting at PyCon AU with Valkey as a sponsor", position = "center 25%" },
+  { src = "/img/community/community-photo-03.jpg", alt = "Community members celebrating Valkey's second birthday" },
+  { src = "/img/community/community-photo-07.jpg", alt = "Contributors posing with a wooden Valkey logo at the birthday celebration" },
+  { src = "/img/community/community-photo-05.jpg", alt = "Valkey team members greeting visitors at a conference booth" },
+  { src = "/img/community/community-photo-06.jpg", alt = "Two speakers on stage during a Valkey conference talk" },
+  { src = "/img/community/community-photo-13.jpg", alt = "Valkey community members at the SCaLE conference booth" },
+  { src = "/img/community/community-photo-09.jpg", alt = "Panel discussion at the KeySpace Beijing community event" },
+  { src = "/img/community/community-photo-10.jpg", alt = "Valkey community members at the Unlocked Conference photo booth" },
+  { src = "/img/community/community-photo-11.jpg", alt = "Student contributors wearing Valkey shirts at a community event" },
+  { src = "/img/community/community-photo-04.jpg", alt = "React Hyderabad and Valkey community members at a meetup hosted at Amazon" }
+]
 
 cards = [
   { icon = "icon-code.svg", title = "Contribute to Core", description = "Help build the Valkey engine itself. Browse open issues, read the contributing guide, and submit a pull request to the core repository.", links = [
