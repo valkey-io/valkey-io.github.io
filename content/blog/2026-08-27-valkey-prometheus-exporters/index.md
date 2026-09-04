@@ -15,6 +15,7 @@ A Valkey cluster has two distinct observability dimensions: what's happening ins
 
 ![Valkey Two Exporters](valkey-two-exporters.png)
 
+
 ## Two Exporters and One Prometheus
 
 **redis_exporter** is the established Prometheus exporter for Valkey and Redis. In **Kubernetes**, the Valkey Operator runs it as a sidecar in every Valkey pod, so you get per-pod metrics on port `9121` at the standard `/metrics` path: memory, connected clients, command throughput, uptime. Because it runs alongside each instance, you can see exactly which shard is under pressure. Prometheus discovers it via a PodMonitor, not a ServiceMonitor, since the sidecar has no Kubernetes Service of its own.
