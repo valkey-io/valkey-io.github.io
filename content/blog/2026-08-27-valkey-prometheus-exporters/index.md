@@ -55,10 +55,12 @@ Prometheus, kube-prometheus-stack, redis_exporter, and the Valkey operator are a
 Valkey is growing fast and the open source ecosystem around it is already there. Follow along as we explore more of what's possible, and let us know in the comments what you're monitoring in your stack. 
 
 
-This post is a starting point, for the full configuration and a closer look at each exporter, see [Monitoring Valkey with Prometheus](https://valkey.io/blog/monitoring-valkey-with-prometheus/).
+This post is a starting point.
+For the full configuration and a closer look at each exporter, see [Monitoring Valkey with Prometheus](https://valkey.io/blog/monitoring-valkey-with-prometheus/).
 
 
-Check this one minute on Valkey with redis_exporter and BetterDB, how to export metrics into Prometheus.
+Watch this one-minute video to learn how to export Valkey metrics to Prometheus with `redis_exporter` and BetterDB.
+
 <div style="max-width: 315px;">
   <iframe
     src="https://www.youtube.com/embed/0lPlmuK-aTw"
