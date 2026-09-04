@@ -17,7 +17,7 @@ This site is built with [Zola](https://www.getzola.org/).
 
 Follow these steps to build the site locally:
 
-1. [Install Zola](https://www.getzola.org/documentation/getting-started/installation/).
+1. Install [Zola 0.22.0](https://github.com/getzola/zola/releases/tag/v0.22.0), the version used by CI. Zola 0.23 and later are not currently supported because they use Tera 2, which removed macro support.
 2. Switch to the directory with your fork of this repo.
 3. Run `zola serve`
 
