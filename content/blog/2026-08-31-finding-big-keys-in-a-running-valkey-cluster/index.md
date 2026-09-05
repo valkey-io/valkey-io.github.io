@@ -47,7 +47,7 @@ Start at the default to catch the obvious offenders, and raise the limit when yo
 ## How fast the scan is
 
 Valkey Admin 1.1.1 pipelines the per-key commands into one batch per `SCAN` iteration.
-We measured this on a 25-shard Amazon ElastiCache for Valkey 9.1.0 cluster with TLS and AWS Identity and Access Management (IAM) authentication enabled.
+We measured this on a 25-shard Amazon ElastiCache for Valkey 9.1.0 cluster with TLS.
 Neither is on by default, and we left both enabled so the numbers include their overhead instead of excluding it.
 The keyspace held 2 million string keys of 10 to 5,000 bytes.
 We also manually seeded 50 outliers, ranging from 100 KB to 1 MB, to test discovery.
