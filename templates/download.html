@@ -1,49 +1,51 @@
 {% extends "right-aside.html" %}
+{% import "macros/release.html" as release_macros %}
 
 {% block subhead_content%}
-<h1 class="page-title">Download Latest</h1>
+<h1 class="page-title">Download Valkey</h1>
 {% endblock subhead_content%}
 {% block main_content %}
 
+{# The newest stable release on each major.minor line, newest line first. #}
 {% set release_section = get_section(path="download/releases/_index.md") %}
-{% set releases = release_section.pages | reverse %}
-
-{% set_global active_releases = [] %}
-{% for release in releases %}
-    {% if release.extra.tag is not matching(".*-.*") %}
-        {% set_global active_releases = active_releases | concat(with=release) %}
+{% set_global release_lines = [] %}
+{% set_global seen_lines = [] %}
+{% for candidate in release_section.pages | sort(attribute="date") | reverse %}
+    {% if candidate.extra.tag is not matching(".*-.*") %}
+        {% set candidate_line = candidate.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+        {% if candidate_line not in seen_lines %}
+            {% set_global seen_lines = seen_lines | concat(with=candidate_line) %}
+            {% set_global release_lines = release_lines | concat(with=candidate) %}
+        {% endif %}
     {% endif %}
 {% endfor %}
 
-{% set most_recent_release_page = active_releases | slice(end= 1) %}
-{% set release_date = most_recent_release_page[0].date %}
-{% set release = most_recent_release_page[0].extra %}
+{% set latest = release_lines | first %}
 
-{% set split_ver = release.tag | split(pat=".")%}
-{% set_global major = split_ver | nth(n= 0) %}
+{{ page.content | safe }}
 
-You can get the latest releases of Valkey from this page.<br />
-For installation instructions, supported package managers, and how to configure Valkey, see the <a href="/topics/installation">installation</a> page.<br />
-The <a href="./releases/">releases</a> page contains links to download all current and previous releases (including any security fixes for previous released versions).<br />
-<br />
+<h2>Latest release: Valkey {{ latest.extra.tag }}</h2>
+{{ release_macros::release_info(date=latest.date, release=latest.extra) }}
 
-<hr />
-
-
-<h3> Version {{major}}.x.x </h3>
-{% include "includes/release.html" %}
-
-<h2> Latest supported version of past releases</h2>
-
-{% for older_release in active_releases %}
-    {% set older_split_ver = older_release.extra.tag | split(pat=".")%}
-    {% set older_major = older_split_ver | nth(n= 0) %}
-    {% if older_major != major %}
-        {% set_global major = older_major %}
-        {% set release = older_release.extra %}
-        <h3> Version {{major}}.x.x </h3>
-        {% include "includes/release.html" %}
-    {% endif %}
-{% endfor %}
-
+<h2>Supported versions</h2>
+<p>Each version page has the release highlights, containers, and binaries for the newest release on that line.</p>
+<table class="release-table">
+    <thead>
+        <tr>
+            <th>Version</th>
+            <th>Latest release</th>
+            <th>Released</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line_release in release_lines %}
+            {% set line = line_release.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+            <tr>
+                <td><a href="/download/{{ line }}/">Valkey {{ line }}</a></td>
+                <td><a href="{{ line_release.permalink }}">{{ line_release.extra.tag }}</a></td>
+                <td>{{ line_release.date | date(format="%B %-d, %Y") }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock main_content %}
