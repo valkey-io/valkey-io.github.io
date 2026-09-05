@@ -14,7 +14,7 @@ featured_image = "/assets/media/featured/valkey-admin-key-size-distribution-flat
 
 Nobody goes looking for a big key until something else breaks.
 One shard hits its memory limit while the others sit half idle, or p99 climbs with no change in traffic, and somewhere in the keyspace is a multi-megabyte hash nobody remembers creating.
-Valkey Admin 1.1 adds Big Keys, which ranks the largest keys across every primary of a running cluster in one view, so you can find it without parsing an RDB offline or writing your own SCAN loop.
+Valkey Admin 1.1 adds big key detection, which ranks the largest keys across every primary of a running cluster in one view, so you can find it without parsing an RDB offline or writing your own SCAN loop.
 
 In this post, we'll walk through why oversized keys are hard to find, how the scan works across shards, and what to do once you have the results.
 
