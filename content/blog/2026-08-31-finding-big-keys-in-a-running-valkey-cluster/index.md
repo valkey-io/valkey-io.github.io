@@ -65,7 +65,7 @@ Pipelining removes round trips, so larger keys, mixed types, or higher network l
 ## What to do once you have the results
 
 Each row carries the key name, its type, its size, its TTL and the node it lives on, and clicking a row copies the key name.
-Valkey Admin does not render a value that large anyway: above a configurable threshold, 2 KB by default, the Key Browser shows the memory footprint and, for collection types, the element count, and does not pull the contents over the wire.
+Valkey Admin does not render values above a configurable threshold, 2 KB by default, so the key browser will typically just show the memory footprint and, for collection types, the element count for large keys.
 
 ![Key Browser showing a large hash where a warning replaces the element list, alongside the element count and memory footprint](valkey-admin_03-key-browser-large-hash.png)
 
