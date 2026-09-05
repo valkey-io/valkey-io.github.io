@@ -46,7 +46,6 @@ Start at the default to catch the obvious offenders, and raise the limit when yo
 
 ## How fast the scan is
 
-Valkey Admin 1.1.0 issued three commands for every sampled key, one key at a time, or 30,000 round trips per primary at the default limit and 750,000 across a 25-shard cluster.
 Valkey Admin 1.1.1 pipelines the per-key commands into one batch per `SCAN` iteration.
 We measured this on a 25-shard Amazon ElastiCache for Valkey 9.1.0 cluster with TLS and AWS Identity and Access Management (IAM) authentication enabled.
 Neither is on by default, and we left both enabled so the numbers include their overhead instead of excluding it.
