@@ -6,6 +6,9 @@ repos_heading= "Featured repositories"
 github_org= "https://github.com/valkey-io"
 github_org_text= "All repos in the Valkey GitHub organization"
 
+# Number of blog posts shown in the "Latest Blog Posts" panel.
+latest_blog_posts= 3
+
 headline= "Valkey: an open source, in-memory data store"
 long_description= ""
 
@@ -14,12 +17,6 @@ headings = ["FAST. RELIABLE.", "OPEN SOURCE, FOREVER."]
 subtitle = "Valkey is an open source (BSD) high-performance key/value datastore that supports a variety of workloads such as caching, message queues, and can act as a primary database. The project is backed by the Linux Foundation, ensuring it will remain open source forever."
 button_text = "GET STARTED"
 button_url = "/topics/quickstart"
-
-[[extra.documentation_cards]]
-title = "Install"
-description = "Step-by-step instructions on how to install and configure Valkey for first-time users."
-button_text = "See Installation Guide"
-button_url = "/topics/installation"
 
 [[extra.documentation_cards]]
 title = "Usage guide"
@@ -35,8 +32,7 @@ button_url = "/commands"
 
 [[extra.documentation_cards]]
 title = "Clients"
-description = "Official Valkey client libraries include support for:"
-features = ["Python", "Java", "Go", "Node.js", "PHP", "C#", "Ruby"]
+description = "Official Valkey client libraries for Python, Java, Go, Node.js, PHP, C#, Ruby, and more."
 button_text = "Learn More"
 button_url = "/clients"
 

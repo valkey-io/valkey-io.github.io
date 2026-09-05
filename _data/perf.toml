@@ -2,15 +2,17 @@
 # Both `title` and `description` can contain markdown for styles, but not links.
 # [[dashboards]]
 # title = "GETs/SETs on `9.0.0`"
+# button_text = "Explore"
 # description = "Performance dashboard of GETs and SETs on the Valkey 9.0.0 release. Updated on Oct 21, 2025."
 # link = "https://perf-dashboard.valkey.io/public-dashboards/3e45bf8ded3043edaa941331cd1a94e2"
 
 # Order in this file indicates rendering order.
 
 [[dashboards]]
-title = "Valkey Performance Dashboards"
-description = "Valkey Performance Dashboards provide a consolidated view of throughput trends across versions, helping teams validate improvements and identify regressions."
+title = "Performance Dashboards"
+description = "Throughput trends across every Valkey version."
 link = "/performance/"
+button_text = "Explore"
 
 # Performance dashboard sections for /performance page
 # Order in this file indicates rendering order.

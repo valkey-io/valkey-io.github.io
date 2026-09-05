@@ -1,0 +1,46 @@
+{% extends "right-aside.html" %}
+{% import "macros/release.html" as release_macros %}
+
+{% block subhead_content %}
+<h1 class="page-title">Download Valkey {{ page.extra.version }}</h1>
+{% endblock subhead_content %}
+
+{% block main_content %}
+{% set line = page.extra.version %}
+
+{# Every stable release on this line, newest first. #}
+{% set release_section = get_section(path="download/releases/_index.md") %}
+{% set_global line_releases = [] %}
+{% for candidate in release_section.pages | sort(attribute="date") | reverse %}
+    {% if candidate.extra.tag is not matching(".*-.*") %}
+        {% set candidate_line = candidate.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+        {% if candidate_line == line %}
+            {% set_global line_releases = line_releases | concat(with=candidate) %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{% set latest = line_releases | first %}
+
+{% if page.content %}
+    <h2>Major features in {{ line }}:</h2>
+    <div class="release-highlights">{{ page.content | safe }}</div>
+    {% if page.extra.blog_url %}
+        <a href="{{ page.extra.blog_url }}" class="link-readmore">{{ page.extra.blog_text }}</a>
+    {% endif %}
+    <hr class="release-rule" />
+{% endif %}
+
+<h2>Get {{ latest.extra.tag }}</h2>
+{{ release_macros::release_info(date=latest.date, release=latest.extra) }}
+
+<h2>All {{ line }} releases</h2>
+<ul class="list-links-small release-links">
+    {% for line_release in line_releases %}
+    <li>
+        <a href="{{ line_release.permalink }}">Valkey {{ line_release.extra.tag }}</a>
+        <small>Released {{ line_release.date | date(format="%B %-d, %Y") }}</small>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock main_content %}
