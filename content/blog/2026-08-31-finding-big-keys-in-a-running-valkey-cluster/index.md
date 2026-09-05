@@ -21,7 +21,7 @@ In this post, we'll walk through why oversized keys are hard to find, how the sc
 ## Why big keys are hard to find
 
 A multi-megabyte hash reads fast, so the first symptom shows up somewhere else.
-Command Logs, which shipped in 1.0 and needs Valkey 8.1 or later, surfaces those large replies once they cross your threshold.
+Commandlog surfaces those large replies once they cross your threshold.
 
 Parsing an RDB file offline tells you what the keyspace looked like when the file was written, not now.
 `valkey-cli --bigkeys` covers only the node you point it at and only the database you select, and it reports one key per type and sizes collections by element count, so you never get a list ranked by bytes.
