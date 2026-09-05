@@ -1,6 +1,6 @@
 +++
 title = "Finding big keys in a running Valkey cluster with Valkey Admin"
-description = "Valkey Admin 1.1 adds big key detection, so you can find the largest keys across every shard of a running cluster from a single view, without parsing an RDB file offline or writing your own SCAN loop. The 1.1.1 patch cuts the time to sample 250,000 keys on a 25-shard cluster from 41.86 seconds to 2.01 seconds."
+description = "Valkey Admin 1.1 adds big key detection, so you can find the largest keys across every shard of a running cluster from a single view, without parsing an RDB file offline or writing your own SCAN loop."
 date = 2026-09-03
 draft = true
 authors = ["bblan0803", "nassery318"]
