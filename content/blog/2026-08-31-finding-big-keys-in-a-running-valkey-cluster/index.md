@@ -26,7 +26,7 @@ Commandlog surfaces those large replies once they cross your threshold.
 Parsing an RDB file offline tells you what the keyspace looked like when the file was written, not now.
 `valkey-cli --bigkeys` covers only the node you point it at and only the database you select, and it reports one key per type and sizes collections by element count, so you never get a list ranked by bytes.
 `valkey-cli --memkeys` calls `MEMORY USAGE` for every key it scans, so it compares more directly.
-Big Keys does it in one pass across the whole cluster, and it complements these tools without replacing them.
+Big key detection does it in one pass across the whole cluster, and it complements these tools without replacing them.
 
 ## How the scan works
 
@@ -36,7 +36,6 @@ It samples 10,000 keys per primary by default and returns the top 50 of that sam
 ![Big Keys results listing the largest keys found across a multi-shard Valkey cluster, ranked by size, each row showing the type, memory footprint, TTL and owning node](valkey-admin_01-big-keys-results.png)
 
 The ranking covers the sample, not the keyspace.
-A key larger than all 10,000 sampled on a node stays hidden, so the default tells you where your outliers are rather than which key is biggest.
 Nothing caps the limit, so raising it above a node key count lets `SCAN` reach every key that node holds.
 Since 1.1.1 that full pass is fast: 2 million keys across 25 shards took 10.34 seconds.
 It is not cheap, the scan sends hundreds of thousands of commands to your servers inside that window.
@@ -48,19 +47,19 @@ Start at the default to catch the obvious offenders, and raise the limit when yo
 
 Valkey Admin 1.1.1 pipelines the per-key commands into one batch per `SCAN` iteration.
 We measured this on a 25-shard Amazon ElastiCache for Valkey 9.1.0 cluster with TLS.
-Neither is on by default, and we left both enabled so the numbers include their overhead instead of excluding it.
+TLS is the slower configuration, so leaving it on makes these numbers more likely to be representative.
 The keyspace held 2 million string keys of 10 to 5,000 bytes.
 We also manually seeded 50 outliers, ranging from 100 KB to 1 MB, to test discovery.
 
 | Keys sampled | Time taken |
-|---|---|---|
+|---|---|
 | 250,000 | 2.01s |
 | 500,000 | 2.98s |
 | 1,250,000 | 6.74s |
 | 1,750,000 | 9.13s |
 | 2,000,000 | 10.34s |
 
-Pipelining removes round trips, so larger keys, mixed types, or higher network latency will not improve by the same factor.
+Pipelining removes round trips, so larger keys, mixed types, or higher network latency will take longer than this.
 
 ## What to do once you have the results
 
