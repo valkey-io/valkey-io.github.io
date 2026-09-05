@@ -52,13 +52,13 @@ Neither is on by default, and we left both enabled so the numbers include their 
 The keyspace held 2 million string keys of 10 to 5,000 bytes.
 We also manually seeded 50 outliers, ranging from 100 KB to 1 MB, to test discovery.
 
-| Keys sampled | Before | After |
+| Keys sampled | Time taken |
 |---|---|---|
-| 250,000 | 41.86s | 2.01s |
-| 500,000 | 79.78s | 2.98s |
-| 1,250,000 | 198.01s | 6.74s |
-| 1,750,000 | 273.81s | 9.13s |
-| 2,000,000 | not recorded | 10.34s |
+| 250,000 | 2.01s |
+| 500,000 | 2.98s |
+| 1,250,000 | 6.74s |
+| 1,750,000 | 9.13s |
+| 2,000,000 | 10.34s |
 
 Pipelining removes round trips, so larger keys, mixed types, or higher network latency will not improve by the same factor.
 
