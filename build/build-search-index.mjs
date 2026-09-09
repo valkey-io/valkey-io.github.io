@@ -138,33 +138,47 @@ function recordsFromContainer($, $container, pageUrl, pageTitle) {
   let current = { heading: null, id: null, parts: [] };
   const sections = [current];
 
-  // Walk the rendered content in document order. cheerio's contents() over the
-  // container's descendants would double-count nested text, so we walk only the
-  // top-level flow children and rely on .text() to gather nested content, while
-  // treating an h2 as a section boundary. Since headings are flat siblings of
-  // the flow content in this site's markup, iterating children of the heading's
-  // parent captures the true order.
-  const flowRoot = $container.find("h2").first().length
-    ? $($container.find("h2").first().get(0)).parent()
-    : $container;
-
-  flowRoot.children().each((_, el) => {
-    const tag = (el.tagName || "").toLowerCase();
+  // Walk the container's descendants in document order, treating every h2 as a
+  // section boundary regardless of how deeply it is nested. We accumulate text
+  // from text nodes only (never an element's aggregate .text()), so a wrapping
+  // element does not double-count the text of its children. This covers lead
+  // content, content after a nested-heading block, and sibling blocks such as a
+  // feature-comparison table that live outside the first h2's parent -- an
+  // earlier version iterated only the first h2's parent and silently dropped
+  // all of that.
+  const root = $container.get(0);
+  const startSection = (el) => {
     const $el = $(el);
-    if (tag === "h2") {
-      current = {
-        heading: normalizeWhitespace($el.text()),
-        id: $el.attr("id") || null,
-        parts: [],
-      };
-      sections.push(current);
-      // Include the heading text itself in the searchable body.
-      current.parts.push(current.heading);
-    } else {
-      const text = normalizeWhitespace($el.text());
+    current = {
+      heading: normalizeWhitespace($el.text()),
+      id: $el.attr("id") || null,
+      parts: [],
+    };
+    sections.push(current);
+    // Include the heading text itself in the searchable body.
+    if (current.heading) current.parts.push(current.heading);
+  };
+
+  const visit = (node) => {
+    if (!node) return;
+    if (node.type === "text") {
+      const text = normalizeWhitespace(node.data || "");
       if (text) current.parts.push(text);
+      return;
     }
-  });
+    if (node.type !== "tag") return;
+    const tag = (node.tagName || "").toLowerCase();
+    if (tag === "h2") {
+      // Start a new section; the heading's own text is captured via .text()
+      // in startSection, so we do not descend into it again.
+      startSection(node);
+      return;
+    }
+    const children = node.children || [];
+    for (const child of children) visit(child);
+  };
+
+  for (const child of root.children || []) visit(child);
 
   // A section only becomes its own record if its h2 has an id to deep-link to.
   // Anchorless sections (h2 with no id) can't be linked individually, so their

@@ -23,6 +23,10 @@
 
   var input = document.getElementById("search-input");
   var resultsList = document.getElementById("search-results");
+  // Live region for status messages (e.g. "No results found"). Kept outside the
+  // listbox because a listbox must only own option/group children; a message
+  // placed inside it would be exposed as a non-navigable option.
+  var statusRegion = document.getElementById("search-status");
 
   if (!input || !resultsList || typeof Fuse === "undefined") {
     return;
@@ -32,6 +36,15 @@
   var indexPromise = null;
   var activeIndex = -1;
   var currentResults = [];
+  // Bumped whenever the dropdown is dismissed so an in-flight search that
+  // resolves later can tell it was superseded and skip rendering.
+  var searchGeneration = 0;
+
+  function setStatus(message) {
+    if (statusRegion) {
+      statusRegion.textContent = message || "";
+    }
+  }
 
   var fuseOptions = {
     includeScore: true,
@@ -121,6 +134,8 @@
     resultsList.hidden = true;
     activeIndex = -1;
     currentResults = [];
+    searchGeneration++;
+    setStatus("");
     input.setAttribute("aria-expanded", "false");
     input.removeAttribute("aria-activedescendant");
   }
@@ -132,15 +147,15 @@
     input.removeAttribute("aria-activedescendant");
 
     if (!results.length) {
-      var empty = document.createElement("li");
-      empty.className = "site-search__empty";
-      empty.setAttribute("role", "option");
-      empty.textContent = "No results found";
-      resultsList.appendChild(empty);
-      resultsList.hidden = false;
-      input.setAttribute("aria-expanded", "true");
+      // Keep the listbox empty and hidden; announce via the status region so no
+      // non-navigable "option" is exposed inside the listbox.
+      resultsList.hidden = true;
+      setStatus("No results found");
+      input.setAttribute("aria-expanded", "false");
       return;
     }
+
+    setStatus("");
 
     results.forEach(function (result, i) {
       var item = result.item;
@@ -186,10 +201,15 @@
       return;
     }
 
+    // Capture the current generation so a resolve after a dismissal (Escape or
+    // outside-click) is ignored. clearResults does not change input.value, so
+    // the value check alone would let a dismissed search re-open the dropdown.
+    var generation = searchGeneration;
     loadIndex()
       .then(function (index) {
-        // Guard against a stale async response after the box was cleared.
-        if (input.value.trim() !== trimmed) {
+        // Guard against a stale async response after the box was cleared or the
+        // query changed.
+        if (generation !== searchGeneration || input.value.trim() !== trimmed) {
           return;
         }
         var results = capPerPage(index.search(trimmed), MAX_PER_PAGE).slice(
