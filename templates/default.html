@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 {%- block head -%}
 {%- endblock -%}<!DOCTYPE html>
 <html lang="{{ page?.lang | default(value=config.default_language) }}">
@@ -68,7 +69,21 @@
           GitHub
           <!-- Star count will be injected here by JS -->
         </a>
-        <div id="docsearch"></div>
+        <div class="site-search" role="search">
+          <input
+            type="search"
+            id="search-input"
+            class="site-search__input"
+            placeholder="Search"
+            aria-label="Search"
+            autocomplete="off"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls="search-results"
+            aria-expanded="false"
+          />
+          <ul id="search-results" class="site-search__results" role="listbox" hidden></ul>
+        </div>
       </nav>
     </div>
   </div>
@@ -141,15 +156,8 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager (noscript) -->
     </div>
-    
-<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@4"></script>
-<script type="text/javascript">
-  docsearch({
-    container: '#docsearch',
-    appId: 'CU4W5N30P1',
-    indexName: 'valkey documentation',
-    apiKey: 'bfe4dd082414b50b74e3cbcc490034d9',
-  });
-</script>
+
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js" integrity="sha384-P/y/5cwqUn6MDvJ9lCHJSaAi2EoH3JSeEdyaORsQMPgbpvA+NvvUqik7XH2YGBjb" crossorigin="anonymous"></script>
+<script src="/assets/js/search.js" defer></script>
 </body>
 </html>

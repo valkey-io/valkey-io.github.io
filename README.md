@@ -93,6 +93,50 @@ Point your browser at `http://127.0.0.1:1111/commands/` and you should see the f
 All files created in this process are ignored by git.
 Commit your changes to your local copy of `valkey-io/valkey-doc` for description changes and `valkey-io/valkey` for command JSON changes (if you have any).
 
+## Search
+
+Site search is powered by [fuse.js](https://www.fusejs.io/) running entirely in the browser against a prebuilt index (`search-index.json`).
+
+The index is not Zola's native search index. Most of this site's documentation (topics, the command reference, and the clients page) is injected at template-render time from the sibling repos described above, so it never appears in the Markdown page body that Zola's `build_search_index` reads. Instead, `build/build-search-index.mjs` walks the rendered HTML in `public/` after a build and extracts the visible page content, capturing everything the site actually renders.
+
+### Building the index locally
+
+The indexer needs [Node.js](https://nodejs.org/) (18 or newer). Install dependencies once:
+
+```shell
+npm install
+```
+
+Because `zola build` and `zola serve` both wipe `public/`, the index must be generated after each build. The simplest way is the convenience script, which runs `zola build` and then the indexer:
+
+```shell
+npm run build
+```
+
+To regenerate only the index against an existing `public/` (for example, after a `zola serve` rebuild), run:
+
+```shell
+npm run build:search-index
+```
+
+The generated `public/search-index.json` is ignored by git; it is always produced fresh at build time.
+
+To search topics, the command reference, and the clients page locally, first follow [Building additional content](#building-additional-content) so those pages exist to be indexed. Otherwise only the blog, author, download, event, and static pages are searchable.
+
+### Previewing complete results without the sibling repos
+
+If you don't have the sibling repos checked out, you can build an index from a running site (production or a local `zola serve`) via its sitemap:
+
+```shell
+node build/build-search-index.mjs --crawl https://valkey.io
+```
+
+This is a local convenience for previewing complete results and is not used by the deploy pipeline.
+
+### Automation
+
+The deploy workflow (`.github/workflows/zola-deploy.yml`) regenerates the index on every deploy, after `zola build` and before the site is published, so it always reflects the commit being deployed.
+
 ## License
 
 This project is licensed under the BSD-3-Clause License.

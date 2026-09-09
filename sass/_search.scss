@@ -1,0 +1,114 @@
+//
+// Site search (fuse.js) — search box in the main nav and results dropdown.
+//
+
+.site-search {
+  position: relative;
+  // Don't stretch to the nav's full height, else the dropdown detaches from the input.
+  display: inline-flex;
+  align-self: center;
+  align-items: center;
+
+  &__input {
+    width: 160px;
+    padding: 6px 12px;
+    border: 1px solid $line;
+    border-radius: 16px;
+    background-color: $background-lightest;
+    color: $text;
+    font-size: 14px;
+    line-height: 1.4;
+    outline: none;
+    transition: width 0.2s ease, border-color 0.2s ease;
+
+    &::placeholder {
+      color: $text-light;
+    }
+
+    &:focus {
+      width: 220px;
+      border-color: $attention;
+    }
+  }
+
+  &__input,
+  &__results {
+    box-sizing: border-box;
+  }
+
+  &__results {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    z-index: 1000;
+    width: 420px;
+    max-width: 90vw;
+    max-height: 70vh;
+    margin: 0;
+    padding: 4px 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    list-style: none;
+    background-color: $background-lightest;
+    border: 1px solid $line;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 42, 58, 0.15);
+  }
+
+  &__result {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    &.is-active,
+    &:hover {
+      background-color: $highlight-lightest;
+    }
+  }
+
+  &__link {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 18px;
+    text-decoration: none;
+    color: $text;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  // Override `.header nav a` (nowrap + zero padding) so results wrap and don't hug the edge.
+  .header nav & &__link {
+    white-space: normal;
+    padding: 10px 18px;
+  }
+
+  &__title {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    color: $text-link-alternate;
+    overflow-wrap: anywhere;
+  }
+
+  &__snippet {
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: $text-light;
+    overflow-wrap: anywhere;
+    // Clamp long snippets to two lines.
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__empty {
+    padding: 12px 14px;
+    font-size: 13px;
+    color: $text-light;
+  }
+}

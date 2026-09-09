@@ -7,7 +7,6 @@
     <meta name="Copyright" content="" />
     <meta name="keywords" content="open-source, valkey" />
     <meta property="og:image" content="{{ config.base_url }}{% if page and page.extra and page.extra.og_image %}{{ page.extra.og_image }}{% elif page and page.extra and page.extra.featured_image %}{{ page.extra.featured_image }}{% else %}/img/valkey-logo-og.png{% endif %}" />
-    <meta name="algolia-site-verification"  content="D96477DE35118476" />
     {% if page and page.extra and page.extra.custom_meta%}
     {{ page.extra.custom_meta | safe }}
     {% endif %}
@@ -56,7 +55,6 @@
     {%- endif -%}">
 
     <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@4" /> 
     <link rel="alternate" type="application/atom+xml" title="Atom feed" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" />
 
     <!-- Nav JS -->
