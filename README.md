@@ -99,6 +99,8 @@ Site search is powered by [fuse.js](https://www.fusejs.io/) running entirely in 
 
 The index is not Zola's native search index. Most of this site's documentation (topics, the command reference, and the clients page) is injected at template-render time from the sibling repos described above, so it never appears in the Markdown page body that Zola's `build_search_index` reads. Instead, `build/build-search-index.mjs` walks the rendered HTML in `public/` after a build and extracts the visible page content, capturing everything the site actually renders.
 
+Long pages are indexed as one record per top-level (`h2`) section rather than a single whole-page record, so deep content stays searchable and a result can link straight to the matching section via its heading anchor. Content before the first `h2`, and pages with no `h2`, produce a single page-level record. All records for one page share the same `title` (the page title); the section heading is stored separately and weighted well below the title, so splitting a page into sections does not let a thin section out-rank, or dilute, a page-name match. Because a long page contributes several records that share a base url, the client (`static/assets/js/search.js`) also caps how many sections from the same page appear in the results list.
+
 ### Building the index locally
 
 The indexer needs [Node.js](https://nodejs.org/) (18 or newer). Install dependencies once:

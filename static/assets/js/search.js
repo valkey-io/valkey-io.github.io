@@ -1,13 +1,24 @@
 /**
  * Client-side search powered by fuse.js over the index produced by
- * build/build-search-index.mjs (records: { url, title, body }).
+ * build/build-search-index.mjs (records: { url, title, heading, body }).
  * The index is fetched lazily on first interaction.
+ *
+ * Long pages are indexed as multiple section records whose urls share a base
+ * path and differ only by "#anchor". All records for one page share the same
+ * `title` (the page title); the section heading lives in `heading`. To keep
+ * ranking fair, `heading` is weighted well below `title` so section records
+ * neither dilute nor out-compete the page-name match, and results are capped
+ * per base page (see MAX_PER_PAGE) so one page's sections cannot fill the whole
+ * dropdown.
  */
 (function () {
   "use strict";
 
   var SEARCH_INDEX_URL = "/search-index.json";
   var MAX_RESULTS = 8;
+  // Cap on how many section results from the same base page (url without its
+  // "#anchor") may appear, so a broad query still surfaces multiple pages.
+  var MAX_PER_PAGE = 2;
   var DEBOUNCE_MS = 150;
 
   var input = document.getElementById("search-input");
@@ -28,8 +39,9 @@
     threshold: 0.4,
     minMatchCharLength: 2,
     keys: [
-      { name: "title", weight: 0.7 },
-      { name: "body", weight: 0.3 },
+      { name: "title", weight: 0.6 },
+      { name: "heading", weight: 0.15 },
+      { name: "body", weight: 0.25 },
     ],
   };
 
@@ -58,11 +70,46 @@
     return indexPromise;
   }
 
-  function makeSnippet(body, maxLength) {
+  // The base page of a record url is everything before the "#anchor".
+  function basePage(url) {
+    if (!url) {
+      return url;
+    }
+    var hash = url.indexOf("#");
+    return hash === -1 ? url : url.slice(0, hash);
+  }
+
+  // fuse returns results best-first; keep at most `limit` per base page so a
+  // single long page's sections can't crowd out other pages. Order preserved.
+  function capPerPage(results, limit) {
+    var counts = Object.create(null);
+    var kept = [];
+    for (var i = 0; i < results.length; i++) {
+      var page = basePage(results[i].item && results[i].item.url);
+      var seen = counts[page] || 0;
+      if (seen >= limit) {
+        continue;
+      }
+      counts[page] = seen + 1;
+      kept.push(results[i]);
+    }
+    return kept;
+  }
+
+  // Section bodies begin with the heading text (the indexer prepends it so the
+  // heading is searchable in `body` too). The heading is already shown in the
+  // result title, so strip that leading copy to avoid a redundant snippet.
+  function makeSnippet(body, heading, maxLength) {
     if (!body) {
       return "";
     }
     var text = body.replace(/\s+/g, " ").trim();
+    if (heading) {
+      var h = heading.replace(/\s+/g, " ").trim();
+      if (h && text.slice(0, h.length) === h) {
+        text = text.slice(h.length).trim();
+      }
+    }
     if (text.length <= maxLength) {
       return text;
     }
@@ -108,10 +155,15 @@
 
       var title = document.createElement("span");
       title.className = "site-search__title";
-      title.textContent = item.title || item.url;
+      // Show the section heading (when present) after the page title so users
+      // can tell which section a result points to, without it affecting rank.
+      title.textContent =
+        item.title && item.heading
+          ? item.title + " \u203a " + item.heading
+          : item.title || item.url;
       link.appendChild(title);
 
-      var snippet = makeSnippet(item.body, 90);
+      var snippet = makeSnippet(item.body, item.heading, 90);
       if (snippet) {
         var desc = document.createElement("span");
         desc.className = "site-search__snippet";
@@ -140,7 +192,10 @@
         if (input.value.trim() !== trimmed) {
           return;
         }
-        var results = index.search(trimmed).slice(0, MAX_RESULTS);
+        var results = capPerPage(index.search(trimmed), MAX_PER_PAGE).slice(
+          0,
+          MAX_RESULTS
+        );
         renderResults(results);
       })
       .catch(function () {

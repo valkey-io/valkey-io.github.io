@@ -87,10 +87,13 @@ jobs:
           npm run build:search-index
 
       # Fail the deploy if the index is missing, malformed, or too small.
-      # MIN_RECORDS is a floor below the real count (~780).
+      # Long pages are split into per-section records, so the real count is
+      # ~2,100+. MIN_RECORDS is a floor with headroom for content churn that is
+      # still high enough to catch a regression back to one-record-per-page
+      # (which would collapse the count to roughly 800).
       - name: Verify search index
         env:
-          MIN_RECORDS: "500"
+          MIN_RECORDS: "1500"
         run: |
           cd website
           INDEX=public/search-index.json
