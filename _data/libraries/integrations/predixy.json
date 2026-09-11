@@ -1,0 +1,13 @@
+{
+  "name": "predixy",
+  "language": "C++",
+  "license": "BSD-3-Clause",
+  "description": "A high-performance, full-featured proxy supporting both Sentinel and cluster topologies.",
+  "documentation": "https://github.com/joyieldInc/predixy/wiki",
+  "isFirstParty": false,
+  "repository": "https://github.com/joyieldInc/predixy",
+  "type": "tools",
+  "tags": [
+    "Proxies & gateways"
+  ]
+}

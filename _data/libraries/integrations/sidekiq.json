@@ -1,0 +1,14 @@
+{
+  "name": "Sidekiq",
+  "language": "Ruby",
+  "license": "LGPL-3.0",
+  "description": "Simple, efficient background job processing for Rails applications.",
+  "repository": "https://github.com/mperham/sidekiq",
+  "documentation": "https://sidekiq.org/",
+  "isFirstParty": false,
+  "installCommand": "gem install sidekiq",
+  "type": "tools",
+  "tags": [
+    "Queues & background jobs"
+  ]
+}

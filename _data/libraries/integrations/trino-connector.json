@@ -1,0 +1,13 @@
+{
+  "name": "Trino connector",
+  "language": "Java",
+  "license": "Apache-2.0",
+  "description": "Query your data with ANSI SQL, joining it against Hive, Kafka, Cassandra or object storage in one query.",
+  "repository": "https://github.com/trinodb/trino",
+  "documentation": "https://trino.io/",
+  "isFirstParty": false,
+  "type": "tools",
+  "tags": [
+    "Data movement"
+  ]
+}

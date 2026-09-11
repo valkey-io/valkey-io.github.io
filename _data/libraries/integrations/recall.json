@@ -1,0 +1,13 @@
+{
+  "name": "Recall",
+  "language": "TypeScript",
+  "license": "MIT",
+  "description": "Model Context Protocol server that gives an assistant persistent, searchable memory of past conversations.",
+  "repository": "https://github.com/joseairosa/recall",
+  "installCommand": "npx @modelcontextprotocol/create-server @joseairosa/recall",
+  "isFirstParty": false,
+  "type": "ai",
+  "tags": [
+    "Agent memory"
+  ]
+}

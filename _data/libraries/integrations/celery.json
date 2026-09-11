@@ -1,0 +1,14 @@
+{
+  "name": "Celery",
+  "language": "Python",
+  "license": "BSD-3-Clause",
+  "description": "Distributed task queue for Python, using Valkey as broker and result backend.",
+  "repository": "https://github.com/celery/celery",
+  "documentation": "https://docs.celeryq.dev/",
+  "isFirstParty": false,
+  "installCommand": "pip install celery",
+  "type": "tools",
+  "tags": [
+    "Queues & background jobs"
+  ]
+}

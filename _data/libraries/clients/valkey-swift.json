@@ -1,0 +1,15 @@
+{
+  "name": "valkey-swift",
+  "language": "Swift",
+  "license": "Apache-2.0",
+  "description": "A Swift client built on Swift Concurrency and NIO, for server-side Swift and Apple platforms.",
+  "repository": "https://github.com/valkey-io/valkey-swift",
+  "documentation": "https://swiftpackageindex.com/valkey-io/valkey-swift/documentation/valkey",
+  "isFirstParty": true,
+  "installCommand": "swift package add-dependency https://github.com/valkey-io/valkey-swift",
+  "features": "110000011",
+  "type": "clients",
+  "tags": [
+    "Clients"
+  ]
+}

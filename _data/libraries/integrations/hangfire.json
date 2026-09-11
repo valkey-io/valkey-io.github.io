@@ -1,0 +1,14 @@
+{
+  "name": "Hangfire",
+  "language": "C#",
+  "license": "LGPL-3.0",
+  "description": "Fire-and-forget, delayed and recurring tasks inside ASP.NET applications.",
+  "repository": "https://github.com/HangfireIO/Hangfire",
+  "documentation": "https://www.hangfire.io/",
+  "isFirstParty": false,
+  "installCommand": "dotnet add package Hangfire",
+  "type": "tools",
+  "tags": [
+    "Queues & background jobs"
+  ]
+}

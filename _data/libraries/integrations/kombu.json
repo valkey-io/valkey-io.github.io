@@ -1,0 +1,14 @@
+{
+  "name": "Kombu",
+  "language": "Python",
+  "license": "BSD-3-Clause",
+  "description": "Python messaging framework — the transport layer underneath Celery.",
+  "repository": "https://github.com/celery/kombu",
+  "documentation": "https://kombu.readthedocs.io/",
+  "isFirstParty": false,
+  "installCommand": "pip install kombu",
+  "type": "tools",
+  "tags": [
+    "Queues & background jobs"
+  ]
+}

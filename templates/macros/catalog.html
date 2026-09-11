@@ -1,0 +1,83 @@
+{# ------------------------------------------------------------------------- #}
+{# Shared catalog chrome for the Clients (/clients/) and Integrations         #}
+{# (/integrations/) pages.                                                    #}
+{#                                                                           #}
+{# These macros hold the markup that is IDENTICAL between the two catalog     #}
+{# pages: the compact header, the toolbar (search + Valkey Project toggle +   #}
+{# sort), and the empty-state / submission-CTA / noscript footer. The pages   #}
+{# differ in their facet (Language vs. Tags) and their per-card body          #}
+{# (feature list + legend on Clients only), so those parts stay inline in     #}
+{# each template rather than being forced through a macro.                    #}
+{#                                                                           #}
+{# Keeping the shared chrome here means a change to the toolbar or empty      #}
+{# state only has to be made once, and the two pages cannot drift apart.      #}
+
+{# Compact header: page title + lede. Extends default.html (not              #}
+{# fullwidth.html) so the site hero band is skipped.                          #}
+{%- macro header(title, lede) -%}
+    <header class="catalog-header">
+      <h1 class="catalog-title">{{ title }}</h1>
+      <p class="catalog-lede">{{ lede }}</p>
+    </header>
+{%- endmacro header -%}
+
+{# Toolbar: search box + Valkey Project toggle + sort control. Only the       #}
+{# search placeholder differs between pages, so it is a parameter.            #}
+{%- macro toolbar(search_placeholder) -%}
+    <div class="toolbar" data-toolbar>
+      <div class="field field-search">
+        <label for="catalog-q">Search</label>
+        <span class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input id="catalog-q" type="search" class="search-input" data-search-input
+                 placeholder="{{ search_placeholder }}" autocomplete="off" aria-label="Search">
+        </span>
+      </div>
+      <div class="field field-toggle">
+        <span class="toggle-label" id="fp-toggle-label">Valkey Project</span>
+        <button type="button" class="fp-toggle" data-first-party-toggle
+                role="switch" aria-checked="false" aria-labelledby="fp-toggle-label">
+          <span class="fp-toggle-track" aria-hidden="true"><span class="fp-toggle-thumb"></span></span>
+          <span class="fp-toggle-text">Project only</span>
+        </button>
+      </div>
+      <div class="field field-sort">
+        <label for="catalog-sort">Sort</label>
+        <select id="catalog-sort" class="sort-control" data-sort-control aria-label="Sort">
+          <option value="name-asc" selected>Name A–Z</option>
+        </select>
+      </div>
+    </div>
+{%- endmacro toolbar -%}
+
+{# Empty state shown by the JS layer when no card matches. `noun` is the      #}
+{# plural item name ("clients" / "integrations") used in the message.         #}
+{%- macro empty_state(noun) -%}
+      <div class="empty-state" data-empty-state hidden>
+        <p class="empty-msg">No {{ noun }} match your current search and filters.</p>
+        <ul class="empty-recovery" data-recovery>
+          <li><button type="button" data-recover="clear-filters">Clear filters</button></li>
+          <li><button type="button" data-recover="clear-search">Clear search</button></li>
+        </ul>
+      </div>
+{%- endmacro empty_state -%}
+
+{# Contribute section + submission call-to-action + noscript note. Emits a    #}
+{# generic contribute heading and descriptive paragraph (shared by both       #}
+{# catalog pages) above the existing submission CTA. `cta_text` is the link    #}
+{# label ("Add your client" / "Add your integration") and `noscript_noun` the  #}
+{# singular item name used in the no-JS note.                                  #}
+{%- macro footer_cta(cta_text, noscript_noun) -%}
+    <h2 class="submission-heading">Add your client, tool or integration</h2>
+    <p class="submission-lede">Building something on Valkey - a client, a module, a tool, or an AI integration? We'd love to see it here alongside the rest. Everything on this page lives in valkey-io repo, so adding yours is just a pull request away.</p>
+    <a class="submission-cta" href="/submission-guide/">{{ cta_text }}</a>
+  </div>
+
+  <noscript>
+    <p class="catalog-nojs-note">Showing every {{ noscript_noun }}. Interactive filtering, search, and sorting require JavaScript.</p>
+  </noscript>
+{%- endmacro footer_cta -%}

@@ -1,0 +1,16 @@
+{
+  "name": "phpredis",
+  "language": "PHP",
+  "license": "PHP-3.01",
+  "description": "A PHP extension written in C, so commands run without the overhead of a userland client.",
+  "repository": "https://github.com/phpredis/phpredis",
+  "documentation": null,
+  "isFirstParty": false,
+  "docsNote": "No standalone docs site; README is the documentation (checked 2026-09-03).",
+  "installCommand": "pecl install redis",
+  "features": "110000001",
+  "type": "clients",
+  "tags": [
+    "Clients"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Medis",
+  "language": "JavaScript",
+  "license": "MIT",
+  "description": "A polished, easy-to-use database management application for macOS.",
+  "documentation": "https://docs.getmedis.com/",
+  "isFirstParty": false,
+  "repository": "https://github.com/luin/medis",
+  "type": "tools",
+  "tags": [
+    "CLI & GUI"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "PraisonAI",
+  "language": "Python",
+  "license": "MIT",
+  "description": "Multi-agent framework for building production agent teams, with pluggable memory and retrieval.",
+  "repository": "https://github.com/MervinPraison/PraisonAI",
+  "documentation": "https://docs.praison.ai/",
+  "isFirstParty": false,
+  "installCommand": "pip install praisonai",
+  "type": "ai",
+  "tags": [
+    "Agent frameworks"
+  ]
+}

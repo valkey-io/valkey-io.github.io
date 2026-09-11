@@ -1,0 +1,16 @@
+{
+  "name": "valkey-java",
+  "language": "Java",
+  "license": "MIT",
+  "description": "The Jedis-derived Java client maintained under valkey-io. Blocking API, connection pooling and cluster support.",
+  "repository": "https://github.com/valkey-io/valkey-java",
+  "documentation": null,
+  "isFirstParty": true,
+  "docsNote": "No dedicated docs site confirmed; a valkey-java.io reference was found but not verified (checked 2026-09-03).",
+  "installCommand": "implementation 'io.valkey:valkey-java:5.+'",
+  "features": "010000011",
+  "type": "clients",
+  "tags": [
+    "Clients"
+  ]
+}

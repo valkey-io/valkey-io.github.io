@@ -1,0 +1,16 @@
+{
+  "name": "iovalkey",
+  "language": "Node.Js",
+  "license": "MIT",
+  "description": "A friendly fork of a widely used Node.js client, tracking Valkey. Promise-based API, Lua scripting and cluster support.",
+  "repository": "https://github.com/valkey-io/iovalkey",
+  "documentation": null,
+  "isFirstParty": true,
+  "docsNote": "No dedicated Valkey-branded docs site; only redis.github.io API docs from the ioredis lineage exist (checked 2026-09-03).",
+  "installCommand": "npm install iovalkey",
+  "features": "110000001",
+  "type": "clients",
+  "tags": [
+    "Clients"
+  ]
+}

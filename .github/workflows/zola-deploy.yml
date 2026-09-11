@@ -58,8 +58,7 @@ jobs:
         run: |
           cd website
           ./build/init-topics-and-clients.sh ../valkey-doc/topics \
-            ../valkey-doc/clients \
-            ../valkey-doc/ai
+            ../valkey-doc/clients
           ./build/init-commands.sh ../valkey-doc/commands \
             ../valkey/src/commands ../valkey-bloom/src/commands \
             ../valkey-json/src/commands ../valkey-search/src/commands

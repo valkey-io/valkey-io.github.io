@@ -1,0 +1,14 @@
+{
+  "name": "huey",
+  "language": "Python",
+  "license": "MIT",
+  "description": "Lightweight Python task queue with periodic tasks and retries.",
+  "repository": "https://github.com/coleifer/huey",
+  "documentation": "https://huey.readthedocs.io/",
+  "isFirstParty": false,
+  "installCommand": "pip install huey",
+  "type": "tools",
+  "tags": [
+    "Queues & background jobs"
+  ]
+}

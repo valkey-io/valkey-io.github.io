@@ -1,0 +1,14 @@
+{
+  "name": "LangChain4j Valkey",
+  "language": "Java",
+  "license": "Apache-2.0",
+  "description": "Valkey embedding store and chat-memory store for LangChain4j, the JVM LLM framework.",
+  "repository": "https://github.com/langchain4j/langchain4j-community",
+  "documentation": "https://docs.langchain4j.dev/",
+  "isFirstParty": false,
+  "installCommand": "dev.langchain4j:langchain4j-community-valkey:1.+",
+  "type": "ai",
+  "tags": [
+    "RAG & retrieval"
+  ]
+}

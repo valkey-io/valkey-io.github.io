@@ -1,0 +1,11 @@
+{
+  "name": "valkey-helm",
+  "license": "BSD-3-Clause",
+  "description": "Official Helm chart for installing Valkey on Kubernetes.",
+  "repository": "https://github.com/valkey-io/valkey-helm",
+  "isFirstParty": true,
+  "type": "tools",
+  "tags": [
+    "Deploy & operate"
+  ]
+}

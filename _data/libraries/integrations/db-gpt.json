@@ -1,0 +1,14 @@
+{
+  "name": "DB-GPT",
+  "language": "Python",
+  "license": "MIT",
+  "description": "AI-native data application framework covering text-to-SQL, RAG and multi-agent workflows.",
+  "repository": "https://github.com/eosphoros-ai/DB-GPT",
+  "documentation": "http://docs.dbgpt.cn/docs/overview",
+  "isFirstParty": false,
+  "installCommand": "pip install \"dbgpt-ext[storage_valkey]\"",
+  "type": "ai",
+  "tags": [
+    "RAG & retrieval"
+  ]
+}
