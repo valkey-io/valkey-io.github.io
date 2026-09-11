@@ -66,6 +66,17 @@
     indexPromise = fetch(SEARCH_INDEX_URL)
       .then(function (response) {
         if (!response.ok) {
+          if (response.status === 404) {
+            // Most common local cause: running under `zola serve`, which does
+            // not generate or serve the post-build index. Point developers at
+            // the fix instead of failing silently.
+            throw new Error(
+              SEARCH_INDEX_URL +
+                " was not found (HTTP 404). Search will not work under `zola serve`, " +
+                "which does not build the index. Run `npm run build` and serve the " +
+                "`public/` directory statically. See the Search section of README.md."
+            );
+          }
           throw new Error("Failed to load search index: " + response.status);
         }
         return response.json();

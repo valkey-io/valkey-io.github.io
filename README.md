@@ -101,27 +101,20 @@ The index is not Zola's native search index. Most of this site's documentation (
 
 Long pages are indexed as one record per top-level (`h2`) section rather than a single whole-page record, so deep content stays searchable and a result can link straight to the matching section via its heading anchor. Content before the first `h2`, and pages with no `h2`, produce a single page-level record. All records for one page share the same `title` (the page title); the section heading is stored separately and weighted well below the title, so splitting a page into sections does not let a thin section out-rank, or dilute, a page-name match. Because a long page contributes several records that share a base url, the client (`static/assets/js/search.js`) also caps how many sections from the same page appear in the results list.
 
-### Building the index locally
+### Testing search locally
 
-The indexer needs [Node.js](https://nodejs.org/) (18 or newer). Install dependencies once:
+Search does not work under `zola serve`. The dev server builds the site into memory and does not run the post-build indexer, so `search-index.json` is never generated or served and every query returns nothing. This is expected: `zola serve` is fine for editing content with live reload, but it cannot serve search.
 
-```shell
-npm install
-```
-
-Because `zola build` and `zola serve` both wipe `public/`, the index must be generated after each build. The simplest way is the convenience script, which runs `zola build` and then the indexer:
+To test search, build the site to disk (which also generates the index) and serve the `public/` directory with any static file server. The indexer needs [Node.js](https://nodejs.org/) (18 or newer); install dependencies once with `npm install`, then:
 
 ```shell
-npm run build
+npm run build                        # zola build + generate search-index.json in public/
+python3 -m http.server -d public 8080   # or any static server for public/
 ```
 
-To regenerate only the index against an existing `public/` (for example, after a `zola serve` rebuild), run:
+Open `http://localhost:8080/` and search will work. Any static server works; the only requirement is that it serves the `public/` directory produced by `npm run build`, including `search-index.json`.
 
-```shell
-npm run build:search-index
-```
-
-The generated `public/search-index.json` is ignored by git; it is always produced fresh at build time.
+The generated `public/search-index.json` is ignored by git; it is always produced fresh at build time. Because both `zola build` and `zola serve` wipe `public/`, re-run `npm run build` after any rebuild to refresh the index. To regenerate only the index against a `public/` that already exists on disk (for example after a plain `zola build`), run `npm run build:search-index`.
 
 To search topics, the command reference, and the clients page locally, first follow [Building additional content](#building-additional-content) so those pages exist to be indexed. Otherwise only the blog, author, download, event, and static pages are searchable.
 
