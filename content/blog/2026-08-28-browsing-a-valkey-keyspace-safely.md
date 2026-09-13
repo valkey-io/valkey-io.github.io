@@ -12,7 +12,7 @@ featured = false
 +++
 
 Valkey rarely runs on its own.
-It sits in front of a database, and when a page gets slow the answer is either a cache that is not being hit or a query that got worse.
+It often sits in front of a database, and when a page gets slow the answer is either a cache that is not being hit or a query that got worse.
 Checking both usually means one terminal on `valkey-cli` and another on the database, and holding the two halves of the picture in your head.
 
 That is the situation I want to walk through, using a graphical user interface (GUI) as the example.
@@ -22,20 +22,21 @@ The second is what the tool is allowed to do once it has connected.
 Valkey answers both, and the useful thing a client can do is stay out of the way of those answers.
 
 The tool in the examples is [LibreDB Studio](https://github.com/libredb/libredb-studio), an open source database GUI I work on, which connects to Valkey alongside the relational database in the same window.
-Everything below was measured against Valkey 9.1.1 from the `valkey/valkey` container image with a default configuration, and every command in it you can run yourself.
+Everything below was measured against Valkey 9.1.1 from the [`valkey/valkey`](https://hub.docker.com/r/valkey/valkey) container image with a default configuration, and every command in it you can run yourself.
 
 ## Listing keys without blocking the server
 
-`KEYS` is the obvious way to find out what is in a keyspace and the wrong one on a server with traffic.
+[`KEYS`](https://valkey.io/commands/keys/) is the obvious way to find out what is in a keyspace and the wrong one on a server with traffic.
+Do not run it against a server that is taking production traffic.
 It walks the entire keyspace in a single call and blocks the server for the duration.
 On a keyspace with millions of keys that is a stall every other client sees.
 
-`SCAN` exists for this reason.
+[`SCAN`](https://valkey.io/commands/scan/) exists for this reason.
 It is cursor-based, and other commands run in between the calls.
 `COUNT` is a hint and not a batch size: a single call can come back with more keys than that, with fewer, or with none at all, and it is the cursor returning to zero rather than an empty reply that tells you the scan is over.
 The guarantee is weaker, which is the point: a key present for the whole scan is returned at least once, but a scan that overlaps with writes samples a moving keyspace rather than photographing a still one.
 
-The key explorer is built on that.
+LibreDB Studio's key explorer is built on that.
 It issues `SCAN` with `COUNT 100` and keeps following the cursor until it has collected 1000 keys or the scan finishes, whichever comes first.
 It groups what it collected by the text before the first colon and shows the groups as rows:
 
@@ -48,7 +49,7 @@ queue:*     1
 Two things about that display are worth stating, because a table of names invites the wrong reading.
 `user:*` is a grouping derived from key names the scan happened to see, not an object on the server, so nothing can be addressed by it.
 And the counts are the sample, not the keyspace.
-The total key count shown elsewhere comes from `DBSIZE`, which is the count for the database you have selected on the node you are connected to.
+The total key count shown elsewhere comes from [`DBSIZE`](https://valkey.io/commands/dbsize/), which is the count for the database you have selected on the node you are connected to.
 
 The effect is that opening the explorer against a busy server costs a bounded number of `SCAN` calls.
 To look inside one prefix you send `SCAN 0 MATCH session:* COUNT 50` yourself rather than asking anything to enumerate the keyspace for you.
@@ -70,21 +71,21 @@ valkey-cli ACL SETUSER studio reset on '>your-password' '~*' '+@read' '-@dangero
 
 Each piece of it maps to something on screen:
 
-- `+@read` covers `SCAN`, `TYPE` and `DBSIZE` for the key explorer, and the value reads behind it.
+- `+@read` covers `SCAN`, [`TYPE`](https://valkey.io/commands/type/) and `DBSIZE` for the key explorer, and the value reads behind it.
 - `-@dangerous` takes back the risky commands as a category instead of one at a time.
 `KEYS` is in it, which is the command the first half of this post is about, and so are `SORT`, `FLUSHALL` and the rest of the set Valkey itself marks as dangerous.
 Order matters here: a specific grant placed after a category revocation still applies, which is why `+info`, `+slowlog|get` and `+client|list` below keep working even though `@dangerous` lists those commands too.
 - `+select` lets the connection switch between the numbered databases a server keeps.
 Without it, a connection configured for anything past database 0 cannot reach it.
 - `+info` is the overview: uptime, connected clients, `maxclients`, `used_memory`, and the keyspace hit and miss counters behind the cache hit ratio.
-- `+slowlog|get` is the slow command list, read with `SLOWLOG GET 10`.
+- `+slowlog|get` is the slow command list, read with [`SLOWLOG GET 10`](https://valkey.io/commands/slowlog-get/).
 - `+client|list` is the session list.
 - `+ping` is the connection check the client runs when it opens the connection.
 
 `reset` at the front is doing more work than it looks like.
 Without it the rules are added to whatever the user already had, so running this against an existing `studio` leaves every earlier permission in place and you get a user that reads the list above and still writes.
 With it the line is the whole grant, which is the only form worth copying into a runbook.
-One thing it does not cover: the password crosses the network on every `AUTH`, so anywhere but a local socket the connection wants transport layer security (TLS) underneath it.
+One thing it does not cover: the password crosses the network on every [`AUTH`](https://valkey.io/commands/auth/), so anywhere but a local socket the connection wants transport layer security (TLS) underneath it.
 
 Connected as `studio`, every panel fills in.
 A write does not:
@@ -98,12 +99,18 @@ The refusal came from the server, and it reaches the query console as the error 
 Nothing in the tool decided it, which is the property worth having: the same restriction holds for anyone who takes those credentials and connects with `valkey-cli` instead.
 
 If you want writes, connect as a user that has them.
-The point is that the choice is recorded in `ACL GETUSER` on the server rather than in a client side setting, and Valkey 9.1 makes the grant finer with database level ACLs.
+The point is that the choice is recorded in [`ACL GETUSER`](https://valkey.io/commands/acl-getuser/) on the server rather than in a client side setting, and Valkey 9.1 makes the grant finer with database level ACLs.
 
 ## What the monitoring views read
 
-There is no agent and no exporter in any of this.
-Every number comes from a command you can run yourself:
+Valkey exposes its own operational state through a handful of read commands, and none of them need a client to make sense of them.
+[`INFO`](https://valkey.io/commands/info/) returns uptime, connected clients, memory usage, and the keyspace hit and miss counters behind a cache hit ratio.
+[`CLIENT LIST`](https://valkey.io/commands/client-list/) returns one line per open connection, including the ACL user it authenticated as.
+`SLOWLOG GET` returns the commands that took the longest to run, timestamped.
+`DBSIZE` returns the key count for the selected database.
+Anyone with a terminal and the right ACL grant already has all of this; a GUI does not add access, only a place to read it.
+
+LibreDB Studio's monitoring view is a thin layer over those same four commands:
 
 | View | Command |
 |------|---------|
@@ -112,19 +119,13 @@ Every number comes from a command you can run yourself:
 | Sessions | `CLIENT LIST` |
 | Slow commands | `SLOWLOG GET 10` |
 
-That is worth knowing because it tells you what a number means and when it will be missing.
+Each panel is the reply to one of those commands rendered as a table instead of a wall of text, nothing more.
 If `INFO` does not publish a field, the panel behind it has nothing to show.
-It also means anything on screen can be checked against `valkey-cli` in a few seconds, which is the right relationship between a graphical client and a server.
-
-One limit is worth stating rather than leaving to be found.
-The connection goes to a single standalone node: TLS is supported, Cluster and Sentinel are not.
-
-A quick practical note if you try this.
-There is no separate Valkey entry in the connection dialog, and Valkey is reached by choosing Redis, because one protocol implementation serves every server that speaks the protocol.
-A second identical entry would suggest a difference in the client that does not exist.
+Anything on screen can be checked against `valkey-cli` in a few seconds, which is the right relationship between a graphical client and a server.
 
 ## Next steps
 
 Create the restricted user before you point anything at a server that matters.
 It is one command, it survives whatever client someone reaches for next, and it is the only read-only access that holds.
 Then run `ACL GETUSER` against the users your own tooling connects as, and see whether the answer is the one you expected.
+The commands above are most of what LibreDB Studio reads from a Valkey server; the [provider docs](https://github.com/libredb/libredb-studio/blob/main/docs/providers/redis.md) cover the rest of what the connection supports, and [libredb.org](https://libredb.org) has more on the tool itself.
