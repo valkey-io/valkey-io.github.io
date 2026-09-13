@@ -85,7 +85,8 @@ Without it, a connection configured for anything past database 0 cannot reach it
 `reset` at the front is doing more work than it looks like.
 Without it the rules are added to whatever the user already had, so running this against an existing `studio` leaves every earlier permission in place and you get a user that reads the list above and still writes.
 With it the line is the whole grant, which is the only form worth copying into a runbook.
-One thing it does not cover: the password crosses the network on every [`AUTH`](https://valkey.io/commands/auth/), so anywhere but a local socket the connection wants transport layer security (TLS) underneath it.
+One thing it does not cover: the password crosses the network on every [`AUTH`](https://valkey.io/commands/auth/).
+Any connection that is not a local socket needs transport layer security (TLS) with certificate verification underneath it, not plain TCP: `valkey-cli --tls --cacert <ca-file>` on the command line, and the equivalent certificate-verification setting in a GUI.
 
 Connected as `studio`, every panel fills in.
 A write does not:
