@@ -34,7 +34,7 @@ On a keyspace with millions of keys that is a stall every other client sees.
 [`SCAN`](https://valkey.io/commands/scan/) exists for this reason.
 It is cursor-based, and other commands run in between the calls.
 `COUNT` is a hint and not a batch size: a single call can come back with more keys than that, with fewer, or with none at all, and it is the cursor returning to zero rather than an empty reply that tells you the scan is over.
-The guarantee is weaker, which is the point: a key present for the whole scan is returned at least once, but a scan that overlaps with writes samples a moving keyspace rather than photographing a still one.
+The guarantee is weaker, which is the point: a key present for the whole scan is returned at least once, but a scan that overlaps with writes samples a moving keyspace rather than snapshotting a still one.
 
 LibreDB Studio's key explorer is built on that.
 It issues `SCAN` with `COUNT 100` and keeps following the cursor until it has collected 1000 keys or the scan finishes, whichever comes first.
