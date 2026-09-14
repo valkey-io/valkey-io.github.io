@@ -17,7 +17,7 @@ Imagine you have a Valkey cluster humming along at 100K requests/second serving 
 
 ## The Problem
 
-Our baseline: 100K req/s total of 1KB `GET`s distributed across 256 connections, each pipelining 32 requests. Then we introduced 10 req/s of 10MB `GET`s as background traffic. Just 10 requests per second of large objects.
+Our baseline: 100K req/s total of 1KB [`GET`](https://valkey.io/commands/get/)s distributed across 256 connections, each pipelining 32 requests. Then we introduced 10 req/s of 10MB `GET`s as background traffic. Just 10 requests per second of large objects.
 
 Here's what happened to the 1KB request latency on Valkey 8.1:
 
