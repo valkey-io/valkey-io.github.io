@@ -1,6 +1,7 @@
 +++
 title = "From Skiplists to B+ Trees: Making Valkey Sorted Sets More Memory Efficient"
-date = 2026-09-16
+date = 2026-09-20
+
 description = "How Valkey 9.2 replaces the skiplist used by large sorted sets with a cache-friendly B+ tree, reducing memory overhead while improving several ordered-set operations." 
 authors =  ["dragosandriciuc","rainvalentine"]
 [taxonomies]
@@ -34,7 +35,9 @@ The mechanical reason is straightforward: a modern CPU can fetch several adjacen
 A B+ tree node that spans a few cache lines can therefore be read efficiently as the CPU scans its contents.
 A skiplist has no such luck: each node is a separate allocation, potentially scattered wherever the heap happened to place it, so following the structure can require repeatedly fetching data from unrelated memory locations.
 
-![Memory layout comparison between a skiplist and fbtree for 61 consecutive sorted set members](images/fbtree-memory-layout.png)
+![Memory layout comparison between a skiplist and fbtree for 61 consecutive sorted set members](images/allocations-to-scale.svg)
+
+**Note:** This comparison uses a different accounting convention than the benchmark numbers shown later in this post. See [Benchmarks](#benchmarks) for the measured reduction from PR 4359. [^4]
 
 Valkey's skiplist pays for this in raw memory too.
 Every node carries a backward pointer (8B), plus an expected 1.33 levels of forward pointers and span values.
@@ -50,27 +53,29 @@ An earlier release folded Valkey's `dict` into the newer `hashtable` implementat
 Another optimization embedded the member string directly into the skiplist node, eliminating an 8B pointer per item.
 The B+ tree change builds on these earlier improvements, further reducing the memory overhead of the ordered index rather than replacing those savings [^3].
 
-![Skiplist structure showing one heap allocation per sorted-set member](images/skiplist-structure.png)
+![Skiplist structure showing one heap allocation per sorted-set member](images/skiplist-structure.svg)
 
 ## What replaced it: fbtree
 
 fbtree, short for FB+ Tree or Feature B+ Tree, has inner nodes that store a small “feature” for each child.
 
-![fbtree architecture showing members packed in leaf arrays and routing data stored in inner nodes](images/fbtree-architecture.png)
+![fbtree architecture showing members packed in leaf arrays and routing data stored in inner nodes](images/fbtree-architecture.svg)
 
 Because the anchors often share a common prefix, fbtree stores that shared prefix separately and uses the four feature bytes to distinguish the children.
 The implementation can then compare those features in parallel using SIMD, often identifying the correct child before fetching the child node itself.
 If the features uniquely identify a child, the search can descend immediately; otherwise, they still narrow the range that needs a full binary search.
 
-Structurally, the tree uses a 61-way fanout, with leaf and inner nodes sized to fit jemalloc allocation classes without wasting space.
+![Diagram showing an inner node's feature bytes narrowing a lookup for "i love valkey!" from 61 possible children to a single match without reading a full anchor string](images/inner-node-traversal.svg)
 
-![Layout of a skiplist node containing a 20-byte member](images/skiplist-node.png)
+Structurally, the tree uses a 61-way fanout, with leaf and inner nodes sized to fit jemalloc allocation classes without wasting space on 64-bit builds; on supported 32-bit builds, `innerNode` is rounded up to the 1280-byte class.
 
-![Layout of an fbtree leaf node with 61 slots](images/fbtree-leaf-node.png)
+![Layout of a skiplist node containing a 20-byte member](images/zskiplistNode-struct-layout.svg)
+
+![Layout of an fbtree leaf node with 61 slots](images/fbtree-leaf-struct.svg)
 
 ![Layout of an fbtree inner node with 61-way fanout](images/fbtree-inner-node.svg)
 
-A 512-byte leaf can hold up to 61 values, packing many sorted set members into a single allocation instead of giving every member its own node.
+A 512-byte leaf can hold up to 61 values, grouping up to 61 value pointers under one leaf allocation instead of giving every member its own node.
 Leaf nodes (which hold the actual scored elements) are linked together in a doubly-linked list, so range operations like `ZRANGE` can walk forward without climbing back up the tree at every step.
 Several targeted optimizations round it out, including a fast path for pushing and popping at either end of the set.
 This preserves the O(1) behavior that the skiplist naturally provides for end operations, allowing commands such as `ZPOPMIN` to maintain parity rather than regress to O(log n).
@@ -80,6 +85,8 @@ The payoff shows up in how the CPU reads it.
 A 512-byte leaf spans eight typical 64-byte cache lines, but those lines are adjacent.
 Hardware prefetching can therefore bring much of the node into cache as the CPU scans it.
 The skiplist has the opposite access pattern: each node is a separate allocation, so following the structure means chasing pointers to unrelated memory locations. Same O(log n) complexity, much smaller constant factor.
+
+![Animated diagram comparing skiplist and fbtree with 3,721 items. To insert an item, skiplist takes 19 fetches while fbtree takes 7.](images/skiplist-v-fbtree-insert-animated.svg)
 
 Another change happens at the leaf level.
 Instead of storing the score and member separately, fbtree stores them together as a single packed value: the normalized 8-byte score followed by the member bytes.
@@ -99,7 +106,7 @@ Small sorted sets under the listpack threshold are unaffected either way, since 
 ### Memory efficiency
 
 The fbtree change is the latest step in a series of memory-efficiency improvements to sorted sets in Valkey.
-Since Valkey 7, these changes have progressively reduced the memory overhead of sorted sets by nearly half.
+Since Valkey 7, these changes have progressively reduced the memory overhead of sorted sets.
 
 The transition from `dict` to `hashtable`, embedding the member string into the skiplist node, and now replacing the skiplist with fbtree each contribute to that reduction.
 
@@ -110,7 +117,7 @@ The smaller reduction comes from random insertion leaving more partially filled 
 
 ### Command performance
 
-The benchmarks below are from the [merged implementation](https://github.com/valkey-io/valkey/pull/4359).
+The benchmarks below were measured on PR `#4206`’s `oi/pr3-fbtree-v2` branch and were not rerun for the merged commit.
 They were run on a Graviton3 c7g.metal system with 64 cores, nine I/O threads, a pipeline depth of 10, and a 3-million-member sorted set.
 Each test was repeated five times; the reported confidence intervals were ≤2% for all commands except `ZRANDMEMBER`.
 
