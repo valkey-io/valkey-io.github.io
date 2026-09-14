@@ -98,9 +98,9 @@ worker.get("job:42")  # b'queued'
 
 If the code under test opens its own connection from a host and port, [`TcpFakeServer`](https://github.com/cunla/fakeredis-py/blob/v2.38.0/docs/valkey-support.md) serves the same fake over TCP.
 
-## How the test suite keeps FakeValkey honest
+## How FakeValkey is maintaining compatablility with Valkey  
 
-A fake is only useful while it behaves like the server, and Valkey keeps shipping.
+FakeValkey is only useful while it behaves like the server, and Valkey keeps shipping.
 fakeredis checks itself by running its test suite twice: the client fixture that every test takes is [parametrized](https://github.com/cunla/fakeredis-py/blob/v2.38.0/test/conftest.py#L182-L187) to yield both a fake client and a client connected to a real server, over protocol versions 2 and 3.
 When the real server is Valkey, the fixtures select `FakeValkey` and `valkey.Valkey`, so the same assertion runs against both.
 The [CI matrix](https://github.com/cunla/fakeredis-py/blob/v2.38.0/.github/workflows/test.yml#L41-L45) runs that suite against the `valkey/valkey:9.1` and `valkey/valkey:8.1.8` images.
@@ -150,27 +150,7 @@ Each test now runs three times, and each variant checks one migration step:
 - `valkey-server` keeps redis-py and switches to Valkey server behavior, as when you point your current client at a Valkey server.
 - `valkey-client` also replaces redis-py with valkey-py.
 
-Here is a failure that only the last variant catches:
-
-```python
-import redis
-
-
-def read_counter(client, key):
-    try:
-        return client.incr(key)
-    except redis.ResponseError:
-        return None
-
-
-def test_read_counter_ignores_non_integers(client):
-    client.set("visits", "abc")
-    assert read_counter(client, "visits") is None
-```
-
-The test passes on `redis` and `valkey-server` and fails on `valkey-client`, because valkey-py raises `valkey.ResponseError`, which `except redis.ResponseError` does not catch.
-
-It also catches commands missing from [Valkey 9.1.2](https://github.com/valkey-io/valkey/tree/9.1.2/src/commands), such as `INCREX`:
+Here is an example of a code using `INCREX`, a command that exists on redis 8.8 but does not exist in valkey. using fakeredis with the three variants will give you the exact issues that require addressing before migrating from redis to valkey. 
 
 ```python
 def count_request(client, user_id):
