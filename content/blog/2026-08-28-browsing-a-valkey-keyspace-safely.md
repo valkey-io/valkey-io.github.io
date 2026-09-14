@@ -77,9 +77,11 @@ Each piece of it maps to something on screen:
 Order matters here: a specific grant placed after a category revocation still applies, which is why `+info`, `+slowlog|get` and `+client|list` below keep working even though `@dangerous` lists those commands too.
 - `+select` lets the connection switch between the numbered databases a server keeps.
 Without it, a connection configured for anything past database 0 cannot reach it.
+`~*` is not scoped to one database, so combined with `+select` this grant covers keys in every database on the server, not only the one a client happens to open on.
 - `+info` is the overview: uptime, connected clients, `maxclients`, `used_memory`, and the keyspace hit and miss counters behind the cache hit ratio.
 - `+slowlog|get` is the slow command list, read with [`SLOWLOG GET 10`](https://valkey.io/commands/slowlog-get/).
-- `+client|list` is the session list.
+Entries include the arguments a slow command ran with, so treat this the way you would treat log access: whoever holds `studio` can see data that passed through those arguments.
+- `+client|list` is the session list, which includes each connection's address, port, and authenticated username.
 - `+ping` is the connection check the client runs when it opens the connection.
 
 `reset` at the front is doing more work than it looks like.
