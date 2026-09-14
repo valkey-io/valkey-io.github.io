@@ -18,7 +18,7 @@ You can mock the client, which is fast, but a mock only knows what you told it, 
 A test double sits between the two: an implementation of the server's behavior that runs inside the test process.
 
 I maintain [fakeredis](https://github.com/cunla/fakeredis-py), a pure-Python, in-memory implementation of the Valkey command set that plugs into [valkey-py](https://github.com/valkey-io/valkey-py) as a client class. It has 40m downloads/month (September 2026). 
-This post covers its `FakeValkey` class: how to use it, how it keeps pace with Valkey, where matching Valkey's behavior gets hard, and when you should use a real server instead.
+This post covers its `FakeValkey` class: how to use it, how it keeps pace with Valkey, where matching Valkey's behavior gets hard, how to check a Redis to Valkey migration with it, and when you should use a real server instead.
 
 ## Replacing a Valkey client with FakeValkey
 
@@ -123,6 +123,69 @@ Three examples from recent releases:
 
 Today Valkey is a first-class target in the test suite.
 The fixtures read the `valkey_version` field that Valkey reports and gate tests on it, rather than on the Redis-compatible `redis_version` that Valkey also reports.
+
+## Checking a Redis to Valkey migration with fakeredis
+
+fakeredis emulates Redis and Valkey behind one client interface, so you can run your existing tests against Valkey's behavior before you change any infrastructure.
+Parametrize the client fixture your tests already use:
+
+```python
+import fakeredis
+import pytest
+
+
+@pytest.fixture(params=["redis", "valkey-server", "valkey-client"])
+def client(request):
+    if request.param == "redis":
+        return fakeredis.FakeRedis(version=(8, 8))  # the Redis version you run today
+    if request.param == "valkey-server":
+        return fakeredis.FakeRedis(server_type="valkey")
+    return fakeredis.FakeValkey()
+```
+
+Each test now runs three times, and each variant checks one migration step:
+
+- `redis` is the baseline: redis-py against the Redis version you run today.
+- `valkey-server` keeps redis-py and switches to Valkey server behavior, as when you point your current client at a Valkey server.
+- `valkey-client` also replaces redis-py with valkey-py.
+
+Here is a failure that only the last variant catches:
+
+```python
+import redis
+
+
+def read_counter(client, key):
+    try:
+        return client.incr(key)
+    except redis.ResponseError:
+        return None
+
+
+def test_read_counter_ignores_non_integers(client):
+    client.set("visits", "abc")
+    assert read_counter(client, "visits") is None
+```
+
+The test passes on `redis` and `valkey-server` and fails on `valkey-client`, because valkey-py raises `valkey.ResponseError`, which `except redis.ResponseError` does not catch.
+
+It also catches commands missing from [Valkey 9.1.2](https://github.com/valkey-io/valkey/tree/9.1.2/src/commands), such as `INCREX`:
+
+```python
+def count_request(client, user_id):
+    value, _ = client.increx(f"requests:{user_id}", ex=60, enx=True)
+    return value
+
+
+def test_count_request_sets_the_window_once(client):
+    assert count_request(client, "alice") == 1
+    assert count_request(client, "alice") == 2
+    assert client.ttl("requests:alice") == 60
+```
+
+This test passes on `redis`.
+On `valkey-server` the server replies `unknown command 'increx'`, and on `valkey-client` valkey-py has no `increx()` method.
+
 
 ## When to use a fake and when to use a real server
 
