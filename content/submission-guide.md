@@ -57,7 +57,7 @@ The SPDX identifier of the open-source license the software is distributed under
 
 **Example:** `"Apache-2.0"`, `"MIT"`, `"BSD-3-Clause"`, `"LGPL-3.0"`
 
-**Note:** Only open-source licenses are accepted. Proprietary or source-available licenses may be considered case by case if the tool provides significant community value.
+**Note:** An open-source license is required. Proprietary or source-available licenses are considered only by exception, where the tool provides significant community value.
 
 #### `repository` (string)
 The URL of the source-code repository (GitHub, GitLab, Bitbucket, etc.).
