@@ -9,7 +9,8 @@ blog_type = ["Technical Deep Dive"]
 
 [extra]
 featured = false
-featured_image = "/assets/media/featured/random-05.webp"
+featured_image = "/blog/testing-without-a-server-fakevalkey/images/hero.svg"
+og_image = "/blog/testing-without-a-server-fakevalkey/images/og.png"
 +++
 
 Every application that talks to Valkey has to answer the same question in its test suite: where does the server come from?
