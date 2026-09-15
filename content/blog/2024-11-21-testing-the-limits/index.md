@@ -209,7 +209,9 @@ volumes:
   data2:
     driver: local
 ```
-Run `docker compose -f valkey-cluster.yaml up -d` to start the cluster. There is one more step to get the cluster running. Find the name of one of your nodes with `docker ps --format '{% raw %}{{.Names}}{% endraw %}'`. 
+Run `docker compose -f valkey-cluster.yaml up -d` to start the cluster.
+There is one more step to get the cluster running.
+Find the name of one of your nodes with `docker ps --format '{% raw %}{{.Names}}{% endraw %}'`. 
 
 ```bash
 docker ps --format '{% raw %}{{.Names}}{% endraw %}
