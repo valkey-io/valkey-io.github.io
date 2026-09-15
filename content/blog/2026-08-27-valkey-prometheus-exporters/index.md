@@ -1,6 +1,6 @@
 +++
 title = "Valkey Metrics in Prometheus: redis_exporter and BetterDB"
-date = 2026-09-15
+date = 2026-09-16
 description = "A starting point for monitoring Valkey with Prometheus: two exporters, per-pod and cluster-wide metrics."
 authors = ["edithpuclla", "kivanow"]
 [taxonomies]
@@ -63,5 +63,9 @@ The **commandlog** metrics require Valkey 8.1+ (they have no Redis equivalent), 
 
 [Prometheus](https://github.com/prometheus/prometheus), [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts), [`redis_exporter`](https://github.com/oliver006/redis_exporter), and the [Valkey operator](https://github.com/valkey-io/valkey-operator) are all open source. [BetterDB Monitor](https://github.com/BetterDB-inc/monitor) is open core: the  Prometheus endpoint used here is MIT-licensed and free to use, while additional features require a commercial agreement for production use. 
 
+## What's next?
+
 Valkey is growing fast and the open source ecosystem around it is already there.
-Try either exporter against your own cluster, and come tell us what you're monitoring in the [Valkey Slack](https://valkey.io/slack/).
+
+Try either exporter against your own cluster and share your experience in the [Valkey Slack](https://valkey.io/slack/). Stay tuned for an upcoming deep dive into Valkey metrics and monitoring, with a closer look at redis_exporter, BetterDB, Prometheus, Grafana, and a complete local setup.
+
