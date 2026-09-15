@@ -82,7 +82,7 @@ def test_each_test_starts_empty(valkey_client):
 ```
 
 pytest reports 0.09 seconds for both tests on an arm64 Linux virtual machine.
-Each `FakeValkey()` gets its own in-memory server, so the second test sees none of the keys the first test wrote.
+Each `FakeValkey` instance gets its own in-memory server, so the second test sees none of the keys the first test wrote.
 
 When two clients need to see the same data, such as a web handler and a background worker, give them one `FakeServer`:
 
@@ -98,7 +98,7 @@ worker.get("job:42")  # b'queued'
 
 If the code under test opens its own connection from a host and port, [`TcpFakeServer`](https://github.com/cunla/fakeredis-py/blob/v2.38.0/docs/valkey-support.md) serves the same fake over TCP.
 
-## How FakeValkey is maintaining compatablility with Valkey  
+## How FakeValkey maintains compatibility with Valkey
 
 FakeValkey is only useful while it behaves like the server, and Valkey keeps shipping.
 fakeredis checks itself by running its test suite twice: the client fixture that every test takes is [parametrized](https://github.com/cunla/fakeredis-py/blob/v2.38.0/test/conftest.py#L182-L187) to yield both a fake client and a client connected to a real server, over protocol versions 2 and 3.
@@ -150,7 +150,8 @@ Each test now runs three times, and each variant checks one migration step:
 - `valkey-server` keeps redis-py and switches to Valkey server behavior, as when you point your current client at a Valkey server.
 - `valkey-client` also replaces redis-py with valkey-py.
 
-Here is an example of a code using `INCREX`, a command that exists on redis 8.8 but does not exist in valkey. using fakeredis with the three variants will give you the exact issues that require addressing before migrating from redis to valkey. 
+Here is code that calls the `INCREX` command, which exists in Redis 8.8 but not in Valkey.
+Running its test against the three variants shows which migration step breaks it.
 
 ```python
 def count_request(client, user_id):
@@ -166,7 +167,6 @@ def test_count_request_sets_the_window_once(client):
 
 This test passes on `redis`.
 On `valkey-server` the server replies `unknown command 'increx'`, and on `valkey-client` valkey-py has no `increx()` method.
-
 
 ## When to use a fake and when to use a real server
 
@@ -188,4 +188,11 @@ Each command in fakeredis is one method plus its tests, which makes command cove
 Pick a command marked "(not implemented)" in the [supported commands docs](https://github.com/cunla/fakeredis-py/tree/v2.38.0/docs/supported-commands), implement it in the matching mixin under `fakeredis/commands_mixins/`, and add tests that pass against both the fake and a real Valkey server.
 If you find a place where `FakeValkey` and Valkey disagree, [open an issue](https://github.com/cunla/fakeredis-py/issues) with the command and your Valkey version; a failing comparison is the most useful kind of bug report I get.
 
-To start, replace one mocked client in your own test suite with `FakeValkey()` and see which tests change.
+## Try FakeValkey on your own test suite
+
+A mock checks your code against the replies you wrote into it.
+`FakeValkey` checks it against an implementation of the Valkey command set, and the fakeredis CI matrix compares that implementation with real Valkey 8.1.8 and 9.1 servers.
+
+To see what that difference catches in your project, replace one mocked client with a `FakeValkey` instance and run your tests.
+A test that starts failing has found one of three things: a reply the mock made up, a bug the mock was hiding, or a command the fake does not implement yet.
+The first two are worth fixing in your code; the third is a contained first pull request to fakeredis.
