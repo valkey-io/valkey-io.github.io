@@ -1,4 +1,4 @@
-{%- macro arguments_parse(argument_array, separator="") -%}
+{% component arguments_parse(argument_array, separator="") %}
     {%- for arguments in argument_array -%}
         {%- if arguments.optional and arguments.optional ==  true -%}
             {%- set start = "[" -%}
@@ -21,11 +21,11 @@
         {%- set next = "" -%}
         {%- if arguments.type and arguments.type == "oneof" -%}
             {%- if arguments.arguments -%}
-                {%- set next = self::arguments_parse(argument_array=arguments.arguments, separator="|") -%}
+                {%- set next %}{{< arguments_parse argument_array={arguments.arguments} separator="|" />}}{% endset -%}
             {%- endif -%}
         {%- else -%}
             {%- if arguments.arguments -%}
-                {%- set next = self::arguments_parse(argument_array=arguments.arguments) -%}
+                {%- set next %}{{< arguments_parse argument_array={arguments.arguments} />}}{% endset -%}
             {%- endif -%}
         {%- endif -%}
         {%- if separator == "|" and loop.last == false -%}
@@ -39,39 +39,16 @@
             [ {{ arguments_str }} ... ]
         {% endif %}
     {%- endfor -%}
-{%- endmacro arguments_parse -%}
+{% endcomponent arguments_parse %}
 
-{%- macro command_obj_name(command_data) -%}
-    {%- for command, command_obj in command_data -%}
-        {% set_global command_obj_name = command %}
-    {%- endfor -%}
-{{ command_obj_name }}
-{%- endmacro command_obj_name -%}
-
-{%- macro command_search_json_path(slug) -%}
-{{config.extra.command_search_json_path }}{{ slug }}.json
-{%- endmacro command_search_json_path -%}
-
-{%- macro command_json_path(slug) -%}
-{{config.extra.command_json_path }}{{ slug }}.json
-{%- endmacro command_json_path -%}
-
-{%- macro command_bloom_json_path(slug) -%}
-{{config.extra.command_bloom_json_path }}{{ slug }}.json
-{%- endmacro command_bloom_json_path -%}
-
-{%- macro command_json_json_path(slug) -%}
-{{config.extra.command_json_json_path }}{{ slug }}.json
-{%- endmacro command_json_json_path -%}
-
-{%- macro fix_links(content) -%}
+{% component fix_links_command(content) %}
 {{ content
-    | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md#(?P<hash>.*?)\)`, rep=`](/topics/$fname#$hash)`)
-    | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md\)`, rep=`](/topics/$fname)`)
-    | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+\.\./topics/(?P<fname>.*?).md`, rep=`[$token]: /topics/$fname`)
-    | regex_replace(pattern=`\]\((?P<fname>[\w\.-]*?)\.md#(?P<hash>.*?)\)`, rep=`](/commands/$fname#$hash)`)
-    | regex_replace(pattern=`\]\((?P<fname>[\w\.-]*?)\.md\)`, rep=`](/commands/$fname)`)
-    | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+(?P<fname>[\w\.-]*?).md`, rep=`[$token]: /commands/$fname`)
+    | regex_replace(pattern="\\]\\(\\.\\./topics/(?P<fname>.*?).md#(?P<hash>.*?)\\)", rep="](/topics/$fname#$hash)")
+    | regex_replace(pattern="\\]\\(\\.\\./topics/(?P<fname>.*?).md\\)", rep="](/topics/$fname)")
+    | regex_replace(pattern="\\[(?P<token>.*?)\\]:\\s+\\.\\./topics/(?P<fname>.*?).md", rep="[$token]: /topics/$fname")
+    | regex_replace(pattern="\\]\\((?P<fname>[\\w\\.-]*?)\\.md#(?P<hash>.*?)\\)", rep="](/commands/$fname#$hash)")
+    | regex_replace(pattern="\\]\\((?P<fname>[\\w\\.-]*?)\\.md\\)", rep="](/commands/$fname)")
+    | regex_replace(pattern="\\[(?P<token>.*?)\\]:\\s+(?P<fname>[\\w\\.-]*?).md", rep="[$token]: /commands/$fname")
     | safe
     }}
-{%- endmacro fix_links -%}
+{% endcomponent fix_links_command %}
