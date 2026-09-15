@@ -33,7 +33,6 @@
     "integrations/langbot.json",
     "integrations/langflow.json",
     "integrations/litellm.json",
-    "integrations/localai.json",
     "integrations/valkey-mcp-server.json",
     "integrations/valkey-message-queue-starter.json"
   ]
