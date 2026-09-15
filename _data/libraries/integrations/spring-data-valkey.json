@@ -9,5 +9,6 @@
   "type": "tools",
   "tags": [
     "Frameworks & ORMs"
-  ]
+  ],
+  "installCommand": "io.valkey.springframework.data:spring-data-valkey:2.0.0"
 }

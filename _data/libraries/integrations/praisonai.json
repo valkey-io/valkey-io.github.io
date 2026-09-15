@@ -2,11 +2,11 @@
   "name": "PraisonAI",
   "language": "Python",
   "license": "MIT",
-  "description": "Multi-agent framework for building production agent teams, with pluggable memory and retrieval.",
+  "description": "Multi-agent framework for building production agent teams, with pluggable retrieval (requires valkey-bundle), and storage.",
   "repository": "https://github.com/MervinPraison/PraisonAI",
   "documentation": "https://docs.praison.ai/",
   "isFirstParty": false,
-  "installCommand": "pip install praisonai",
+  "installCommand": "pip install 'praisonai[valkey]'",
   "type": "ai",
   "tags": [
     "Agent frameworks"

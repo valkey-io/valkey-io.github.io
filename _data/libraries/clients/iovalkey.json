@@ -8,7 +8,7 @@
   "isFirstParty": true,
   "docsNote": "No dedicated Valkey-branded docs site; only redis.github.io API docs from the ioredis lineage exist (checked 2026-09-03).",
   "installCommand": "npm install iovalkey",
-  "features": "110000001",
+  "features": "111000001",
   "type": "clients",
   "tags": [
     "Clients"

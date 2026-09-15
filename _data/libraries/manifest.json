@@ -28,6 +28,13 @@
     "integrations/valkey-integration-for-haystack.json",
     "integrations/cognee-valkey-adapter.json",
     "integrations/praisonai.json",
-    "integrations/valkey-skills.json"
+    "integrations/valkey-skills.json",
+    "integrations/agno.json",
+    "integrations/langbot.json",
+    "integrations/langflow.json",
+    "integrations/litellm.json",
+    "integrations/localai.json",
+    "integrations/valkey-mcp-server.json",
+    "integrations/valkey-message-queue-starter.json"
   ]
 }

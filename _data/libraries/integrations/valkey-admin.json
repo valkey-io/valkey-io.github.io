@@ -2,7 +2,7 @@
   "name": "Valkey Admin",
   "language": "TypeScript",
   "license": "Apache-2.0",
-  "description": "Administration console for standalone and clustered deployments: browse and edit keys, inspect slots and replication, watch live metrics and run commands from a single desktop app.",
+  "description": "Administration console for standalone and clustered deployments: browse and edit keys, inspect slots and replication, watch live metrics and run commands from a single web interface.",
   "repository": "https://github.com/valkey-io/valkey-admin",
   "documentation": "https://valkey-admin.valkey.io/",
   "isFirstParty": true,

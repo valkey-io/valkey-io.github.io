@@ -6,7 +6,7 @@
   "repository": "https://github.com/cocoindex-io/cocoindex",
   "documentation": "https://cocoindex.io/",
   "isFirstParty": false,
-  "installCommand": "pip install cocoindex",
+  "installCommand": "pip install 'cocoindex[valkey]'",
   "type": "ai",
   "tags": [
     "RAG & retrieval"

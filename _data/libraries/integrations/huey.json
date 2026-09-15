@@ -2,7 +2,7 @@
   "name": "huey",
   "language": "Python",
   "license": "MIT",
-  "description": "Lightweight Python task queue with periodic tasks and retries.",
+  "description": "Python task queue with periodic tasks and retries, with a Valkey backend built on the official Valkey GLIDE client.",
   "repository": "https://github.com/coleifer/huey",
   "documentation": "https://huey.readthedocs.io/",
   "isFirstParty": false,

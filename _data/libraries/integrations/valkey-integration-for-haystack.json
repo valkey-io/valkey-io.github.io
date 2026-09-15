@@ -2,7 +2,7 @@
   "name": "Valkey Integration for Haystack",
   "language": "Python",
   "license": "Apache-2.0",
-  "description": "Document and embedding store for Haystack RAG pipelines, backed by Valkey.",
+  "description": "Document and embedding store for Haystack RAG pipelines, backed by Valkey (requires valkey-bundle).",
   "repository": "https://github.com/deepset-ai/haystack-core-integrations",
   "documentation": "https://haystack.deepset.ai/integrations",
   "isFirstParty": false,

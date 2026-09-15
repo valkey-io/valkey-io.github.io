@@ -1,0 +1,13 @@
+{
+  "name": "LocalAI",
+  "language": "Go",
+  "license": "MIT",
+  "description": "Self-hosted OpenAI-compatible inference server with an optional valkey-store vector backend, installed from its backend gallery (requires valkey-bundle).",
+  "repository": "https://github.com/mudler/LocalAI",
+  "documentation": "https://localai.io",
+  "installCommand": null,
+  "type": "ai",
+  "tags": [
+    "RAG & retrieval"
+  ]
+}

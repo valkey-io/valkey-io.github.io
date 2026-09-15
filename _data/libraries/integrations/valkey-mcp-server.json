@@ -1,0 +1,13 @@
+{
+  "name": "Valkey MCP Server",
+  "language": "Python",
+  "license": "Apache-2.0",
+  "description": "Model Context Protocol server exposing Valkey to AI agents through search, JSON, and tiered read/write/admin command tools (requires valkey-bundle).",
+  "repository": "https://github.com/awslabs/mcp/tree/main/src/valkey-mcp-server",
+  "documentation": null,
+  "installCommand": "uvx awslabs.valkey-mcp-server@latest",
+  "type": "ai",
+  "tags": [
+    "Agent frameworks"
+  ]
+}

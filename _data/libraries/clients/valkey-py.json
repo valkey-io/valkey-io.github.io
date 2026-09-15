@@ -7,7 +7,7 @@
   "documentation": "https://valkey-py.readthedocs.io/en/latest/",
   "isFirstParty": true,
   "installCommand": "pip install valkey",
-  "features": "110000001",
+  "features": "111000101",
   "type": "clients",
   "tags": [
     "Clients"

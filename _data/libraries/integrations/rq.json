@@ -1,9 +1,9 @@
 {
   "name": "Rq",
   "language": "Python",
-  "license": "BSD-3-Clause",
-  "description": "Minimalistic Python task queue backed by Valkey.",
-  "repository": "https://github.com/nvie/rq",
+  "license": "BSD-2-Clause",
+  "description": "Minimalistic Python task queue that supports Valkey.",
+  "repository": "https://github.com/rq/rq",
   "documentation": "https://python-rq.org/",
   "isFirstParty": false,
   "installCommand": "pip install rq",
