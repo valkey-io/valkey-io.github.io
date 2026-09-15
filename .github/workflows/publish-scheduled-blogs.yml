@@ -1,0 +1,77 @@
+name: Publish scheduled blogs
+
+on:
+  schedule:
+    # Once a day at 15:00 UTC, which is 07:00 PST / 08:00 PDT.
+    # Running once during PT working hours avoids the middle-of-the-night
+    # publishing that an hourly job would cause, since posts are conventionally
+    # dated 00:00:00 or 01:01:01.
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Report what would be published without committing'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-scheduled-blogs
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate token
+        id: generate-token
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
+        with:
+          app-id: ${{ secrets.VALKEYRIE_BOT_APP_ID }}
+          private-key: ${{ secrets.VALKEYRIE_BOT_PRIVATE_KEY }}
+          # workflow `permissions` only scopes GITHUB_TOKEN, not this token.
+          permission-contents: write
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Install dependencies
+        run: pip install --disable-pip-version-check 'tomlkit==0.15.1'
+
+      - name: Release posts whose date has arrived
+        id: release
+        run: python3 build/publish-scheduled-blogs.py
+
+      - name: Commit and push
+        if: steps.release.outputs.count != '0' && inputs.dry_run != true
+        env:
+          PUBLISHED: ${{ steps.release.outputs.published }}
+        run: |
+          git config user.name 'valkeyrie-bot[bot]'
+          git config user.email '${{ steps.generate-token.outputs.app-slug }}[bot]@users.noreply.github.com'
+          # Stage by directory: the script only edits files under content/blog,
+          # and this is safe for paths containing spaces.
+          git add -- content/blog
+          git commit --signoff -m 'Publish scheduled blog posts' \
+            -m "$(printf '%s\n' "$PUBLISHED" | grep . | sed 's/^/- /')"
+          git push origin HEAD:main
+
+      - name: Summary
+        env:
+          PUBLISHED: ${{ steps.release.outputs.published }}
+        run: |
+          if [[ '${{ steps.release.outputs.count }}' == '0' ]]; then
+            echo 'Nothing to publish.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '### Published' >> "$GITHUB_STEP_SUMMARY"
+            printf '%s\n' "$PUBLISHED" | grep . | sed 's/^/- /' >> "$GITHUB_STEP_SUMMARY"
+            if [[ '${{ inputs.dry_run }}' == 'true' ]]; then
+              echo '' >> "$GITHUB_STEP_SUMMARY"
+              echo '_Dry run: nothing was committed._' >> "$GITHUB_STEP_SUMMARY"
+            fi
+          fi

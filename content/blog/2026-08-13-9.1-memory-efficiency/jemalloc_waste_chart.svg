@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 620" font-family="Inter, -apple-system, sans-serif">
+  <defs>
+    <style>
+      text { fill: #2c3e50; }
+      .axis-label { font-size: 13px; fill: #6b7b8f; }
+      .title { font-size: 18px; font-weight: 600; fill: #1a2332; }
+      .subtitle { font-size: 12px; fill: #6b7b8f; }
+      .legend-text { font-size: 12px; fill: #2c3e50; }
+      .tick-label { font-size: 11px; fill: #6b7b8f; }
+      .annotation { font-size: 10px; fill: #6b7b8f; font-weight: 500; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="700" height="620" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="350" y="35" text-anchor="middle" class="title">jemalloc Size-Class Round-Up Waste</text>
+  <text x="350" y="55" text-anchor="middle" class="subtitle">Default size classes · 16-byte quantum · 4 KiB pages · 64-bit</text>
+
+  <!-- Chart area: 520w x 520h, origin at (100, 80) -->
+  <!-- X: 0-2048, Y: 0-2048 -->
+  <!-- Scale: 520/2048 = 0.253906 px/byte -->
+  <g transform="translate(100, 80)">
+
+    <!-- Grid lines -->
+    <g stroke="#e8ecf0" stroke-width="0.5">
+      <!-- Vertical -->
+      <line x1="0" y1="0" x2="0" y2="520"/>
+      <line x1="65" y1="0" x2="65" y2="520"/>
+      <line x1="130" y1="0" x2="130" y2="520"/>
+      <line x1="195" y1="0" x2="195" y2="520"/>
+      <line x1="260" y1="0" x2="260" y2="520"/>
+      <line x1="325" y1="0" x2="325" y2="520"/>
+      <line x1="390" y1="0" x2="390" y2="520"/>
+      <line x1="455" y1="0" x2="455" y2="520"/>
+      <line x1="520" y1="0" x2="520" y2="520"/>
+      <!-- Horizontal -->
+      <line x1="0" y1="520" x2="520" y2="520"/>
+      <line x1="0" y1="455" x2="520" y2="455"/>
+      <line x1="0" y1="390" x2="520" y2="390"/>
+      <line x1="0" y1="325" x2="520" y2="325"/>
+      <line x1="0" y1="260" x2="520" y2="260"/>
+      <line x1="0" y1="195" x2="520" y2="195"/>
+      <line x1="0" y1="130" x2="520" y2="130"/>
+      <line x1="0" y1="65" x2="520" y2="65"/>
+      <line x1="0" y1="0" x2="520" y2="0"/>
+    </g>
+
+    <!-- Axes -->
+    <line x1="0" y1="520" x2="520" y2="520" stroke="#1a2332" stroke-width="1.5"/>
+    <line x1="0" y1="0" x2="0" y2="520" stroke="#1a2332" stroke-width="1.5"/>
+
+    <!-- X tick labels (every 256B) -->
+    <text x="0" y="538" text-anchor="middle" class="tick-label">0</text>
+    <text x="65" y="538" text-anchor="middle" class="tick-label">256</text>
+    <text x="130" y="538" text-anchor="middle" class="tick-label">512</text>
+    <text x="195" y="538" text-anchor="middle" class="tick-label">768</text>
+    <text x="260" y="538" text-anchor="middle" class="tick-label">1024</text>
+    <text x="325" y="538" text-anchor="middle" class="tick-label">1280</text>
+    <text x="390" y="538" text-anchor="middle" class="tick-label">1536</text>
+    <text x="455" y="538" text-anchor="middle" class="tick-label">1792</text>
+    <text x="520" y="538" text-anchor="middle" class="tick-label">2048</text>
+
+    <!-- Y tick labels -->
+    <text x="-8" y="524" text-anchor="end" class="tick-label">0</text>
+    <text x="-8" y="459" text-anchor="end" class="tick-label">256</text>
+    <text x="-8" y="394" text-anchor="end" class="tick-label">512</text>
+    <text x="-8" y="329" text-anchor="end" class="tick-label">768</text>
+    <text x="-8" y="264" text-anchor="end" class="tick-label">1024</text>
+    <text x="-8" y="199" text-anchor="end" class="tick-label">1280</text>
+    <text x="-8" y="134" text-anchor="end" class="tick-label">1536</text>
+    <text x="-8" y="69" text-anchor="end" class="tick-label">1792</text>
+    <text x="-8" y="4" text-anchor="end" class="tick-label">2048</text>
+
+    <!-- Axis titles -->
+    <text x="260" y="565" text-anchor="middle" class="axis-label">Requested allocation size (bytes)</text>
+    <text x="-60" y="260" text-anchor="middle" class="axis-label" transform="rotate(-90, -60, 260)">Actual allocation size (bytes)</text>
+
+    <!-- Waste shading -->
+    <!-- Scale: px = bytes * 520/2048 = bytes * 0.253906 -->
+    <!-- jemalloc classes up to 2048: 8,16,32,48,64,80,96,112,128,160,192,224,256,320,384,448,512,640,768,896,1024,1280,1536,1792,2048 -->
+    <!-- Each waste triangle: from (prev_class, prev_class) along diagonal to (class, class), -->
+    <!-- with the staircase at y=class from x=prev_class to x=class -->
+    <!-- Triangle vertices: (px(prev), py(prev)), (px(prev), py(class)), (px(class), py(class)) -->
+
+    <!-- px(v) = v * 0.253906, py(v) = 520 - v * 0.253906 -->
+    <g fill="rgba(232, 93, 93, 0.22)" stroke="none">
+      <!-- 8→16: (2.0,518.0) (2.0,515.9) (4.1,515.9) -->
+      <polygon points="2.0,518.0 2.0,515.9 4.1,515.9"/>
+      <!-- 16→32: (4.1,515.9) (4.1,511.9) (8.1,511.9) -->
+      <polygon points="4.1,515.9 4.1,511.9 8.1,511.9"/>
+      <!-- 32→48 -->
+      <polygon points="8.1,511.9 8.1,507.8 12.2,507.8"/>
+      <!-- 48→64 -->
+      <polygon points="12.2,507.8 12.2,503.8 16.3,503.8"/>
+      <!-- 64→80 -->
+      <polygon points="16.3,503.8 16.3,499.7 20.3,499.7"/>
+      <!-- 80→96 -->
+      <polygon points="20.3,499.7 20.3,495.6 24.4,495.6"/>
+      <!-- 96→112 -->
+      <polygon points="24.4,495.6 24.4,491.6 28.4,491.6"/>
+      <!-- 112→128 -->
+      <polygon points="28.4,491.6 28.4,487.5 32.5,487.5"/>
+      <!-- 128→160 -->
+      <polygon points="32.5,487.5 32.5,479.4 40.6,479.4"/>
+      <!-- 160→192 -->
+      <polygon points="40.6,479.4 40.6,471.3 48.8,471.3"/>
+      <!-- 192→224 -->
+      <polygon points="48.8,471.3 48.8,463.1 56.9,463.1"/>
+      <!-- 224→256 -->
+      <polygon points="56.9,463.1 56.9,455.0 65.0,455.0"/>
+      <!-- 256→320 -->
+      <polygon points="65.0,455.0 65.0,438.8 81.3,438.8"/>
+      <!-- 320→384 -->
+      <polygon points="81.3,438.8 81.3,422.5 97.5,422.5"/>
+      <!-- 384→448 -->
+      <polygon points="97.5,422.5 97.5,406.3 113.8,406.3"/>
+      <!-- 448→512 -->
+      <polygon points="113.8,406.3 113.8,390.0 130.0,390.0"/>
+      <!-- 512→640 -->
+      <polygon points="130.0,390.0 130.0,357.5 162.5,357.5"/>
+      <!-- 640→768 -->
+      <polygon points="162.5,357.5 162.5,325.0 195.0,325.0"/>
+      <!-- 768→896 -->
+      <polygon points="195.0,325.0 195.0,292.5 227.5,292.5"/>
+      <!-- 896→1024 -->
+      <polygon points="227.5,292.5 227.5,260.0 260.0,260.0"/>
+      <!-- 1024→1280 -->
+      <polygon points="260.0,260.0 260.0,195.0 325.0,195.0"/>
+      <!-- 1280→1536 -->
+      <polygon points="325.0,195.0 325.0,130.0 390.0,130.0"/>
+      <!-- 1536→1792 -->
+      <polygon points="390.0,130.0 390.0,65.0 455.0,65.0"/>
+      <!-- 1792→2048 -->
+      <polygon points="455.0,65.0 455.0,0.0 520.0,0.0"/>
+    </g>
+
+    <!-- y=x diagonal (ideal, no waste) -->
+    <line x1="0" y1="520" x2="520" y2="0" stroke="#0066FF" stroke-width="2" stroke-dasharray="6,3"/>
+
+    <!-- Staircase (actual jemalloc allocations) -->
+    <polyline fill="none" stroke="#1a2332" stroke-width="2.2"
+      points="
+        0,518.0
+        2.0,518.0
+        2.0,515.9
+        4.1,515.9
+        4.1,511.9
+        8.1,511.9
+        8.1,507.8
+        12.2,507.8
+        12.2,503.8
+        16.3,503.8
+        16.3,499.7
+        20.3,499.7
+        20.3,495.6
+        24.4,495.6
+        24.4,491.6
+        28.4,491.6
+        28.4,487.5
+        32.5,487.5
+        32.5,479.4
+        40.6,479.4
+        40.6,471.3
+        48.8,471.3
+        48.8,463.1
+        56.9,463.1
+        56.9,455.0
+        65.0,455.0
+        65.0,438.8
+        81.3,438.8
+        81.3,422.5
+        97.5,422.5
+        97.5,406.3
+        113.8,406.3
+        113.8,390.0
+        130.0,390.0
+        130.0,357.5
+        162.5,357.5
+        162.5,325.0
+        195.0,325.0
+        195.0,292.5
+        227.5,292.5
+        227.5,260.0
+        260.0,260.0
+        260.0,195.0
+        325.0,195.0
+        325.0,130.0
+        390.0,130.0
+        390.0,65.0
+        455.0,65.0
+        455.0,0.0
+        520.0,0.0
+      "/>
+
+    <!-- Spacing annotations: horizontal text, anchored at the midpoint of each
+         spacing region on the diagonal, offset a uniform +16px right (≈11px
+         perpendicular distance from the ideal line) so all labels sit evenly
+         below-right of the diagonal in the empty region. -->
+    <!-- 16B spacing region: 16-128, midpoint 72 → diag point (18.3, 501.7) -->
+    <text x="34" y="506" class="annotation">16 B spacing</text>
+
+    <!-- 32B spacing region: 128-256, midpoint 192 → diag point (48.8, 471.2) -->
+    <text x="65" y="475" class="annotation">32 B spacing</text>
+
+    <!-- 64B spacing region: 256-512, midpoint 384 → diag point (97.5, 422.5) -->
+    <text x="114" y="427" class="annotation">64 B spacing</text>
+
+    <!-- 128B spacing region: 512-1024, midpoint 768 → diag point (195, 325) -->
+    <text x="211" y="329" class="annotation">128 B spacing</text>
+
+    <!-- 256B spacing region: 1024-2048, midpoint 1536 → diag point (390, 130) -->
+    <text x="406" y="134" class="annotation">256 B spacing</text>
+
+    <!-- Legend -->
+    <g transform="translate(20, 20)">
+      <rect x="-10" y="-12" width="195" height="72" rx="4" fill="#ffffff" stroke="#e8ecf0" stroke-width="1"/>
+      <line x1="0" y1="0" x2="24" y2="0" stroke="#0066FF" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="30" y="4" class="legend-text">Ideal (y = x, zero waste)</text>
+      <line x1="0" y1="22" x2="24" y2="22" stroke="#1a2332" stroke-width="2.2"/>
+      <text x="30" y="26" class="legend-text">Actual (jemalloc size class)</text>
+      <rect x="0" y="38" width="24" height="14" fill="rgba(232, 93, 93, 0.25)" stroke="none" rx="2"/>
+      <text x="30" y="50" class="legend-text">Round-up waste</text>
+    </g>
+  </g>
+</svg>

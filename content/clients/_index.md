@@ -12,10 +12,12 @@ recommended_clients_paths = [
     "/java/redisson.json",
     "/go/valkey-GLIDE.json",
     "/go/valkey-go.json",
+    "/php/valkey-GLIDE.json",
     "/php/phpredis.json",
     "/php/predis.json",
     "/swift/valkey-swift.json",
-    "/csharp/valkey-GLIDE.json"
+    "/csharp/valkey-GLIDE.json",
+    "/ruby/valkey-GLIDE.json"
     ] 
 
 client_fields =[
