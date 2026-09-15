@@ -1,9 +1,8 @@
 {% extends "fullwidth.html" %}
-{% import "macros/docs.html" as docs %}
 
 {% block main_content %}
     {% set client_path = section.extra.recommended_clients_paths | first %}
-    {% set first_client = load_data(path = docs::client_json_path(client_path=client_path), format="json", required = false) %}
+    {% set first_client = load_data(path = config.extra.client_json_path ~ client_path, format="json", required = false) %}
     {% if not first_client %}
         <strong>Clients page not found.</strong> You likely need to build the client page. See "Building additional content" in the README.md file.
     {% else %}
@@ -19,19 +18,19 @@
                 {% for path in section.extra.recommended_clients_paths %}
                     {% set language = path | split(pat="/") | nth(n=1) %}
                     {% if language not in languages %}
-                        {% set_global languages = languages | concat(with=language) %}
+                        {% set_global languages = [...languages, language] %}
                     {% endif %}
                 {% endfor %}
                 {% for language in languages %}
-                    <li><a href="#{{ language | slugify }}">{{ docs::format_language(language=language) }}</a></li>
+                    <li><a href="#{{ language | slugify }}">{{< format_language language={language} />}}</a></li>
                 {% endfor %}
                 <li><a href="#feature-comparison-table">Feature Comparison Table</a></li>
             </ul>
             {% for language in languages %}
                 <div class="language-clients">
-                    <h2 id="{{ language | slugify }}">{{ docs::format_language(language=language) }}</h2>
+                    <h2 id="{{ language | slugify }}">{{< format_language language={language} />}}</h2>
                     {% for path in section.extra.recommended_clients_paths %}
-                        {% set client = load_data(path = docs::client_json_path(client_path= path), format="json") %}
+                        {% set client = load_data(path = config.extra.client_json_path ~ path, format="json") %}
                         {% if client.language == language %}
                         <div class="client-item" >
                             <h3 id="{{ client.name | slugify }}">{{ client.name }}</h3>
@@ -42,7 +41,7 @@
                                 {% endif %} 
                                 <li>
                                     <strong>Installation:</strong>
-                                    {% if client.installation is iterable %}
+                                    {% if client.installation is not string %}
                                         <ul>
                                             {% for installation_type in client.installation %}
                                                 <li>
