@@ -105,7 +105,22 @@ One or more curated tags used for the Category filter on the Integrations page. 
 The official documentation or landing-page URL. Used for the card's title link and the "Documentation" footer link. Set to `null` when no dedicated docs site exists.
 
 #### `docsNote` (string)
-A short note explaining a `null` `documentation` value (e.g. "README is the only documentation, checked YYYY-MM-DD"). For maintainer context; not rendered on the card.
+A short note explaining a `null` `documentation` value. **Reviewer and maintainer context only — it is not rendered on the card**, so it can be candid.
+
+**Use it only alongside `documentation: null`.** If you have a documentation URL, put it in `documentation` and omit `docsNote`; a note next to a populated URL has nothing to explain.
+
+**A useful note answers three things:** what you looked for, what exists instead, and when you checked. The date matters because docs sites appear and disappear — a note without one cannot be trusted a year later. Use the form `(checked YYYY-MM-DD)`.
+
+**Examples from the catalog:**
+
+```json
+"docsNote": "No dedicated Valkey-branded docs site; only redis.github.io API docs from the ioredis lineage exist (checked 2026-09-03)."
+"docsNote": "No dedicated docs site; only an in-repo QUICK_START.md exists (checked 2026-09-03)."
+```
+
+**Do not present an unverified URL as though it were documentation.** If you found a candidate and could not confirm it, say so explicitly in the note and still leave `documentation` as `null`. This is not hypothetical: one entry's note recorded an unconfirmed `<project>.io` reference, and that domain turned out to be a **parked for-sale page** with no documentation on it. Naming it as unverified in `docsNote` is what kept it out of the `documentation` field.
+
+**Not a substitute for having docs.** A note saying documentation is absent does not satisfy the documentation expectation in the review checklist below; it records the gap honestly so a reviewer is not left guessing whether the field was researched or simply skipped.
 
 #### `installCommand` (string)
 The primary install command using the language's standard package manager. Rendered with a copy button.
