@@ -16,7 +16,8 @@
     {% else %}
       {% set page_cards = [] %}
     {% endif %}
-    {% set cards = page_cards | concat(with= cards_meta.extra.cards) %}
+    {% set meta_cards = cards_meta.extra.cards | default(value=[]) %}
+    {% set cards = [...page_cards, ...meta_cards] %}
     
     {% if cards %}
       <div class="community-card-grid">
