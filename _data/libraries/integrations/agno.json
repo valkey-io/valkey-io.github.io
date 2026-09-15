@@ -5,6 +5,7 @@
   "description": "Agent framework with Valkey as a session and state store, plus a Valkey vector store (requires valkey-bundle) supporting vector and keyword search.",
   "repository": "https://github.com/agno-agi/agno",
   "documentation": "https://docs.agno.com/database/providers/valkey/overview",
+  "isFirstParty": false,
   "installCommand": "pip install 'agno[valkey]'",
   "type": "ai",
   "tags": [

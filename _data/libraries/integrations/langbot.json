@@ -5,6 +5,7 @@
   "description": "Chat-bot platform whose knowledge base can use a Valkey vector store, built on the official Valkey GLIDE client (requires valkey-bundle; not available on Windows).",
   "repository": "https://github.com/langbot-app/LangBot",
   "documentation": "https://langbot.app",
+  "isFirstParty": false,
   "installCommand": "pip install langbot",
   "type": "ai",
   "tags": [

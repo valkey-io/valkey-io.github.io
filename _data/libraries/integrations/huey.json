@@ -6,7 +6,7 @@
   "repository": "https://github.com/coleifer/huey",
   "documentation": "https://huey.readthedocs.io/",
   "isFirstParty": false,
-  "installCommand": "pip install huey",
+  "installCommand": "pip install huey valkey-glide-sync",
   "type": "tools",
   "tags": [
     "Queues & background jobs"
