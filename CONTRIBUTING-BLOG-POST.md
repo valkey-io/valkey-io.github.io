@@ -55,7 +55,8 @@ Unless you have specific authority (and you probably don’t!), avoid speaking f
 
 Reviewers use these as the basis for suggestions, so knowing them up front saves a round trip.
 This document follows them, so read its source as an example.
-[`content/blog/example-post.md.example`](content/blog/example-post.md.example) is a short post that applies every rule below, with frontmatter, a tagged code block, and an image with alt text.
+[`content/blog/example-post.md.example`](content/blog/example-post.md.example) is a short post that applies the core rules below, with frontmatter, a tagged code block, and an image with alt text.
+It does not show the situational rules (14 and 15), which apply only to posts that embed a video or quote template-like syntax.
 Copy it as a starting point.
 
 1. Put one sentence per line in the markdown source.
@@ -107,6 +108,12 @@ The two cases that come up most in Valkey posts:
     If you find you have nothing to write in the body, the image is not carrying information worth showing.
     2. Use empty alt text (`![]`) for a purely decorative image, and for one whose content the adjacent text already states in full.
 13. Expand an acronym on first use with the acronym in parentheses.
+14. Embed a YouTube video with the `youtube` component, not a raw `<iframe>`.
+Write `{{< youtube id="VIDEO_ID" />}}` on its own line, where `VIDEO_ID` is the part after `v=` in the video URL.
+Optional attributes are `class`, `playlist`, and `autoplay`, for example `{{< youtube id="VIDEO_ID" class="my-class" />}}`.
+15. Escape any text that looks like Zola template syntax so the build does not try to evaluate it.
+Zola renders each post through its template engine, so a literal `{{ ... }}` or `{% ... %}` in your prose or in a code block (for example a Docker `--format '{{.Names}}'` string, or a Go, Vue, or Handlebars snippet) is read as a template expression and breaks the build.
+Wrap the literal text in a `{% raw %}` / `{% endraw %}` pair so it is emitted verbatim, like `{% raw %}{{.Names}}{% endraw %}`.
 
 ## Step 3: Write about yourself
 
