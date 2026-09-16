@@ -1,5 +1,8 @@
 +++
 title = "Integrations"
-template = "integrations.html"
+template = "libraries.html"
 render = true
+
+[extra]
+default_kind = "integrations"
 +++

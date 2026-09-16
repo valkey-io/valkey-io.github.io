@@ -1,28 +1,18 @@
 {# ------------------------------------------------------------------------- #}
-{# Shared catalog chrome for the Clients (/clients/) and Integrations         #}
-{# (/integrations/) pages.                                                    #}
+{# Shared catalog chrome for the merged Libraries page (served at both        #}
+{# /clients/ and /integrations/ from templates/libraries.html).               #}
 {#                                                                           #}
-{# These macros hold the markup that is IDENTICAL between the two catalog     #}
-{# pages: the compact header, the toolbar (search + Valkey Project toggle +   #}
-{# sort), and the empty-state / submission-CTA / noscript footer. The pages   #}
-{# differ in their facet (Language vs. Tags) and their per-card body          #}
-{# (feature list + legend on Clients only), so those parts stay inline in     #}
-{# each template rather than being forced through a macro.                    #}
+{# These macros hold the markup that is generic across both catalog kinds:    #}
+{# the toolbar (search + Valkey toggle + reversible sort), the empty-state,   #}
+{# and the submission-CTA / noscript footer. The kind-specific parts — the    #}
+{# per-kind headers, the Language vs. Category facets, the per-card body, and  #}
+{# the clients-only feature legend — stay inline in libraries.html.           #}
 {#                                                                           #}
 {# Keeping the shared chrome here means a change to the toolbar or empty      #}
-{# state only has to be made once, and the two pages cannot drift apart.      #}
+{# state only has to be made in one place.                                    #}
 
-{# Compact header: page title + lede. Extends default.html (not              #}
-{# fullwidth.html) so the site hero band is skipped.                          #}
-{%- macro header(title, lede) -%}
-    <header class="catalog-header">
-      <h1 class="catalog-title">{{ title }}</h1>
-      <p class="catalog-lede">{{ lede }}</p>
-    </header>
-{%- endmacro header -%}
-
-{# Toolbar: search box + Valkey Project toggle + sort control. Only the       #}
-{# search placeholder differs between pages, so it is a parameter.            #}
+{# Toolbar: search box + Valkey toggle + sort control. Only the              #}
+{# search placeholder differs, so it is a parameter.                          #}
 {%- macro toolbar(search_placeholder) -%}
     <div class="toolbar" data-toolbar>
       <div class="field field-search">
@@ -38,24 +28,31 @@
         </span>
       </div>
       <div class="field field-toggle">
-        <span class="toggle-label" id="fp-toggle-label">Valkey Project</span>
+        <span class="toggle-label" id="fp-toggle-label">Valkey</span>
         <button type="button" class="fp-toggle" data-first-party-toggle
                 role="switch" aria-checked="false" aria-labelledby="fp-toggle-label">
           <span class="fp-toggle-track" aria-hidden="true"><span class="fp-toggle-thumb"></span></span>
-          <span class="fp-toggle-text">Project only</span>
+          <span class="fp-toggle-text">Valkey only</span>
         </button>
       </div>
       <div class="field field-sort">
-        <label for="catalog-sort">Sort</label>
-        <select id="catalog-sort" class="sort-control" data-sort-control aria-label="Sort">
-          <option value="name-asc" selected>Name A–Z</option>
-        </select>
+        <label id="catalog-sort-label">Sort</label>
+        <button type="button" id="catalog-sort" class="sort-control" data-sort-control
+                aria-pressed="false" aria-labelledby="catalog-sort-label"
+                aria-label="Sort by name, ascending A to Z. Activate to reverse.">
+          <span class="sort-control-text" data-sort-text>Name A–Z</span>
+          <svg class="sort-control-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 4v16"></path><path d="M4 8l3-4 3 4"></path>
+            <path d="M13 6h7"></path><path d="M13 12h5"></path><path d="M13 18h3"></path>
+          </svg>
+        </button>
       </div>
     </div>
 {%- endmacro toolbar -%}
 
-{# Empty state shown by the JS layer when no card matches. `noun` is the      #}
-{# plural item name ("clients" / "integrations") used in the message.         #}
+{# Empty state shown by the JS layer when no card of the active kind matches. #}
+{# `noun` is the plural item name ("libraries") used in the message.          #}
 {%- macro empty_state(noun) -%}
       <div class="empty-state" data-empty-state hidden>
         <p class="empty-msg">No {{ noun }} match your current search and filters.</p>

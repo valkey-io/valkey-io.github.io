@@ -1,5 +1,8 @@
 +++
 title = "Clients"
-template = "clients.html"
+template = "libraries.html"
 render = true
+
+[extra]
+default_kind = "clients"
 +++
