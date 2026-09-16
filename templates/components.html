@@ -1,5 +1,5 @@
 {% component youtube(id, class="", playlist="", autoplay=false) %}
 <div {% if class %}class="{{class}}"{% endif %}>
-    <iframe src="https://www.youtube-nocookie.com/embed/{{id}}{% if playlist %}?list={{playlist}}{% endif %}{% if autoplay %}?autoplay=1{% endif %}" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+    <iframe src="https://www.youtube-nocookie.com/embed/{{id}}{% if playlist %}?list={{playlist}}{% endif %}{% if autoplay %}{% if playlist %}&autoplay=1{% else %}?autoplay=1{% endif %}{% endif %}" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 </div>
 {% endcomponent youtube %}
