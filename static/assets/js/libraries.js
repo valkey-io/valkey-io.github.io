@@ -89,6 +89,15 @@
     return hay.indexOf(q) !== -1;
   }
 
+  // Whether the search term matches the card's title (name). Used to rank
+  // title matches ahead of description-only matches while a search is active.
+  function matchesTitle(card, search) {
+    if (!search) return false;
+    var q = String(search).toLowerCase();
+    var name = (card.nameLower || "").toLowerCase();
+    return name.indexOf(q) !== -1;
+  }
+
   // A card is visible iff it is of the ACTIVE kind AND matches the active-kind
   // facet, the first-party toggle, and the search text. Preserves input order
   // so a later stable sort can rely on it.
@@ -108,14 +117,22 @@
   }
 
   // Direction-aware stable sort by nameLower. `direction` is "asc" (default) or
-  // "desc"; ties keep original input order in both directions (stable).
-  function sortVisible(visible, direction) {
+  // "desc"; ties keep original input order in both directions (stable). When
+  // `search` is non-empty, title matches are grouped before description-only
+  // matches; within each group the name ordering still applies.
+  function sortVisible(visible, direction, search) {
     var list = Array.isArray(visible) ? visible.slice() : [];
     var desc = direction === "desc";
+    var q = search || "";
     var decorated = list.map(function (card, index) {
       return { card: card, index: index };
     });
     decorated.sort(function (a, b) {
+      if (q) {
+        var aTitle = matchesTitle(a.card, q) ? 0 : 1;
+        var bTitle = matchesTitle(b.card, q) ? 0 : 1;
+        if (aTitle !== bTitle) return aTitle - bTitle;
+      }
       var na = ((a.card && a.card.nameLower) || "").toLowerCase();
       var nb = ((b.card && b.card.nameLower) || "").toLowerCase();
       if (na < nb) return desc ? 1 : -1;
@@ -249,6 +266,7 @@
     sortVisible: sortVisible,
     pillCount: pillCount,
     recovery: recovery,
+    matchesTitle: matchesTitle,
   };
 });
 
@@ -281,6 +299,39 @@
     return Array.prototype.slice.call(el.querySelectorAll(sel));
   }
 
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function escapeRegExp(str) {
+    return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  // Wraps the first match of `term` (case-insensitive) inside `text` with a
+  // <mark>, HTML-escaping the rest. Returns escaped plain text when there is
+  // no term or no match.
+  function highlightMatch(text, term) {
+    var safeText = escapeHtml(text);
+    if (!term) return safeText;
+    var re = new RegExp(escapeRegExp(term), "i");
+    var match = re.exec(text);
+    if (!match) return safeText;
+    var start = match.index;
+    var end = start + match[0].length;
+    return (
+      escapeHtml(text.slice(0, start)) +
+      "<mark class=\"search-hit\">" +
+      escapeHtml(text.slice(start, end)) +
+      "</mark>" +
+      escapeHtml(text.slice(end))
+    );
+  }
+
   function setScriptingFlag(doc) {
     if (doc && doc.documentElement) {
       doc.documentElement.classList.add("js");
@@ -304,7 +355,10 @@
         : [],
       firstParty: cardEl.getAttribute("data-first-party") === "true",
       search: cardEl.getAttribute("data-search") || "",
+      desc: cardEl.getAttribute("data-desc") || "",
       nameLower: cardEl.getAttribute("data-name-lower") || "",
+      descEl: q(cardEl, ".entry-desc"),
+      descOriginal: null,
     };
   }
 
@@ -356,7 +410,7 @@
   // refresh pill counts, reveal/hide the empty state.
   Controller.prototype.apply = function () {
     var visible = api.computeVisible(this.cards, this.state);
-    var ordered = api.sortVisible(visible, this.state.sortDir);
+    var ordered = api.sortVisible(visible, this.state.sortDir, this.state.search);
 
     var visibleSet = new Set(
       visible.map(function (c) {
@@ -374,6 +428,8 @@
       }
     }
 
+    this.applyDescriptionHighlights(visibleSet);
+
     if (this.grid) {
       for (var j = 0; j < ordered.length; j++) {
         this.grid.appendChild(ordered[j].el);
@@ -382,6 +438,32 @@
 
     this.refreshPillCounts();
     this.updateEmptyState(ordered.length);
+  };
+
+  // Highlights the search term in a card's description, but only for cards
+  // whose match came from the description rather than the title — title
+  // matches are already obvious from the (unhighlighted) heading. Restores
+  // the original description text for cards that are hidden or no longer
+  // matched by description.
+  Controller.prototype.applyDescriptionHighlights = function (visibleSet) {
+    var search = this.state.search || "";
+    for (var i = 0; i < this.cards.length; i++) {
+      var card = this.cards[i];
+      if (!card.descEl) continue;
+      if (card.descOriginal === null) card.descOriginal = card.descEl.textContent;
+
+      var shouldHighlight =
+        search &&
+        visibleSet.has(card.el) &&
+        !api.matchesTitle(card, search) &&
+        card.desc.indexOf(search) !== -1;
+
+      if (shouldHighlight) {
+        card.descEl.innerHTML = highlightMatch(card.descOriginal, search);
+      } else {
+        card.descEl.textContent = card.descOriginal;
+      }
+    }
   };
 
   Controller.prototype.refreshPillCounts = function () {

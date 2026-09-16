@@ -125,7 +125,7 @@
     </header>
     <header class="catalog-header" data-catalog-kind="integrations">
       <h1 class="catalog-title">Integrations</h1>
-      <p class="catalog-lede">Tools, frameworks, and AI integrations that work with Valkey across your stack. Filter by category to find what fits.</p>
+      <p class="catalog-lede">Tools, frameworks, and Integrations that work with Valkey.</p>
     </header>
 
     {# Shared toolbar: search + Valkey toggle + sort                         #}
@@ -174,6 +174,7 @@
                  data-slug="{{ slug }}"
                  data-name-lower="{{ entry.name | lower }}"
                  data-search="{{ search_text | lower }}"
+                 data-desc="{{ entry.description | lower }}"
                  data-group="{{ entry.type }}"
                  data-language="{{ lang }}"
                  data-first-party="{% if entry.isFirstParty %}true{% else %}false{% endif %}">
@@ -189,12 +190,17 @@
                       style="background:{{ lc.color }};color:{{ lc.fg }}">{{ lc.mono }}</span>
                 {%- endif -%}
                 {{ lang }}</span>
-              {% if entry.isFirstParty %}<span class="chip chip-project">Valkey</span>{% endif %}
+              {% if entry.isFirstParty %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
             </div>
           </div>
 
           <p class="entry-desc">{{ entry.description }}</p>
 
+          {# Anchored footer group — copy box, advanced features, license, and #}
+          {# the repo/docs footer are pinned to the bottom of the card as one  #}
+          {# unit, so none of them shift up or down between cards depending   #}
+          {# on how long the description is.                                  #}
+          <div class="entry-anchor">
           {% if entry.installCommand %}
           <div class="cmd">
             <span class="cmd-scroll"><code class="install-cmd">{{ entry.installCommand }}</code></span>
@@ -210,9 +216,9 @@
               {% set_global disc_count = disc_count + 1 %}
             {% endif %}
           {% endfor %}
-          {% if disc_count > 0 %}
-          <div class="disc">
-            <strong>Advanced features supported</strong>
+          <details class="disc"{% if disc_count == 0 %} data-disc-empty{% endif %}>
+            <summary>Advanced features supported <span class="disc-count">({{ disc_count }})</span></summary>
+            {% if disc_count > 0 %}
             <ul class="feature-list">
               {% for idx in range(end=9) %}
                 {% set key = fkeys[idx] %}
@@ -222,16 +228,18 @@
                 {% endif %}
               {% endfor %}
             </ul>
-          </div>
-          {% endif %}
+            {% else %}
+            <p class="disc-none">None reported.</p>
+            {% endif %}
+          </details>
 
-          {# License anchors to the bottom of the card, directly above the footer bar. #}
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
             {% if entry.repository %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
             {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
+          </div>
         </article>
       {% endfor %}
 
@@ -252,6 +260,7 @@
                  data-slug="{{ slug }}"
                  data-name-lower="{{ entry.name | lower }}"
                  data-search="{{ search_text | lower }}"
+                 data-desc="{{ entry.description | lower }}"
                  data-group="{{ entry.type }}"
                  data-tags="{{ ec_tags | join(sep='|') }}"
                  data-first-party="{% if entry.isFirstParty %}true{% else %}false{% endif %}">
@@ -261,12 +270,17 @@
             </h3>
             <div class="entry-tags">
               {% for t in ec_tags %}<span class="chip chip-tag">{{ t }}</span>{% endfor %}
-              {% if entry.isFirstParty %}<span class="chip chip-project">Valkey</span>{% endif %}
+              {% if entry.isFirstParty %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
             </div>
           </div>
 
           <p class="entry-desc">{{ entry.description }}</p>
 
+          {# Anchored footer group — copy box, license, and the repo/docs     #}
+          {# footer are pinned to the bottom of the card as one unit, so      #}
+          {# none of them shift up or down between cards depending on how    #}
+          {# long the description is.                                        #}
+          <div class="entry-anchor">
           {% if entry.installCommand %}
           <div class="cmd">
             <span class="cmd-scroll"><code class="install-cmd">{{ entry.installCommand }}</code></span>
@@ -275,13 +289,13 @@
           </div>
           {% endif %}
 
-          {# License anchors to the bottom of the card, directly above the footer bar. #}
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
             {% if entry.repository %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
             {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
+          </div>
         </article>
       {% endfor %}
 
