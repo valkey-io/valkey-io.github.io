@@ -1,18 +1,8 @@
-{# ------------------------------------------------------------------------- #}
-{# Shared catalog chrome for the merged Libraries page (served at both        #}
-{# /clients/ and /integrations/ from templates/libraries.html).               #}
-{#                                                                           #}
-{# These macros hold the markup that is generic across both catalog kinds:    #}
-{# the toolbar (search + Valkey toggle + reversible sort), the empty-state,   #}
-{# and the submission-CTA / noscript footer. The kind-specific parts — the    #}
-{# per-kind headers, the Language vs. Category facets, the per-card body, and  #}
-{# the clients-only feature legend — stay inline in libraries.html.           #}
-{#                                                                           #}
-{# Keeping the shared chrome here means a change to the toolbar or empty      #}
-{# state only has to be made in one place.                                    #}
+{# Shared catalog chrome for the Libraries page (templates/libraries.html), #}
+{# served at both /clients/ and /integrations/: the toolbar, empty-state, and #}
+{# submission-CTA / noscript footer. Kind-specific parts stay in libraries.html. #}
 
-{# Toolbar: search box + Valkey toggle + sort control. Only the              #}
-{# search placeholder differs, so it is a parameter.                          #}
+{# Toolbar: search box + Valkey toggle + sort control. #}
 {%- macro toolbar(search_placeholder) -%}
     <div class="toolbar" data-toolbar>
       <div class="field field-search">
@@ -51,8 +41,7 @@
     </div>
 {%- endmacro toolbar -%}
 
-{# Empty state shown by the JS layer when no card of the active kind matches. #}
-{# `noun` is the plural item name ("libraries") used in the message.          #}
+{# Empty state shown by JS when no card of the active kind matches. #}
 {%- macro empty_state(noun) -%}
       <div class="empty-state" data-empty-state hidden>
         <p class="empty-msg">No {{ noun }} match your current search and filters.</p>
@@ -63,11 +52,7 @@
       </div>
 {%- endmacro empty_state -%}
 
-{# Contribute section + submission call-to-action + noscript note. Emits a    #}
-{# generic contribute heading and descriptive paragraph (shared by both       #}
-{# catalog pages) above the existing submission CTA. `cta_text` is the link    #}
-{# label ("Add your client" / "Add your integration") and `noscript_noun` the  #}
-{# singular item name used in the no-JS note.                                  #}
+{# Contribute heading + submission CTA + noscript note. #}
 {%- macro footer_cta(cta_text, noscript_noun) -%}
     <h2 class="submission-heading">Add your client, tool or integration</h2>
     <p class="submission-lede">Building something on Valkey - a client, a module, a tool, or an AI integration? We'd love to see it here alongside the rest. Everything on this page lives in valkey-io repo, so adding yours is just a pull request away.</p>

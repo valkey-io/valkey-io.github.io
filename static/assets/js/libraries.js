@@ -1,37 +1,22 @@
 /*
- * libraries.js — merged Libraries catalog page (/clients/ and /integrations/).
+ * libraries.js — Libraries catalog page (/clients/ and /integrations/).
  *
- * One controller drives BOTH catalogs on a single page and a two-way
- * Clients ↔ Integrations segmented toggle. Same two-layer shape as the old
- * clients.js / integrations.js it replaces:
- *   1. A pure-logic core: side-effect-free functions (no DOM, clipboard, or
- *      timers) that partition cards by kind and decide which cards of the
- *      ACTIVE kind to show, hide, and reorder.
- *   2. DOM wiring on top: reads pre-rendered card attributes, holds interaction
- *      state, listens to events, and calls the pure functions. It never builds
- *      cards from data.
+ * One controller drives both catalogs on a single page with a Clients ↔
+ * Integrations toggle. Two layers:
+ *   1. A pure-logic core (no DOM/clipboard/timers) that partitions cards by
+ *      kind and decides which cards of the active kind to show and reorder.
+ *   2. DOM wiring that reads pre-rendered card attributes, holds interaction
+ *      state, listens to events, and calls the pure functions.
  *
  * Each card carries data-catalog-kind ("clients" | "integrations"). Only cards
- * of the active kind can be visible; the inactive kind is always hidden. Within
- * the active kind the facet (Language for clients, Tags for integrations), the
- * Valkey (first-party) toggle, the search text, and the reversible sort all
- * compose exactly as on the old single-kind pages.
+ * of the active kind can be visible. Within the active kind the facet (Language
+ * for clients, Tags for integrations), the Valkey toggle, the search text, and
+ * the reversible sort all compose.
  *
- * Card descriptor shape (read from data-* attributes):
- *   { el, kind, language|null, tags:string[], firstParty:boolean,
- *     search, nameLower }
- *
- * Interaction state shape:
- *   {
- *     kind:          "clients" | "integrations",  // active catalog kind
- *     facets: {                                    // per-kind facet selections
- *       clients:      Set<string>,                 // languages (OR; empty=all)
- *       integrations: Set<string>,                 // tags (OR; empty=all)
- *     },
- *     firstPartyOnly: boolean,                      // Valkey toggle
- *     search:        string,                        // lowercased
- *     sortDir:       "asc" | "desc",
- *   }
+ * Card descriptor: { el, kind, language|null, tags:string[], firstParty:boolean,
+ * search, nameLower }.
+ * State: { kind, facets:{clients:Set, integrations:Set}, firstPartyOnly, search,
+ * sortDir:"asc"|"desc" }.
  */
 
 (function (root, factory) {
@@ -172,8 +157,7 @@
     return count;
   }
 
-  // Recovery suggestions for an empty active-kind result. Mirrors the old
-  // per-page logic but scoped to the active kind via computeVisible.
+  // Recovery suggestions for an empty active-kind result.
   function withActiveFacet(state, set) {
     var facets = {};
     var src = (state && state.facets) || {};
@@ -269,13 +253,11 @@
 });
 
 /*
- * DOM wiring layer, built on top of the pure-logic core above. Sets the
- * scripting `js` flag, reads pre-rendered card DOM into plain descriptors,
- * holds interaction state, runs apply() (computeVisible + sortVisible to toggle
- * a hidden class and reorder nodes), refreshes live pill counts on the active
- * facet bar, reveals/hides the empty state and builds recovery, and wires the
- * kind switch, the per-kind facet pills, the Valkey toggle, debounced search,
- * the reversible sort button, and the copy buttons.
+ * DOM wiring layer, built on the pure-logic core above. Sets the `js` flag,
+ * reads pre-rendered card DOM into descriptors, holds interaction state, runs
+ * apply() (computeVisible + sortVisible to toggle a hidden class and reorder
+ * nodes), refreshes pill counts, reveals/hides the empty state, and wires the
+ * kind switch, facet pills, Valkey toggle, debounced search, sort, and copy.
  *
  * Exposed as LibrariesCatalog.initDom(root); auto-initializes on
  * DOMContentLoaded when a libraries catalog page is present.
@@ -435,7 +417,6 @@
     var list = q(this.emptyState, "[data-recovery]");
     if (!list) return;
     var suggestions = api.recovery(this.cards, this.state) || [];
-    var self = this;
     var doc = this.doc;
 
     while (list.firstChild) list.removeChild(list.firstChild);
@@ -446,9 +427,6 @@
       btn.type = "button";
       btn.setAttribute("data-recover", s.action);
       btn.textContent = s.label;
-      btn.addEventListener("click", function () {
-        self.applyRecovery(s);
-      });
       li.appendChild(btn);
       list.appendChild(li);
     });
@@ -486,8 +464,7 @@
 
   // Reflect the active kind: aria-selected on the switch options and
   // data-active-kind on the root (CSS uses it to reveal the active header,
-  // facet bar, and — for clients — the legend). Also keep the search box's
-  // aria in step is unnecessary; the placeholder is generic.
+  // facet bar, and — for clients — the legend).
   Controller.prototype.syncKindState = function () {
     var kind = this.state.kind;
     if (this.kindSwitch) {
@@ -665,16 +642,12 @@
           var btn = ev.target.closest ? ev.target.closest("[data-recover]") : null;
           if (!btn || !recoveryList.contains(btn)) return;
           var action = btn.getAttribute("data-recover");
-          if (action === "clear-filters") {
-            self.state.facets[self.state.kind] = new Set();
-            self.state.firstPartyOnly = false;
-            self.syncPillPressedState();
-            self.syncToggleState();
-            self.apply();
-          } else if (action === "clear-search") {
-            self.state.search = "";
-            if (self.searchInput) self.searchInput.value = "";
-            self.apply();
+          var suggestions = api.recovery(self.cards, self.state) || [];
+          for (var i = 0; i < suggestions.length; i++) {
+            if (suggestions[i].action === action) {
+              self.applyRecovery(suggestions[i]);
+              return;
+            }
           }
         });
       }

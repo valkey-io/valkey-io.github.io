@@ -1,40 +1,29 @@
 //
 // Clients + Integrations catalog pages
 //
-// Shared styles for the two near-identical catalog pages at /clients/ and
-// /integrations/. Both use the same compact header, toolbar, filter-pill row,
-// and card grid; the only visual differences are the facet (languages vs.
-// tags) and the presence of the advanced-feature list/legend on the clients
-// page. Reuses existing color/typography variables and the `respond-min`
-// mixin.
+// Shared styles for the catalog served at /clients/ and /integrations/. Both
+// use the same compact header, toolbar, filter-pill row, and card grid; the
+// only visual differences are the facet (languages vs. tags) and the
+// advanced-feature list/legend on the clients view. Reuses existing
+// color/typography variables and the `respond-min` mixin.
 //
-// Design values are aligned to the prototype (formerly example/example.html).
-// The tokens that have no brand-color equivalent (the periwinkle accent, the
-// wordmark ink, and the slate hairline) are declared here as catalog-local
-// variables so the rest of the site is untouched. Note the site sets
-// `html { font-size: 10px }`, so in this file 1rem = 10px and every prototype
-// px value maps to (px / 10)rem.
+// The site sets `html { font-size: 10px }`, so in this file 1rem = 10px.
 //
-// Progressive enhancement:
-//   * Without JS, all cards on the page show and JS-only controls are hidden,
-//     so a no-JS visitor sees the full, operable catalog with no broken
-//     controls.
-//   * A synchronous head snippet adds `js` to <html> before first paint. Rules
-//     gated behind `.js` then reveal the JS-only controls. Because each page
-//     shows only its own cards (clients OR integrations), there is no
-//     per-intent pre-hiding: the default view is the full set for that page.
+// Progressive enhancement: without JS, all cards show and JS-only controls are
+// hidden. A synchronous head snippet adds `js` to <html> before first paint;
+// rules gated behind `.js` then reveal the JS-only controls.
 //
 
 // ---------------------------------------------------------------------------
-// Catalog-local design tokens (prototype parity)
+// Catalog-local design tokens
 // ---------------------------------------------------------------------------
 
-$cat-bg:      #f5f7f7;   // prototype --bg      (page ground; == $background-darker)
-$cat-surface: #ffffff;   // prototype --surface (cards, controls)
-$cat-fg:      #1a2026;    // prototype --fg      (wordmark ink)
-$cat-muted:   #647782;   // prototype --muted   (secondary text; == $text-light)
-$cat-border:  #e2e8f0;   // prototype --border  (hairlines)
-$cat-accent:  #6983ff;   // prototype --accent  (valkey mark periwinkle)
+$cat-bg:      #f5f7f7;   // page ground (== $background-darker)
+$cat-surface: #ffffff;   // cards, controls
+$cat-fg:      #1a2026;    // wordmark ink
+$cat-muted:   #647782;   // secondary text (== $text-light)
+$cat-border:  #e2e8f0;   // hairlines
+$cat-accent:  #6983ff;   // valkey mark periwinkle
 
 $cat-accent-soft: rgba($cat-accent, 0.14);
 $cat-fg-soft:     rgba($cat-fg, 0.06);
@@ -84,15 +73,13 @@ $cat-radius-lg: 16px;
 // Kind switch (Clients ↔ Integrations)
 // ---------------------------------------------------------------------------
 //
-// Two-way segmented control that swaps the active catalog kind on the merged
-// Libraries page. Styled to match the prototype's intent segmented control
-// (.intent-group / .intent-opt): a bordered, rounded, padded track holding
-// options that fill with accent-soft + accent border and turn their label the
-// accent colour when selected. JS-only — hidden without scripting by the PE
-// gate below, which keeps both card sets visible instead.
+// Two-way segmented control that swaps the active catalog kind on the
+// Libraries page: a bordered, rounded, padded track holding options that fill
+// with accent-soft + accent border and turn their label the accent colour when
+// selected. JS-only — hidden without scripting by the PE gate below, which
+// keeps both card sets visible instead.
 
 .kind-switch {
-  // prototype .intent-group
   display: inline-grid;
   grid-auto-flow: column;
   gap: 4px;
@@ -103,7 +90,6 @@ $cat-radius-lg: 16px;
   background: $cat-surface;
 
   .kind-opt {
-    // prototype .intent-opt > span
     display: flex;
     align-items: center;
     justify-content: center;
@@ -121,18 +107,15 @@ $cat-radius-lg: 16px;
     transition: background 0.15s ease, border-color 0.15s ease;
 
     &:hover {
-      // prototype .intent-opt:hover > span
       background: $cat-fg-soft;
     }
 
     &:focus-visible {
-      // prototype .intent-opt input:focus-visible + span
       outline: 2px solid $cat-accent;
       outline-offset: 2px;
     }
 
     &[aria-selected="true"] {
-      // prototype .intent-opt input:checked + span
       background: $cat-accent-soft;
       border-color: mix($cat-accent, transparent, 45%);
       color: $cat-accent;
@@ -425,7 +408,7 @@ $cat-radius-lg: 16px;
       pointer-events: none;
     }
 
-    // Selected state — fills with ink, not accent (prototype budget rule).
+    // Selected state — fills with ink, not accent.
     &[aria-pressed="true"],
     &.selected {
       background: $cat-fg;
@@ -548,7 +531,7 @@ $cat-radius-lg: 16px;
     margin-top: auto;
 
     // The "License" label is secondary; the license name itself is primary and
-    // should read as dark, high-contrast ink (matches the prototype).
+    // should read as dark, high-contrast ink.
     dt {
       color: $cat-muted;
     }
