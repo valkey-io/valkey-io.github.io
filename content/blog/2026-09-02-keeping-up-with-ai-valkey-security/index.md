@@ -1,7 +1,7 @@
 +++
 title = "Keeping up with AI: Valkey security in 2026"
 description = "Valkey published more security advisories in the first eight months of 2026 than in its first twenty-one. AI made bugs cheaper to find. This post covers how the Valkey community is keeping up."
-date = 2026-09-02
+date = 2026-09-17
 authors = ["madolson", "murphyjacob4", "hpatro"]
 
 [taxonomies]
