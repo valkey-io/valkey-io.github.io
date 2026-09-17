@@ -17,18 +17,18 @@ Enter Prometheus. This post covers two popular ways to get Valkey metrics into P
 
 [Prometheus](https://prometheus.io/) is an open-source systems monitoring and alerting toolkit designed for reliability, multi-dimensional data collection and querying even during outages or broken architectures. It scrapes and periodically pulls metrics from instrumented jobs exposed by the systems it monitors, storing them as time series (changes over time) in its own local database, which allows you to query, graph, and alert on that data using its flexible query language, [PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/).
 
-Each Prometheus server is standalone and runs independently, it relies only on:
+Each Prometheus server is standalone and runs independently. It relies only on:
 
-- a local storage such as an HDD or SSD
-- and [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/), which handles routing and deduplicating notifications
+- a local storage such as an HDD or SSD,
+- and [Alertmanager](https://prometheus.io/docs/alerting/latest/alertmanager/), which handles routing and deduplicating notifications.
 
-In Valkey's case there is a catch, Prometheus does not talk to Valkey natively. Valkey does not expose any metrics endpoint on its own however it does expose operational data through the [`INFO` command](https://valkey.io/commands/info/).
+In Valkey's case, there is a catch: Prometheus does not talk to Valkey natively. Valkey does not expose any metrics endpoint on its own. However it does expose operational data through the [`INFO` command](https://valkey.io/commands/info/).
 
 ## Why monitor Valkey with Prometheus?
 
 If you can't see your Valkey database or cache, it will continue to keep serving requests while its fragmentation goes unnoticed and memory creeps toward the `maxmemory` ceiling, or replicas lag behind and the first sign of trouble is often a latency spike somewhere downstream, long after the root cause started.
 
-Putting Valkey behind Prometheus provides several advantages.
+Putting Valkey and Prometheus provides several advantages.
 
 - **Trend visibility**: View the operations per second, hit ratio, memory usage, and connection counts over time, not just a snapshot from `INFO` when something's already broken.
 - **Alerting before things break**: Set alert rules and manage those alerts using Alertmanager
@@ -91,7 +91,7 @@ Then point Prometheus at `http://<host>:3001/prometheus/metrics`, and open `http
 
 ### redis_exporter (Valkey-compatible)
 
-[redis_exporter](https://github.com/oliver006/redis_exporter) is a long-standing, community-standard Prometheus exporter for Valkey metrics. It supports Valkey 7.x, 8.x, and 9.x.
+[redis_exporter](https://github.com/oliver006/redis_exporter) is a long-standing, community-standard Prometheus exporter for Valkey metrics. At the time of writing, it supports Valkey 7.x, 8.x, and 9.x.
 
 However, redis_exporter has no UI of its own. It's a single-purpose exporter: you connect to the datastore, pull data, republish it in the Prometheus format, and export it. You can use this to feed Grafana dashboards and Prometheus alerting rules instead of an actual dashboard.
 
@@ -179,7 +179,7 @@ Create a project directory with these files:
 
   services:
     valkey:
-      image: valkey/valkey:8-alpine
+      image: valkey/valkey:9-alpine
       container_name: valkey
       ports:
         - "6379:6379"
@@ -283,16 +283,6 @@ Or, for a sustained load, run `valkey-benchmark` from inside the container:
   ```
 
 The above is a complete, disposable local loop with Valkey, an exporter, Prometheus scraping it, and Grafana visualizing it. This is a hypothetical mirror of what you'd run in production, just without the TLS, ACLs, and persistence you'd want to layer on before shipping it anywhere real.
-
-For a quick walkthrough, here's a one-minute video on exporting Valkey metrics to Prometheus with redis_exporter and BetterDB:
-<div style="max-width: 315px;">
-  <iframe
-    src="https://www.youtube.com/embed/0lPlmuK-aTw"
-    title="Exporting Valkey metrics to Prometheus"
-    style="width: 100%; aspect-ratio: 9 / 16; border: 0;"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen></iframe>
-</div>
 
 ## What's next?
 
