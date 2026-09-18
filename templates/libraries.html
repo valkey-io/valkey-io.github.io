@@ -196,11 +196,10 @@
 
           <p class="entry-desc">{{ entry.description }}</p>
 
-          {# Anchored footer group — copy box, advanced features, license, and #}
-          {# the repo/docs footer are pinned to the bottom of the card as one  #}
-          {# unit, so none of them shift up or down between cards depending   #}
-          {# on how long the description is.                                  #}
+          {# Copy box + features flow after the description; only the license/footer #}
+          {# is pinned to the bottom to absorb extra row height. #}
           <div class="entry-anchor">
+          <div class="entry-anchor-top">
           {% if entry.installCommand %}
           <div class="cmd">
             <span class="cmd-scroll"><code class="install-cmd">{{ entry.installCommand }}</code></span>
@@ -232,13 +231,16 @@
             <p class="disc-none">None reported.</p>
             {% endif %}
           </details>
+          </div>
 
+          <div class="entry-anchor-bottom">
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
             {% if entry.repository %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
             {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
+          </div>
           </div>
         </article>
       {% endfor %}
@@ -276,11 +278,10 @@
 
           <p class="entry-desc">{{ entry.description }}</p>
 
-          {# Anchored footer group — copy box, license, and the repo/docs     #}
-          {# footer are pinned to the bottom of the card as one unit, so      #}
-          {# none of them shift up or down between cards depending on how    #}
-          {# long the description is.                                        #}
+          {# Copy box flows after the description; only the license/footer is #}
+          {# pinned to the bottom to absorb extra row height. #}
           <div class="entry-anchor">
+          <div class="entry-anchor-top">
           {% if entry.installCommand %}
           <div class="cmd">
             <span class="cmd-scroll"><code class="install-cmd">{{ entry.installCommand }}</code></span>
@@ -288,13 +289,16 @@
                     aria-label="Copy install command">Copy</button>
           </div>
           {% endif %}
+          </div>
 
+          <div class="entry-anchor-bottom">
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
             {% if entry.repository %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
             {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
+          </div>
           </div>
         </article>
       {% endfor %}

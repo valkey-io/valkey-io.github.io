@@ -514,6 +514,14 @@ $cat-radius-lg: 16px;
     color: $cat-muted;
     overflow-wrap: anywhere;
 
+    // Fixed five-line height so the copy line below starts at the same offset across cards.
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    overflow: hidden;
+    min-height: calc(1.55em * 5);
+
     // Marks the span of a description-only search match (JS-applied). Title
     // matches are not highlighted since the name heading already makes those
     // obvious.
@@ -525,16 +533,26 @@ $cat-radius-lg: 16px;
     }
   }
 
-  // Groups the install-command box, advanced-features disclosure, license,
-  // and footer into a single unit and pins it to the bottom of the card. A
-  // single auto margin on the group (rather than on each piece separately)
-  // keeps their relative spacing fixed and stops any of them from drifting up
-  // or down between cards as the description's length varies.
+  // Footer region; flex: 1 lets it fill the shared card height so the license/footer sink to the bottom.
   .entry-anchor {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .entry-anchor-top {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  // Pinned to the bottom so it absorbs extra row height instead of the copy box shifting down.
+  .entry-anchor-bottom {
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
     margin-top: auto;
+    padding-top: 1.2rem;
   }
 
   .kv {
