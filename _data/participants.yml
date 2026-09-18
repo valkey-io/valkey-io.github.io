@@ -1,16 +1,1 @@
-- name: Layerbase
-  link: https://layerbase.com/db/valkey
-  image:
-    path: /img/layerbase.svg
-    alt: Layerbase Logo
-  company: >
-    Layerbase is an independent DBaaS based in Austin, Texas. Layerbase Cloud
-    hosts managed databases across many engines on one account, with scale-to-zero
-    when idle and copy-on-write branching for supported engines. For more
-    information, visit [layerbase.com](https://layerbase.com).
-  offering: >
-    Layerbase Cloud offers managed Valkey that is compatible with Redis® OSS.
-    Valkey on Layerbase is free-tier eligible, supports copy-on-write branching,
-    and scales to zero with wake-on-connect. It runs on flat Free, Solo ($5/mo),
-    and Pro ($15/mo) plans with no compute-hour meters. Learn more at
-    [layerbase.com/db/valkey](https://layerbase.com/db/valkey).
+test
