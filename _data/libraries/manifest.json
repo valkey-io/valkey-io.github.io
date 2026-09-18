@@ -11,7 +11,8 @@
     "clients/valkey-go.json",
     "clients/predis.json",
     "clients/valkey-swift.json",
-    "clients/valkey-glide-csharp.json"
+    "clients/valkey-glide-csharp.json",
+    "clients/valkey-glide-php.json"
   ],
   "integrations": [
     "integrations/valkey-admin.json",

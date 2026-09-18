@@ -1,37 +1,22 @@
 /*
- * libraries.js — merged Libraries catalog page (/clients/ and /integrations/).
+ * libraries.js — Libraries catalog page (/clients/ and /integrations/).
  *
- * One controller drives BOTH catalogs on a single page and a two-way
- * Clients ↔ Integrations segmented toggle. Same two-layer shape as the old
- * clients.js / integrations.js it replaces:
- *   1. A pure-logic core: side-effect-free functions (no DOM, clipboard, or
- *      timers) that partition cards by kind and decide which cards of the
- *      ACTIVE kind to show, hide, and reorder.
- *   2. DOM wiring on top: reads pre-rendered card attributes, holds interaction
- *      state, listens to events, and calls the pure functions. It never builds
- *      cards from data.
+ * One controller drives both catalogs on a single page with a Clients ↔
+ * Integrations toggle. Two layers:
+ *   1. A pure-logic core (no DOM/clipboard/timers) that partitions cards by
+ *      kind and decides which cards of the active kind to show and reorder.
+ *   2. DOM wiring that reads pre-rendered card attributes, holds interaction
+ *      state, listens to events, and calls the pure functions.
  *
  * Each card carries data-catalog-kind ("clients" | "integrations"). Only cards
- * of the active kind can be visible; the inactive kind is always hidden. Within
- * the active kind the facet (Language for clients, Tags for integrations), the
- * Valkey (first-party) toggle, the search text, and the reversible sort all
- * compose exactly as on the old single-kind pages.
+ * of the active kind can be visible. Within the active kind the facet (Language
+ * for clients, Tags for integrations), the Valkey toggle, the search text, and
+ * the reversible sort all compose.
  *
- * Card descriptor shape (read from data-* attributes):
- *   { el, kind, language|null, tags:string[], firstParty:boolean,
- *     search, nameLower }
- *
- * Interaction state shape:
- *   {
- *     kind:          "clients" | "integrations",  // active catalog kind
- *     facets: {                                    // per-kind facet selections
- *       clients:      Set<string>,                 // languages (OR; empty=all)
- *       integrations: Set<string>,                 // tags (OR; empty=all)
- *     },
- *     firstPartyOnly: boolean,                      // Valkey toggle
- *     search:        string,                        // lowercased
- *     sortDir:       "asc" | "desc",
- *   }
+ * Card descriptor: { el, kind, language|null, tags:string[], firstParty:boolean,
+ * search, nameLower }.
+ * State: { kind, facets:{clients:Set, integrations:Set}, firstPartyOnly, search,
+ * sortDir:"asc"|"desc" }.
  */
 
 (function (root, factory) {
@@ -104,6 +89,15 @@
     return hay.indexOf(q) !== -1;
   }
 
+  // Whether the search term matches the card's title (name). Used to rank
+  // title matches ahead of description-only matches while a search is active.
+  function matchesTitle(card, search) {
+    if (!search) return false;
+    var q = String(search).toLowerCase();
+    var name = (card.nameLower || "").toLowerCase();
+    return name.indexOf(q) !== -1;
+  }
+
   // A card is visible iff it is of the ACTIVE kind AND matches the active-kind
   // facet, the first-party toggle, and the search text. Preserves input order
   // so a later stable sort can rely on it.
@@ -123,14 +117,22 @@
   }
 
   // Direction-aware stable sort by nameLower. `direction` is "asc" (default) or
-  // "desc"; ties keep original input order in both directions (stable).
-  function sortVisible(visible, direction) {
+  // "desc"; ties keep original input order in both directions (stable). When
+  // `search` is non-empty, title matches are grouped before description-only
+  // matches; within each group the name ordering still applies.
+  function sortVisible(visible, direction, search) {
     var list = Array.isArray(visible) ? visible.slice() : [];
     var desc = direction === "desc";
+    var q = search || "";
     var decorated = list.map(function (card, index) {
       return { card: card, index: index };
     });
     decorated.sort(function (a, b) {
+      if (q) {
+        var aTitle = matchesTitle(a.card, q) ? 0 : 1;
+        var bTitle = matchesTitle(b.card, q) ? 0 : 1;
+        if (aTitle !== bTitle) return aTitle - bTitle;
+      }
       var na = ((a.card && a.card.nameLower) || "").toLowerCase();
       var nb = ((b.card && b.card.nameLower) || "").toLowerCase();
       if (na < nb) return desc ? 1 : -1;
@@ -172,8 +174,7 @@
     return count;
   }
 
-  // Recovery suggestions for an empty active-kind result. Mirrors the old
-  // per-page logic but scoped to the active kind via computeVisible.
+  // Recovery suggestions for an empty active-kind result.
   function withActiveFacet(state, set) {
     var facets = {};
     var src = (state && state.facets) || {};
@@ -265,17 +266,16 @@
     sortVisible: sortVisible,
     pillCount: pillCount,
     recovery: recovery,
+    matchesTitle: matchesTitle,
   };
 });
 
 /*
- * DOM wiring layer, built on top of the pure-logic core above. Sets the
- * scripting `js` flag, reads pre-rendered card DOM into plain descriptors,
- * holds interaction state, runs apply() (computeVisible + sortVisible to toggle
- * a hidden class and reorder nodes), refreshes live pill counts on the active
- * facet bar, reveals/hides the empty state and builds recovery, and wires the
- * kind switch, the per-kind facet pills, the Valkey toggle, debounced search,
- * the reversible sort button, and the copy buttons.
+ * DOM wiring layer, built on the pure-logic core above. Sets the `js` flag,
+ * reads pre-rendered card DOM into descriptors, holds interaction state, runs
+ * apply() (computeVisible + sortVisible to toggle a hidden class and reorder
+ * nodes), refreshes pill counts, reveals/hides the empty state, and wires the
+ * kind switch, facet pills, Valkey toggle, debounced search, sort, and copy.
  *
  * Exposed as LibrariesCatalog.initDom(root); auto-initializes on
  * DOMContentLoaded when a libraries catalog page is present.
@@ -297,6 +297,39 @@
   }
   function qa(el, sel) {
     return Array.prototype.slice.call(el.querySelectorAll(sel));
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function escapeRegExp(str) {
+    return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  // Wraps the first match of `term` (case-insensitive) inside `text` with a
+  // <mark>, HTML-escaping the rest. Returns escaped plain text when there is
+  // no term or no match.
+  function highlightMatch(text, term) {
+    var safeText = escapeHtml(text);
+    if (!term) return safeText;
+    var re = new RegExp(escapeRegExp(term), "i");
+    var match = re.exec(text);
+    if (!match) return safeText;
+    var start = match.index;
+    var end = start + match[0].length;
+    return (
+      escapeHtml(text.slice(0, start)) +
+      "<mark class=\"search-hit\">" +
+      escapeHtml(text.slice(start, end)) +
+      "</mark>" +
+      escapeHtml(text.slice(end))
+    );
   }
 
   function setScriptingFlag(doc) {
@@ -322,7 +355,10 @@
         : [],
       firstParty: cardEl.getAttribute("data-first-party") === "true",
       search: cardEl.getAttribute("data-search") || "",
+      desc: cardEl.getAttribute("data-desc") || "",
       nameLower: cardEl.getAttribute("data-name-lower") || "",
+      descEl: q(cardEl, ".entry-desc"),
+      descOriginal: null,
     };
   }
 
@@ -374,7 +410,7 @@
   // refresh pill counts, reveal/hide the empty state.
   Controller.prototype.apply = function () {
     var visible = api.computeVisible(this.cards, this.state);
-    var ordered = api.sortVisible(visible, this.state.sortDir);
+    var ordered = api.sortVisible(visible, this.state.sortDir, this.state.search);
 
     var visibleSet = new Set(
       visible.map(function (c) {
@@ -392,6 +428,8 @@
       }
     }
 
+    this.applyDescriptionHighlights(visibleSet);
+
     if (this.grid) {
       for (var j = 0; j < ordered.length; j++) {
         this.grid.appendChild(ordered[j].el);
@@ -400,6 +438,32 @@
 
     this.refreshPillCounts();
     this.updateEmptyState(ordered.length);
+  };
+
+  // Highlights the search term in a card's description, but only for cards
+  // whose match came from the description rather than the title — title
+  // matches are already obvious from the (unhighlighted) heading. Restores
+  // the original description text for cards that are hidden or no longer
+  // matched by description.
+  Controller.prototype.applyDescriptionHighlights = function (visibleSet) {
+    var search = this.state.search || "";
+    for (var i = 0; i < this.cards.length; i++) {
+      var card = this.cards[i];
+      if (!card.descEl) continue;
+      if (card.descOriginal === null) card.descOriginal = card.descEl.textContent;
+
+      var shouldHighlight =
+        search &&
+        visibleSet.has(card.el) &&
+        !api.matchesTitle(card, search) &&
+        card.desc.indexOf(search) !== -1;
+
+      if (shouldHighlight) {
+        card.descEl.innerHTML = highlightMatch(card.descOriginal, search);
+      } else {
+        card.descEl.textContent = card.descOriginal;
+      }
+    }
   };
 
   Controller.prototype.refreshPillCounts = function () {
@@ -435,7 +499,6 @@
     var list = q(this.emptyState, "[data-recovery]");
     if (!list) return;
     var suggestions = api.recovery(this.cards, this.state) || [];
-    var self = this;
     var doc = this.doc;
 
     while (list.firstChild) list.removeChild(list.firstChild);
@@ -446,9 +509,6 @@
       btn.type = "button";
       btn.setAttribute("data-recover", s.action);
       btn.textContent = s.label;
-      btn.addEventListener("click", function () {
-        self.applyRecovery(s);
-      });
       li.appendChild(btn);
       list.appendChild(li);
     });
@@ -486,8 +546,7 @@
 
   // Reflect the active kind: aria-selected on the switch options and
   // data-active-kind on the root (CSS uses it to reveal the active header,
-  // facet bar, and — for clients — the legend). Also keep the search box's
-  // aria in step is unnecessary; the placeholder is generic.
+  // facet bar, and — for clients — the legend).
   Controller.prototype.syncKindState = function () {
     var kind = this.state.kind;
     if (this.kindSwitch) {
@@ -665,16 +724,12 @@
           var btn = ev.target.closest ? ev.target.closest("[data-recover]") : null;
           if (!btn || !recoveryList.contains(btn)) return;
           var action = btn.getAttribute("data-recover");
-          if (action === "clear-filters") {
-            self.state.facets[self.state.kind] = new Set();
-            self.state.firstPartyOnly = false;
-            self.syncPillPressedState();
-            self.syncToggleState();
-            self.apply();
-          } else if (action === "clear-search") {
-            self.state.search = "";
-            if (self.searchInput) self.searchInput.value = "";
-            self.apply();
+          var suggestions = api.recovery(self.cards, self.state) || [];
+          for (var i = 0; i < suggestions.length; i++) {
+            if (suggestions[i].action === action) {
+              self.applyRecovery(suggestions[i]);
+              return;
+            }
           }
         });
       }

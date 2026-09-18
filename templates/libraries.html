@@ -1,39 +1,25 @@
 {% extends "default.html" %}
 {% import "macros/catalog.html" as catalog %}
 
-{# ------------------------------------------------------------------------- #}
-{# Merged Libraries catalog page.                                            #}
-{#                                                                           #}
-{# One page renders BOTH catalogs — Clients and Integrations — and a two-way  #}
-{# segmented toggle switches between them. Both existing URLs point here:     #}
-{#   content/clients/_index.md      → default_kind = "clients"               #}
-{#   content/integrations/_index.md → default_kind = "integrations"          #}
-{# so inbound links and the header submenu entries keep working, each         #}
-{# preselecting its own tab via `data-default-kind` on the catalog root.      #}
-{#                                                                           #}
-{# Everything is rendered at build time from the per-file data under          #}
-{# _data/libraries/ via load_data; there is no runtime data fetch. Every      #}
-{# client and integration is emitted once as a pre-rendered card tagged with  #}
-{# data-catalog-kind, and the JS layer (libraries.js) shows the active kind,  #}
-{# hides the other, and filters/sorts within the active kind.                 #}
-{#                                                                           #}
-{# Progressive enhancement: without JS the switch and JS-only controls are    #}
-{# hidden and every card of BOTH kinds shows with working links.             #}
+{# Libraries catalog page. Renders both the Clients and Integrations catalogs #}
+{# with a toggle between them. Both URLs point here:                          #}
+{#   content/clients/_index.md      → default_kind = "clients"                #}
+{#   content/integrations/_index.md → default_kind = "integrations"           #}
+{# Cards are rendered at build time from _data/libraries/ (no runtime fetch); #}
+{# libraries.js shows the active kind and filters/sorts within it. Without JS #}
+{# the toggle and JS-only controls are hidden and every card shows.           #}
 
 {% block content %}
   <script>document.documentElement.classList.add('js');</script>
 
   {%- set default_kind = section.extra.default_kind | default(value="clients") -%}
 
-  {# ======================================================================= #}
-  {# Data assembly                                                            #}
-  {# ======================================================================= #}
+  {# Data assembly #}
   {% set manifest = load_data(path="_data/libraries/manifest.json", format="json") %}
   {% set meta = load_data(path="_data/libraries/metadata.json", format="json") %}
 
-  {# Neutral, trademark-safe language chips: per-language colors from GitHub    #}
-  {# Linguist (MIT-licensed color data, not brand logos). See                   #}
-  {# _data/lang_colors.toml for the mapping and rationale.                      #}
+  {# Per-language colors from GitHub Linguist (MIT-licensed color data, not #}
+  {# brand logos). See _data/lang_colors.toml. #}
   {% set lang_colors = load_data(path="_data/lang_colors.toml", format="toml") %}
 
   {# --- Clients ----------------------------------------------------------- #}
@@ -124,9 +110,7 @@
 
   <div class="catalog" data-catalog-root data-page="libraries" data-default-kind="{{ default_kind }}">
 
-    {# ===================================================================== #}
     {# Segmented Clients ↔ Integrations toggle                               #}
-    {# ===================================================================== #}
     <div class="kind-switch" data-kind-switch role="tablist" aria-label="Catalog">
       <button type="button" class="kind-opt" data-kind="clients" role="tab"
               aria-selected="{% if default_kind == 'clients' %}true{% else %}false{% endif %}">Clients</button>
@@ -134,26 +118,20 @@
               aria-selected="{% if default_kind == 'integrations' %}true{% else %}false{% endif %}">Integrations</button>
     </div>
 
-    {# ===================================================================== #}
     {# Per-kind headers (JS/CSS reveals the active one)                       #}
-    {# ===================================================================== #}
     <header class="catalog-header" data-catalog-kind="clients">
       <h1 class="catalog-title">Clients</h1>
       <p class="catalog-lede">Language clients recommended for use with Valkey and tested for compatibility. Choose the one that fits your language and stack.</p>
     </header>
     <header class="catalog-header" data-catalog-kind="integrations">
       <h1 class="catalog-title">Integrations</h1>
-      <p class="catalog-lede">Tools, frameworks, and AI integrations that work with Valkey across your stack. Filter by category to find what fits.</p>
+      <p class="catalog-lede">Tools, frameworks, and Integrations that work with Valkey.</p>
     </header>
 
-    {# ===================================================================== #}
     {# Shared toolbar: search + Valkey toggle + sort                         #}
-    {# ===================================================================== #}
     {{ catalog::toolbar(search_placeholder="Search clients, tools, frameworks, packages…") }}
 
-    {# ===================================================================== #}
     {# Facets (one per kind; JS shows the active kind's bar)                  #}
-    {# ===================================================================== #}
     <div class="filterbar" data-facet="language" data-select="multi" data-catalog-kind="clients">
       <span class="filterbar-label">Language</span>
       <div class="pills">
@@ -180,9 +158,7 @@
       </div>
     </div>
 
-    {# ===================================================================== #}
     {# Card grid — both kinds, each card tagged data-catalog-kind            #}
-    {# ===================================================================== #}
     <section class="catalog-grid" data-catalog>
 
       {# --- Client cards --------------------------------------------------- #}
@@ -198,6 +174,7 @@
                  data-slug="{{ slug }}"
                  data-name-lower="{{ entry.name | lower }}"
                  data-search="{{ search_text | lower }}"
+                 data-desc="{{ entry.description | lower }}"
                  data-group="{{ entry.type }}"
                  data-language="{{ lang }}"
                  data-first-party="{% if entry.isFirstParty %}true{% else %}false{% endif %}">
@@ -213,12 +190,16 @@
                       style="background:{{ lc.color }};color:{{ lc.fg }}">{{ lc.mono }}</span>
                 {%- endif -%}
                 {{ lang }}</span>
-              {% if entry.isFirstParty %}<span class="chip chip-project">Valkey</span>{% endif %}
+              {% if entry.isFirstParty %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
             </div>
           </div>
 
           <p class="entry-desc">{{ entry.description }}</p>
 
+          {# Copy box + features flow after the description; only the license/footer #}
+          {# is pinned to the bottom to absorb extra row height. #}
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
           {% if entry.installCommand %}
           <div class="cmd">
             <span class="cmd-scroll"><code class="install-cmd">{{ entry.installCommand }}</code></span>
@@ -234,9 +215,9 @@
               {% set_global disc_count = disc_count + 1 %}
             {% endif %}
           {% endfor %}
-          {% if disc_count > 0 %}
-          <div class="disc">
-            <strong>Advanced features supported</strong>
+          <details class="disc"{% if disc_count == 0 %} data-disc-empty{% endif %}>
+            <summary>Advanced features supported <span class="disc-count">({{ disc_count }})</span></summary>
+            {% if disc_count > 0 %}
             <ul class="feature-list">
               {% for idx in range(end=9) %}
                 {% set key = fkeys[idx] %}
@@ -246,16 +227,21 @@
                 {% endif %}
               {% endfor %}
             </ul>
+            {% else %}
+            <p class="disc-none">None reported.</p>
+            {% endif %}
+          </details>
           </div>
-          {% endif %}
 
-          {# License anchors to the bottom of the card, directly above the footer bar. #}
+          <div class="entry-anchor-bottom">
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
             {% if entry.repository %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
             {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
+          </div>
+          </div>
         </article>
       {% endfor %}
 
@@ -276,6 +262,7 @@
                  data-slug="{{ slug }}"
                  data-name-lower="{{ entry.name | lower }}"
                  data-search="{{ search_text | lower }}"
+                 data-desc="{{ entry.description | lower }}"
                  data-group="{{ entry.type }}"
                  data-tags="{{ ec_tags | join(sep='|') }}"
                  data-first-party="{% if entry.isFirstParty %}true{% else %}false{% endif %}">
@@ -285,12 +272,16 @@
             </h3>
             <div class="entry-tags">
               {% for t in ec_tags %}<span class="chip chip-tag">{{ t }}</span>{% endfor %}
-              {% if entry.isFirstParty %}<span class="chip chip-project">Valkey</span>{% endif %}
+              {% if entry.isFirstParty %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
             </div>
           </div>
 
           <p class="entry-desc">{{ entry.description }}</p>
 
+          {# Copy box flows after the description; only the license/footer is #}
+          {# pinned to the bottom to absorb extra row height. #}
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
           {% if entry.installCommand %}
           <div class="cmd">
             <span class="cmd-scroll"><code class="install-cmd">{{ entry.installCommand }}</code></span>
@@ -298,23 +289,24 @@
                     aria-label="Copy install command">Copy</button>
           </div>
           {% endif %}
+          </div>
 
-          {# License anchors to the bottom of the card, directly above the footer bar. #}
+          <div class="entry-anchor-bottom">
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
             {% if entry.repository %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
             {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
+          </div>
+          </div>
         </article>
       {% endfor %}
 
       {{ catalog::empty_state(noun="libraries") }}
     </section>
 
-    {# ===================================================================== #}
     {# Feature-definition legend (clients only)                              #}
-    {# ===================================================================== #}
     <section class="legend" data-legend data-catalog-kind="clients" aria-label="Feature definitions">
       <h2 class="legend-title">Feature definitions</h2>
       <dl class="legend-list">
