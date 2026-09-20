@@ -1,15 +1,32 @@
 /**
- * Community page photo carousel
+ * Community page interactions
  *
- * Pages through the "Community in action" photos three at a time on
- * desktop, two on tablet, and one on mobile. Prev/next buttons and a
- * "current / total" status are the only controls; there is no auto-scroll.
+ * 1. Participant logo marquee pause/play toggle (WCAG 2.2.2: auto-moving
+ *    content lasting more than 5s needs a control to pause it).
+ * 2. "Community in action" photo carousel: pages through photos three at a
+ *    time on desktop, two on tablet, one on mobile. Prev/next buttons and a
+ *    "current / total" status are the only controls; there is no auto-scroll.
  */
 
 (function () {
   'use strict';
 
+  // Participant logo marquee pause/play toggle -----------------------------
+  function initLogoMarquee() {
+    var track = document.getElementById('communityLogoTrack');
+    var button = document.getElementById('communityLogoPause');
+    if (!track || !button) return;
+
+    button.addEventListener('click', function () {
+      var paused = track.classList.toggle('is-paused');
+      button.setAttribute('aria-pressed', paused ? 'true' : 'false');
+      button.textContent = paused ? 'Play' : 'Pause';
+    });
+  }
+
   function init() {
+    initLogoMarquee();
+
     var track = document.getElementById('communityPhotoTrack');
     var prev = document.getElementById('communityPhotoPrev');
     var next = document.getElementById('communityPhotoNext');

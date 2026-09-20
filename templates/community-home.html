@@ -10,9 +10,12 @@
 {% if participants and participants | length > 0 %}
 <section class="community-logo-band">
   <div class="community-logo-band-inner">
-    <a class="community-home-kicker" href="/participants/">Valkey participants</a>
-    <div class="community-logo-row" aria-label="Valkey participant organizations">
-      <div class="community-logo-track">
+    <div class="community-logo-band-head">
+      <a class="community-home-kicker" href="/participants/">Valkey participants</a>
+      <button class="community-logo-pause" type="button" id="communityLogoPause" aria-pressed="false" aria-label="Pause the scrolling participant logos">Pause</button>
+    </div>
+    <div class="community-logo-row" role="group" aria-label="Valkey participant organizations">
+      <div class="community-logo-track" id="communityLogoTrack">
         {{ community::logo_set(participants=participants) }}
         {{ community::logo_set(participants=participants, duplicate=true) }}
       </div>
@@ -61,8 +64,9 @@
   <div class="community-home-photo-viewport">
     <div class="community-home-photo-track" id="communityPhotoTrack">
       {% for photo in extra.photos %}
+      {% set thumb = resize_image(path="static" ~ photo.src, width=800, op="fit_width") %}
       <figure>
-        <img src="{{ photo.src }}" alt="{{ photo.alt }}" decoding="async"{% if loop.index > 3 %} loading="lazy"{% endif %}{% if photo.position %} style="object-position: {{ photo.position }};"{% endif %}>
+        <img src="{{ thumb.url }}" alt="{{ photo.alt }}" width="{{ thumb.width }}" height="{{ thumb.height }}" decoding="async"{% if loop.index > 3 %} loading="lazy"{% endif %}{% if photo.position %} style="object-position: {{ photo.position }};"{% endif %}>
       </figure>
       {% endfor %}
     </div>
@@ -93,15 +97,6 @@
   </div>
   {% endif %}
 </div>
-
-{# Code of Conduct #}
-{% if extra.conduct %}
-<section class="community-home-conduct">
-  <h2>{{ extra.conduct.title }}</h2>
-  <p>{{ extra.conduct.description }}</p>
-  <a href="{{ extra.conduct.link.url }}" class="community-home-btn community-home-btn-light">{{ extra.conduct.link.text }}</a>
-</section>
-{% endif %}
 
 <script src="/assets/js/community.js" defer></script>
 {% endblock content %}

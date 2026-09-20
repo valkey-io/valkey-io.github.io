@@ -1,9 +1,7 @@
 // Community landing page (templates/community-home.html)
-//
 // The "Ways to contribute" tiles reuse the shared .community-card styles
 // from _valkey.scss. Everything here is specific to the landing page:
-// participant logo strip, photo hero, connect bar, photo carousel, and the
-// Code of Conduct block.
+// participant logo strip, photo hero, connect bar, and photo carousel.
 
 $community-purple-900: #2d2471;
 $community-purple-800: #35247e;
@@ -69,11 +67,35 @@ $community-ink: #072150;
 }
 
 .community-logo-band-inner {
-  max-width: 1280px;
+  max-width: var(--max-width);
   margin: 0 auto;
+}
 
-  .community-home-kicker {
-    margin-bottom: 1.1rem;
+.community-logo-band-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+// Visible pause/play control for the auto-scrolling marquee (WCAG 2.2.2:
+// moving content that lasts more than 5s needs a mechanism to pause it).
+.community-logo-pause {
+  flex: 0 0 auto;
+  padding: 0.4rem 1.1rem;
+  border: 1px solid #bfc6dd;
+  border-radius: 20px;
+  background: #fff;
+  color: #47506b;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $community-purple-800;
+    color: $community-purple-800;
   }
 }
 
@@ -93,9 +115,9 @@ $community-ink: #072150;
   will-change: transform;
 }
 
-// Pause only for keyboard users tabbing through the logos; a hover pause
-// made the strip feel stalled whenever the cursor rested on it.
-.community-logo-row:focus-within .community-logo-track {
+// Paused via the visible toggle button (see community.js). The logos
+// themselves are non-interactive, so there is no focus-based pause.
+.community-logo-track.is-paused {
   animation-play-state: paused;
 }
 
@@ -121,7 +143,8 @@ $community-ink: #072150;
     display: block;
     width: auto;
     height: var(--logo-height, 24px);
-    max-width: 160px;
+    // Shared width budget; keep in sync with the budget in macros/community.html.
+    max-width: 210px;
     max-height: var(--logo-height, 24px);
     object-fit: contain;
   }
@@ -210,7 +233,10 @@ $community-ink: #072150;
 // Connect with us and photo carousel sit on a faint blue canvas so the white
 // Connect card and its shadow read against the page.
 .community-home-canvas {
-  padding: 0.1px 0; // keeps child margins inside the tinted area
+  // 0.1px top/bottom keeps child margins inside the tinted area; the side
+  // gutter is the single, page-wide rule so everything lines up with the
+  // header/footer content column (--max-width).
+  padding: 0.1px 2rem;
   background: #f8faff;
 }
 
@@ -220,7 +246,7 @@ $community-ink: #072150;
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  max-width: 1160px;
+  max-width: var(--max-width);
   margin: 3.4rem auto;
   padding: 2.7rem 3.4rem;
   background: #fff;
@@ -231,11 +257,6 @@ $community-ink: #072150;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-  }
-
-  @media (max-width: 1200px) {
-    margin-left: 2rem;
-    margin-right: 2rem;
   }
 
   h2 {
@@ -262,13 +283,8 @@ $community-ink: #072150;
 // Photo carousel ------------------------------------------------------------
 
 .community-home-photos {
-  max-width: 1160px;
+  max-width: var(--max-width);
   margin: 4.4rem auto 4.8rem;
-
-  @media (max-width: 1200px) {
-    margin-left: 2rem;
-    margin-right: 2rem;
-  }
 }
 
 .community-home-section-head {
@@ -366,6 +382,8 @@ $community-ink: #072150;
   padding-bottom: 6rem; // band continues below the last row of tiles, as in the mockup
 
   .community-header {
+    max-width: var(--max-width);
+    margin: 0 auto;
     padding: 5.2rem 2rem 0;
 
     h2 {
@@ -383,14 +401,14 @@ $community-ink: #072150;
 
 // The landing page centres tile copy like the mockup and uses the mockup's
 // lighter type; the shared card style used elsewhere keeps left-aligned
-// text. All nine tiles share one height so the grid reads as a clean 3x3.
+// text. Tiles share one height so the grid rows stay level. The grid uses
+// the site content column (--max-width) with a constant side gutter so it
+// lines up with the header, footer, and the rest of the page.
 .community-card-grid-centered {
   grid-auto-rows: 1fr;
+  max-width: var(--max-width);
   margin-top: 2.8rem;
-
-  @media (max-width: 1100px) {
-    padding: 0 2rem;
-  }
+  padding: 0 2rem;
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr 1fr;
@@ -419,36 +437,5 @@ $community-ink: #072150;
       padding: 0.6rem 1.1rem;
       font-size: 1.3rem;
     }
-  }
-}
-
-// Code of Conduct -----------------------------------------------------------
-
-.community-home-conduct {
-  max-width: 1100px;
-  margin: 4.8rem auto;
-  padding: 4.2rem 3rem;
-  border-radius: 18px;
-  background: linear-gradient(110deg, #332079, #5668e8);
-  color: #fff;
-  text-align: center;
-
-  @media (max-width: 1100px) {
-    margin-left: 2rem;
-    margin-right: 2rem;
-  }
-
-  h2 {
-    margin: 0 0 1rem;
-    color: #fff;
-    font-size: 3.2rem;
-    font-weight: 700;
-  }
-
-  p {
-    max-width: 680px;
-    margin: 0 auto 1.9rem;
-    color: rgba(255, 255, 255, 0.88);
-    font-size: 1.6rem;
   }
 }

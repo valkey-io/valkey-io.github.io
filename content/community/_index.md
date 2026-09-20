@@ -4,7 +4,7 @@ description = "Join the Valkey community: contribute code, docs, and content, sp
 template = "community-home.html"
 page_template = "community.html"
 [extra]
-hero = { title = "Unlock. Contribute. Repeat.", subtitle = "Every key contributor started somewhere: a bug report, a talk, a line of code. This community is built one key at a time. Yours starts here.", image = "/img/community/hero-community.jpg" }
+hero = { title = "Built by the community. For the community.", subtitle = "Every contributor started somewhere: a bug report, a talk, a line of code. This community is built one key at a time. Yours starts here.", image = "/img/community/hero-community.jpg" }
 
 connect = { title = "Connect with us", description = "Ask questions, share ideas, and meet the Valkey community.", links = [
   { url = "/slack", text = "Join Slack" },
@@ -19,7 +19,6 @@ photos = [
   { src = "/img/community/community-photo-03.jpg", alt = "Community members celebrating Valkey's second birthday" },
   { src = "/img/community/community-photo-07.jpg", alt = "Contributors posing with a wooden Valkey logo at the birthday celebration" },
   { src = "/img/community/community-photo-05.jpg", alt = "Valkey team members greeting visitors at a conference booth" },
-  { src = "/img/community/community-photo-06.jpg", alt = "Two speakers on stage during a Valkey conference talk" },
   { src = "/img/community/community-photo-13.jpg", alt = "Valkey community members at the SCaLE conference booth" },
   { src = "/img/community/community-photo-09.jpg", alt = "Panel discussion at the KeySpace Beijing community event" },
   { src = "/img/community/community-photo-10.jpg", alt = "Valkey community members at the Unlocked Conference photo booth" },
@@ -49,24 +48,24 @@ cards = [
     { url = "https://github.com/valkey-io/community/blob/main/1.%20Community%20Blog%20Guidelines.md", text = "Blog Guidelines" },
     { url = "https://github.com/valkey-io/community/blob/main/2.%20Youtube-video-guideline.md", text = "Video Guidelines" }
   ] },
-  { icon = "icon-mic.svg", title = "Speak", description = "Speaking at a conference? Let us know. Looking for speaking opportunities? CFPs are also listed in the Slack channel.", links = [
-    { url = "https://valkey-oss-developer.slack.com/archives/C0B8XC9A30Q", text = "#valkey-speakers" }
-  ] },
-  { icon = "icon-users.svg", title = "Meetups / Events", description = "Join or organize a Valkey meetup near you, and attend an upcoming event.", links = [
+  { icon = "icon-users.svg", title = "Meetups / Events / Speak", description = "Join or organize a Valkey meetup, attend an upcoming event, or speak at one. Looking for speaking opportunities? CFPs are also posted in the #valkey-speakers channel on Slack.", links = [
     { url = "/community/meetup-groups/", text = "Meetup Groups & Charter" },
     { url = "https://github.com/valkey-io/valkey-io.github.io/issues/new?template=new-meetup-group.md", text = "Start a New Meetup Group" },
-    { url = "/events/", text = "Upcoming Events" }
+    { url = "/events/", text = "Upcoming Events" },
+    { url = "/slack", text = "Join #valkey-speakers on Slack" }
   ] },
   { icon = "icon-news.svg", title = "Get the Latest News", description = "Stay updated and connect with us on our social media platforms and newsletter.", links = [
     { url = "https://www.linkedin.com/company/valkey/", text = "LinkedIn" },
     { url = "https://bsky.app/profile/valkeyio.bsky.social", text = "Bluesky" },
     { url = "https://x.com/valkey_io", text = "X" },
     { url = "#email-signup", text = "Newsletter" }
+  ] },
+  { icon = "icon-sheild.svg", title = "Code of Conduct", description = "Help keep the Valkey community welcoming, inclusive, and respectful for everyone.", links = [
+    { url = "/code_of_conduct", text = "Read the Code of Conduct" }
   ] }
 ]
-
-conduct = { title = "Community Conduct", description = "Help keep the Valkey community welcoming, inclusive, and respectful for everyone.", link = { url = "/code_of_conduct", text = "Read the Code of Conduct" } }
 +++
 
 ## Ways to contribute
+
 Pick the path that matches how you want to help.
