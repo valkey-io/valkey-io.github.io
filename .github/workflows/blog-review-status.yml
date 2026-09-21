@@ -1,0 +1,80 @@
+name: Weekly blog review status
+
+on:
+  schedule:
+    # Mondays at 15:00 UTC, the same hour the scheduled-publish job runs, so the
+    # report reflects what published that morning.
+    - cron: '0 15 * * 1'
+  # TEMPORARY: workflow_dispatch only works from the default branch, so this
+  # lets the branch be tested before it merges. Remove before merging.
+  push:
+    branches: [blog-review-status]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Build the report without posting to Slack'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blog-review-status
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate token
+        id: generate-token
+        uses: actions/create-github-app-token@d72941d797fd3113feb6b93fd0dec494b13a2547 # v1.12.0
+        with:
+          app-id: ${{ secrets.VALKEYRIE_BOT_APP_ID }}
+          private-key: ${{ secrets.VALKEYRIE_BOT_PRIVATE_KEY }}
+          # Reading team membership is an organization permission, so the token
+          # cannot be scoped to this repository alone.
+          owner: ${{ github.repository_owner }}
+          permission-members: read
+          permission-pull-requests: read
+          permission-issues: write
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout the blog content on main
+        uses: actions/checkout@v4
+        with:
+          # The publish queue is whatever `main` holds, not what this ref holds.
+          ref: main
+          path: main
+          sparse-checkout: content/blog
+
+      - name: Build the report
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          python3 build/blog-review-status.py \
+            --repo '${{ github.repository }}' \
+            --content-dir main/content/blog \
+            --apply-labels \
+            --out payload.json | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Post to Slack
+        if: inputs.dry_run != true
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          # #blog-review-status. The bot has to be a member of the channel.
+          SLACK_CHANNEL: C0AV5QURJN6
+        run: |
+          jq --arg channel "$SLACK_CHANNEL" '. + {channel: $channel}' payload.json > message.json
+          response=$(curl -sS -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            --data @message.json)
+          # Slack answers 200 with `"ok": false` when it rejects a message.
+          if [[ "$(jq -r '.ok' <<< "$response")" != 'true' ]]; then
+            echo "$response"
+            exit 1
+          fi
