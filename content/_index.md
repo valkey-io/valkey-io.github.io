@@ -17,10 +17,12 @@ headings = ["FAST. RELIABLE.", "OPEN SOURCE, FOREVER."]
 subtitle = "Valkey is an open source (BSD) high-performance key/value datastore that supports a variety of workloads such as caching, message queues, and can act as a primary database. The project is backed by the Linux Foundation, ensuring it will remain open source forever."
 button_text = "GET STARTED"
 button_url = "/topics/quickstart"
+secondary_button_text = "INSTALL VALKEY"
+secondary_button_url = "/topics/installation"
 
 [[extra.documentation_cards]]
 title = "Usage guide"
-description = "Detailed documentation on the various datatype supported by Valkey and best practices."
+description = "Detailed documentation on the various datatypes supported by Valkey and best practices."
 button_text = "Documentation by topic"
 button_url = "/topics/"
 
@@ -32,7 +34,7 @@ button_url = "/commands"
 
 [[extra.documentation_cards]]
 title = "Clients"
-description = "Official Valkey client libraries for Python, Java, Go, Node.js, PHP, C#, Ruby, and more."
+description = "Recommended Valkey client libraries for Python, Java, Go, Node.js, PHP, C#, Ruby, and more."
 button_text = "Learn More"
 button_url = "/clients"
 

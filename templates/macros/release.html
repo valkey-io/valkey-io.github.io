@@ -1,6 +1,8 @@
 {% macro release_info(date, release) %}
-<strong>Release Date:</strong>  {{ date | date(format="%Y-%m-%d") }} <br/> 
-<strong>GitHub Release:</strong> <a href="https://github.com/valkey-io/valkey/releases/tag/{{release.tag}}">{{release.tag}}</a><br />
+<p class="release-meta">
+    <strong>Release Date:</strong> {{ date | date(format="%Y-%m-%d") }}<br />
+    <strong>GitHub Release:</strong> <a href="https://github.com/valkey-io/valkey/releases/tag/{{release.tag}}">{{release.tag}}</a>
+</p>
 <hr />
 
 {% for registry in release.container_registry %}

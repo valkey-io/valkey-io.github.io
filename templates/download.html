@@ -51,4 +51,30 @@
         {% endfor %}
     </tbody>
 </table>
+
+{# Pre-releases on a line that has no stable release yet. Older release
+   candidates are superseded by their own line's stable release, so listing
+   them here would only add noise. #}
+{% set_global upcoming = [] %}
+{% for candidate in release_section.pages | sort(attribute="date") | reverse %}
+    {% if candidate.extra.tag is matching(".*-.*") %}
+        {% set candidate_line = candidate.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+        {% if candidate_line not in seen_lines %}
+            {% set_global upcoming = upcoming | concat(with=candidate) %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{% if upcoming | length > 0 %}
+<h2>Other releases</h2>
+<p>Release candidates for a version that has not had a stable release yet. Not recommended for production use.</p>
+<ul class="list-links-small release-links">
+    {% for pre_release in upcoming %}
+    <li>
+        <a href="{{ pre_release.permalink }}">Valkey {{ pre_release.extra.tag }}</a>
+        <small>Released {{ pre_release.date | date(format="%B %-d, %Y") }}</small>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
 {% endblock main_content %}
