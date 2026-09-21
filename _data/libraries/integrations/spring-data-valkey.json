@@ -10,5 +10,5 @@
   "tags": [
     "Frameworks & ORMs"
   ],
-  "installCommand": "io.valkey.springframework.data:spring-data-valkey:2.0.0"
+  "installCommand": "implementation 'io.valkey.springframework.boot:spring-boot-starter-data-valkey:2.0.0'"
 }
