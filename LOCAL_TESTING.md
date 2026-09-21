@@ -42,8 +42,8 @@ From the `valkey-io.github.io` directory:
 ./build/init-topics-and-clients.sh ../valkey-doc/topics \
   ../valkey-doc/clients
 
-# Start Zola development server with extra watch path for client symlinks
-zola serve --extra-watch-path build-clients
+# Start Zola development server with extra watch paths for client/topic symlinks
+zola serve --extra-watch-path build-clients --extra-watch-path build-topics
 ```
 
 ### 3. View the site
@@ -85,7 +85,7 @@ The `init-topics-and-clients.sh` script:
 
 1. Stop Zola (Ctrl+C)
 2. Re-run the init script (symlinks may have been removed)
-3. Restart Zola: `zola serve --extra-watch-path build-clients`
+3. Restart Zola: `zola serve --extra-watch-path build-clients --extra-watch-path build-topics`
 4. Hard refresh browser (Cmd+Shift+R or Ctrl+Shift+R)
 
 ## Building for production

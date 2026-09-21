@@ -550,7 +550,8 @@
     this.apply();
   };
 
-  // Reflect the active kind: aria-pressed on the switch options and
+  // Reflect the active kind: aria-selected on the switch's tab options
+  // (the markup uses role="tab", which styles.scss keys off of) and
   // data-active-kind on the root (CSS uses it to reveal the active header,
   // facet bar, and — for clients — the legend).
   Controller.prototype.syncKindState = function () {
@@ -558,7 +559,7 @@
     if (this.kindSwitch) {
       qa(this.kindSwitch, ".kind-opt").forEach(function (opt) {
         var on = opt.getAttribute("data-kind") === kind;
-        opt.setAttribute("aria-pressed", on ? "true" : "false");
+        opt.setAttribute("aria-selected", on ? "true" : "false");
       });
     }
     if (this.catalogRoot) {
