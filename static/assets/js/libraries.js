@@ -374,6 +374,12 @@
     this.toggleBtn = q(root, "[data-first-party-toggle]");
     this.kindSwitch = q(root, "[data-kind-switch]");
 
+    // Apply live region semantics to empty state for screen reader announcement
+    if (this.emptyState) {
+      this.emptyState.setAttribute("role", "status");
+      this.emptyState.setAttribute("aria-live", "polite");
+    }
+
     // Facet bars keyed by kind (each carries data-catalog-kind).
     this.facetBars = {
       clients: q(root, '.filterbar[data-catalog-kind="clients"]'),
@@ -544,7 +550,7 @@
     this.apply();
   };
 
-  // Reflect the active kind: aria-selected on the switch options and
+  // Reflect the active kind: aria-pressed on the switch options and
   // data-active-kind on the root (CSS uses it to reveal the active header,
   // facet bar, and — for clients — the legend).
   Controller.prototype.syncKindState = function () {
@@ -552,7 +558,7 @@
     if (this.kindSwitch) {
       qa(this.kindSwitch, ".kind-opt").forEach(function (opt) {
         var on = opt.getAttribute("data-kind") === kind;
-        opt.setAttribute("aria-selected", on ? "true" : "false");
+        opt.setAttribute("aria-pressed", on ? "true" : "false");
       });
     }
     if (this.catalogRoot) {
@@ -753,10 +759,12 @@
   function initDom(rootEl) {
     var host = rootEl || (root.document ? root.document : null);
     if (!host) return null;
-    if (host.querySelector && !host.querySelector('[data-catalog-root][data-page="libraries"]')) {
+    var selector = '[data-catalog-root][data-page="libraries"]';
+    var hostIsRoot = host.matches && host.matches(selector);
+    if (!hostIsRoot && host.querySelector && !host.querySelector(selector)) {
       return null;
     }
-    var scope = host.querySelector('[data-catalog-root][data-page="libraries"]') || host;
+    var scope = hostIsRoot ? host : host.querySelector(selector) || host;
     return new Controller(scope).init();
   }
 

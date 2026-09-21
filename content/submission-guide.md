@@ -96,8 +96,9 @@ The primary programming language. **Required in practice for clients** and for a
 **Multi-language support:** If your library ships separate packages per language, create **one entry per language**, each with its own `installCommand`, `documentation`, and `features`.
 
 #### `tags` (array of strings, tools & AI)
-One or more curated tags used for the Category filter on the Integrations page. Clients do not use tags. Use an existing tag where one fits; introduce a new one only when necessary. Tags currently in use:
+One or more curated tags used for filtering and discovery. Clients use `["Clients"]`, tools and AI libraries use category tags. Use an existing tag where one fits and introduce a new one only when necessary. Tags currently in use:
 
+- **Clients:** `["Clients"]`
 - **Tools:** `CLI & GUI`, `Deploy & operate`, `Proxies & gateways`, `Frameworks & ORMs`, `Queues & background jobs`, `Data movement`, `Observability & testing`
 - **AI:** `RAG & retrieval`, `Agent memory`, `Agent frameworks`, `Inference & serving`
 

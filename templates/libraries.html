@@ -47,6 +47,10 @@
     {% if bits | length != 9 %}
       {{ throw(message="_data/libraries/clients: client entry '" ~ label ~ "' features must be a 9-character bit-string (got '" ~ bits ~ "')") }}
     {% endif %}
+    {% set stripped = bits | replace(from="0", to="") | replace(from="1", to="") %}
+    {% if stripped | length != 0 %}
+      {{ throw(message="_data/libraries/clients: client entry '" ~ label ~ "' features must contain only 0 and 1, got '" ~ bits ~ "'") }}
+    {% endif %}
   {% endfor %}
 
   {# --- Integrations ------------------------------------------------------ #}
@@ -180,7 +184,7 @@
                  data-first-party="{% if entry.isFirstParty %}true{% else %}false{% endif %}">
           <div class="entry-head">
             <h3 class="entry-name">
-              {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
+              {% if entry.documentation and (entry.documentation is starting_with("http://") or entry.documentation is starting_with("https://")) %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
             </h3>
             <div class="entry-tags">
               <span class="chip chip-language">
@@ -190,7 +194,7 @@
                       style="background:{{ lc.color }};color:{{ lc.fg }}">{{ lc.mono }}</span>
                 {%- endif -%}
                 {{ lang }}</span>
-              {% if entry.isFirstParty %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
+              {% if entry.isFirstParty == true %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
             </div>
           </div>
 
@@ -237,8 +241,8 @@
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
-            {% if entry.repository %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
-            {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
+            {% if entry.repository and (entry.repository is starting_with("http://") or entry.repository is starting_with("https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
+            {% if entry.documentation and (entry.documentation is starting_with("http://") or entry.documentation is starting_with("https://")) %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
           </div>
           </div>
@@ -268,11 +272,11 @@
                  data-first-party="{% if entry.isFirstParty %}true{% else %}false{% endif %}">
           <div class="entry-head">
             <h3 class="entry-name">
-              {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
+              {% if entry.documentation and (entry.documentation is starting_with("http://") or entry.documentation is starting_with("https://")) %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
             </h3>
             <div class="entry-tags">
               {% for t in ec_tags %}<span class="chip chip-tag">{{ t }}</span>{% endfor %}
-              {% if entry.isFirstParty %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
+              {% if entry.isFirstParty == true %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
             </div>
           </div>
 
@@ -295,8 +299,8 @@
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
-            {% if entry.repository %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
-            {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
+            {% if entry.repository and (entry.repository is starting_with("http://") or entry.repository is starting_with("https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
+            {% if entry.documentation and (entry.documentation is starting_with("http://") or entry.documentation is starting_with("https://")) %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
           </div>
           </div>

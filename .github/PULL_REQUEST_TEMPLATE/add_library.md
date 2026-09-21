@@ -67,7 +67,8 @@ Example: `"111101000"` = replica, backoff, pubsub, scan, and az supported; the r
 **Optional fields:**
 
 - `language` (string) — primary language. Required in practice for clients and any library imported into code (ORM adapters, SDK wrappers, agent frameworks). Omit for standalone tools. If a library ships separate packages per language, create one entry per language.
-- `tags` (array of strings, tools & AI only) — for the Integrations Category filter. Clients do not use tags. Prefer an existing tag:
+- `tags` (array of strings) — for filtering and discovery. Clients use `["Clients"]`; tools and AI libraries use category tags. Prefer an existing tag:
+  - Clients: `["Clients"]`
   - Tools: `CLI & GUI`, `Deploy & operate`, `Proxies & gateways`, `Frameworks & ORMs`, `Queues & background jobs`, `Data movement`, `Observability & testing`
   - AI: `RAG & retrieval`, `Agent memory`, `Agent frameworks`, `Inference & serving`
 - `documentation` (string or null) — official docs/landing URL, or `null` if none exists.
