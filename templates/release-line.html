@@ -32,6 +32,17 @@
 {% endif %}
 {% set latest = line_releases | first %}
 
+{# Above the highlights, not beside the download link: the highlights describe a
+   version nobody can run in production yet, and that has to be read first. #}
+{% if prerelease_only %}
+<div class="release-prerelease-notice">
+    <strong>Valkey {{ line }} has no stable release yet.</strong> What follows
+    describes a release candidate. Commands, configuration, and behaviour can
+    change before the stable release, and release candidates are not supported
+    for production use.
+</div>
+{% endif %}
+
 {% if page.content %}
     <h2>Major features in {{ line }}:</h2>
     <div class="release-highlights">{{ page.content | safe }}</div>
@@ -43,10 +54,8 @@
 
 {% if latest %}
     <h2>Get {{ latest.extra.tag }}</h2>
-    {% if prerelease_only %}
-        <p>Valkey {{ line }} has no stable release yet. This is a release candidate, not recommended for production use.</p>
-    {% endif %}
-    {{ release_macros::release_info(date=latest.date, release=latest.extra) }}
+    {# The notice above the highlights already covers this page. #}
+    {{ release_macros::release_info(date=latest.date, release=latest.extra, notice=false) }}
 
     <h2>All {{ line }} releases</h2>
     <ul class="list-links-small release-links">

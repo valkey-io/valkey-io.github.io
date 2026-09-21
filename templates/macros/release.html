@@ -1,4 +1,15 @@
-{% macro release_info(date, release) %}
+{% macro release_info(date, release, notice=true) %}
+{# A tag with a suffix is a pre-release. The warning lives here so it reaches
+   every page that offers the artifacts. Callers that have already warned in
+   their own words pass notice=false. #}
+{% if notice and release.tag is matching(".*-.*") %}
+<div class="release-prerelease-notice">
+    <strong>{{ release.tag }} is a release candidate, not a stable release.</strong>
+    Commands, configuration, and behaviour can change between a release candidate
+    and the stable release it leads to. Release candidates are not supported for
+    production use.
+</div>
+{% endif %}
 <p class="release-meta">
     <strong>Release Date:</strong> {{ date | date(format="%Y-%m-%d") }}<br />
     <strong>GitHub Release:</strong> <a href="https://github.com/valkey-io/valkey/releases/tag/{{release.tag}}">{{release.tag}}</a>

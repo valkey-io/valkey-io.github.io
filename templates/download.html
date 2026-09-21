@@ -67,7 +67,9 @@
 
 {% if upcoming | length > 0 %}
 <h2>Other releases</h2>
-<p>Release candidates for a version that has not had a stable release yet. Not recommended for production use.</p>
+<p>Release candidates for a version that has not had a stable release yet. These are
+not stable releases: commands, configuration, and behaviour can still change, and
+they are not supported for production use.</p>
 <ul class="list-links-small release-links">
     {% for pre_release in upcoming %}
     <li>

@@ -2100,6 +2100,19 @@ html.banner-hidden .banner {
   height: 1.6rem;
 }
 
+// Amber rather than red: a release candidate is not broken, it is just not
+// finished. #7A4A00 on #FFF6E5 is 7.4:1.
+.release-prerelease-notice {
+  @include sans-serif;
+  margin: 0 0 2rem;
+  padding: 1.5rem 2rem;
+  border-left: 4px solid #B26A00;
+  border-radius: 4px;
+  background: #FFF6E5;
+  color: #7A4A00;
+  line-height: 1.6;
+}
+
 .release-meta {
   margin: 0 0 1.5rem;
   line-height: 1.6;
