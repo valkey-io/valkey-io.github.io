@@ -1,6 +1,6 @@
 +++
 title = "Monitoring Valkey with Prometheus"
-date = 2026-09-07
+date = 2026-09-21
 description = "Learn how to expose Valkey metrics to Prometheus, visualize them in Grafana, and choose the right exporter for your deployment." 
 authors =  ["dragosandriciuc"]
 [taxonomies]
@@ -35,7 +35,7 @@ However it does expose operational data through the [`INFO` command](https://val
 
 If you can't see your Valkey database or cache, it will continue to keep serving requests while its fragmentation goes unnoticed and memory creeps toward the `maxmemory` ceiling, or replicas lag behind and the first sign of trouble is often a latency spike somewhere downstream, long after the root cause started.
 
-Putting Valkey and Prometheus provides several advantages.
+Putting Valkey and Prometheus together provides several advantages.
 
 - **Trend visibility**: View the operations per second, hit ratio, memory usage, and connection counts over time, not just a snapshot from `INFO` when something's already broken.
 - **Alerting before things break**: Set alert rules and manage those alerts using Alertmanager
@@ -158,7 +158,7 @@ This is an example of a minimal Prometheus scrape configuration for it:
 scrape_configs:
   - job_name: redis_exporter
     static_configs:
-      - targets: ['redis-exporter:9121']
+      - targets: ['redis_exporter:9121']
 ```
 
 ## Where each one fits
