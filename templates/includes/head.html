@@ -30,25 +30,25 @@
     <meta name="theme-color" content="#ffffff">
 
     <title>
-    {%- if command_title -%}
+    {%- if command_title is defined and command_title -%}
     Valkey Command &middot; {{ command_title }}
-    {%- elif frontmatter_title -%}
+    {%- elif frontmatter_title is defined and frontmatter_title -%}
     Valkey Documentation &middot; {{ frontmatter_title }}
-    {%- elif page.title -%}
+    {%- elif page is defined and page.title -%}
     Valkey &middot; {{ page.title }}
-    {%- elif section.title -%}
+    {%- elif section is defined and section.title -%}
     Valkey &middot; {{ section.title }}
     {%- else -%}
     Valkey
     {%- endif -%}
     </title>
-    <meta name="title" property="og:title" content="{%- if command_title -%}
+    <meta name="title" property="og:title" content="{%- if command_title is defined and command_title -%}
     Valkey Command: {{ command_title }}
-    {%- elif frontmatter_title -%}
+    {%- elif frontmatter_title is defined and frontmatter_title -%}
     Valkey Documentation: {{ frontmatter_title }}
-    {%- elif page.title -%}
+    {%- elif page is defined and page.title -%}
     Valkey: {{ page.title }}
-    {%- elif section.title -%}
+    {%- elif section is defined and section.title -%}
     Valkey: {{ section.title }}
     {%- else -%}
     Valkey

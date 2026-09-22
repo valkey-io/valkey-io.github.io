@@ -1,0 +1,168 @@
+name: Preview website
+
+# Builds a full preview of the site (including the command reference, topics,
+# and clients pages assembled from the sibling repos) for any pull request, and
+# makes it available for reviewers to test. Production deploys are handled
+# separately by zola-deploy.yml; this workflow never touches the production
+# GitHub Pages deployment.
+#
+# Two ways to consume a preview are provided:
+#
+# 1. Downloadable artifact (always on, no setup): the built `public/` directory
+#    is uploaded as a workflow artifact. Download it from the run's Summary page
+#    and open index.html, or serve the folder with any static server. This uses
+#    the production base_url, so absolute links point at valkey.io; it is best
+#    for eyeballing pages and running the search indexer locally.
+#
+# 2. Hosted preview URL (opt-in): if the PREVIEW_REPOSITORY and PREVIEW_TOKEN
+#    secrets are set, the build is pushed to a SEPARATE preview repository whose
+#    GitHub Pages serves it at a per-branch subpath. A repository can serve only
+#    one GitHub Pages site, and this repo's Pages is already the production site,
+#    so a hosted preview must live in a different repo. The build then uses that
+#    repo's Pages origin as its base_url so internal links resolve.
+
+on:
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch or ref to build a preview for"
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: preview-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  build-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.event.inputs.ref || github.event.pull_request.head.sha || github.ref }}
+          path: website
+
+      - name: Checkout valkey-doc
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: valkey-io/valkey-doc
+          path: valkey-doc
+
+      - name: Checkout valkey
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: valkey-io/valkey
+          path: valkey
+
+      - name: Checkout valkey-bloom
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: valkey-io/valkey-bloom
+          path: valkey-bloom
+
+      - name: Checkout valkey-search
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: valkey-io/valkey-search
+          path: valkey-search
+
+      - name: Checkout valkey-json
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: valkey-io/valkey-json
+          path: valkey-json
+
+      - name: Init commands, topics and clients
+        run: |
+          cd website
+          ./build/init-topics-and-clients.sh ../valkey-doc/topics \
+            ../valkey-doc/clients
+          ./build/init-commands.sh ../valkey-doc/commands \
+            ../valkey/src/commands ../valkey-bloom/src/commands \
+            ../valkey-json/src/commands ../valkey-search/src/commands
+
+      - name: Compute preview path and base URL
+        id: slug
+        env:
+          # Pass the ref through the environment, never interpolate it directly
+          # into the shell script body: a branch name is attacker-controlled and
+          # inline ${{ }} expansion would allow shell injection.
+          PREVIEW_REF: ${{ github.event.pull_request.head.ref || github.event.inputs.ref || github.ref_name }}
+          PREVIEW_REPOSITORY: ${{ secrets.PREVIEW_REPOSITORY }}
+          PREVIEW_TOKEN: ${{ secrets.PREVIEW_TOKEN }}
+        run: |
+          RAW="$PREVIEW_REF"
+          # Build a readable but collision-resistant, always-nonempty path:
+          # a sanitized name plus a short hash of the raw ref. This keeps
+          # foo/bar and foo-bar distinct and never yields an empty path (which
+          # would publish at the repo root and, with keep_files, clobber peers).
+          NAME="$(printf '%s' "$RAW" | tr '/' '-' | tr -cd '[:alnum:]._-')"
+          HASH="$(printf '%s' "$RAW" | shasum -a 256 | cut -c1-8)"
+          SAFE="${NAME:-preview}-${HASH}"
+          echo "path=$SAFE" >> "$GITHUB_OUTPUT"
+          # Host a preview only when BOTH secrets are present. If only one is set,
+          # fall back to artifact-only so the run completes instead of invoking
+          # the publish step without a usable credential and failing.
+          if [ -n "$PREVIEW_REPOSITORY" ] && [ -n "$PREVIEW_TOKEN" ]; then
+            PV_OWNER="${PREVIEW_REPOSITORY%%/*}"
+            PV_REPO="${PREVIEW_REPOSITORY#*/}"
+            echo "hosted=true" >> "$GITHUB_OUTPUT"
+            echo "base_url=https://${PV_OWNER}.github.io/${PV_REPO}/${SAFE}/" >> "$GITHUB_OUTPUT"
+          else
+            echo "hosted=false" >> "$GITHUB_OUTPUT"
+            echo "base_url=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build (default base URL, for the downloadable artifact)
+        if: steps.slug.outputs.hosted != 'true'
+        uses: shalzz/zola-deploy-action@1be083648a1db2853ce4970e381740c0e2fd06de # v0.23.6
+        env:
+          BUILD_DIR: website
+          BUILD_ONLY: true
+          BUILD_THEMES: false
+
+      - name: Build (preview base URL, for the hosted preview)
+        if: steps.slug.outputs.hosted == 'true'
+        uses: shalzz/zola-deploy-action@1be083648a1db2853ce4970e381740c0e2fd06de # v0.23.6
+        env:
+          BUILD_DIR: website
+          BUILD_ONLY: true
+          BUILD_THEMES: false
+          BUILD_FLAGS: --base-url ${{ steps.slug.outputs.base_url }}
+
+      - name: Upload preview artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: site-preview-${{ steps.slug.outputs.path }}
+          path: ./website/public
+          retention-days: 14
+
+      - name: Publish hosted preview
+        if: steps.slug.outputs.hosted == 'true'
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4
+        with:
+          personal_token: ${{ secrets.PREVIEW_TOKEN }}
+          external_repository: ${{ secrets.PREVIEW_REPOSITORY }}
+          publish_branch: gh-pages
+          publish_dir: ./website/public
+          destination_dir: ${{ steps.slug.outputs.path }}
+          keep_files: true
+          commit_message: "preview: ${{ steps.slug.outputs.path }} (${{ github.sha }})"
+
+      - name: Summarize
+        run: |
+          echo "### Preview build ready" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Downloadable artifact: **site-preview-${{ steps.slug.outputs.path }}** (see the Artifacts section of this run). Unzip and open index.html, or serve the folder with any static server." >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.slug.outputs.hosted }}" = "true" ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Hosted preview URL: ${{ steps.slug.outputs.base_url }}" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "_Hosted preview URL not configured. Set the PREVIEW_REPOSITORY (owner/repo of a separate Pages repo) and PREVIEW_TOKEN secrets to publish a hosted preview URL._" >> "$GITHUB_STEP_SUMMARY"
+          fi

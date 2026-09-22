@@ -19,37 +19,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event_name != 'pull_request' && 'main' || '' }}
           path: website
 
       - name: Checkout valkey-doc
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: valkey-io/valkey-doc
           path: valkey-doc
 
       - name: Checkout valkey
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: valkey-io/valkey
           path: valkey
 
       - name: Checkout valkey-bloom
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: valkey-io/valkey-bloom
           path: valkey-bloom
 
       - name: Checkout valkey-search
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: valkey-io/valkey-search
           path: valkey-search
 
       - name: Checkout valkey-json
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: valkey-io/valkey-json
           path: valkey-json
@@ -64,7 +64,7 @@ jobs:
             ../valkey-json/src/commands ../valkey-search/src/commands
 
       - name: Build only
-        uses: shalzz/zola-deploy-action@v0.22.0
+        uses: shalzz/zola-deploy-action@1be083648a1db2853ce4970e381740c0e2fd06de # v0.23.6
         env:
           BUILD_DIR: website
           BUILD_ONLY: true
@@ -72,7 +72,7 @@ jobs:
 
       - name: Upload artifact
         if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: ./website/public
 
@@ -86,4 +86,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

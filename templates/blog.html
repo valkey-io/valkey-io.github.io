@@ -74,7 +74,8 @@
   <div class="blog-featured">
     <h2>Featured</h2>
     {% set blog_post_section = get_section(path="blog/_index.md") %}
-      {% set featured_posts = blog_post_section.pages | filter(attribute="extra.featured", value=true) | slice(end=4) %}
+      {% set featured_posts = [p for p in blog_post_section.pages if p.extra?.featured == true] %}
+      {% set featured_posts = featured_posts[:4] %}
         {% for post in featured_posts %}
           <div class="blog-featured-card">
             {% if post.extra.featured_image %}

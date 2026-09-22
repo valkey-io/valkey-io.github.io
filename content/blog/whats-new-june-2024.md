@@ -25,7 +25,7 @@ Abhishek Gupta gives a [tutorial on how to get started with Valkey on JavaScript
 
 In less than 10 minutes Shantanu shows you how to install Valkey from source on Ubuntu.
 
-{{ youtube(id="T-tH1GC0omo") }}
+{{< youtube id="T-tH1GC0omo" />}}
 
 Percona published a couple of detailed how-to posts: Matthew Boehm detailed [setting up Valkey replication](https://www.percona.com/blog/valkey-redis-setting-up-replication/) and Anil Joshi [covers Valkey sharding](https://www.percona.com/blog/valkey-redis-sharding-using-the-native-clustering-feature/).
 
@@ -33,15 +33,15 @@ Percona published a couple of detailed how-to posts: Matthew Boehm detailed [set
 
 Swapnil from [TFIR interviews Ann Schlemmer from Percona](https://tfir.io/why-open-source-still-leads-the-way-despite-license-changes-ann-schlemmer/) about why open source still leads the way despite license changes.
 
-{{ youtube(id="D2G7kfAO37U") }}
+{{< youtube id="D2G7kfAO37U" />}}
 
 TSC member [Madelyn Olson was interviewed by Roberto Zicari on ODBMS](https://www.odbms.org/2024/06/on-the-open-source-valkey-project-qa-with-madelyn-olson/) and chatted with [Corey Quinn about Valkey on the Screaming in the Cloud podcast](https://www.lastweekinaws.com/podcast/screaming-in-the-cloud/steering-through-open-source-waters-with-madelyn-olson/).
 
-{{ youtube(id="Pl-udfEPwtk") }}
+{{< youtube id="Pl-udfEPwtk" />}}
 
 Robert and Courtney from the WooCommerce community chat about Valkey on the [Do the Woo Podcast](https://www.youtube.com/watch?v=E1hX1GZij_U).
 
-{{ youtube(id="E1hX1GZij_U") }}
+{{< youtube id="E1hX1GZij_U" />}}
 
 ## Want to feature your tutorial/article/meetup/video?
 
