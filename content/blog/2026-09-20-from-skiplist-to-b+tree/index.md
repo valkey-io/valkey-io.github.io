@@ -1,6 +1,6 @@
 +++
 title = "From Skiplists to B+ Trees: Making Valkey Sorted Sets More Memory Efficient"
-date = 2026-09-20
+date = 2026-09-22
 
 description = "How Valkey 9.2 replaces the skiplist used by large sorted sets with a cache-friendly B+ tree, reducing memory overhead while improving several ordered-set operations." 
 authors =  ["dragosandriciuc","rainvalentine"]
@@ -24,6 +24,8 @@ The hashtable gives O(1) lookups by member, while the skiplist gives O(log n) or
 That pairing has worked well for years, but the skiplist carries a hidden cost that is often overlooked.
 It stores exactly one element per node, scattered across memory as separate allocations connected by pointers.
 
+![Layout of a skiplist node showing the base-level pointer, span, and first fast lane](images/zskiplistNode-struct-layout.svg)
+
 That's not a Valkey-specific problem.
 Modern CPUs use a hierarchy of hardware caches (L1, L2, and L3) to keep frequently accessed data close to the processor.
 These caches are much smaller and faster than main memory (RAM), so when the CPU cannot find the data it needs in its cache, it must fetch it from a slower level of the memory hierarchy.
@@ -32,15 +34,20 @@ A 2025 study comparing fully concurrent in-memory index implementations found th
 **Note:** These figures come from the study's benchmark environment and should not be interpreted as measurements of Valkey's skiplist.
 
 The mechanical reason is straightforward: a modern CPU can fetch several adjacent cache lines efficiently when the data is laid out contiguously, thanks in part to the way memory is accessed and to hardware prefetching [^5].
-A B+ tree node that spans a few cache lines can therefore be read efficiently as the CPU scans its contents.
-A skiplist has no such luck: each node is a separate allocation, potentially scattered wherever the heap happened to place it, so following the structure can require repeatedly fetching data from unrelated memory locations.
+However, the bigger advantage is that a B+ tree requires fewer dependent memory fetches to reach the target data.
+
+A B+ tree node that spans a few cache lines can therefore be read efficiently as the CPU scans its contents, while the tree's high fanout means fewer levels need to be traversed in the first place.
+
+A skiplist is not designed like this.
+Each node is a separate allocation, potentially scattered wherever the heap happened to place it, so following the structure can require repeatedly fetching data from unrelated memory locations.
+Because each step can determine where the next step goes, these fetches are dependent, resulting in more round trips through the memory hierarchy.
 
 ![Memory layout comparison between a skiplist and fbtree for 61 consecutive sorted set members](images/allocations-to-scale.svg)
 
 **Note:** This comparison uses a different accounting convention than the benchmark numbers shown later in this post. See [Benchmarks](#benchmarks) for the measured reduction from PR 4359. [^4]
 
 Valkey's skiplist pays for this in raw memory too.
-Every node carries a backward pointer (8B), plus an expected 1.33 levels of forward pointers and span values.
+Every node carries a backward pointer (8B), plus an average of 1.33 levels of forward pointers and span values, since skiplists are probabilistic.
 Each level costs 8B for the pointer plus 8B for the span value, giving around 29B of pointer and span overhead per node.
 Add the 8B score, and the total reaches roughly 37B per node before accounting for the member string [^2].
 
@@ -48,12 +55,12 @@ There's a cleaner way to think about that 25%-per-level rule: it gives the skipl
 A B+ tree with a fanout of 61 (each node can hold up to 61 entries or child pointers) searches a much larger portion of the dataset at each level.
 Both structures retain O(log n) search complexity, but the B+ tree has substantially fewer levels to traverse and therefore fewer opportunities for expensive memory fetches.
 
+![Skiplist structure showing one heap allocation per sorted-set member](images/skiplist-structure.svg)
+
 This also isn't the first time sorted set memory has gotten smaller.
 An earlier release folded Valkey's `dict` into the newer `hashtable` implementation, reducing the overhead of the hash table used alongside the ordered index.
 Another optimization embedded the member string directly into the skiplist node, eliminating an 8B pointer per item.
 The B+ tree change builds on these earlier improvements, further reducing the memory overhead of the ordered index rather than replacing those savings [^3].
-
-![Skiplist structure showing one heap allocation per sorted-set member](images/skiplist-structure.svg)
 
 ## What replaced it: fbtree
 
@@ -69,8 +76,6 @@ If the features uniquely identify a child, the search can descend immediately; o
 
 Structurally, the tree uses a 61-way fanout, with leaf and inner nodes sized to fit jemalloc allocation classes without wasting space on 64-bit builds; on supported 32-bit builds, `innerNode` is rounded up to the 1280-byte class.
 
-![Layout of a skiplist node containing a 20-byte member](images/zskiplistNode-struct-layout.svg)
-
 ![Layout of an fbtree leaf node with 61 slots](images/fbtree-leaf-struct.svg)
 
 ![Layout of an fbtree inner node with 61-way fanout](images/fbtree-inner-node.svg)
@@ -84,7 +89,9 @@ fbtree also provides an efficient way to delete a contiguous range of elements w
 The payoff shows up in how the CPU reads it.
 A 512-byte leaf spans eight typical 64-byte cache lines, but those lines are adjacent.
 Hardware prefetching can therefore bring much of the node into cache as the CPU scans it.
-The skiplist has the opposite access pattern: each node is a separate allocation, so following the structure means chasing pointers to unrelated memory locations. Same O(log n) complexity, much smaller constant factor.
+The skiplist has the opposite access pattern: each node is a separate allocation, so following the structure means chasing pointers to unrelated memory locations.
+Each dependent fetch can stall progress until the required data arrives, and the next pointer cannot be followed until then.
+Same O(log n) complexity, much smaller constant factor.
 
 ![Animated diagram comparing skiplist and fbtree with 3,721 items. To insert an item, skiplist takes 19 fetches while fbtree takes 7.](images/skiplist-v-fbtree-insert-animated.svg)
 
@@ -105,10 +112,8 @@ Small sorted sets under the listpack threshold are unaffected either way, since 
 
 ### Memory efficiency
 
-The fbtree change is the latest step in a series of memory-efficiency improvements to sorted sets in Valkey.
-Since Valkey 7, these changes have progressively reduced the memory overhead of sorted sets.
-
-The transition from `dict` to `hashtable`, embedding the member string into the skiplist node, and now replacing the skiplist with fbtree each contribute to that reduction.
+fbtree's contribution is best isolated from the earlier improvements covered above: the `dict`-to-`hashtable` transition and embedding the member string in the node.
+The skiplist baseline below already includes both of those changes, so what's measured here is specifically the effect of replacing the skiplist itself.
 
 Inserting 5 million 20-byte members sequentially reduced per-member memory overhead, excluding the member data itself, from 50.3B to 28.5B, a **43% reduction**.
 The same 5 million members inserted in random order reduced per-member overhead from 50.3B to 32.0B, a **36% reduction**.
@@ -140,16 +145,6 @@ The same underlying design changes also improve throughput for several sorted se
 The pattern makes sense once you look at what each command actually does: `ZADD` and `ZREM` reposition elements in the tree, so they benefit most directly from fbtree's shallower structure and fewer pointer updates.
 Range operations see smaller gains because once the index traversal becomes cheap, producing and returning the requested elements becomes a larger part of the total cost.
 
-## How the migration was validated
-
-Replacing a core data structure in a mature database is less about implementing the new structure than proving that it behaves exactly like the old one.
-
-An OrderedIndex interface was first introduced between `ZSET` operations and the underlying data structure. The existing behavior was then captured in a shared test suite, allowing the skiplist and fbtree implementations to be tested against the same contract.
-
-[PR #3840](https://github.com/valkey-io/valkey/pull/3840) introduced this abstraction and migrated the `ZSET` call sites before the fbtree implementation replaced the skiplist.
-
-The final implementation was then validated with unit tests, integration tests, property-based and fuzz testing, and full-server benchmarks, 302 new unit tests plus 21 new integration tests covering the new encoding [^4].
-
 ## Known limitations
 
 One gap worth knowing about if you run delete-heavy sorted set workloads: fbtree doesn't yet merge or rebalance nodes on delete.
@@ -157,6 +152,8 @@ If your workload adds and removes elements at similar rates over a long period, 
 
 Background compaction is planned as a follow-up.
 If you're running a workload with heavy churn, it's worth watching `MEMORY USAGE` over time rather than assuming the benchmarks above hold indefinitely.
+
+Exactly how sparse depends on your workload's mix of adds and removes, but even at its sparsest, fbtree stays ahead of the skiplist's one-allocation-per-member baseline; steady-state, it's never worse, only better.
 
 ## Test in Valkey 9.2
 
