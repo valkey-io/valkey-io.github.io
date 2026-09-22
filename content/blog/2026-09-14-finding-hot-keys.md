@@ -31,14 +31,12 @@ Client-side sampling works if you own every client and can deploy mid-incident.
 
 ## What HOTKEYS reports
 
-Valkey 9.2 adds [`HOTKEYS`](/commands/hotkeys/), which answers the question on the server: over the last few seconds, which keys took the most requests?
+Valkey 9.2 adds [`HOTKEYS`](https://valkey.io/commands/hotkeys/), which answers the question on the server: over the last few seconds, which keys took the most requests?
 
-```bash
-valkey-cli CONFIG SET hotkeys-top-k 16
-valkey-cli HOTKEYS GET
 ```
-
-```text
+127.0.0.1:6379> CONFIG SET hotkeys-top-k 16
+OK
+127.0.0.1:6379> HOTKEYS GET
 1) 1) "key"
    2) "product:8fd21a"
    3) "db"
@@ -54,8 +52,8 @@ Missing keys count too, which catches something keyspace scans cannot see: a cli
 
 ## Configuring it for what you are looking for
 
-Three runtime-settable parameters.
-`hotkeys-top-k` doubles as the on/off switch, because tracking zero keys is the same as not tracking.
+You can set three runtime parameters.
+`hotkeys-top-k` doubles as the on/off switch: tracking zero keys is the same as not tracking.
 
 | Parameter | Default | Range | Meaning |
 | --- | --- | --- | --- |
@@ -74,16 +72,17 @@ During an incident, set sampling to 100 and the window to 1.
 A few percent more CPU on an already-saturated node buys a near-exact answer with one-second granularity, and you can turn it back down afterwards.
 
 To judge whether resharding will help, raise `hotkeys-top-k` to 50 and compare nodes.
-Load spread over many keys reshards well; 60% of it on one key does not, and needs client-side caching or a split across several keys instead.
+Load spread over many keys reshards well; load concentrated on one key does not, and needs client-side caching or a split across several keys instead.
 Detection is per-node, so collect from each node and combine the results yourself.
 
 Two habits matter as much as the settings.
-Poll at least once per window, because each report covers the last completed window and replaces the previous one: polling every 30 seconds with a one-second window observes about 3% of the timeline.
-Read `INFO hotkeys` alongside the report, because `hotkeys_last_window_samples` is the number of samples behind it, and a report built from few samples is one to read loosely.
+
+- Poll at least once per window, because each report covers the last completed window and replaces the previous one: polling every 30 seconds with a one-second window observes about 3% of the timeline.
+- Read `INFO hotkeys` alongside the report, because `hotkeys_last_window_samples` is the number of samples behind it, and a report built from few samples is one to read loosely.
 
 ## Why Space-Saving
 
-We needed bounded memory regardless of keyspace size, the specific key names rather than "something is hot", almost no cost on the access path, and no threshold for an operator to guess.
+We needed bounded memory regardless of keyspace size, the exact key names rather than a vague "something is hot", almost no cost on the access path, and no threshold for an operator to guess.
 
 Exact counting fails the first requirement: a counter per key across hundreds of millions of keys is a second copy of the keyspace, and you still have to sort it.
 
@@ -97,17 +96,18 @@ That eviction rule *is* the ranking, so there is no second structure and no thre
 Nothing needs tuning against a target error, because the filter calibrates itself against whatever the traffic is.
 
 Two guarantees come with it.
-Each entry's error bound puts the true count in `[count - error, count]`, so accuracy is per-entry rather than a property of the whole structure.
-Any key above `N/K` of the sampled traffic is guaranteed to be tracked, where `N` is the sample count that `INFO` reports, which is why raising `hotkeys-top-k` gives you a longer credible list.
+
+- Each entry's error bound puts the true count in `[count - error, count]`, so accuracy is per-entry rather than a property of the whole structure.
+- Any key above `N/K` of the sampled traffic is guaranteed to be tracked, where `N` is the sample count that `INFO` reports, which is why raising `hotkeys-top-k` gives you a longer credible list.
 
 Rates come from a frozen window: counts accumulate, and when the window elapses the summary freezes whole and a fresh one starts, so `HOTKEYS GET` never reports a partial window.
 Cumulative counters would never forget, letting yesterday's hot key outrank today's.
 Exponential decay would want floating point and a clock read on every sampled access, plus a half-life to tune.
 
-## What it costs
+## What HOTKEYS costs
 
 Detection is off by default, so baseline overhead is zero.
-Enabled, the cost tracks the sampling percentage:
+When enabled, the cost tracks the sampling percentage:
 
 | Sampling percentage | Throughput | Degradation |
 | ---: | ---: | ---: |
@@ -133,7 +133,7 @@ valkey-cli HOTKEYS GET
 valkey-cli INFO hotkeys
 ```
 
-`HOTKEYS HELP` lists the subcommands, and the reference pages are [`HOTKEYS GET`](/commands/hotkeys-get/) and [`HOTKEYS RESET`](/commands/hotkeys-reset/).
+`HOTKEYS HELP` lists the subcommands, and the reference pages are [`HOTKEYS GET`](https://valkey.io/commands/hotkeys-get/) and [`HOTKEYS RESET`](https://valkey.io/commands/hotkeys-reset/).
 
 Plenty is left to build.
 Reads and writes share one summary today, and splitting them is a natural follow-up.
