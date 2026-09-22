@@ -1,6 +1,7 @@
 +++
 title = "Introducing the Valkey GLIDE Ruby Client: Now Generally Available!"
-description = "The Ruby client for Valkey GLIDE, valkey-glide-rb, is now generally available, bringing GLIDE's shared Rust core and native observability to the Ruby ecosystem. Freshworks built it to replace years of Ruby client sprawl — redis-rb, redis-client, and moneta — with one client and one set of connection defaults."
+description = """The Ruby client for Valkey GLIDE, valkey-glide-rb, is now generally available, bringing GLIDE's shared Rust core and native observability to the Ruby ecosystem.
+Freshworks built it to replace years of Ruby client sprawl — redis-rb, redis-client, and moneta — with one client and one set of connection defaults."""
 date = 2026-09-22
 authors = ["sasidharan-gopal"]
 
@@ -312,7 +313,7 @@ Like the other [GLIDE](https://github.com/valkey-io/valkey-glide) language clien
 ```
 
 - **Ruby client** ([lib/valkey.rb](https://github.com/valkey-io/valkey-glide-ruby/blob/main/lib/valkey.rb), [lib/valkey/commands/*](https://github.com/valkey-io/valkey-glide-ruby/tree/main/lib/valkey/commands)) — the idiomatic, [redis-rb](https://github.com/redis/redis-rb)-flavored interface.
-- **[ffi](https://github.com/ffi/ffi) gem** — calls into the prebuilt native library (`libglide_ffi.so` on Linux, `.dylib` on macOS) with zero compilation step for consumers.
+- **[ffi](https://github.com/ffi/ffi) gem** — calls into the prebuilt native library (`libglide_ffi.so` on Linux, `.dylib` on macOS 14+ Apple silicon/arm64) with zero compilation step for consumers; Intel Mac users need to build Valkey GLIDE manually.
 - **[glide-core](https://github.com/valkey-io/valkey-glide/tree/main/glide-core)** — the same Rust driver used by the Java, Python, Node.js, and Go clients: connection management, cluster topology, retries, OpenTelemetry.
 
 This is the same FFI approach used by [GLIDE](https://github.com/valkey-io/valkey-glide)'s Go and Python-sync clients — different from Java (JNI) or Python-async (PyO3 + UDS) — chosen for straightforward native builds across Ruby's supported platforms (glibc- and musl-based Linux, and macOS).
