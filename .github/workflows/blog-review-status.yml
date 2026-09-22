@@ -60,21 +60,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
+          # A dry run reports the missing labels rather than adding them.
           python3 build/blog-review-status.py \
             --repo '${{ github.repository }}' \
             --content-dir main/content/blog \
-            --apply-labels \
+            ${{ env.POST == 'true' && '--apply-labels' || '' }} \
             --out payload.json | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Show the message without posting it
         if: env.POST != 'true'
         run: |
-          {
-            echo '### Slack payload'
-            echo '```json'
-            cat payload.json
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
+          echo '### Slack payload' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat payload.json | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
 
       - name: Post to Slack
         if: env.POST == 'true'
