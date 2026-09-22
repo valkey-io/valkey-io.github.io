@@ -92,11 +92,70 @@ function searchCommands() {
     // Show/hide no results message based on search results
     noResultsMessage.style.display = totalVisible === 0 ? "block" : "none";
 }
+
+function filterByCategory() {
+    var hash = window.location.hash.substring(1);
+    var groups = document.querySelectorAll(".command-group");
+    var sidebarLinks = document.querySelectorAll(".category-link");
+    var noResultsMessage = document.getElementById("no-results-message");
+
+    // Clear search box when filtering by category
+    var searchBox = document.getElementById("search-box");
+    if (searchBox) searchBox.value = "";
+
+    // Update active state on sidebar links
+    sidebarLinks.forEach(function (link) {
+        link.classList.remove("active");
+        if (link.getAttribute("href") === "#" + hash) {
+            link.classList.add("active");
+        }
+    });
+
+    // If no hash or hash is "top", show all groups
+    if (!hash || hash === "top") {
+        groups.forEach(function (group) {
+            group.style.display = "";
+            group.querySelectorAll(".command-entry").forEach(function (item) {
+                item.style.display = "";
+            });
+        });
+        noResultsMessage.style.display = "none";
+        sidebarLinks.forEach(function (link) { link.classList.remove("active"); });
+        var showAllLink = document.querySelector(".show-all-link");
+        if (showAllLink) showAllLink.classList.add("active");
+        return;
+    }
+
+    // Show only the matching group
+    var found = false;
+    groups.forEach(function (group) {
+        var heading = group.querySelector("h2");
+        if (heading && heading.id === hash) {
+            group.style.display = "";
+            group.querySelectorAll(".command-entry").forEach(function (item) {
+                item.style.display = "";
+            });
+            found = true;
+        } else {
+            group.style.display = "none";
+        }
+    });
+
+    noResultsMessage.style.display = found ? "none" : "block";
+}
 </script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("search-box").focus();
+
+    // Filter on initial page load if URL has a hash
+    if (window.location.hash) {
+        filterByCategory();
+    }
+
+    // Filter when hash changes (sidebar link clicked)
+    window.addEventListener("hashchange", filterByCategory);
 });
 </script>
 {% endblock main_content %}
@@ -104,10 +163,11 @@ document.addEventListener("DOMContentLoaded", function() {
 {% block related_content %}
 <h2 id="top">Command Categories</h2>
 <ul>
+<li><a href="#top" class="show-all-link active" onclick="window.location.hash='top';">Show All</a></li>
 {% if group_descriptions %}
 {% for command_group_name, group_description in group_descriptions %}
     {% set replaced_group_id = command_group_name | replace(from="-", to="_") %}
-    {% if grouped[replaced_group_id]  %}<li>  <a href="#{{ command_group_name }}">{{ group_description.display }}</a></li>{% endif %}
+    {% if grouped[replaced_group_id]  %}<li>  <a href="#{{ command_group_name }}" class="category-link">{{ group_description.display }}</a></li>{% endif %}
 {% endfor %}
 {% endif %}
 </ul>
