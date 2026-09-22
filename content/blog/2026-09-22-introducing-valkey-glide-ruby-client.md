@@ -13,15 +13,15 @@ featured_image = "/assets/media/featured/default.webp"
 +++
 
 We are pleased to announce the **general availability** of the Ruby client for [Valkey GLIDE](https://github.com/valkey-io/valkey-glide), [valkey-glide-rb](https://github.com/valkey-io/valkey-glide-ruby).
-This release brings the same battle-tested Rust core that powers [GLIDE](https://github.com/valkey-io/valkey-glide)'s [Java](https://github.com/valkey-io/valkey-glide/tree/main/java), [Python](https://github.com/valkey-io/valkey-glide/tree/main/python), [Node.js](https://github.com/valkey-io/valkey-glide/tree/main/node), and [Go](https://github.com/valkey-io/valkey-glide/tree/main/go) clients to the Ruby community — with an API designed to feel familiar to anyone coming from [redis-rb](https://github.com/redis-rb/redis-client).
+This release brings the shared Rust core that powers [GLIDE](https://github.com/valkey-io/valkey-glide)'s [Java](https://github.com/valkey-io/valkey-glide/tree/main/java), [Python](https://github.com/valkey-io/valkey-glide/tree/main/python), [Node.js](https://github.com/valkey-io/valkey-glide/tree/main/node), and [Go](https://github.com/valkey-io/valkey-glide/tree/main/go) clients to the Ruby community — with an API designed to feel familiar to anyone coming from [redis-rb](https://github.com/redis/redis-rb).
 
-[Freshworks](https://www.freshworks.com/) needed a Valkey-native Ruby client that could slot into our existing [redis-rb](https://github.com/redis-rb/redis-client) based workflows while giving us [GLIDE](https://github.com/valkey-io/valkey-glide)'s connection management, reliability, and observability out of the box — but Ruby wasn't on [GLIDE](https://github.com/valkey-io/valkey-glide)'s language roadmap.
-Building on top of [GLIDE](https://github.com/valkey-io/valkey-glide)'s shared core meant we didn't have to reinvent battle-tested cluster handling, retries, or tracing ourselves; we could focus purely on the Ruby surface and let the Rust core do the heavy lifting.
-In this post, we cover why Freshworks took this on, what GA means for the Ruby ecosystem, and how to get started — whether you're evaluating [GLIDE](https://github.com/valkey-io/valkey-glide) for the first time or migrating off [redis-rb](https://github.com/redis-rb/redis-client).
+[Freshworks](https://www.freshworks.com/) needed a Valkey-native Ruby client that could slot into our existing [redis-rb](https://github.com/redis/redis-rb) based workflows while giving us [GLIDE](https://github.com/valkey-io/valkey-glide)'s connection management, reliability, and observability out of the box — but Ruby wasn't on [GLIDE](https://github.com/valkey-io/valkey-glide)'s language roadmap.
+Building on top of [GLIDE](https://github.com/valkey-io/valkey-glide)'s shared core meant we didn't have to reinvent cluster handling, retries, or tracing ourselves; we could focus purely on the Ruby surface and let the Rust core do the heavy lifting.
+In this post, we cover why Freshworks took this on, what GA means for the Ruby ecosystem, and how to get started — whether you're evaluating [GLIDE](https://github.com/valkey-io/valkey-glide) for the first time or migrating off [redis-rb](https://github.com/redis/redis-rb).
 
-## Why You Should Be Excited
+## What GLIDE Brings to Ruby Developers
 
-If you run Ruby services against [Valkey](https://github.com/valkey-io/valkey) or [Redis OSS](https://github.com/redis/redis) today, you're almost certainly using [redis-rb](https://github.com/redis-rb/redis-client), [redis-client](https://github.com/redis-rb/redis-client), or a caching abstraction like [moneta](https://github.com/moneta-rb/moneta) sitting on top of one of them — each with its own connection pooling, retry, and TLS (Transport Layer Security) story.
+If you run Ruby services against [Valkey](https://github.com/valkey-io/valkey) or [Redis OSS](https://github.com/redis/redis) today, you're almost certainly using [redis-rb](https://github.com/redis/redis-rb), [redis-client](https://github.com/redis-rb/redis-client), or a caching abstraction like [moneta](https://github.com/moneta-rb/moneta) sitting on top of one of them — each with its own connection pooling, retry, and TLS (Transport Layer Security) story.
 [GLIDE](https://github.com/valkey-io/valkey-glide) gives Ruby a client that's:
 
 - **Consistent** with every other [GLIDE](https://github.com/valkey-io/valkey-glide) language client, so platform/infra teams can reason about client behavior once and apply it everywhere.
@@ -38,12 +38,12 @@ That scale created a problem that will sound familiar to anyone running Redis/Va
 As the team responsible for Redis/Valkey infrastructure at Freshworks, we had visibility into the *servers*, but almost none into how client applications talked to them.
 In practice, that meant:
 
-- Different teams depended on different gems for the same job — [redis-rb](https://github.com/redis-rb/redis-client), [redis-client](https://github.com/redis-rb/redis-client), [moneta](https://github.com/moneta-rb/moneta) (with a Redis/Valkey backend), and in some cases hand-rolled wrappers around [connection_pool](https://github.com/mperham/connection_pool) and [hiredis](https://github.com/redis/hiredis-rb).
+- Different teams depended on different gems for the same job — [redis-rb](https://github.com/redis/redis-rb), [redis-client](https://github.com/redis-rb/redis-client), [moneta](https://github.com/moneta-rb/moneta) (with a Redis/Valkey backend), and in some cases hand-rolled wrappers around [connection_pool](https://github.com/mperham/connection_pool) and [hiredis](https://github.com/redis/hiredis-rb).
 - Connection pooling, timeout, and retry/backoff settings were configured independently per team, with no shared defaults — so failure behavior during a network blip was inconsistent across the fleet.
 - There was no shared observability story: when a team reported "Redis is slow," the platform team had no client-side traces or statistics to correlate against server-side metrics, and every investigation started from scratch.
 - Upgrading TLS settings, rotating credentials, or rolling out a new connection strategy meant coordinating changes across `redis-rb`, `redis-client`, `moneta`, `connection_pool`, and `hiredis` — five configuration patterns instead of one.
 
-None of this is a knock on [redis-rb](https://github.com/redis-rb/redis-client) or [moneta](https://github.com/moneta-rb/moneta) — they're solid, widely used libraries.
+None of this is a knock on [redis-rb](https://github.com/redis/redis-rb) or [moneta](https://github.com/moneta-rb/moneta) — they're solid, widely used libraries.
 The issue was entirely about **not having one client with shared, centrally-owned defaults** that the platform team could reason about and evolve.
 
 ### Why GLIDE
@@ -55,14 +55,14 @@ The problem: [**GLIDE**](https://github.com/valkey-io/valkey-glide) **had no Rub
 Java, Python, Node.js, and Go were covered — Ruby wasn't on the roadmap.
 
 So Freshworks engineers, alongside the broader Valkey [GLIDE](https://github.com/valkey-io/valkey-glide) community, built it.
-From an empty repository to a GA gem: the FFI (Foreign Function Interface) bindings to glide-core, the command surface (strings, hashes, sets, sorted sets, streams, geo, bitmaps, scripting, pub/sub groundwork, JSON and vector-search module support, cluster commands), a [redis-rb](https://github.com/redis-rb/redis-client)-flavored API and [lint suite](https://github.com/valkey-io/valkey-glide-ruby/tree/main/test/lint), native builds across Linux (glibc/musl) and macOS, cluster and TLS test infrastructure, and OpenTelemetry integration.
+From an empty repository to a GA gem: the FFI (Foreign Function Interface) bindings to glide-core, the command surface (strings, hashes, sets, sorted sets, streams, geo, bitmaps, scripting, pub/sub groundwork, JSON and vector-search module support, cluster commands), a [redis-rb](https://github.com/redis/redis-rb)-flavored API and [lint suite](https://github.com/valkey-io/valkey-glide-ruby/tree/main/test/lint), native builds across Linux (glibc/musl) and macOS, cluster and TLS test infrastructure, and OpenTelemetry integration.
 
 ### Why this matters for a company our size
 
 - **One client, centrally owned.** The Redis/Valkey platform team can now set — and evolve — connection, retry, TLS, and observability defaults in one place instead of chasing down every team's Gemfile.
 - **Consistency with our other stacks.** Although we haven't started using GLIDE in other languages yet, we're looking forward to using it to ensure connection-management behavior is the same for Ruby, creating one mental model and one on-call runbook instead of N.
 - **Built-in observability.** Native OpenTelemetry spans and `get_statistics` give the platform team the client-side signal they never had, without asking every product team to add instrumentation.
-- **A path off client sprawl.** Teams still on [redis-rb](https://github.com/redis-rb/redis-client) or [moneta](https://github.com/moneta-rb/moneta)-over-Redis have a clear, supported target to migrate to, backed by the same team that runs the infrastructure.
+- **A path off client sprawl.** Teams still on [redis-rb](https://github.com/redis/redis-rb) or [moneta](https://github.com/moneta-rb/moneta)-over-Redis have a clear, supported target to migrate to, backed by the same team that runs the infrastructure.
 
 ## Key Features
 
@@ -94,7 +94,7 @@ Under the hood, [GLIDE](https://github.com/valkey-io/valkey-glide):
 
 - **Proactive reconnection** — [GLIDE](https://github.com/valkey-io/valkey-glide) monitors connection state in the background and reconnects before a request detects a broken connection, rather than incurring reconnection latency on the request path.
 - **Connection storm prevention** — reconnection attempts are spread out using backoff with jitter, so a network blip doesn't turn into a thundering herd against your servers.
-- **Multiplexed connections** — one connection per node rather than a pool, minimizing TCP connection counts, reducing syscall overhead, and lowering the connection-management burden on the server side.
+- **Multiplexed connections** — one connection per node rather than a pool.
 
 ```ruby
 client = Valkey.new(
@@ -108,7 +108,7 @@ client = Valkey.new(
 
 ### Built for Performance
 
-The Ruby client keeps the synchronous, blocking API Ruby developers already expect from [redis-rb](https://github.com/redis-rb/redis-client) — each command call blocks the calling thread, matching familiar client patterns.
+The Ruby client keeps the synchronous, blocking API Ruby developers already expect from [redis-rb](https://github.com/redis/redis-rb) — each command call blocks the calling thread, matching familiar client patterns.
 But under the hood, every FFI call into the Rust core is declared `blocking: true`, which releases Ruby's GVL (Global VM Lock) for the duration of the I/O.
 That means multiple Ruby threads sharing one Valkey client can issue commands concurrently — the GVL isn't held while [GLIDE](https://github.com/valkey-io/valkey-glide)'s core is talking to the server — and [GLIDE](https://github.com/valkey-io/valkey-glide)'s single multiplexed connection per node pipelines those concurrent requests efficiently instead of opening a connection per thread:
 
@@ -288,15 +288,15 @@ client = Valkey.new(
 
 valkey-glide-rb is **not a drop-in replacement** — it's a different client with its own connection model — but it deliberately follows familiar Ruby conventions to keep the migration cost low:
 
-| Feature | [redis-rb](https://github.com/redis-rb/redis-client) / [redis-client](https://github.com/redis-rb/redis-client) | [moneta](https://github.com/moneta-rb/moneta) (Redis backend) | valkey-glide-rb |
+| Feature | [redis-rb](https://github.com/redis/redis-rb) / [redis-client](https://github.com/redis-rb/redis-client) | [moneta](https://github.com/moneta-rb/moneta) (Redis backend) | valkey-glide-rb |
 | --- | --- | --- | --- |
-| **Connection model** | Per-thread pool ([connection_pool](https://github.com/mperham/connection_pool)) | Wraps [redis-rb](https://github.com/redis-rb/redis-client)/[redis-client](https://github.com/redis-rb/redis-client) | Single multiplexed connection per node |
+| **Connection model** | Per-thread pool ([connection_pool](https://github.com/mperham/connection_pool)) | Wraps [redis-rb](https://github.com/redis/redis-rb)/[redis-client](https://github.com/redis-rb/redis-client) | Single multiplexed connection per node |
 | **Cluster topology** | Manual/partial | N/A (not cluster-aware) | Automatic discovery + maintenance |
 | **Reconnection** | App/pool-managed | Delegated | Proactive, backoff + jitter |
 | **Observability** | Bring your own | Bring your own | Native OpenTelemetry + `get_statistics` |
-| **API style** | `.set`, `.get`, `pipelined`, `multi` | Hash-like `Moneta::Adapters::Redis` | `.set`, `.get`, `pipelined`, `multi` ([redis-rb](https://github.com/redis-rb/redis-client)-flavored) |
+| **API style** | `.set`, `.get`, `pipelined`, `multi` | Hash-like `Moneta::Adapters::Redis` | `.set`, `.get`, `pipelined`, `multi` ([redis-rb](https://github.com/redis/redis-rb)-flavored) |
 
-A shared [lint suite](https://github.com/valkey-io/valkey-glide-ruby/tree/main/test/lint) checks the gem's command methods against [redis-rb](https://github.com/redis-rb/redis-client) conventions, and `call`/`call_v` cover anything not yet wrapped — so teams can move over incrementally rather than rewriting call sites in one pass.
+A shared [lint suite](https://github.com/valkey-io/valkey-glide-ruby/tree/main/test/lint) checks the gem's command methods against [redis-rb](https://github.com/redis/redis-rb) conventions, and `call`/`call_v` cover anything not yet wrapped — so teams can move over incrementally rather than rewriting call sites in one pass.
 
 ## Behind the Scenes: Technical Architecture
 
@@ -311,7 +311,7 @@ Like the other [GLIDE](https://github.com/valkey-io/valkey-glide) language clien
 +------------+      +-----+      +------------+      +------------+
 ```
 
-- **Ruby client** ([lib/valkey.rb](https://github.com/valkey-io/valkey-glide-ruby/blob/main/lib/valkey.rb), [lib/valkey/commands/*](https://github.com/valkey-io/valkey-glide-ruby/tree/main/lib/valkey/commands)) — the idiomatic, [redis-rb](https://github.com/redis-rb/redis-client)-flavored interface.
+- **Ruby client** ([lib/valkey.rb](https://github.com/valkey-io/valkey-glide-ruby/blob/main/lib/valkey.rb), [lib/valkey/commands/*](https://github.com/valkey-io/valkey-glide-ruby/tree/main/lib/valkey/commands)) — the idiomatic, [redis-rb](https://github.com/redis/redis-rb)-flavored interface.
 - **[ffi](https://github.com/ffi/ffi) gem** — calls into the prebuilt native library (`libglide_ffi.so` on Linux, `.dylib` on macOS) with zero compilation step for consumers.
 - **[glide-core](https://github.com/valkey-io/valkey-glide/tree/main/glide-core)** — the same Rust driver used by the Java, Python, Node.js, and Go clients: connection management, cluster topology, retries, OpenTelemetry.
 
