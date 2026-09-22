@@ -1,6 +1,6 @@
 +++
 title = "Valkey Metrics in Prometheus: redis_exporter and BetterDB"
-date = 2026-09-16
+date = 2026-09-22
 description = "A starting point for monitoring Valkey with Prometheus: two exporters, per-pod and cluster-wide metrics."
 authors = ["edithpuclla", "kivanow"]
 [taxonomies]
