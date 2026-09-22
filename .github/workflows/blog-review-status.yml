@@ -26,6 +26,11 @@ concurrency:
 jobs:
   report:
     runs-on: ubuntu-latest
+    env:
+      # A dry run builds the message and shows it in the job summary instead of
+      # posting it. TEMPORARY: `push` runs are dry too, so the branch can be
+      # tested before it merges. Remove the event check before merging.
+      POST: ${{ inputs.dry_run != true && github.event_name != 'push' }}
     steps:
       - name: Generate token
         id: generate-token
@@ -61,8 +66,18 @@ jobs:
             --apply-labels \
             --out payload.json | tee -a "$GITHUB_STEP_SUMMARY"
 
+      - name: Show the message without posting it
+        if: env.POST != 'true'
+        run: |
+          {
+            echo '### Slack payload'
+            echo '```json'
+            cat payload.json
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Post to Slack
-        if: inputs.dry_run != true
+        if: env.POST == 'true'
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           # #blog-review-status. The bot has to be a member of the channel.
