@@ -1,0 +1,45 @@
+{#
+  Participant logo strip helpers for the community page.
+
+  Logos come in very different shapes (square icons, tall lockups, long
+  wordmarks). To give them similar visual weight, each logo is sized against
+  a shared width budget: display height = budget / aspect-ratio, clamped to a
+  sane band. This keeps very wide wordmarks (e.g. NetApp Instaclustr, IONOS,
+  Oracle) from being squeezed to a sliver by a fixed width cap, while square
+  marks stay reasonably small. Dimensions are read at build time from the
+  image file itself. The 210 budget below must match the `max-width` on
+  `.community-logo-cell img` in _community.scss.
+#}
+
+{% macro logo_height(src) %}
+  {%- set meta = get_image_metadata(path="static" ~ src, allow_missing=true) -%}
+  {%- if meta and meta.height > 0 -%}
+    {%- set ratio = meta.width / meta.height -%}
+    {%- set h = 210 / ratio -%}
+    {%- if h > 44 -%}44
+    {%- elif h < 22 -%}22
+    {%- else -%}{{ h | round }}
+    {%- endif -%}
+  {%- else -%}24
+  {%- endif -%}
+{% endmacro logo_height %}
+
+{# One full set of logos. The marquee renders it twice; the copy is hidden from
+   assistive tech. Logos are non-interactive: the "Valkey participants" kicker
+   already links to /participants/, where each logo is linked with a
+   description. Rendering them as links here added ~20 tab stops with no skip
+   link and let keyboard focus scroll the marquee off-track. #}
+{% macro logo_set(participants, duplicate=false) %}
+<div class="community-logo-set"{% if duplicate %} aria-hidden="true"{% endif %}>
+  {%- for participant in participants -%}
+    {%- if participant.name and participant.image and participant.image.path -%}
+      {%- set src = participant.image.strip | default(value=participant.image.path) -%}
+      {%- set height = self::logo_height(src=src) | trim -%}
+      {%- set alt = participant.image.alt | default(value=participant.name ~ " logo") -%}
+      <span class="community-logo-cell" title="{{ participant.name }}" style="--logo-height: {{ height }}px">
+        <img src="{{ src }}" alt="{% if not duplicate %}{{ alt }}{% endif %}" loading="eager" decoding="async">
+      </span>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+{% endmacro logo_set %}
