@@ -51,8 +51,7 @@ They solve overlapping but distinct problems.
 
 ### BetterDB
 
-[BetterDB](https://www.betterdb.com/) is a Valkey-native observability platform built by Kristiyan Ivanov (you'll find him active on the Valkey Slack).
-The project started because Valkey is growing quickly but it has mostly inherited tooling that predates it rather than tooling built to take advantage of what Valkey now offers natively, things like [`COMMANDLOG`](https://valkey.io/commands/commandlog/) and [`CLUSTER SLOT-STATS`](https://valkey.io/commands/cluster-slot-stats/).
+[BetterDB](https://www.betterdb.com/) is a Valkey-native observability platform.
 
 BetterDB is a full monitoring and observability application that provides real-time dashboards, anomaly detection, and operational intelligence for your Valkey deployment, not only a metrics-to-Prometheus bridge.
 
@@ -61,12 +60,12 @@ BetterDB is a full monitoring and observability application that provides real-t
 It exposes its own metrics at `GET /prometheus/metrics` in the standard text/plain format and standard Node.js process metrics from `prom-client`. It covers the following:
 
 - **Core Valkey performance**: Operations processed per second, memory usage, and network throughput, derived from `INFO`.
-- **ACL audit metrics**: Denied ACL events, broken down by reason and by username, useful for catching misconfigured permissions or attempted unauthorized access.
+- **ACL audit metrics**: Denied ACL events, broken down by reason and by username, used to catch misconfigured permissions or attempted unauthorized access.
 - **Client connection metrics**: Current and peak connection counts, broken down by client name and by ACL user.
-- **Slowlog metrics**: Metrics data such as average duration, and percentage share, grouped by query *pattern* rather than raw individual queries, which makes it much easier to spot "this class of query is the problem" instead of scrolling through a slowlog manually.
-- **COMMANDLOG metrics (Valkey 8.1+)**: Large-request and large-reply counts, surfacing a Valkey-only capability that plain `INFO`-based tools cannot retrieve.
+- **Slowlog metrics**: Metrics data such as average duration, and percentage share, grouped by query *pattern* rather than raw individual queries, which makes spotting a problematic query class faster than reviewing entries one by one.
+- **COMMANDLOG metrics (Valkey 8.1+)**: Large-request and large-reply counts, grouped and analyzed by command pattern.
 - **Vector Index / AI metrics**: This is for deployments running [`valkey-search`](https://valkey.io/topics/search/), a dedicated set of per-index health metrics and gauges (indexed docs, index memory, indexing failures, percent indexed).
-- **Node.js process metrics**: Since the monitor itself is a Node.js application, it also exposes its own CPU, event-loop metrics, and HEAP/GC metrics, useful for keeping an eye on the monitoring tool's own health.
+- **Node.js process metrics**: Since the monitor itself is a Node.js application, it also exposes its own CPU, event-loop metrics, and HEAP/GC metrics, which keeps an eye on the monitoring tool's own health.
 
 ### Example for BetterDB
 
@@ -85,7 +84,7 @@ betterdb_memory_fragmentation_ratio{connection="172.17.0.4:6379"} 10.35
 betterdb_commands_processed_total{connection="172.17.0.4:6379"} 319
 betterdb_instantaneous_ops_per_sec{connection="172.17.0.4:6379"} 0
 
-# Anomaly detection (this is BetterDB's differentiator)
+# Anomaly detection
 betterdb_anomaly_events_total{connection="172.17.0.4:6379",severity="warning",metric_type="fragmentation_ratio",anomaly_type="spike"} 1
 betterdb_correlated_groups_total{connection="172.17.0.4:6379",pattern="memory_pressure",severity="warning"} 1
 ```
@@ -101,11 +100,9 @@ Then point Prometheus at `http://<host>:3001/prometheus/metrics`, and open `http
 ### redis_exporter (Valkey-compatible)
 
 [redis_exporter](https://github.com/oliver006/redis_exporter) is a long-standing, community-standard Prometheus exporter for Valkey metrics.
-At the time of writing, it supports Valkey 7.x, 8.x, and 9.x.
+It focuses entirely on getting Valkey metrics into Prometheus format rather than providing its own dashboard, which makes it lightweight and easy to slot into an existing Grafana or Alertmanager stack.
 
-However, redis_exporter has no UI of its own.
-It's a single-purpose exporter: you connect to the datastore, pull data, republish it in the Prometheus format, and export it.
-You can use this to feed Grafana dashboards and Prometheus alerting rules instead of an actual dashboard.
+At the time of writing, it supports Valkey 7.x, 8.x, and 9.x.
 
 ### What metrics does redis_exporter cover
 
@@ -169,7 +166,7 @@ The comparison below focuses on what each tool provides rather than treating the
 
 | | BetterDB | redis_exporter |
 |---|---|---|
-| **What it is** | Full monitoring application including dashboard, a Prometheus endpoint, an audit trail and anomaly detection | Single-purpose Prometheus exporter with no UI |
+| **What it is** | Full monitoring application including dashboard, a Prometheus endpoint, an audit trail and anomaly detection | Single-purpose Prometheus exporter focused on metrics export, no built-in UI |
 | **Setup** | One Docker container or `npx @betterdb/monitor`; configurable storage backend | One Docker container; typically paired with your own Grafana dashboards |
 | **Valkey-specific features** | Native support for `COMMANDLOG` and `CLUSTER SLOT-STATS` | Exposes many Valkey metrics through INFO and dedicated collectors, including `COMMANDLOG`; does not provide BetterDB's higher-level analysis of those features |
 | **Vector/AI search visibility** | Dedicated tab and metrics for `valkey-search` | Optional, using the `--include-search-indexes-metrics` flag, less purpose-built |
