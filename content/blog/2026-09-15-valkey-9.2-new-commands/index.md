@@ -182,18 +182,41 @@ The equivalent Lua implementation is possible, here's what replicating `XDELEX .
 local stream = KEYS[1]
 local id = ARGV[1]
 
+-- An entry beyond a group's delivery cursor is still deliverable, even
+-- though it is not in that group's PEL yet.
+local function component_greater(left, right)
+    left = string.gsub(left, '^0+', '')
+    right = string.gsub(right, '^0+', '')
+    if left == '' then left = '0' end
+    if right == '' then right = '0' end
+    return #left > #right or (#left == #right and left > right)
+end
+
+local function id_greater(left, right)
+    local left_ms, left_seq = string.match(left, '^(%d+)%-(%d+)$')
+    local right_ms, right_seq = string.match(right, '^(%d+)%-(%d+)$')
+    return component_greater(left_ms, right_ms) or
+        (left_ms == right_ms and component_greater(left_seq, right_seq))
+end
+
 -- enumerate every consumer group on the stream
 local groups = server.call('XINFO', 'GROUPS', stream)
 
 -- check whether this ID is still pending in any of them
 for i, group in ipairs(groups) do
     local groupName = nil
+    local lastDelivered = nil
     for j = 1, #group, 2 do
         if group[j] == 'name' then
             groupName = group[j + 1]
+        elseif group[j] == 'last-delivered-id' then
+            lastDelivered = group[j + 1]
         end
     end
     if groupName then
+        if lastDelivered and id_greater(id, lastDelivered) then
+            return 2  -- this group can still receive the entry
+        end
         local pending = server.call('XPENDING', stream, groupName, id, id, 1)
         if #pending > 0 then
             return 2  -- still referenced, not safe to delete
@@ -221,7 +244,7 @@ end
 # deleted, once acknowledged
 ```
 
-It produces the same result as `XDELEX ... ACKED` on the same scenario, but getting there means enumerating groups, walking the `XINFO GROUPS` reply's field/value reply structure by hand, and looping `XPENDING` per group before you can call `XDEL`.
+This version also checks each group's last-delivered ID; checking `XPENDING` alone is not enough because an entry beyond that cursor is deliverable even before it enters the group's PEL. With that caveat, it produces the same result as `XDELEX ... ACKED` on the same scenario, but getting there means enumerating groups, walking the `XINFO GROUPS` reply's field/value reply structure by hand, and looping `XPENDING` per group before you can call `XDEL`.
 `XDELEX` does all of that in one call.
 
 ### `XACKDEL` to delete acknowledged messages
