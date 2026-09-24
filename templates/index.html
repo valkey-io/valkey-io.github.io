@@ -10,102 +10,106 @@
         <p class="hero-subtitle">
             {{ section.extra.hero.subtitle }}
         </p>
-        <a href="{{ section.extra.hero.button_url }}" class="hero-button">{{ section.extra.hero.button_text }}</a>
+        <div class="hero-buttons">
+            <a href="{{ section.extra.hero.button_url }}" class="hero-button">{{ section.extra.hero.button_text }}</a>
+            {% if section.extra.hero.secondary_button_text %}
+            <a href="{{ section.extra.hero.secondary_button_url }}" class="hero-button hero-button-dark">{{ section.extra.hero.secondary_button_text }}</a>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endif %}
 
 <div class="whats-new-section">
-        <div class="whats-new-inner row">
-            <div class="col col-6">   
-                {% set release_section = get_section(path="download/releases/_index.md") %}
-                {% set releases = release_section.pages | reverse %}
-                
-                {% set_global active_releases = [] %}
-                {% for release in releases %}
-                    {% if release.extra.tag is not matching(".*-.*") %}
-                        {% set_global active_releases = active_releases | concat(with=release) %}
+    <div class="whats-new-inner row">
+        <div class="col col-6">
+            {# The newest stable release on each major.minor line, newest line first. #}
+            {% set release_section = get_section(path="download/releases/_index.md") %}
+            {% set_global release_lines = [] %}
+            {% set_global seen_lines = [] %}
+            {% for candidate in release_section.pages | sort(attribute="date") | reverse %}
+                {% if candidate.extra.tag is not matching(".*-.*") %}
+                    {% set candidate_line = candidate.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+                    {% if candidate_line not in seen_lines %}
+                        {% set_global seen_lines = seen_lines | concat(with=candidate_line) %}
+                        {% set_global release_lines = release_lines | concat(with=candidate) %}
                     {% endif %}
-                {% endfor %}
-                
-                {% set most_recent_release_page = active_releases | slice(end= 1) %}
-                {% set release_date = most_recent_release_page[0].date %}
-                {% set release = most_recent_release_page[0].extra %}
-                
-                {% set split_ver = release.tag | split(pat=".")%}
-                {% set_global major = split_ver | nth(n= 0) %}
-                
-                <h3> Version {{major}}.x.x </h3>
-                <div class="inner-card">
-                    {% include "includes/release.html" %}
-                </div>
-
-                <h3> Latest supported version of past releases</h3>
-                
-                <div class="inner-card">
-                    {% for older_release in active_releases %}
-                        {% set older_split_ver = older_release.extra.tag | split(pat=".")%}
-                        {% set older_major = older_split_ver | nth(n= 0) %}
-                        {% if older_major != major %}
-                            {% set_global major = older_major %}
-                            {% set release = older_release.extra %}
-                            <h4> Version {{major}}.x.x </h4>
-                            {% include "includes/release.html" %}
-                        {% endif %}
-                    {% endfor %}
-                </div>                   
-            </div>        
-            <div class="col col-3"> 
-                <h3>Performance</h3>
-                <div class="homepage-performance-section">
-                    {% set perf = load_data(path="_data/perf.toml") %}
-                    {% for perf_dashboard in perf.dashboards %}
-                    <div class="homepage-performance-card">
-                        <div class="homepage-performance-card-content">
-                            <h4><a href="{{ perf_dashboard.link }}">{{ perf_dashboard.title | markdown | safe }}</a></h4>
-                            {{ perf_dashboard.description | markdown | safe }}
-                            <a href="{{  perf_dashboard.link }}" class="view-dashboard">Explore</a>
-                        </div>
-
-                    </div>
-                    {% endfor %}
-                </div>
-                
-            </div>
-            <div class="col col-3">   
-                <h3>Latest Blog Posts</h3>
-                <div class="homepage-blog-section">
-                    {% set blog_post_section = get_section(path="blog/_index.md") %}
-                    {% set blog_posts = blog_post_section.pages | slice(end=2) %}
-                    {% for post in blog_posts %}
-                        <div class="homepage-blog-card">
-                            <div class="homepage-blog-card-content">
-                                <h4 class="homepage-blog-card-title"><a href="{{ post.permalink }}">{{ post.title }}</a></h4>
-                                <p class="homepage-blog-card-description">{{ post.description }}</p>
-                                <a href="{{ post.permalink }}" class="homepage-blog-card-readmore">Read More</a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-
-
-
-                {% if section.extra and section.extra.sidebar %}
-                    {% for sidebar_category in section.extra.sidebar %}
-                        <h3>{{sidebar_category.title}}</h3>
-                        <div class="inner-card">
-                            <ul class="list-links-small">
-                                {% for link in sidebar_category.links %}
-                                <li><a href="{{ link.url }}">{{ link.title}}</a></li>
-                                {% endfor %}
-                            </ul>
-                            {% if sidebar_category.more %} 
-                                <a href="{{ sidebar_category.more.url }}" class="link-readmore">{{sidebar_category.more.title}}</a> 
-                            {% endif %}
-                        </div>
-                    {% endfor %}
                 {% endif %}
-            </div>        
+            {% endfor %}
+
+            {% set latest = release_lines | first %}
+            {% set latest_line = latest.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+
+            {# Highlights and the line URL both come from the /download/<line>/ page.
+               get_page fails the build if a release ships without its line page. #}
+            {% set latest_slug = latest_line | replace(from=".", to="-") %}
+            {% set latest_line_page = get_page(path="download/versions/" ~ latest_slug ~ ".md") %}
+
+            <h3>Latest release</h3>
+            <div class="inner-card">
+                <p class="release-headline">
+                    <a href="{{ latest_line_page.permalink }}">Valkey {{ latest.extra.tag }}</a>
+                    <small>Released {{ latest.date | date(format="%B %-d, %Y") }}</small>
+                </p>
+
+                <div class="release-highlights">{{ latest_line_page.content | safe }}</div>
+                {% if latest_line_page.extra.blog_url %}
+                    <a href="{{ latest_line_page.extra.blog_url }}" class="link-readmore">{{ latest_line_page.extra.blog_text }}</a>
+                {% endif %}
+            </div>
+
+            <h3>Latest supported version of past releases</h3>
+            <div class="inner-card">
+                <ul class="list-links-small release-links">
+                    {% for older_release in release_lines | slice(start=1) %}
+                        {% set older_line = older_release.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+                        {% set older_slug = older_line | replace(from=".", to="-") %}
+                        {% set older_line_page = get_page(path="download/versions/" ~ older_slug ~ ".md") %}
+                        <li>
+                            <a href="{{ older_line_page.permalink }}">Valkey {{ older_release.extra.tag }}</a>
+                            <small>Released {{ older_release.date | date(format="%B %-d, %Y") }}</small>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <a href="/download/releases/" class="link-readmore">All releases</a>
+            </div>
+        </div>
+        <div class="col col-6">
+            <div class="homepage-blog-heading">
+                <h3>Latest Blog Posts</h3>
+                <a href="/blog/" class="homepage-blog-more">All blog posts</a>
+            </div>
+            <div class="homepage-blog-section">
+                {% set blog_post_section = get_section(path="blog/_index.md") %}
+                {% set blog_posts = blog_post_section.pages | slice(end=section.extra.latest_blog_posts) %}
+                {% for post in blog_posts %}
+                    {# The whole card is the link, so there is no separate call to action.
+                       Featured images are 16:9 decoration; a thumbnail this narrow could only
+                       show a crop of one, so the card is text instead. #}
+                    <a class="homepage-blog-card" href="{{ post.permalink }}">
+                        <h4 class="homepage-blog-card-title">{{ post.title }}</h4>
+                        <p class="homepage-blog-card-meta">{{ post.date | date(format="%B %-d, %Y") }}</p>
+                        <p class="homepage-blog-card-description">{{ post.description }}</p>
+                    </a>
+                {% endfor %}
+            </div>
+
+            {% if section.extra and section.extra.sidebar %}
+                {% for sidebar_category in section.extra.sidebar %}
+                    <h3>{{sidebar_category.title}}</h3>
+                    <div class="inner-card">
+                        <ul class="list-links-small">
+                            {% for link in sidebar_category.links %}
+                            <li><a href="{{ link.url }}">{{ link.title}}</a></li>
+                            {% endfor %}
+                        </ul>
+                        {% if sidebar_category.more %}
+                            <a href="{{ sidebar_category.more.url }}" class="link-readmore">{{sidebar_category.more.title}}</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
     </div>
 </div>
 
@@ -122,13 +126,6 @@
                 <div class="documentation-card">
                     <h3>{{ card.title }}</h3>
                     <p>{{ card.description }}</p>
-                    {% if card.features %}
-                    <ul>
-                        {% for feature in card.features %}
-                        <li>{{ feature }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
                     <a class="btn" href="{{ card.button_url }}">{{ card.button_text }}</a>
                 </div>
             </div>

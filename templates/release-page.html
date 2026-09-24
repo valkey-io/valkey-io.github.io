@@ -1,11 +1,9 @@
 {% extends "right-aside.html" %}
+{% import "macros/release.html" as release_macros %}
 
 {% block subhead_content%}
 <h1 class="page-title">Download Valkey {{page.title}}</h1>
 {% endblock subhead_content%}
 {% block main_content %}
-{% set release = page.extra %}
-{% set release_date = page.date %}
-
-{% include "includes/release.html" %}
+{{ release_macros::release_info(date=page.date, release=page.extra) }}
 {% endblock main_content %}
