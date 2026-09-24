@@ -70,6 +70,53 @@ jobs:
           BUILD_ONLY: true
           BUILD_THEMES: false
 
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "20"
+
+      # Runs after `zola build`, before the artifact upload, so the index
+      # ships with the pages it describes and reflects this exact commit.
+      # The zola-deploy-action builds `website/public` as root inside Docker,
+      # so reclaim ownership before the Node step writes search-index.json.
+      - name: Build search index
+        run: |
+          cd website
+          sudo chown -R "$(id -u):$(id -g)" public
+          npm ci
+          npm run build:search-index
+
+      # Fail the deploy if the index is missing, malformed, or too small.
+      # Long pages are split into per-section records, so the real count is
+      # ~2,100+. MIN_RECORDS is a floor with headroom for content churn that is
+      # still high enough to catch a regression back to one-record-per-page
+      # (which would collapse the count to roughly 800).
+      - name: Verify search index
+        env:
+          MIN_RECORDS: "1500"
+        run: |
+          cd website
+          INDEX=public/search-index.json
+          if [ ! -s "$INDEX" ]; then
+            echo "::error::$INDEX is missing or empty"
+            exit 1
+          fi
+          COUNT=$(node -e "const a=require('./public/search-index.json'); if(!Array.isArray(a)){console.error('not an array');process.exit(1)} console.log(a.length)")
+          echo "search-index.json contains $COUNT records"
+          if [ "$COUNT" -lt "$MIN_RECORDS" ]; then
+            echo "::error::search index has $COUNT records, below the expected minimum of $MIN_RECORDS"
+            exit 1
+          fi
+          # Spot-check that render-time docs content (not just blog stubs) made
+          # it in: at least one /topics/ and one /commands/ page must be present.
+          node -e "
+            const a=require('./public/search-index.json');
+            const has=(p)=>a.some(r=>typeof r.url==='string'&&r.url.startsWith(p)&&(r.body||'').length>0);
+            const topics=has('/topics/'), commands=has('/commands/');
+            console.log('topics indexed:', topics, '| commands indexed:', commands);
+            if(!topics||!commands){console.error('::error::expected indexed /topics/ and /commands/ pages with content');process.exit(1)}
+          "
+
       - name: Upload artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
