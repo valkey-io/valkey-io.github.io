@@ -1,0 +1,65 @@
+{# Shared catalog chrome for the Libraries page (templates/libraries.html), #}
+{# served at both /clients/ and /integrations/: the toolbar, empty-state, and #}
+{# submission-CTA / noscript footer. Kind-specific parts stay in libraries.html. #}
+
+{# Toolbar: search box + Valkey toggle + sort control. #}
+{%- macro toolbar(search_placeholder) -%}
+    <div class="toolbar" data-toolbar>
+      <div class="field field-search">
+        <label for="catalog-q">Search</label>
+        <span class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input id="catalog-q" type="search" class="search-input" data-search-input
+                 placeholder="{{ search_placeholder }}" autocomplete="off" aria-label="Search">
+        </span>
+      </div>
+      <div class="field field-toggle">
+        <span class="toggle-label" id="fp-toggle-label">Valkey</span>
+        <button type="button" class="fp-toggle" data-first-party-toggle
+                role="switch" aria-checked="false" aria-labelledby="fp-toggle-label">
+          <span class="fp-toggle-track" aria-hidden="true"><span class="fp-toggle-thumb"></span></span>
+          <span class="fp-toggle-text">Maintained by Valkey</span>
+        </button>
+      </div>
+      <div class="field field-sort">
+        <label id="catalog-sort-label">Sort</label>
+        <button type="button" id="catalog-sort" class="sort-control" data-sort-control
+                aria-pressed="false" aria-labelledby="catalog-sort-label"
+                aria-label="Sort by name, ascending A to Z. Activate to reverse.">
+          <span class="sort-control-text" data-sort-text>Name A–Z</span>
+          <svg class="sort-control-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 4v16"></path><path d="M4 8l3-4 3 4"></path>
+            <path d="M13 6h7"></path><path d="M13 12h5"></path><path d="M13 18h3"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+{%- endmacro toolbar -%}
+
+{# Empty state shown by JS when no card of the active kind matches. #}
+{%- macro empty_state(noun) -%}
+      <div class="empty-state" data-empty-state hidden>
+        <p class="empty-msg">No {{ noun }} match your current search and filters.</p>
+        <ul class="empty-recovery" data-recovery>
+          <li><button type="button" data-recover="clear-filters">Clear filters</button></li>
+          <li><button type="button" data-recover="clear-search">Clear search</button></li>
+        </ul>
+      </div>
+{%- endmacro empty_state -%}
+
+{# Contribute heading + submission CTA + noscript note. #}
+{%- macro footer_cta(cta_text, noscript_noun) -%}
+    <h2 class="submission-heading">Add your client, tool or integration</h2>
+    <p class="submission-lede">Building something on Valkey - a client, a module, a tool, or an AI integration? We'd love to see it here alongside the rest. Everything on this page lives in valkey-io repo, so adding yours is just a pull request away.</p>
+    <a class="submission-cta" href="https://github.com/valkey-io/valkey-io.github.io/compare?template=add_library.md">{{ cta_text }}</a>
+  </div>
+
+  <noscript>
+    <p class="catalog-nojs-note">Showing every {{ noscript_noun }}. Interactive filtering, search, and sorting require JavaScript.</p>
+  </noscript>
+{%- endmacro footer_cta -%}

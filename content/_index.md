@@ -38,7 +38,7 @@ title = "Clients"
 description = "Official Valkey client libraries include support for:"
 features = ["Python", "Java", "Go", "Node.js", "PHP", "C#", "Ruby"]
 button_text = "Learn More"
-button_url = "/clients"
+button_url = "/clients/"
 
 [[extra.download_ctas]]
 text= "Get Valkey"

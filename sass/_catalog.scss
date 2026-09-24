@@ -1,0 +1,1086 @@
+//
+// Clients + Integrations catalog pages
+//
+// Shared styles for the catalog served at /clients/ and /integrations/. Both
+// use the same compact header, toolbar, filter-pill row, and card grid; the
+// only visual differences are the facet (languages vs. tags) and the
+// advanced-feature list/legend on the clients view. Reuses existing
+// color/typography variables and the `respond-min` mixin.
+//
+// The site sets `html { font-size: 10px }`, so in this file 1rem = 10px.
+//
+// Progressive enhancement: without JS, all cards show and JS-only controls are
+// hidden. A synchronous head snippet adds `js` to <html> before first paint;
+// rules gated behind `.js` then reveal the JS-only controls.
+//
+
+// ---------------------------------------------------------------------------
+// Catalog-local design tokens
+// ---------------------------------------------------------------------------
+
+$cat-bg:      #f5f7f7;   // page ground (== $background-darker)
+$cat-surface: #ffffff;   // cards, controls
+$cat-fg:      #1a2026;    // wordmark ink
+$cat-muted:   #647782;   // secondary text (== $text-light)
+$cat-border:  #e2e8f0;   // hairlines
+$cat-accent:  #6983ff;   // valkey mark periwinkle
+
+$cat-accent-soft: rgba($cat-accent, 0.14);
+$cat-fg-soft:     rgba($cat-fg, 0.06);
+
+$cat-radius:    10px;
+$cat-radius-lg: 16px;
+
+// ---------------------------------------------------------------------------
+// Layout wrapper
+// ---------------------------------------------------------------------------
+
+.catalog {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 10px 20px 0;
+  @include sans-serif;
+  color: $cat-fg;
+  background: $cat-surface;
+  line-height: 1.55;
+  overflow-x: hidden;
+
+  a,
+  a:visited {
+    color: $cat-fg;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Accessible-only helper
+// ---------------------------------------------------------------------------
+
+.catalog .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ---------------------------------------------------------------------------
+// Compact header
+// ---------------------------------------------------------------------------
+// Kind switch (Clients ↔ Integrations)
+// ---------------------------------------------------------------------------
+//
+// Two-way segmented control that swaps the active catalog kind on the
+// Libraries page: a bordered, rounded, padded track holding options that fill
+// with accent-soft + accent border and turn their label the accent colour when
+// selected. JS-only — hidden without scripting by the PE gate below, which
+// keeps both card sets visible instead.
+
+.kind-switch {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 4px;
+  margin: 0 0 2.4rem;
+  padding: 4px;
+  border: 1px solid $cat-border;
+  border-radius: 14px;
+  background: $cat-surface;
+
+  .kind-opt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.3rem 1.6rem 1.4rem;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    background: transparent;
+    color: $cat-fg;
+    font: inherit;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      background: $cat-fg-soft;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $cat-accent;
+      outline-offset: 2px;
+    }
+
+    &[aria-selected="true"] {
+      background: $cat-accent-soft;
+      border-color: mix($cat-accent, transparent, 45%);
+      color: $cat-accent;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Compact header
+// ---------------------------------------------------------------------------
+//
+// A small heading + one lede line, replacing the old intent switcher and
+// briefing panel. Keeps the top of the page tight so cards reach the fold.
+
+.catalog-header {
+  margin: 0 0 2.4rem;
+
+  .catalog-title {
+    margin: 0 0 0.6rem;
+    font-size: 3rem;             // compact vs. the site hero
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: $cat-fg;
+  }
+
+  .catalog-lede {
+    margin: 0;
+    max-width: 82ch;
+    font-size: 1.55rem;
+    line-height: 1.5;
+    color: $cat-muted;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Toolbar: search + Valkey Project toggle + sort
+// ---------------------------------------------------------------------------
+//
+// Three columns: the search field stretches; the toggle and sort take their
+// intrinsic/fixed width on the right. Collapses to a single column on narrow
+// viewports.
+
+.toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 180px;
+  gap: 1.2rem;
+  align-items: end;
+  margin: 0 0 3.2rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  @media (max-width: 620px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    label,
+    .toggle-label {
+      font-size: 1.3rem;
+      color: $cat-muted;
+    }
+  }
+
+  .field-toggle {
+    // Keep the toggle control aligned to the bottom edge of the row.
+    justify-content: flex-end;
+  }
+
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1.4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: $cat-muted;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    padding: 1.1rem 1.4rem 1.1rem 4rem;
+    border: 1px solid $cat-border;
+    border-radius: $cat-radius;
+    background: $cat-surface;
+    color: $cat-fg;
+    font: inherit;
+    font-size: 1.5rem;
+    outline: none;
+
+    &:focus {
+      border-color: $cat-accent;
+      outline: 2px solid $cat-accent-soft;
+    }
+  }
+
+  .sort-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.9rem;
+    width: 100%;
+    height: 44px;
+    padding: 1.1rem 1.4rem;
+    border: 1px solid $cat-border;
+    border-radius: $cat-radius;
+    background-color: $cat-surface;
+    color: $cat-fg;
+    font: inherit;
+    font-size: 1.5rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+
+    &:hover {
+      border-color: rgba($cat-fg, 0.32);
+    }
+
+    &:focus-visible {
+      border-color: $cat-accent;
+      outline: 2px solid $cat-accent;
+      outline-offset: 2px;
+    }
+
+    .sort-control-text {
+      flex: 1 1 auto;
+      text-align: left;
+    }
+
+    .sort-control-icon {
+      flex: none;
+      width: 16px;
+      height: 16px;
+      color: $cat-muted;
+    }
+
+    // Descending state — flip the icon to signal reversed order.
+    &.is-desc .sort-control-icon {
+      transform: scaleY(-1);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Valkey Project toggle (a switch, distinct from the facet pills)
+// ---------------------------------------------------------------------------
+
+.fp-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.9rem;
+  height: 44px;
+  padding: 0 1.4rem;
+  border: 1px solid $cat-border;
+  border-radius: $cat-radius;
+  background: $cat-surface;
+  color: $cat-muted;
+  font: inherit;
+  font-size: 1.4rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    color: $cat-fg;
+    border-color: rgba($cat-fg, 0.32);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $cat-accent;
+    outline-offset: 2px;
+  }
+
+  .fp-toggle-track {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 18px;
+    flex: none;
+    border-radius: 999px;
+    background: $cat-border;
+    transition: background 0.15s ease;
+  }
+
+  .fp-toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: $cat-surface;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    transition: transform 0.15s ease;
+  }
+
+  // On state — accent fill, thumb slides right, text inks.
+  &.is-on,
+  &[aria-checked="true"] {
+    color: $cat-fg;
+    border-color: rgba($cat-accent, 0.55);
+    background: $cat-accent-soft;
+
+    .fp-toggle-track {
+      background: $cat-accent;
+    }
+
+    .fp-toggle-thumb {
+      transform: translateX(16px);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Filter pills
+// ---------------------------------------------------------------------------
+
+.filterbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.8rem 1.2rem;
+  margin: 0 0 3.2rem;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .filterbar-label {
+    // Force the label onto its own line so the pills always sit *below* it,
+    // not inline. Without this the pills flow next to the label whenever they
+    // fit, which made the Language bar (few pills) look different from the
+    // Category bar (many pills). A full-width flex item guarantees the pill
+    // row wraps beneath the label on every catalog kind.
+    flex: 0 0 100%;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: $cat-fg;
+    margin-right: 0.2rem;
+  }
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  .filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.9rem 1.4rem;
+    min-height: 44px;
+    border: 1px solid $cat-border;
+    border-radius: 999px;
+    background: $cat-surface;
+    color: $cat-muted;
+    font: inherit;
+    font-size: 1.35rem;
+    cursor: pointer;
+
+    &:hover {
+      color: $cat-fg;
+      // prototype: color-mix(in oklch, var(--fg) 32%, var(--border))
+      border-color: mix($cat-fg, $cat-border, 32%);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $cat-accent;
+      outline-offset: 2px;
+    }
+
+    &[disabled] {
+      opacity: 0.4;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    // Selected state — fills with ink, not accent.
+    &[aria-pressed="true"],
+    &.selected {
+      background: $cat-fg;
+      border-color: $cat-fg;
+      color: $cat-surface;
+      font-weight: 600;
+    }
+
+    &.selected:hover {
+      background: $cat-fg;
+    }
+
+    .pill-count {
+      display: inline-block;
+      min-width: 1.6em;
+      padding: 0 0.5em;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.08);
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    &[aria-pressed="true"] .pill-count,
+    &.selected .pill-count {
+      background: rgba(255, 255, 255, 0.25);
+      color: $cat-surface;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Card grid
+// ---------------------------------------------------------------------------
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin: 0 0 5.6rem;
+
+  @media (max-width: 680px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .entry-card.is-hidden {
+    display: none;
+  }
+}
+
+// Entry card
+.entry-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 2.4rem;
+  border: 1px solid $cat-border;
+  border-radius: $cat-radius-lg;
+  background: $cat-surface;
+  min-width: 0;
+
+  &:hover {
+    border-color: rgba($cat-fg, 0.26);
+  }
+
+  .entry-head {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .entry-name {
+    margin: 0;
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: $cat-fg;
+    line-height: 1.3;
+    letter-spacing: -0.005em;
+    word-break: break-word;
+
+    a {
+      color: $cat-fg;
+
+      &:hover {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-color: $cat-accent;
+      }
+    }
+  }
+
+  .entry-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.6rem;
+  }
+
+  .entry-desc {
+    margin: 0;
+    font-size: 1.45rem;
+    line-height: 1.55;
+    color: $cat-muted;
+    overflow-wrap: anywhere;
+
+    // Fixed five-line height so the copy line below starts at the same offset across cards.
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    overflow: hidden;
+    min-height: calc(1.55em * 5);
+
+    // Marks the span of a description-only search match (JS-applied). Title
+    // matches are not highlighted since the name heading already makes those
+    // obvious.
+    mark.search-hit {
+      background: $cat-accent-soft;
+      color: $cat-fg;
+      border-radius: 3px;
+      padding: 0 0.15em;
+    }
+  }
+
+  // Footer region; flex: 1 lets it fill the shared card height so the license/footer sink to the bottom.
+  .entry-anchor {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .entry-anchor-top {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  // Pinned to the bottom so it absorbs extra row height instead of the copy box shifting down.
+  .entry-anchor-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    margin-top: auto;
+    padding-top: 1.2rem;
+  }
+
+  .kv {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 1.2rem;
+    margin: 0;
+    font-size: 1.35rem;
+    color: $cat-fg;
+
+    // The "License" label is secondary; the license name itself is primary and
+    // should read as dark, high-contrast ink.
+    dt {
+      color: $cat-muted;
+    }
+
+    dd {
+      margin: 0;
+      color: $cat-fg;
+    }
+
+    .num {
+      @include monospace;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  .entry-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid $cat-border;
+    font-size: 1.35rem;
+
+    a {
+      color: $cat-fg;
+      border-bottom: 1px solid $cat-border;
+
+      &:hover {
+        border-bottom-color: $cat-accent;
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Chips + badges
+// ---------------------------------------------------------------------------
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+// Language chip (clients) — outlined neutral.
+.chip-language {
+  background: $cat-surface;
+  color: $cat-muted;
+  border: 1px solid $cat-border;
+}
+
+// Small language monogram badge shown inside the language chip. Data-driven
+// (color/fg/mono from _data/lang_colors.toml, using MIT-licensed GitHub
+// Linguist color data — no brand logos). The inline `style` on the element
+// sets background/color per language; this rule only handles size and shape.
+.lang-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  // Square by default for 1-2 char monograms (min-width == height), but allow
+  // the box to grow for 3-char monograms like "PHP" so the glyphs keep
+  // horizontal color padding instead of butting against the chip's white
+  // background.
+  box-sizing: border-box;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 0.3rem;
+  border-radius: 3px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+// Tag chip (integrations) — filled ink-soft, no border (the "shelf label").
+.chip-tag {
+  background: $cat-fg-soft;
+  color: $cat-fg;
+  border: 1px solid transparent;
+}
+
+// Valkey Project chip — accent-tinted, marks first-party entries on both pages.
+.chip-project {
+  background: $cat-accent-soft;
+  color: mix(#000, $cat-accent, 22%);
+  border: 1px solid rgba($cat-accent, 0.4);
+  font-weight: 600;
+}
+
+// Icon inside the Valkey Project chip (the Valkey logo mark).
+.chip-icon {
+  flex: none;
+  width: 11px;
+  height: 12.5px;
+  display: block;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  @include monospace;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+// ---------------------------------------------------------------------------
+// Install command + copy button
+// ---------------------------------------------------------------------------
+
+.entry-card .cmd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding: 0.8rem 0.8rem 0.8rem 1.2rem;
+  border: 1px solid $cat-border;
+  border-radius: 8px;
+  background: $cat-bg;
+  min-width: 0;
+
+  // Non-scrolling wrapper around the command. It stays fixed while the inner
+  // <code> scrolls, which lets the fade overlay (::after) stay pinned to the
+  // visible right edge — independent of the copy button's label width
+  // ("Copy" vs "Copy failed").
+  .cmd-scroll {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+    display: block;
+  }
+
+  // Soft fade at the right edge, signalling that an over-long command
+  // continues rather than ending at an abrupt hard cutoff. Anchored to the
+  // non-scrolling wrapper so it never moves with the scrolled text.
+  // Non-interactive so it never blocks scrolling; hidden from assistive tech.
+  .cmd-scroll::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 3.2rem;
+    pointer-events: none;
+    background: linear-gradient(to right, rgba($cat-bg, 0), $cat-bg);
+  }
+
+  .install-cmd {
+    display: block;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    @include monospace;
+    font-size: 1.25rem;
+    white-space: nowrap;
+    // Room on the right so the last glyphs sit under the fade, not flush
+    // against it.
+    padding-right: 1.6rem;
+  }
+
+  .copy-btn {
+    flex: 0 0 auto;
+    min-height: 30px;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid $cat-border;
+    border-radius: 6px;
+    background: $cat-surface;
+    color: $cat-muted;
+    font: inherit;
+    font-size: 1.2rem;
+    cursor: pointer;
+
+    &:hover {
+      border-color: $cat-fg;
+      color: $cat-fg;
+    }
+
+    &.is-copied {
+      border-color: $cat-fg;
+      color: $cat-fg;
+    }
+
+    &.is-failed {
+      border-color: $red-200;
+      color: $red-300;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Supported-feature list (clients only)
+// ---------------------------------------------------------------------------
+
+.entry-card .disc {
+  border-top: 1px solid $cat-border;
+  padding-top: 1.2rem;
+  font-size: 1.3rem;
+
+  // Collapsed by default (native <details>); this rule fixes every client
+  // card's advanced-features block to the same closed-state height so cards
+  // line up side by side in the grid regardless of how many features a given
+  // client supports.
+  summary {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 0;
+    list-style: none;
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: $cat-muted;
+    cursor: pointer;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::before {
+      content: "";
+      flex: none;
+      width: 10px;
+      height: 10px;
+      border-right: 1.5px solid $cat-muted;
+      border-bottom: 1.5px solid $cat-muted;
+      transform: rotate(-45deg);
+      transition: transform 0.15s ease;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $cat-accent;
+      outline-offset: 2px;
+    }
+  }
+
+  &[open] summary::before {
+    transform: rotate(45deg);
+  }
+
+  .disc-count {
+    color: $cat-muted;
+  }
+
+  .disc-none {
+    margin: 1.2rem 0 0;
+    color: $cat-muted;
+    font-size: 1.3rem;
+  }
+
+  .feature-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem 1.6rem;
+    margin: 1.2rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1.3rem;
+
+    @media (max-width: 620px) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .feature-badge {
+    display: flex;
+    gap: 0.8rem;
+    align-items: baseline;
+    padding: 0;
+    background: none;
+    color: $cat-fg;
+    font-size: 1.3rem;
+    font-weight: 400;
+    cursor: help;
+
+    &::before {
+      content: "\2713";     // ✓
+      font-family: "Fira Mono", Consolas, Menlo, Monaco, "Courier New", Courier, monospace;
+      width: 12px;
+      flex: none;
+      color: $cat-fg;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Feature-definition legend (clients only)
+// ---------------------------------------------------------------------------
+
+.legend {
+  margin: 0 0 5.6rem;
+  padding: 2.4rem;
+  border: 1px solid $cat-border;
+  border-radius: $cat-radius-lg;
+  background: $cat-surface;
+  font-size: 1.3rem;
+
+  h2,
+  h3 {
+    margin: 0 0 1.2rem;
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: $cat-fg;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.4rem 1.6rem;
+    margin: 0;
+
+    @include respond-min(768px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include respond-min(1024px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  dt {
+    font-weight: 600;
+    color: $cat-fg;
+  }
+
+  dd {
+    margin: 0 0 0.5rem;
+    color: $cat-muted;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Empty state
+// ---------------------------------------------------------------------------
+
+.empty-state {
+  grid-column: 1 / -1;
+  padding: 4.4rem 2.8rem;
+  text-align: center;
+  border: 1px dashed $cat-border;
+  border-radius: $cat-radius-lg;
+  background: $cat-surface;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .empty-msg {
+    margin: 0 auto 2rem;
+    max-width: 46ch;
+    font-size: 1.45rem;
+    font-weight: 600;
+    color: $cat-fg;
+  }
+
+  .empty-recovery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    button {
+      min-height: 36px;
+      padding: 0.7rem 1.2rem;
+      border: 1px solid $cat-border;
+      border-radius: $cat-radius;
+      background: $cat-surface;
+      color: $cat-fg;
+      font: inherit;
+      font-size: 1.35rem;
+      cursor: pointer;
+
+      &:hover {
+        border-color: $cat-fg;
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Submission CTA
+// ---------------------------------------------------------------------------
+
+.submission-heading {
+  margin: 0 0 0.6rem;
+  font-size: 3rem;             // matches .catalog-title
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: $cat-fg;
+}
+
+.submission-lede {
+  margin: 0 0 2rem;
+  max-width: 82ch;
+  font-size: 1.55rem;
+  line-height: 1.5;
+  color: $cat-muted;
+}
+
+.submission-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin: 0 0 5.6rem;
+  padding: 1.1rem 1.8rem;
+  border: 1px solid $cat-accent;
+  border-radius: $cat-radius;
+  background: $cat-accent;
+  color: $cat-surface !important;
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  text-align: center;
+
+  &:hover {
+    background: mix(#000, $cat-accent, 12%);
+    border-color: mix(#000, $cat-accent, 12%);
+    text-decoration: none;
+  }
+}
+
+.catalog-nojs-note {
+  margin: 2rem auto;
+  max-width: var(--max-width);
+  padding: 0 20px;
+  color: $cat-muted;
+  font-size: 1.4rem;
+}
+
+// ===========================================================================
+// Progressive-enhancement gating
+// ===========================================================================
+//
+// Without JS: show every card on the page, hide JS-only controls so no broken
+// control appears. Each page renders only its own cards (clients OR
+// integrations), so there is no per-intent pre-hiding.
+
+.copy-btn,
+.field-search,
+.field-sort,
+.filterbar,
+.fp-toggle,
+.kind-switch,
+.empty-state {
+  display: none;
+}
+
+// Once `js` is set on <html> (synchronously, before first paint) reveal the
+// JS-only controls. All cards remain visible until the controller's first
+// apply() classifies them via `.is-hidden`.
+.js {
+  .copy-btn {
+    display: inline-block;
+  }
+
+  .field-search,
+  .field-sort {
+    display: flex;
+  }
+
+  .fp-toggle {
+    display: inline-flex;
+  }
+
+  .kind-switch {
+    display: inline-grid;
+  }
+
+  .filterbar:not([hidden]) {
+    display: flex;
+  }
+
+  .empty-state:not([hidden]) {
+    display: block;
+  }
+}
+
+// After the controller marks the root `catalog-ready`, visibility is driven
+// entirely by the `.is-hidden` class the JS toggles on each card.
+.js .catalog-ready [data-catalog] .entry-card {
+  display: flex;
+}
+
+.js .catalog-ready [data-catalog] .entry-card.is-hidden {
+  display: none;
+}
+
+// ---------------------------------------------------------------------------
+// Merged page: active-kind gating
+// ---------------------------------------------------------------------------
+//
+// On the merged Libraries page the controller sets `data-active-kind` on the
+// catalog root once ready. Elements tagged `data-catalog-kind` that do not
+// match the active kind are hidden (headers, facet bars, the clients-only
+// legend). Card visibility is still driven by `.is-hidden` (the controller
+// hides inactive-kind cards there), so cards are not gated here.
+//
+// Before the controller is ready (or without JS) all kinds show, so the no-JS
+// fallback presents both catalogs in full.
+.js .catalog-ready[data-active-kind="clients"] [data-catalog-kind="integrations"]:not(.entry-card),
+.js .catalog-ready[data-active-kind="integrations"] [data-catalog-kind="clients"]:not(.entry-card) {
+  display: none;
+}

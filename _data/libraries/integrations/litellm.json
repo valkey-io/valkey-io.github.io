@@ -1,0 +1,14 @@
+{
+  "name": "LiteLLM",
+  "language": "Python",
+  "license": "MIT",
+  "description": "Unified gateway for 100+ LLM APIs, with a Valkey-backed semantic cache for prompt and response reuse (requires valkey-bundle).",
+  "repository": "https://github.com/BerriAI/litellm",
+  "documentation": "https://docs.litellm.ai/docs/",
+  "isFirstParty": false,
+  "installCommand": "pip install litellm 'redis<6'",
+  "type": "ai",
+  "tags": [
+    "Inference & serving"
+  ]
+}

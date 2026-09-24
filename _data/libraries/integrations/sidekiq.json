@@ -1,0 +1,14 @@
+{
+  "name": "Sidekiq",
+  "language": "Ruby",
+  "license": "LGPL-3.0",
+  "description": "Background job processing for Ruby applications, with maintained support for Valkey 7.2 and above.",
+  "repository": "https://github.com/sidekiq/sidekiq",
+  "documentation": "https://sidekiq.org/",
+  "isFirstParty": false,
+  "installCommand": "gem install sidekiq",
+  "type": "tools",
+  "tags": [
+    "Queues & background jobs"
+  ]
+}

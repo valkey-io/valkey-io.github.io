@@ -1,0 +1,14 @@
+{
+  "name": "CocoIndex",
+  "language": "Python",
+  "license": "Apache-2.0",
+  "description": "Data transformation framework for AI that builds and incrementally updates indexes as your sources change.",
+  "repository": "https://github.com/cocoindex-io/cocoindex",
+  "documentation": "https://cocoindex.io/",
+  "isFirstParty": false,
+  "installCommand": "pip install 'cocoindex[valkey]'",
+  "type": "ai",
+  "tags": [
+    "RAG & retrieval"
+  ]
+}

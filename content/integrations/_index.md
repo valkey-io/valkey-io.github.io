@@ -1,8 +1,8 @@
 +++
-title = "Clients"
+title = "Integrations"
 template = "libraries.html"
 render = true
 
 [extra]
-default_kind = "clients"
+default_kind = "integrations"
 +++
