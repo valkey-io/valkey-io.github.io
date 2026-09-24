@@ -1,6 +1,6 @@
 +++
 title = "Browsing a Valkey keyspace safely: SCAN, INFO, and a read-only ACL user"
-date = 2026-08-28 01:01:01
+date = 2026-09-24 01:01:01
 description = "Pointing a graphical client at a Valkey server that is taking traffic raises two questions: how to safely collect data from the server, and how to properly authorize the access. This post covers how LibreDB Studio answers the first and best practices for the second."
 authors = ["kaya-abdullah"]
 
