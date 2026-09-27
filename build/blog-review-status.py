@@ -8,14 +8,21 @@ report also lists drafts already on `main` that publish within the next week,
 pull requests that are approved but unmerged, and blog pull requests missing the
 `blog-post` label.
 
+Each pull request shows its DRI, which is its assignee, and is checked against
+the blog project board: it should be on the board, have a publish date there,
+and that date should match the post's frontmatter. Every section is split into
+technical and non-technical posts, and posts publishing this week are marked.
+
 A review counts for a team only when its author belongs to that team, so the
-token needs `read:org` on the organization that owns the repository.
+token needs `read:org` on the organization that owns the repository. Reading
+the board needs `read:project` there as well.
 
 Writes a Slack `chat.postMessage` payload to `--out`, without `channel` so the
 caller supplies it, and a plain text version of the same report to stdout.
 """
 
 import argparse
+import base64
 import datetime
 import json
 import os
@@ -32,6 +39,12 @@ TECH_TEAM = "technical-blog-reviewers"
 BLOG_LABEL = "blog-post"
 BLOG_PATH = "content/blog/"
 FENCE = "+++"
+# The board that schedules blog posts, and its date field.
+PROJECT_NUMBER = 43
+PUBLISH_FIELD = "Publish date"
+# The blog types that get a technical review. Keep in step with
+# `.github/workflows/assign-blog-reviewers.yml`.
+TECH_TYPES = {"Technical Deep Dive", "Announcements"}
 UTC = datetime.timezone.utc
 
 # Slack rejects a section over 3000 characters, so long lists are split.
@@ -107,6 +120,69 @@ def get_all(url, token):
         items.extend(page)
         url = next_link(link)
     return items
+
+
+def graphql(query, variables, token):
+    body = request_json(f"{API}/graphql", token, {"query": query, "variables": variables})
+    if body.get("errors"):
+        sys.exit(f"GraphQL error: {body['errors']}")
+    return body["data"]
+
+
+BOARD_QUERY = """
+query($owner: String!, $name: String!, $number: Int!, $field: String!) {
+  repository(owner: $owner, name: $name) {
+    pullRequest(number: $number) {
+      projectItems(first: 20) {
+        nodes {
+          project { number }
+          fieldValueByName(name: $field) {
+            ... on ProjectV2ItemFieldDateValue { date }
+          }
+        }
+      }
+    }
+  }
+}
+"""
+
+
+def board_entry(repo, number, token):
+    """Return (on the board, publish date or None) for a pull request."""
+    owner, name = repo.split("/")
+    data = graphql(
+        BOARD_QUERY,
+        {"owner": owner, "name": name, "number": number, "field": PUBLISH_FIELD},
+        token,
+    )
+    for item in data["repository"]["pullRequest"]["projectItems"]["nodes"]:
+        if item["project"]["number"] != PROJECT_NUMBER:
+            continue
+        value = item["fieldValueByName"] or {}
+        return True, publish_date(value.get("date"))
+    return False, None
+
+
+def post_frontmatter(repo, path, sha, token):
+    """Return the frontmatter of a post as the pull request's head has it.
+
+    The base repository serves a fork's head commit too, so this works for
+    pull requests from forks without access to the fork.
+    """
+    quoted = urllib.parse.quote(path)
+    try:
+        body, _ = request(f"{API}/repos/{repo}/contents/{quoted}?ref={sha}", token)
+    except urllib.error.HTTPError as error:
+        if error.code != 404:
+            raise
+        return None
+    text = base64.b64decode(body["content"]).decode("utf-8", errors="replace")
+    return frontmatter(text)
+
+
+def is_technical(data):
+    types = ((data or {}).get("taxonomies") or {}).get("blog_type") or []
+    return any(t in TECH_TYPES for t in types)
 
 
 def team_members(org, slug, token):
@@ -219,7 +295,14 @@ def scheduled_posts(content_dir, today, window):
             continue
         # The checkout directory is arbitrary, so report the path the repository
         # uses: links in the message have to resolve there.
-        found.append((date, str(data.get("title", path.stem)), BLOG_PATH + str(path.relative_to(root))))
+        found.append(
+            (
+                date,
+                str(data.get("title", path.stem)),
+                BLOG_PATH + str(path.relative_to(root)),
+                is_technical(data),
+            )
+        )
     return sorted(found)
 
 
@@ -251,22 +334,34 @@ def collect(repo, token, content_dir, today, window):
     for pull in sorted(pulls, key=lambda p: p["updated_at"]):
         labels = {label["name"] for label in pull["labels"]}
         labeled = BLOG_LABEL in labels
-        if labeled:
-            touches_blog = True
-        else:
-            files = get_all(
-                f"{API}/repos/{repo}/pulls/{pull['number']}/files?per_page=100", token
-            )
-            # Only an added file is a new post; a pull request that edits
-            # published posts, like a Zola migration, is not in the queue.
-            touches_blog = any(
-                f["status"] == "added"
-                and f["filename"].startswith(BLOG_PATH)
-                and f["filename"].endswith(".md")
-                for f in files
-            )
-        if not touches_blog:
+        files = get_all(
+            f"{API}/repos/{repo}/pulls/{pull['number']}/files?per_page=100", token
+        )
+        # Only an added file is a new post; a pull request that edits
+        # published posts, like a Zola migration, is not in the queue.
+        posts = [
+            f["filename"]
+            for f in files
+            if f["status"] == "added"
+            and f["filename"].startswith(BLOG_PATH)
+            and f["filename"].endswith(".md")
+            and not f["filename"].endswith("/_index.md")
+        ]
+        if not labeled and not posts:
             continue
+
+        data = (
+            post_frontmatter(repo, posts[0], pull["head"]["sha"], token) if posts else None
+        )
+        post_date = publish_date((data or {}).get("date"))
+        on_board, board_date = board_entry(repo, pull["number"], token)
+        flags = []
+        if not on_board:
+            flags.append("not on the blog board")
+        elif board_date is None:
+            flags.append("no publish date on the board")
+        elif post_date and post_date != board_date:
+            flags.append(f"board says {board_date:%-d %b}, post says {post_date:%-d %b}")
 
         entry = {
             "number": pull["number"],
@@ -274,6 +369,11 @@ def collect(repo, token, content_dir, today, window):
             "url": pull["html_url"],
             "author": pull["user"]["login"],
             "updated_at": parse_time(pull["updated_at"]),
+            "dri": [a["login"] for a in pull.get("assignees") or []],
+            "technical": is_technical(data),
+            # The board is the schedule, so its date wins for "this week".
+            "publish": board_date or post_date,
+            "flags": flags,
         }
         if not labeled:
             report["unlabeled"].append(entry)
@@ -320,7 +420,11 @@ def shorten(title):
     return title if len(title) <= TITLE_LIMIT else title[: TITLE_LIMIT - 1] + "…"
 
 
-def pull_line(entry, now, slack, show_turn=False):
+def this_week(date, today, horizon):
+    return date is not None and today <= date <= horizon
+
+
+def pull_line(entry, now, slack, today, horizon, show_turn=False):
     """Render one pull request as a bullet, for Slack or for plain text."""
     idle = (now - entry["updated_at"]).days
     title = shorten(entry["title"])
@@ -329,12 +433,29 @@ def pull_line(entry, now, slack, show_turn=False):
         if slack
         else f"#{entry['number']} {title} ({entry['url']})"
     )
-    parts = [head, entry["author"], f"idle {idle}d"]
+    dri = ", ".join(entry["dri"])
+    parts = [head, f"DRI {dri}" if dri else "no DRI", f"idle {idle}d"]
     if show_turn:
         parts.append(
             "no pass yet" if entry["turn"] == "unreviewed" else "updated since last pass"
         )
-    return "• " + " · ".join(parts)
+    parts.extend(("⚠️ " if slack else "! ") + flag for flag in entry["flags"])
+    line = "• " + " · ".join(parts)
+    if this_week(entry["publish"], today, horizon):
+        mark = f"publishes {entry['publish']:%a %-d %b}"
+        line = f"📅 *{mark}* " + line[2:] if slack else f"• [{mark.upper()}] " + line[2:]
+    return line
+
+
+def split(entries, render):
+    """Return (slack, plain) lines grouped under technical and non-technical."""
+    lines = []
+    for technical, name in ((True, "Technical"), (False, "Non-technical")):
+        group = [e for e in entries if e["technical"] == technical]
+        if group:
+            lines.append((f"_{name}_", f"  {name}:"))
+            lines.extend(render(e) for e in group)
+    return lines
 
 
 def build(report, repo, today, window, now, mention, applied):
@@ -346,42 +467,42 @@ def build(report, repo, today, window, now, mention, applied):
         if lines:
             sections.append((title, lines))
 
-    add(
-        f"Needs copy-editing ({len(report['copy'])})",
-        [(pull_line(e, now, True, True), pull_line(e, now, False, True)) for e in report["copy"]],
-    )
+    def pulls(key, show_turn=False):
+        return split(
+            report[key],
+            lambda e: (
+                pull_line(e, now, True, today, horizon, show_turn),
+                pull_line(e, now, False, today, horizon, show_turn),
+            ),
+        )
+
+    add(f"Needs copy-editing ({len(report['copy'])})", pulls("copy", True))
     add(
         f"Waiting on technical approval ({len(report['technical'])})",
-        [(pull_line(e, now, True, True), pull_line(e, now, False, True)) for e in report["technical"]],
+        pulls("technical", True),
     )
     add(
         f"Publishing by {horizon:%a %-d %b} ({len(report['scheduled'])})",
-        [
-            (
-                f"• *{date:%a %-d %b}* — <https://github.com/{repo}/blob/main/{path}|{escape(shorten(title))}>",
-                f"• {date:%a %-d %b} — {shorten(title)} ({path})",
-            )
-            for date, title, path in report["scheduled"]
-        ],
+        split(
+            [
+                {"date": date, "title": title, "path": path, "technical": technical}
+                for date, title, path, technical in report["scheduled"]
+            ],
+            lambda e: (
+                f"📅 *{e['date']:%a %-d %b}* — <https://github.com/{repo}/blob/main/{e['path']}|{escape(shorten(e['title']))}>",
+                f"• {e['date']:%a %-d %b} — {shorten(e['title'])} ({e['path']})",
+            ),
+        ),
     )
-    add(
-        f"Waiting on the author ({len(report['author'])})",
-        [(pull_line(e, now, True), pull_line(e, now, False)) for e in report["author"]],
-    )
-    add(
-        f"Approved, not merged ({len(report['approved'])})",
-        [(pull_line(e, now, True), pull_line(e, now, False)) for e in report["approved"]],
-    )
+    add(f"Waiting on the author ({len(report['author'])})", pulls("author"))
+    add(f"Approved, not merged ({len(report['approved'])})", pulls("approved"))
     add(
         f"Could not be given the `{BLOG_LABEL}` label ({len(report['unlabeled'])})"
         if applied
         else f"Missing the `{BLOG_LABEL}` label ({len(report['unlabeled'])})",
-        [(pull_line(e, now, True), pull_line(e, now, False)) for e in report["unlabeled"]],
+        pulls("unlabeled"),
     )
-    add(
-        f"Still a GitHub draft ({len(report['draft'])})",
-        [(pull_line(e, now, True), pull_line(e, now, False)) for e in report["draft"]],
-    )
+    add(f"Still a GitHub draft ({len(report['draft'])})", pulls("draft"))
 
     heading = f"Valkey blog review queue · {today:%-d %b %Y}"
     blocks = [{"type": "header", "text": {"type": "plain_text", "text": heading}}]

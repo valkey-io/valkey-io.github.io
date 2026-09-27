@@ -42,6 +42,10 @@ jobs:
           # cannot be scoped to this repository alone.
           owner: ${{ github.repository_owner }}
           permission-members: read
+          # Reads the blog board's publish dates.
+          permission-organization-projects: read
+          # Reads each post's frontmatter at the pull request's head.
+          permission-contents: read
           permission-pull-requests: read
           permission-issues: write
 
