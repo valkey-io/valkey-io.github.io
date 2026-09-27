@@ -78,7 +78,7 @@ jobs:
       - name: Post to Slack
         if: env.POST == 'true'
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.VALKEYRIE_SLACK_BOT_TOKEN_ID }}
           # #blog-review-status. The bot has to be a member of the channel.
           SLACK_CHANNEL: C0AV5QURJN6
         run: |
