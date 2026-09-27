@@ -3,4 +3,5 @@
 /content/events/     @valkey-io/content-creators
 /content/community/  @valkey-io/content-creators
 /content/authors/    @valkey-io/content-creators
+/static/assets/media/authors/ @valkey-io/content-creators
 /templates/    @stockholmux
