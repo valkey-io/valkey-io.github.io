@@ -30,7 +30,7 @@ jobs:
       # A dry run builds the message and shows it in the job summary instead of
       # posting it. TEMPORARY: `push` runs are dry too, so the branch can be
       # tested before it merges. Remove the event check before merging.
-      POST: ${{ inputs.dry_run != true && github.event_name != 'push' }}
+      POST: ${{ inputs.dry_run != true }}
     steps:
       - name: Generate token
         id: generate-token
