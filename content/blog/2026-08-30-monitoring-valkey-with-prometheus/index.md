@@ -1,6 +1,6 @@
 +++
 title = "Monitoring Valkey with Prometheus"
-date = 2026-09-21
+date = 2026-09-28
 description = "Learn how to expose Valkey metrics to Prometheus, visualize them in Grafana, and choose the right exporter for your deployment." 
 authors =  ["dragosandriciuc"]
 [taxonomies]
