@@ -231,3 +231,20 @@
     Solanica is a core contributor to the OpenEverest project and a pioneer in cloud-native data platform automation. The Solanica Platform delivers seamless deployment, observability, and expert support for teams. Designed for AI, analytics, and modern workloads, Solanica helps organizations unlock the full potential of their database infrastructure.
   offering: >
     With the Solanica Platform, you can run your Valkey workloads on any Kubernetes cluster without pain. No more struggling with day-2 operations: you can now deploy, provision, and manage your instances, and you don’t have to worry about backups, monitoring, etc.; everything can be controlled from one GUI. [Learn more](https://solanica.io/platform).
+
+- name: Layerbase
+  link: https://layerbase.com/db/valkey
+  image:
+    path: /img/layerbase.svg
+    alt: Layerbase Logo
+  company: >
+    Layerbase is an independent DBaaS based in Austin, Texas. Layerbase Cloud
+    hosts managed databases across many engines on one account, with scale-to-zero
+    when idle and copy-on-write branching for supported engines. For more
+    information, visit [layerbase.com](https://layerbase.com).
+  offering: >
+    Layerbase Cloud offers managed Valkey that is compatible with Redis® OSS.
+    Valkey on Layerbase is free-tier eligible, supports copy-on-write branching,
+    and scales to zero with wake-on-connect. It runs on flat Free, Solo ($5/mo),
+    and Pro ($15/mo) plans with no compute-hour meters. Learn more at
+    [layerbase.com/db/valkey](https://layerbase.com/db/valkey).
