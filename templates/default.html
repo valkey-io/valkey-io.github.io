@@ -1,4 +1,6 @@
-{%- block head -%}{%- endblock -%}<!DOCTYPE html>
+<!DOCTYPE html>
+{%- block head -%}
+{%- endblock -%}
 <html lang="{{ page.lang | default(value=config.default_language) }}">
 {% include "includes/head.html" %}
 <script>
@@ -44,7 +46,6 @@
       ></div>
       <nav role="navigation" aria-label="Main">
         <a role="menuitem" href="/download/">Download</a>
-
         <div class="has-submenu">
           <a role="menuitem" href="/docs/">Documentation</a>
           <div class="submenu">
@@ -67,7 +68,22 @@
           GitHub
           <!-- Star count will be injected here by JS -->
         </a>
-        
+        <div class="site-search" role="search">
+          <input
+            type="search"
+            id="search-input"
+            class="site-search__input"
+            placeholder="Search"
+            aria-label="Search"
+            autocomplete="off"
+            role="combobox"
+            aria-autocomplete="list"
+            aria-controls="search-results"
+            aria-expanded="false"
+          />
+          <ul id="search-results" class="site-search__results" role="listbox" hidden></ul>
+          <div id="search-status" class="site-search__status" role="status" aria-live="polite"></div>
+        </div>
       </nav>
     </div>
   </div>
@@ -139,7 +155,8 @@
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager (noscript) -->
     </div>
-    
 
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0/dist/fuse.min.js" integrity="sha384-P/y/5cwqUn6MDvJ9lCHJSaAi2EoH3JSeEdyaORsQMPgbpvA+NvvUqik7XH2YGBjb" crossorigin="anonymous"></script>
+<script src="/assets/js/search.js" defer></script>
 </body>
 </html>

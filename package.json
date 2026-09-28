@@ -1,0 +1,13 @@
+{
+  "name": "valkey-io-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build tooling for the valkey.io website (Zola site).",
+  "scripts": {
+    "build:search-index": "node build/build-search-index.mjs",
+    "build": "zola build && npm run build:search-index"
+  },
+  "devDependencies": {
+    "cheerio": "1.0.0"
+  }
+}

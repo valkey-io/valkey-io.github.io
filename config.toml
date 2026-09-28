@@ -3,8 +3,8 @@ title = "Valkey"
 
 compile_sass = true
 
-build_search_index = true
-
+# Search uses fuse.js over a post-build index (build/build-search-index.mjs),
+# not Zola's native index, which only sees the empty Markdown stubs here.
 generate_feeds = true
 
 taxonomies = [
