@@ -4,7 +4,7 @@ date = 2026-09-28
 description = "Learn how to expose Valkey metrics to Prometheus, visualize them in Grafana, and choose the right exporter for your deployment." 
 authors =  ["dragosandriciuc"]
 [taxonomies]
-blog_type = ["Community Highlight"]
+blog_type = ["How-to"]
 [extra]
 featured = true
 +++
@@ -57,7 +57,7 @@ BetterDB is a full monitoring and observability application that provides real-t
 
 ### What metrics does BetterDB cover
 
-It exposes its own metrics at `GET /prometheus/metrics` in the standard text/plain format and standard Node.js process metrics from `prom-client`. It covers the following:
+It exposes its own metrics at `GET /api/prometheus/metrics` in the standard text/plain format and standard Node.js process metrics from `prom-client`. It covers the following:
 
 - **Core Valkey performance**: Operations processed per second, memory usage, and network throughput, derived from `INFO`.
 - **ACL audit metrics**: Denied ACL events, broken down by reason and by username, used to catch misconfigured permissions or attempted unauthorized access.
@@ -109,7 +109,7 @@ At the time of writing, it supports Valkey 7.x, 8.x, and 9.x.
 Most items from Valkey's `INFO` command are exported directly:
 
 - **Memory**: Used memory, RSS, fragmentation ratio, `maxmemory`, and (through `redis_memory_max_bytes`) the configured memory ceiling.
-- **Throughput and commands**: Total commands processed, ops/sec, commandstats (with `--include-config-metrics` and related flags), and latency histograms.
+- **Throughput and commands**: Total commands processed, ops/sec, commandstats, and latency histograms.
 - **Keyspace**: Per-database total key counts, expiring key counts, and average key TTL.
 - **Clients and connections**: Connected clients, blocked clients, rejected connections and optionally a full client list breakdown with `--export-client-list`.
 - **Replication**: Role (primary/replica), connected replicas, replication offset and lag.
@@ -196,7 +196,7 @@ Create a project directory with these files:
       container_name: valkey
       ports:
         - "6379:6379"
-      command: ["valkey-server", "--save", "", "--enable-debug-command", "yes"]
+      command: ["valkey-server", "--save", ""]
 
     redis_exporter:
       image: oliver006/redis_exporter:latest
