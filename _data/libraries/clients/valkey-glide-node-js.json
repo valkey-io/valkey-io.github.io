@@ -1,0 +1,16 @@
+{
+  "name": "Valkey GLIDE Node.js",
+  "language": "Node.Js",
+  "license": "Apache-2.0",
+  "description": "Designed for reliability, optimized performance, and high-availability. GLIDE is a multi-language client with one shared Rust core and per-language bindings.",
+  "repository": "https://github.com/valkey-io/valkey-glide/tree/main/node",
+  "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=nodejs",
+  "isFirstParty": true,
+  "installCommand": "npm install @valkey/valkey-glide",
+  "features": "111101000",
+  "isGlide": true,
+  "type": "clients",
+  "tags": [
+    "Clients"
+  ]
+}

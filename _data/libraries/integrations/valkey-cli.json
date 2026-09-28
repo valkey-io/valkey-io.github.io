@@ -1,0 +1,13 @@
+{
+  "name": "valkey-cli",
+  "language": "C",
+  "license": "BSD-3-Clause",
+  "description": "The interactive terminal client shipped with valkey-server, with cluster-aware routing, --scan, --bigkeys and latency diagnostics built in.",
+  "repository": "https://github.com/valkey-io/valkey",
+  "documentation": "https://valkey.io/topics/cli/",
+  "isFirstParty": true,
+  "type": "tools",
+  "tags": [
+    "CLI & GUI"
+  ]
+}

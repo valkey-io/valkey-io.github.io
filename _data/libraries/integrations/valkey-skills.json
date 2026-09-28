@@ -1,0 +1,11 @@
+{
+  "name": "valkey-skills",
+  "license": "BSD-3-Clause",
+  "description": "Reusable, domain-specific skills that teach coding agents how to work with Valkey correctly.",
+  "repository": "https://github.com/valkey-io/valkey-skills",
+  "isFirstParty": true,
+  "type": "ai",
+  "tags": [
+    "Agent frameworks"
+  ]
+}

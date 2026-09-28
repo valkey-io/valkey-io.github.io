@@ -1,0 +1,14 @@
+{
+  "name": "huey",
+  "language": "Python",
+  "license": "MIT",
+  "description": "Python task queue with periodic tasks and retries, with a Valkey backend built on the official Valkey GLIDE client.",
+  "repository": "https://github.com/coleifer/huey",
+  "documentation": "https://huey.readthedocs.io/",
+  "isFirstParty": false,
+  "installCommand": "pip install huey valkey-glide-sync",
+  "type": "tools",
+  "tags": [
+    "Queues & background jobs"
+  ]
+}

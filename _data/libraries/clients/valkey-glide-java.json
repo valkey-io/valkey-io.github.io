@@ -1,0 +1,16 @@
+{
+  "name": "Valkey GLIDE Java",
+  "language": "Java",
+  "license": "Apache-2.0",
+  "description": "Designed for reliability, optimized performance, and high-availability. Pick the classifier that matches your platform: osx-aarch_64, linux-aarch_64 or linux-x86_64.",
+  "repository": "https://github.com/valkey-io/valkey-glide/tree/main/java",
+  "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=java",
+  "isFirstParty": true,
+  "installCommand": "implementation 'io.valkey:valkey-glide:2.+'",
+  "features": "111101000",
+  "isGlide": true,
+  "type": "clients",
+  "tags": [
+    "Clients"
+  ]
+}

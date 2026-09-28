@@ -1,0 +1,13 @@
+{
+  "name": "valkey-operator",
+  "language": "Go",
+  "license": "Apache-2.0",
+  "description": "Kubernetes operator for deploying Valkey clusters and managing their lifecycle. Work in progress.",
+  "repository": "https://github.com/valkey-io/valkey-operator",
+  "documentation": "https://github.com/valkey-io/valkey-operator/tree/main/docs",
+  "isFirstParty": true,
+  "type": "tools",
+  "tags": [
+    "Deploy & operate"
+  ]
+}

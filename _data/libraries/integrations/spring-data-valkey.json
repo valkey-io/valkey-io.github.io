@@ -1,0 +1,14 @@
+{
+  "name": "Spring Data Valkey",
+  "language": "Java",
+  "license": "Apache-2.0",
+  "description": "Spring Data module for Valkey — templates, repositories and Spring Cache backing for JVM applications.",
+  "repository": "https://github.com/valkey-io/spring-data-valkey",
+  "documentation": "https://spring.valkey.io/",
+  "isFirstParty": true,
+  "type": "tools",
+  "tags": [
+    "Frameworks & ORMs"
+  ],
+  "installCommand": "implementation 'io.valkey.springframework.boot:spring-boot-starter-data-valkey:2.0.0'"
+}

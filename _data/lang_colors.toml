@@ -1,0 +1,55 @@
+# Language chip colors for the client/integration catalog (see templates/libraries.html).
+#
+# Colors are the per-language "color" values from GitHub Linguist's
+# lib/linguist/languages.yml, which is MIT-licensed data (colors, not logos), so
+# there is no trademark exposure — unlike bundling brand logos. See:
+#   https://github.com/github-linguist/linguist/blob/main/lib/linguist/languages.yml
+#   https://github.com/github-linguist/linguist/blob/main/LICENSE  (MIT)
+#
+# Each entry is keyed by the language slug the template computes from the
+# `language` field (lowercased; `#` -> `-sharp`, `.` and spaces -> `-`), e.g.
+# "C#" -> "c-sharp", "Node.Js" -> "node-js".
+#
+# Fields:
+#   color   — chip background (Linguist hex).
+#   fg      — chip text/monogram color; use "#000" on light chips, "#fff" on dark.
+#   mono    — 1-2 char monogram shown in the badge.
+#
+# Note: Node.js is a runtime, not a Linguist language, so it has no Linguist
+# color of its own; we reuse the JavaScript color (#f1e05a) for the "node-js"
+# slug since Node.js clients are JavaScript/TypeScript.
+
+[python]
+color = "#3572A5"
+fg = "#fff"
+mono = "Py"
+
+[node-js]
+color = "#f1e05a"
+fg = "#000"
+mono = "Js"
+
+[java]
+color = "#b07219"
+fg = "#fff"
+mono = "Jv"
+
+[c-sharp]
+color = "#178600"
+fg = "#fff"
+mono = "C#"
+
+[go]
+color = "#00ADD8"
+fg = "#fff"
+mono = "Go"
+
+[php]
+color = "#4F5D95"
+fg = "#fff"
+mono = "PHP"
+
+[swift]
+color = "#F05138"
+fg = "#fff"
+mono = "Sw"

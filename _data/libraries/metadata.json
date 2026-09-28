@@ -1,0 +1,42 @@
+{
+  "version": "3.0.0",
+  "updated": "2026-09-03",
+  "featureDescriptions": {
+    "replica": {
+      "label": "Replica reads",
+      "definition": "Route read commands to replicas instead of the primary, spreading read load across the topology."
+    },
+    "backoff": {
+      "label": "Retry & backoff",
+      "definition": "Back off progressively instead of hammering a server that is overloaded or restarting, avoiding connection storms."
+    },
+    "pubsub": {
+      "label": "Pub/Sub",
+      "definition": "Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf."
+    },
+    "scan": {
+      "label": "SCAN family",
+      "definition": "Iterate keys consistently across every shard, tracking slot migrations that happen mid-scan."
+    },
+    "latency": {
+      "label": "Low-latency",
+      "definition": "Send reads to whichever replica is currently answering fastest, measured by the client itself."
+    },
+    "az": {
+      "label": "AZ affinity",
+      "definition": "Prefer replicas in the client’s own availability zone to cut cross-AZ latency and transfer cost."
+    },
+    "csc": {
+      "label": "Client-side caching",
+      "definition": "Keep hot values in the application process and let the server invalidate them, removing a round trip entirely."
+    },
+    "capa": {
+      "label": "Advanced capabilities",
+      "definition": "Announce client capabilities so the server can hand off slot redirections cleanly during upgrades and failover."
+    },
+    "pool": {
+      "label": "Connection pooling",
+      "definition": "Reuse a pool of established connections rather than dialing one per command."
+    }
+  }
+}
