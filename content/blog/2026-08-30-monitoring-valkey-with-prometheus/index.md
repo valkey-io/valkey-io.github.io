@@ -168,7 +168,7 @@ The comparison below focuses on what each tool provides rather than treating the
 |---|---|---|
 | **What it is** | Full monitoring application including dashboard, a Prometheus endpoint, an audit trail and anomaly detection | Single-purpose Prometheus exporter focused on metrics export, no built-in UI |
 | **Setup** | One Docker container or `npx @betterdb/monitor`; configurable storage backend | One Docker container; typically paired with your own Grafana dashboards |
-| **Valkey-specific features** | Native support for `COMMANDLOG` and `CLUSTER SLOT-STATS` | Exposes many Valkey metrics through INFO and dedicated collectors, including `COMMANDLOG`; does not provide BetterDB's higher-level analysis of those features |
+| **Valkey-specific features** | Native support for `COMMANDLOG` and `CLUSTER SLOT-STATS` | Exposes many Valkey metrics through INFO and dedicated collectors, including `COMMANDLOG` |
 | **Vector/AI search visibility** | Dedicated tab and metrics for `valkey-search` | Optional, using the `--include-search-indexes-metrics` flag, less purpose-built |
 | **Slowlog analysis** | Grouped by query pattern, with duration and percentage breakdowns | Exported by default but no detailed slowlog entry analysis |
 | **Maturity / ecosystem** | Newer project, smaller community, actively evolving | Long-established (originally for Redis), ~3.6k GitHub stars, huge base of existing Grafana dashboards and alerting "mixins" |
