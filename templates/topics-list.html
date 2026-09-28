@@ -1,11 +1,10 @@
-{% import "macros/docs.html" as docs %}
-
 {% set topics_entries = [] %}
 {% set topics_section = get_section(path="topics/_index.md") %}
 
 {% for topic_page in topics_section.pages %}
-    {% set docs_file_contents = docs::load(slug= topic_page.slug) %}
-    {% set frontmatter = docs::extract_frontmatter(content= docs_file_contents) %}
+    {% set docs_file_contents %}{{< load slug={topic_page.slug} topic_path={config.extra.doc_topic_path} exceptions={config.extra.slug_source_exceptions} />}}{% endset %}
+    {% set frontmatter %}{{< extract_frontmatter content={docs_file_contents} />}}{% endset %}
+    {% set frontmatter = frontmatter | trim %}
     {% set frontmatter_length = frontmatter | length() %}
 
     {% if frontmatter_length > 0 %}
@@ -16,7 +15,7 @@
                 topic_page.permalink | safe,
                 frontmatter_data.description | default(value="")
             ] %}
-            {% set_global topics_entries = topics_entries | concat(with= [ topic_entry ]) %}
+            {% set_global topics_entries = [...topics_entries, topic_entry] %}
         {% endif %}
     {% endif %}
 {% endfor %}

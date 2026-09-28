@@ -1,23 +1,21 @@
 {% extends "left-aside.html" %}
 
-{% import "macros/command.html" as commands %}
-
 
 {%- block head -%}
 {% set upper_slug = page.slug | upper %}
 
 {% set command_description = load_data(path=config.extra.command_description_path ~ page.slug ~ ".md", required= false) %}
 {% set command_sources = [
-    load_data(path= commands::command_json_path(slug= page.slug), required= false),
-    load_data(path= commands::command_bloom_json_path(slug= page.slug), required= false),
-    load_data(path= commands::command_json_json_path(slug= page.slug), required= false),
-    load_data(path= commands::command_search_json_path(slug= page.slug), required= false)
+    load_data(path= config.extra.command_json_path ~ page.slug ~ ".json", required= false),
+    load_data(path= config.extra.command_bloom_json_path ~ page.slug ~ ".json", required= false),
+    load_data(path= config.extra.command_json_json_path ~ page.slug ~ ".json", required= false),
+    load_data(path= config.extra.command_search_json_path ~ page.slug ~ ".json", required= false)
 ] %}
 
-{% set command_data = command_sources | filter(attribute="") | first %}
+{% set command_data = [s for s in command_sources if s] | first %}
 
 {% if command_data %}
-    {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
+    {% set command_obj_name = command_data | keys | first %}
     {% set command_data_obj = command_data[command_obj_name] %}
     {% if command_data_obj.container %}
         {% set command_title =  command_data_obj.container  ~ " " ~ command_obj_name %}
@@ -64,7 +62,8 @@
             <code>
             {% if command_data_obj.container %}{{ command_data_obj.container }}{% endif %} {{command_obj_name}}
             {% if command_data_obj.arguments %}
-            {{ commands::arguments_parse(argument_array=command_data_obj.arguments) }}
+            {% set args_rendered %}{{< arguments_parse argument_array={command_data_obj.arguments} />}}{% endset %}
+            {{ args_rendered }}
             {% endif %}
             </code>
         </dd>
@@ -122,7 +121,7 @@
 
 
 {% if command_description %}
-{%- set command_description_with_fixed_links = commands::fix_links(content= command_description) -%}
+{%- set command_description_with_fixed_links %}{{< fix_links_command content={command_description} />}}{% endset -%}
 
 {{ command_description_with_fixed_links | markdown | safe }}
 {% else %}
@@ -144,15 +143,18 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
         {% set resp3_reply = resp3_reply | join(sep="\n\n") -%}
         {% if resp2_reply == resp3_reply -%}
             <h3>RESP2/RESP3 Reply</h3>
-            {{ commands::fix_links(content=resp2_reply) | markdown | safe }}
+            {% set resp2_fixed %}{{< fix_links_command content={resp2_reply} />}}{% endset %}
+            {{ resp2_fixed | markdown | safe }}
         {% else %}
             {% if resp2_reply -%}
                 <h3>RESP2 Reply</h3>
-                {{ commands::fix_links(content=resp2_reply) | markdown | safe }}
+                {% set resp2_fixed %}{{< fix_links_command content={resp2_reply} />}}{% endset %}
+                {{ resp2_fixed | markdown | safe }}
             {% endif -%}
             {% if resp3_reply -%}
                 <h3>RESP3 Reply</h3>
-                {{ commands::fix_links(content=resp3_reply) | markdown | safe }}
+                {% set resp3_fixed %}{{< fix_links_command content={resp3_reply} />}}{% endset %}
+                {{ resp3_fixed | markdown | safe }}
             {% endif -%}
         {% endif -%}
     {% endif -%}

@@ -16,7 +16,7 @@
     {% set patch = split_ver | nth(n= 2) %}
     {% set header =  major ~ "." ~ minor %}
 
-    {% set_global release_lines = release_lines | concat(with=header) %}
+    {% set_global release_lines = [...release_lines, header] %}
 {% endfor %}
 
 {% set release_lines_unique = release_lines | unique %}
