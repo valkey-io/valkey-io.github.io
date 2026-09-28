@@ -231,3 +231,15 @@
     Solanica is a core contributor to the OpenEverest project and a pioneer in cloud-native data platform automation. The Solanica Platform delivers seamless deployment, observability, and expert support for teams. Designed for AI, analytics, and modern workloads, Solanica helps organizations unlock the full potential of their database infrastructure.
   offering: >
     With the Solanica Platform, you can run your Valkey workloads on any Kubernetes cluster without pain. No more struggling with day-2 operations: you can now deploy, provision, and manage your instances, and you don’t have to worry about backups, monitoring, etc.; everything can be controlled from one GUI. [Learn more](https://solanica.io/platform).
+
+- name: LibreDB Studio
+  link: https://libredb.org
+  company: >
+    LibreDB is an open source project that builds LibreDB Studio, a web-based database IDE released under the MIT license on [GitHub](https://github.com/libredb/libredb-studio).
+    LibreDB Studio runs as a Docker container, a Helm chart or `npx @libredb/studio`, and connects to relational, document, key-value and streaming engines from one browser tab.
+  offering: >
+    [LibreDB Studio](https://libredb.org) connects to Valkey over the Redis protocol.
+    Its key explorer walks the keyspace with SCAN instead of KEYS, and its monitoring view reads INFO, SLOWLOG and CLIENT LIST, so it works with a read-only ACL user.
+  image:
+    path: /img/libredb-studio.svg
+    alt: LibreDB Studio Logo
