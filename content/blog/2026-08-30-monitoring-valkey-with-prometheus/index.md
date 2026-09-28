@@ -286,7 +286,6 @@ You can also generate some traffic to see the dashboards move:
   docker exec -it valkey valkey-cli --no-raw
   > SET foo bar
   > GET foo
-  > DEBUG SLEEP 0.1
   ```
 
 Or, for a sustained load, run `valkey-benchmark` from inside the container:
