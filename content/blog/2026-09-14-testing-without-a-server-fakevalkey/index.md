@@ -18,7 +18,8 @@ You can start a real `valkey-server` in continuous integration (CI), which is ac
 You can mock the client, which is fast, but a mock only knows what you told it, so it drifts from the server without failing a single test.
 A test double sits between the two: an implementation of the server's behavior that runs inside the test process.
 
-I maintain [fakeredis](https://github.com/cunla/fakeredis-py), a pure-Python, in-memory implementation of the Valkey command set that plugs into [valkey-py](https://github.com/valkey-io/valkey-py) as a client class. It has 40m downloads/month (September 2026). 
+I maintain [fakeredis](https://github.com/cunla/fakeredis-py), a pure-Python, in-memory implementation of the Valkey command set that plugs into [valkey-py](https://github.com/valkey-io/valkey-py) as a client class.
+It has about 40 million [downloads per month](https://pypistats.org/packages/fakeredis) (September 2026).
 This post covers its `FakeValkey` class: how to use it, how it keeps pace with Valkey, where matching Valkey's behavior gets hard, how to check a Redis to Valkey migration with it, and when you should use a real server instead.
 
 ## Replacing a Valkey client with FakeValkey
@@ -74,7 +75,7 @@ def test_blocks_the_sixth_attempt(valkey_client):
     for _ in range(5):
         assert allow_login(valkey_client, "alice")
     assert not allow_login(valkey_client, "alice")
-    assert valkey_client.ttl("login:alice") == 60
+    assert 0 < valkey_client.ttl("login:alice") <= 60
 
 
 def test_each_test_starts_empty(valkey_client):
@@ -162,7 +163,7 @@ def count_request(client, user_id):
 def test_count_request_sets_the_window_once(client):
     assert count_request(client, "alice") == 1
     assert count_request(client, "alice") == 2
-    assert client.ttl("requests:alice") == 60
+    assert 0 < client.ttl("requests:alice") <= 60
 ```
 
 This test passes on `redis`.
