@@ -116,6 +116,9 @@ hotkeys_last_window_duration_ms:1022
 That sample count is the `N` in the `N/K` bound: at 211,833 samples across 16 slots, anything above roughly 13,000 sampled accesses is guaranteed to be listed, so the top entries are trustworthy.
 When the count is small — a quiet server, or low sampling over a short window — the guarantee weakens with it, and the ordering of the lower entries stops meaning much even though the list still comes back.
 
+The duration is the span those rates were divided by, and it is the measured span rather than the configured one — 1,022 ms for a one-second window, because rotation happens on the server's periodic job rather than on a timer interrupt.
+Reporting the real denominator is what keeps the rate honest: dividing by a nominal 1,000 ms would have overstated every key in that window by about 2%.
+
 ## Benchmarks
 
 Elegant is not the same as affordable, and a server at 98% CPU is where you can least afford a heavy diagnostic — so I measured it.
@@ -191,6 +194,9 @@ valkey-cli CONFIG SET hotkeys-sampling-percentage 100
 valkey-cli HOTKEYS GET
 valkey-cli INFO hotkeys
 ```
+
+`HOTKEYS GET` should name the keys you skewed towards, at roughly the rate you sent them.
+`INFO hotkeys` is how you check that before believing it: divide its sample count by your `hotkeys-top-k` to get the rate floor the list is guaranteed above, and if that floor sits near the rates you are reading, widen the list or lengthen the window until it does not.
 
 If hot keys are a recurring shape of incident for you, the more useful step is to leave `hotkeys-top-k 16` on at the default sampling percentage, so the answer is waiting the next time one server runs hot.
 
