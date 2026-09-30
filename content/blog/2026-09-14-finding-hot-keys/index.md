@@ -175,10 +175,15 @@ No cliff appears anywhere in that sweep, which is what makes the setting safe to
 All of that describes one workload on one machine type, with the bias in a known direction: a skewed workload — where a hot key genuinely exists — should cost less, since hot keys hold their slots and most sampled accesses become a plain increment. I measured the uniform case.
 
 The limits of the list itself are worth knowing before you lean on it at 3am.
-`HOTKEYS` consumes only a few kilobytes regardless of keyspace size, holding one fixed summary of `hotkeys-top-k` entries per window — and that bound has consequences.
+With the benchmark configuration — `hotkeys-top-k` 16 and 16-byte key names — the summaries cost a few kilobytes.
+Memory stays independent of keyspace size, which is the point of the design, but it grows with `hotkeys-top-k` and with key length, because the live and frozen summaries each hold up to K entries and each entry owns a copy of its key name.
 With no real heavy hitters you still get sixteen entries, because the slots always hold something, and their rates describe slot churn rather than your traffic.
 The reply also gives a rate without the error bound behind it, which is why the sample count matters: check it before trusting the ordering.
 Reads and writes share one summary today, so a write-hot and a read-hot key look identical, and aggregating across a cluster belongs in tooling above the server.
+
+Statistics also do not follow a key that changes identity.
+An entry is tracked by key name and database, so after [`RENAME`](https://valkey.io/commands/rename/), [`MOVE`](https://valkey.io/commands/move/) or [`SWAPDB`](https://valkey.io/commands/swapdb/) the accumulated counts stay under the previous name or database.
+Since those commands are not usually high-frequency, the stale entry is harmless: it stops accruing hits immediately and ages out with its window, though `HOTKEYS GET` can report the old identity until that window has rotated away.
 
 ## Try it
 
