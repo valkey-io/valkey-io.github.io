@@ -27,15 +27,20 @@ By now you are certain you have a hot key; you just cannot name it, and three ho
 
 The frustrating part is that Valkey already tells you plenty about your workload — just not this.
 
-My first instinct was `valkey-cli --hotkeys`, which walks the keyspace asking each key how popular it has been, using the least-frequently-used (LFU) counters.
-Those measure long-run popularity with decay: the right input for eviction, and a different question from what is taking traffic *right now*.
-It needs an `*lfu` `maxmemory-policy` too, and being a full keyspace walk calling [`OBJECT FREQ`](https://valkey.io/commands/object-freq/) on every key, on a large keyspace the answer takes a long time to arrive.
+My first instinct was `valkey-cli --hotkeys`.
+Its real problem is not precision, it is waiting: the answer is a full keyspace walk calling [`OBJECT FREQ`](https://valkey.io/commands/object-freq/) on every key, and on a large cluster you are watching an incident burn while that walk runs.
+
+You can shorten the walk instead of abandoning it.
+[`CLUSTER SLOT-STATS`](https://valkey.io/commands/cluster-slot-stats/) points at the hot slot first, so only that slot needs scanning — and slot statistics are the right tool in their own right for judging whether data is unevenly distributed and whether resharding will help.
+But a single slot can hold a great many keys, so you may still be running `OBJECT FREQ` across all of them, and still waiting.
+
+Two smaller catches sit on top of that.
+The walk reads the least-frequently-used (LFU) counters, so it needs an `*lfu` `maxmemory-policy` to report anything at all.
+And those counters measure long-run popularity with decay, which is the right input for eviction decisions and a different question from what is taking traffic *right now*.
 
 [`MONITOR`](https://valkey.io/commands/monitor/) had that truth in real time, but it streams every command to a client, and the documentation measures a single `MONITOR` client cutting throughput by more than 50% [^4].
 A statistically meaningful sample means leaving it running on the node I was trying to rescue, while grepping a firehose for a key I could not name.
 
-[`CLUSTER SLOT-STATS`](https://valkey.io/commands/cluster-slot-stats/) narrowed it to the hot slot, which felt like progress until I remembered how many keys share one.
-It is the right tool for judging whether data is unevenly distributed and whether resharding will help — it just cannot name the key.
 Client-side sampling would have nailed it had every client already been instrumented; instrumenting them mid-incident is a second incident rather than a plan.
 And every one of these except `MONITOR` shares a blind spot: a key that does not exist leaves nothing to scan, so a client hammering a missing key is invisible to anything inspecting stored data.
 
@@ -52,9 +57,12 @@ Exact counting is the obvious approach and the first to fail: a counter per key 
 The instinct to do this on the server was not new — the first proposal came from [li-benson](https://github.com/li-benson) in [#2965](https://github.com/valkey-io/valkey/pull/2965), using a Count-Min Sketch (CMS).
 A CMS estimates how often a given key was seen and cannot rank on its own: ranking needs a companion structure and an admission rule, and in #2965 that rule was an absolute, operator-configured requests-per-second threshold — a knob with no right value across shards of different size.
 
+There was a cost question too, since a CMS requires several hashes on the hot path.
+
 Space-Saving, which is what shipped [^1], folds the ranking into one bounded structure instead.
 Picture sixteen slots, each holding a key name, its database, a count, and an error bound.
 On each observed access you increment the key if it holds a slot, take a free one if there is one, and otherwise displace the smallest-count slot, handing the new key that count plus one.
+That is one hash on the hot path, not one per row.
 
 That last step is the whole trick.
 Because a new key inherits the score of the one it displaced, it arrives on probation rather than at zero: a genuinely hot key shrugs that off, while a key touched once lands in the weakest slot and is gone by the next arrival needing the room.
