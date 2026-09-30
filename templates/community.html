@@ -10,14 +10,15 @@
       {{ page.content | markdown | safe }}
       {% endif %}
     </div>
-    {% set cards_meta = get_section(path="community/_index.md", metadata_only=true) %}
-    {% if (page and page.extra and page.extra.cards)  %} 
-      {% set page_cards = page.extra.cards %}
+    {# Subpages show only their own cards. The landing page's contribute cards
+       are defined in community/_index.md and belong to that page alone; pulling
+       them in here made them bleed onto every /community/* subpage. #}
+    {% if (page and page.extra and page.extra.cards) %}
+      {% set cards = page.extra.cards %}
     {% else %}
-      {% set page_cards = [] %}
+      {% set cards = [] %}
     {% endif %}
-    {% set cards = page_cards | concat(with= cards_meta.extra.cards) %}
-    
+
     {% if cards %}
       <div class="community-card-grid">
         {% for card in cards%}
@@ -27,7 +28,7 @@
             <p>{{ card.description }}</p>
             <div class="community-card-actions">
               {% for link in card.links %}
-                <a href="{{ link.url }}" class="btn" target="_blank">{{ link.text }}</a>
+                <a href="{{ link.url }}" class="btn"{% if link.url is starting_with("http") %} target="_blank" rel="noopener"{% endif %}>{{ link.text }}</a>
               {% endfor %}
             </div>
           </div>
