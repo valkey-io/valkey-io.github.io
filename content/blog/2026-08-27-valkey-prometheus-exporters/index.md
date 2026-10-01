@@ -67,5 +67,5 @@ The **commandlog** metrics require Valkey 8.1+ (they have no Redis equivalent), 
 
 Valkey is growing fast and the open source ecosystem around it is already there.
 
-Try either exporter against your own cluster and share your experience in the [Valkey Slack](https://valkey.io/slack/). Stay tuned for an upcoming deep dive into Valkey metrics and monitoring, with a closer look at redis_exporter, BetterDB, Prometheus, Grafana, and a complete local setup.
+Try either exporter against your own cluster and share your experience in the [Valkey Slack](https://valkey.io/slack/). For the full configuration and a closer look at each exporter, see [Monitoring Valkey with Prometheus](https://valkey.io/blog/monitoring-valkey-with-prometheus/).
 
