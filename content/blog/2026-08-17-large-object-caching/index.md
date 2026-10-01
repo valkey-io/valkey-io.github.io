@@ -73,22 +73,6 @@ In 9.0, the long tail holds up. p99.9 under noise drops from 26.2ms to 3.10ms, a
 
 The party crashers got kicked out. Well, not really. They were ushered to the dance floor where they now play nicely with everyone else.
 
-## The Secret Menu
-
-You don't need to tune the copy avoidance configs to get these gains, though you do need I/O threads enabled (`io-threads` still defaults to 1). The optimization is controlled by three configs that aren't in the default config file. The [secret menu](https://github.com/valkey-io/valkey/blob/df7cdc1d998bcc2f4ab86ac0e8a1c51fa0a7d6c1/src/config.c#L3331), if you will. The defaults are sane:
-
-| Config | Default | Effect |
-|---|---|---|
-| `min-io-threads-avoid-copy-reply` | 7 | With 7+ I/O threads, always use copy avoidance |
-| `min-string-size-avoid-copy-reply` | 16KB | Size threshold in single-threaded mode |
-| `min-string-size-avoid-copy-reply-threaded` | 64KB | Size threshold with I/O threads enabled |
-
-The defaults work for most use-cases. But now you know where to look if you want to tune for your specific workload.
-
-This is one of many community-driven optimizations in Valkey. Individually, they're incremental. Together, they compound. I'm excited about upcoming changes like [PR #2976](https://github.com/valkey-io/valkey/pull/2976), which offloads eligible read commands to worker threads in cluster mode, taking the main thread off the read path for those commands.
-
-Large objects are not going away. If anything, they are becoming the common case. A 10MB blob looked like an outlier when we designed this benchmark, but now it describes an inference workload. Teams moving KV cache off the GPU and onto a shared tier will run this same experiment in production, with small reads and multi-megabyte blocks competing for the same main thread. Valkey 9.0 means they get to keep both. The party crashers can stay, and everybody keeps dancing. 🕺
-
 ## What to do next
 
 If you are serving large objects out of Valkey today, the path is short. [Upgrade to 9.0](https://download.valkey.io/releases/), enable I/O threads, and re-run your own mixed workload watching p99.9 rather than p99. Start with the defaults values. The configs in the secret menu are there if you need them.
