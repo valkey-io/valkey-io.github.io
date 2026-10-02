@@ -1,6 +1,6 @@
 {
   "name": "iovalkey",
-  "language": "Node.Js",
+  "language": "Node.js",
   "license": "MIT",
   "description": "A friendly fork of a widely used Node.js client, tracking Valkey. Promise-based API, Lua scripting and cluster support.",
   "repository": "https://github.com/valkey-io/iovalkey",

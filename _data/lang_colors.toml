@@ -8,7 +8,7 @@
 #
 # Each entry is keyed by the language slug the template computes from the
 # `language` field (lowercased; `#` -> `-sharp`, `.` and spaces -> `-`), e.g.
-# "C#" -> "c-sharp", "Node.Js" -> "node-js".
+# "C#" -> "c-sharp", "Node.js" -> "node-js".
 #
 # Fields:
 #   color   — chip background (Linguist hex).
