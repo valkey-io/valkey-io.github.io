@@ -1,18 +1,18 @@
 {% extends "default.html" %}
 {% import "macros/catalog.html" as catalog %}
 
-{# Libraries catalog page. Renders both the Clients and Integrations catalogs #}
-{# with a toggle between them. Both URLs point here:                          #}
-{#   content/clients/_index.md      → default_kind = "clients"                #}
-{#   content/integrations/_index.md → default_kind = "integrations"           #}
+{# Libraries catalog page. Each URL renders one catalog:                    #}
+{#   content/clients/_index.md      → kind = "clients"                       #}
+{#   content/integrations/_index.md → kind = "integrations"                  #}
+{# Both pages load and validate every entry, then render only their kind.   #}
 {# Cards are rendered at build time from _data/libraries/ (no runtime fetch); #}
-{# libraries.js shows the active kind and filters/sorts within it. Without JS #}
-{# the toggle and JS-only controls are hidden and every card shows.           #}
+{# libraries.js filters and sorts them. Without JS the JS-only controls are  #}
+{# hidden and every card shows.                                              #}
 
 {% block content %}
   <script>document.documentElement.classList.add('js');</script>
 
-  {%- set default_kind = section.extra.default_kind | default(value="clients") -%}
+  {%- set kind = section.extra.kind | default(value="clients") -%}
 
   {# Data assembly #}
   {% set manifest = load_data(path="_data/libraries/manifest.json", format="json") %}
@@ -114,31 +114,28 @@
     {% endif %}
   {% endfor %}
 
-  <div class="catalog" data-catalog-root data-page="libraries" data-default-kind="{{ default_kind }}">
+  <div class="catalog" data-catalog-root data-page="libraries">
 
-    {# Segmented Clients ↔ Integrations toggle                               #}
-    <div class="kind-switch" data-kind-switch role="tablist" aria-label="Catalog">
-      <button type="button" class="kind-opt" data-kind="clients" role="tab"
-              aria-selected="{% if default_kind == 'clients' %}true{% else %}false{% endif %}">Clients</button>
-      <button type="button" class="kind-opt" data-kind="integrations" role="tab"
-              aria-selected="{% if default_kind == 'integrations' %}true{% else %}false{% endif %}">Integrations</button>
-    </div>
-
-    {# Per-kind headers (JS/CSS reveals the active one)                       #}
-    <header class="catalog-header" data-catalog-kind="clients">
+    {% if kind == "clients" %}
+    <header class="catalog-header">
       <h1 class="catalog-title">Clients</h1>
       <p class="catalog-lede">Client libraries and tools used for connecting to Valkey. Anything that speaks the Redis 7.2 wire protocol works with Valkey 7.2 and later, so most existing clients need no changes to migrate.</p>
+      <p class="catalog-crosslink">See also: <a href="/integrations/">Integrations</a></p>
     </header>
-    <header class="catalog-header" data-catalog-kind="integrations">
+    {% else %}
+    <header class="catalog-header">
       <h1 class="catalog-title">Integrations</h1>
       <p class="catalog-lede">Frameworks, job queues, AI libraries, and operations tools that work with Valkey.</p>
+      <p class="catalog-crosslink">See also: <a href="/clients/">Clients</a></p>
     </header>
+    {% endif %}
 
     {# Shared toolbar: search + Valkey toggle + sort                         #}
-    {{ catalog::toolbar(search_placeholder="Search clients, tools, frameworks, packages…") }}
+    {{ catalog::toolbar(search_placeholder="Search " ~ kind ~ "…") }}
 
-    {# Facets (one per kind; JS shows the active kind's bar)                  #}
-    <div class="filterbar" data-facet="language" data-select="multi" data-catalog-kind="clients">
+    {# The facet bar's data-facet names the card attribute it filters on.    #}
+    {% if kind == "clients" %}
+    <div class="filterbar" data-facet="language" data-select="multi">
       <span class="filterbar-label">Language</span>
       <div class="pills">
         <button type="button" class="filter-pill" data-value="__all__" aria-pressed="true">All</button>
@@ -150,8 +147,8 @@
         {% endfor %}
       </div>
     </div>
-
-    <div class="filterbar" data-facet="tags" data-select="multi" data-catalog-kind="integrations">
+    {% else %}
+    <div class="filterbar" data-facet="tags" data-select="multi">
       <span class="filterbar-label">Category</span>
       <div class="pills">
         <button type="button" class="filter-pill" data-value="__all__" aria-pressed="true">All</button>
@@ -163,11 +160,11 @@
         {% endfor %}
       </div>
     </div>
+    {% endif %}
 
-    {# Card grid — both kinds, each card tagged data-catalog-kind            #}
     <section class="catalog-grid" data-catalog>
 
-      {# --- Client cards --------------------------------------------------- #}
+      {% if kind == "clients" %}
       {% for entry in clients %}
         {% set slug = entry.name | slugify %}
         {% set lang = entry.language | default(value="") %}
@@ -176,7 +173,6 @@
         {% set char_bits = bits | split(pat="") %}
         {% set lang_slug = lang | lower | replace(from='#', to='-sharp') | replace(from='.', to='-') | replace(from=' ', to='-') %}
         <article class="entry-card"
-                 data-catalog-kind="clients"
                  data-slug="{{ slug }}"
                  data-name-lower="{{ entry.name | lower }}"
                  data-search="{{ search_text | lower }}"
@@ -251,7 +247,7 @@
         </article>
       {% endfor %}
 
-      {# --- Integration cards ---------------------------------------------- #}
+      {% else %}
       {% for entry in integrations %}
         {% set slug = entry.name | slugify %}
         {% set_global ec_tags = [] %}
@@ -264,7 +260,6 @@
         {% set tagstr = ec_tags | join(sep=" ") %}
         {% set search_text = entry.name ~ " " ~ entry.description ~ " " ~ tagstr %}
         <article class="entry-card"
-                 data-catalog-kind="integrations"
                  data-slug="{{ slug }}"
                  data-name-lower="{{ entry.name | lower }}"
                  data-search="{{ search_text | lower }}"
@@ -308,12 +303,13 @@
           </div>
         </article>
       {% endfor %}
+      {% endif %}
 
-      {{ catalog::empty_state(noun="libraries") }}
+      {{ catalog::empty_state(noun=kind) }}
     </section>
 
-    {# Feature-definition legend (clients only)                              #}
-    <section class="legend" data-legend data-catalog-kind="clients" aria-label="Feature definitions">
+    {% if kind == "clients" %}
+    <section class="legend" data-legend aria-label="Feature definitions">
       <h2 class="legend-title">Feature definitions</h2>
       <dl class="legend-list">
         {% for key, feat in meta.featureDescriptions %}
@@ -326,6 +322,7 @@
         {% endfor %}
       </dl>
     </section>
+    {% endif %}
 
     {{ catalog::footer_cta(cta_text="Add your library", noscript_noun="library") }}
 

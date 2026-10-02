@@ -4,5 +4,5 @@ template = "libraries.html"
 render = true
 
 [extra]
-default_kind = "integrations"
+kind = "integrations"
 +++

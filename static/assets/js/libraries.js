@@ -1,22 +1,18 @@
 /*
  * libraries.js — Libraries catalog page (/clients/ and /integrations/).
  *
- * One controller drives both catalogs on a single page with a Clients ↔
- * Integrations toggle. Two layers:
- *   1. A pure-logic core (no DOM/clipboard/timers) that partitions cards by
- *      kind and decides which cards of the active kind to show and reorder.
+ * Each page renders one catalog. Two layers:
+ *   1. A pure-logic core (no DOM/clipboard/timers) that decides which cards
+ *      to show and in what order.
  *   2. DOM wiring that reads pre-rendered card attributes, holds interaction
  *      state, listens to events, and calls the pure functions.
  *
- * Each card carries data-catalog-kind ("clients" | "integrations"). Only cards
- * of the active kind can be visible. Within the active kind the facet (Language
- * for clients, Tags for integrations), the Valkey toggle, the search text, and
- * the reversible sort all compose.
+ * The facet (Language on /clients/, Category on /integrations/), the Valkey
+ * toggle, the search text, and the reversible sort all compose.
  *
- * Card descriptor: { el, kind, language|null, tags:string[], firstParty:boolean,
- * search, nameLower }.
- * State: { kind, facets:{clients:Set, integrations:Set}, firstPartyOnly, search,
- * sortDir:"asc"|"desc" }.
+ * Card descriptor: { el, facetValues:string[], firstParty:boolean, search,
+ * nameLower }.
+ * State: { facet:Set, firstPartyOnly, search, sortDir:"asc"|"desc" }.
  */
 
 (function (root, factory) {
@@ -39,41 +35,24 @@
     return s;
   }
 
-  function cardTags(card) {
-    return Array.isArray(card && card.tags) ? card.tags : [];
+  function cardFacetValues(card) {
+    return Array.isArray(card && card.facetValues) ? card.facetValues : [];
   }
 
-  // Split a card list into { clients: [...], integrations: [...] } by kind.
-  function partitionByKind(cards) {
-    var list = Array.isArray(cards) ? cards : [];
-    var out = { clients: [], integrations: [] };
-    for (var i = 0; i < list.length; i++) {
-      var c = list[i];
-      if (!c) continue;
-      if (c.kind === "clients") out.clients.push(c);
-      else if (c.kind === "integrations") out.integrations.push(c);
-    }
-    return out;
-  }
-
-  // The facet values selected for the active kind.
+  // The selected facet values.
   function activeFacet(state) {
-    var facets = (state && state.facets) || {};
-    return toSet(facets[state.kind]);
+    return toSet(state && state.facet);
   }
 
-  // Facet match against the active kind's selection. Clients match on their
-  // single `language`; integrations match on ANY of their `tags` (OR). An empty
-  // selection matches all cards of that kind.
+  // A card matches if ANY of its facet values is selected (OR). A client has
+  // one value (its language); an integration has one per tag. An empty
+  // selection matches every card.
   function matchesFacet(card, state) {
     var sel = activeFacet(state);
     if (sel.size === 0) return true;
-    if (card.kind === "clients") {
-      return card.language !== null && sel.has(card.language);
-    }
-    var ct = cardTags(card);
-    for (var i = 0; i < ct.length; i++) {
-      if (sel.has(ct[i])) return true;
+    var values = cardFacetValues(card);
+    for (var i = 0; i < values.length; i++) {
+      if (sel.has(values[i])) return true;
     }
     return false;
   }
@@ -98,9 +77,9 @@
     return name.indexOf(q) !== -1;
   }
 
-  // A card is visible iff it is of the ACTIVE kind AND matches the active-kind
-  // facet, the first-party toggle, and the search text. Preserves input order
-  // so a later stable sort can rely on it.
+  // A card is visible iff it matches the facet, the first-party toggle, and
+  // the search text. Preserves input order so a later stable sort can rely on
+  // it.
   function computeVisible(cards, state) {
     var list = Array.isArray(cards) ? cards : [];
     var st = state || {};
@@ -108,7 +87,6 @@
     return list.filter(function (c) {
       return (
         c &&
-        c.kind === st.kind &&
         matchesFacet(c, st) &&
         matchesFirstParty(c, st) &&
         matchesSearch(c, search)
@@ -144,12 +122,11 @@
     });
   }
 
-  // Live count for a single facet-value pill within the active kind: cards of
-  // the active kind satisfying the current search and first-party toggle whose
-  // facet value includes `value`. Other facet selections are ignored so the
-  // count reflects "how many would match if this pill were active". The "All"
-  // pill (null/"__all__") counts every searched, toggle-eligible active-kind
-  // card.
+  // Live count for a single facet-value pill: cards satisfying the current
+  // search and first-party toggle whose facet values include `value`. Other
+  // facet selections are ignored so the count reflects "how many would match
+  // if this pill were active". The "All" pill (null/"__all__") counts every
+  // searched, toggle-eligible card.
   function pillCount(cards, value, state) {
     var list = Array.isArray(cards) ? cards : [];
     var st = state || {};
@@ -158,37 +135,24 @@
     for (var i = 0; i < list.length; i++) {
       var c = list[i];
       if (!c) continue;
-      if (c.kind !== st.kind) continue;
       if (!matchesSearch(c, search)) continue;
       if (!matchesFirstParty(c, st)) continue;
       var ok;
       if (value === null || value === undefined || value === "__all__") {
         ok = true;
-      } else if (c.kind === "clients") {
-        ok = c.language === value;
       } else {
-        ok = cardTags(c).indexOf(value) !== -1;
+        ok = cardFacetValues(c).indexOf(value) !== -1;
       }
       if (ok) count += 1;
     }
     return count;
   }
 
-  // Recovery suggestions for an empty active-kind result.
-  function withActiveFacet(state, set) {
-    var facets = {};
-    var src = (state && state.facets) || {};
-    facets.clients = toSet(src.clients);
-    facets.integrations = toSet(src.integrations);
-    facets[state.kind] = set;
-    return facets;
-  }
-
+  // Recovery suggestions for an empty result.
   function baseState(state, overrides) {
     var st = state || {};
     var patch = {
-      kind: st.kind,
-      facets: withActiveFacet(st, toSet((st.facets || {})[st.kind])),
+      facet: toSet(st.facet),
       firstPartyOnly: !!st.firstPartyOnly,
       search: st.search || "",
       sortDir: st.sortDir || "asc",
@@ -201,7 +165,7 @@
 
   function clearedFilterState(state) {
     return baseState(state, {
-      facets: withActiveFacet(state, new Set()),
+      facet: new Set(),
       firstPartyOnly: false,
     });
   }
@@ -212,7 +176,7 @@
 
   function clearedAllState(state) {
     return baseState(state, {
-      facets: withActiveFacet(state, new Set()),
+      facet: new Set(),
       firstPartyOnly: false,
       search: "",
     });
@@ -261,7 +225,6 @@
   }
 
   return {
-    partitionByKind: partitionByKind,
     computeVisible: computeVisible,
     sortVisible: sortVisible,
     pillCount: pillCount,
@@ -275,7 +238,7 @@
  * reads pre-rendered card DOM into descriptors, holds interaction state, runs
  * apply() (computeVisible + sortVisible to toggle a hidden class and reorder
  * nodes), refreshes pill counts, reveals/hides the empty state, and wires the
- * kind switch, facet pills, Valkey toggle, debounced search, sort, and copy.
+ * facet pills, Valkey toggle, debounced search, sort, and copy.
  *
  * Exposed as LibrariesCatalog.initDom(root); auto-initializes on
  * DOMContentLoaded when a libraries catalog page is present.
@@ -339,20 +302,16 @@
   }
 
   // Read pre-rendered data-* attributes into the plain descriptor the pure
-  // logic operates on. No card construction.
-  function readCardDescriptor(cardEl) {
-    var kind = cardEl.getAttribute("data-catalog-kind") || "";
-    var langAttr = cardEl.getAttribute("data-language");
-    var tagsAttr = cardEl.getAttribute("data-tags") || "";
+  // logic operates on. No card construction. `facetName` is the facet bar's
+  // data-facet ("language" or "tags"); the card attribute of the same name
+  // holds its values, separated by "|".
+  function readCardDescriptor(cardEl, facetName) {
+    var facetAttr = facetName ? cardEl.getAttribute("data-" + facetName) || "" : "";
     return {
       el: cardEl,
-      kind: kind,
-      language: langAttr ? langAttr : null,
-      tags: tagsAttr
-        ? tagsAttr.split("|").filter(function (t) {
-            return t !== "";
-          })
-        : [],
+      facetValues: facetAttr.split("|").filter(function (v) {
+        return v !== "";
+      }),
       firstParty: cardEl.getAttribute("data-first-party") === "true",
       search: cardEl.getAttribute("data-search") || "",
       desc: cardEl.getAttribute("data-desc") || "",
@@ -372,7 +331,7 @@
     this.sortControl = q(root, "[data-sort-control]");
     this.emptyState = q(root, "[data-empty-state]");
     this.toggleBtn = q(root, "[data-first-party-toggle]");
-    this.kindSwitch = q(root, "[data-kind-switch]");
+    this.facetBar = q(root, ".filterbar[data-facet]");
 
     // Apply live region semantics to empty state for screen reader announcement
     if (this.emptyState) {
@@ -380,23 +339,14 @@
       this.emptyState.setAttribute("aria-live", "polite");
     }
 
-    // Facet bars keyed by kind (each carries data-catalog-kind).
-    this.facetBars = {
-      clients: q(root, '.filterbar[data-catalog-kind="clients"]'),
-      integrations: q(root, '.filterbar[data-catalog-kind="integrations"]'),
-    };
-
+    var facetName = this.facetBar ? this.facetBar.getAttribute("data-facet") : "";
     this.cardEls = this.grid ? qa(this.grid, ".entry-card") : [];
-    this.cards = this.cardEls.map(readCardDescriptor);
-
-    var defaultKind =
-      this.catalogRoot.getAttribute("data-default-kind") === "integrations"
-        ? "integrations"
-        : "clients";
+    this.cards = this.cardEls.map(function (el) {
+      return readCardDescriptor(el, facetName);
+    });
 
     this.state = {
-      kind: defaultKind,
-      facets: { clients: new Set(), integrations: new Set() },
+      facet: new Set(),
       firstPartyOnly: false,
       search: "",
       sortDir: "asc",
@@ -406,14 +356,9 @@
     this._copyTimers = [];
   }
 
-  // The active kind's facet bar, or null.
-  Controller.prototype.activeFacetBar = function () {
-    return this.facetBars[this.state.kind] || null;
-  };
-
-  // The core render pass: compute visibility + order for the active kind,
-  // toggle the hidden class on every card, reorder active-kind nodes in place,
-  // refresh pill counts, reveal/hide the empty state.
+  // The core render pass: compute visibility + order, toggle the hidden class
+  // on every card, reorder visible nodes in place, refresh pill counts,
+  // reveal/hide the empty state.
   Controller.prototype.apply = function () {
     var visible = api.computeVisible(this.cards, this.state);
     var ordered = api.sortVisible(visible, this.state.sortDir, this.state.search);
@@ -473,7 +418,7 @@
   };
 
   Controller.prototype.refreshPillCounts = function () {
-    var bar = this.activeFacetBar();
+    var bar = this.facetBar;
     if (!bar) return;
     var self = this;
     qa(bar, ".filter-pill").forEach(function (pill) {
@@ -522,11 +467,8 @@
 
   Controller.prototype.applyRecovery = function (suggestion) {
     var patch = suggestion.patch || {};
-    if (patch.facets) {
-      this.state.facets.clients =
-        patch.facets.clients instanceof Set ? patch.facets.clients : new Set();
-      this.state.facets.integrations =
-        patch.facets.integrations instanceof Set ? patch.facets.integrations : new Set();
+    if (patch.facet) {
+      this.state.facet = patch.facet instanceof Set ? patch.facet : new Set();
     }
     this.state.firstPartyOnly = !!patch.firstPartyOnly;
     this.state.search = patch.search || "";
@@ -537,45 +479,14 @@
     this.apply();
   };
 
-  // --- Kind switch --------------------------------------------------------
-
-  Controller.prototype.onKindSwitch = function (kind) {
-    if (kind !== "clients" && kind !== "integrations") return;
-    if (kind === this.state.kind) return;
-    this.state.kind = kind;
-    this.syncKindState();
-    // Facet pressed-state and counts are per-kind; refresh for the new active
-    // bar. The first-party toggle, search, and sort direction persist.
-    this.syncPillPressedState();
-    this.apply();
-  };
-
-  // Reflect the active kind: aria-selected on the switch's tab options
-  // (the markup uses role="tab", which styles.scss keys off of) and
-  // data-active-kind on the root (CSS uses it to reveal the active header,
-  // facet bar, and — for clients — the legend).
-  Controller.prototype.syncKindState = function () {
-    var kind = this.state.kind;
-    if (this.kindSwitch) {
-      qa(this.kindSwitch, ".kind-opt").forEach(function (opt) {
-        var on = opt.getAttribute("data-kind") === kind;
-        opt.setAttribute("aria-selected", on ? "true" : "false");
-      });
-    }
-    if (this.catalogRoot) {
-      this.catalogRoot.setAttribute("data-active-kind", kind);
-    }
-  };
-
   // --- Facet pills --------------------------------------------------------
 
   Controller.prototype.onPillClick = function (pill) {
     var value = pill.getAttribute("data-value");
-    var set = this.state.facets[this.state.kind];
     if (value === FACET_ALL) {
-      this.state.facets[this.state.kind] = new Set();
+      this.state.facet = new Set();
     } else {
-      this.toggleInSet(set, value);
+      this.toggleInSet(this.state.facet, value);
     }
     this.syncPillPressedState();
     this.apply();
@@ -586,12 +497,12 @@
     else set.add(value);
   };
 
-  // Reflect selection state in aria-pressed on the active kind's pills. The
-  // "All" pill is pressed exactly when no value is selected for that kind.
+  // Reflect selection state in aria-pressed on the pills. The "All" pill is
+  // pressed exactly when no value is selected.
   Controller.prototype.syncPillPressedState = function () {
-    var bar = this.activeFacetBar();
+    var bar = this.facetBar;
     if (!bar) return;
-    var sel = this.state.facets[this.state.kind];
+    var sel = this.state.facet;
     qa(bar, ".filter-pill").forEach(function (pill) {
       var value = pill.getAttribute("data-value");
       var pressed = value === FACET_ALL ? sel.size === 0 : sel.has(value);
@@ -676,24 +587,13 @@
   Controller.prototype.bind = function () {
     var self = this;
 
-    if (this.kindSwitch) {
-      this.kindSwitch.addEventListener("click", function (ev) {
-        var opt = ev.target.closest ? ev.target.closest(".kind-opt") : null;
-        if (opt && self.kindSwitch.contains(opt)) {
-          self.onKindSwitch(opt.getAttribute("data-kind"));
-        }
-      });
-    }
-
-    // One delegated listener per facet bar (both kinds), scoped by the bar.
-    ["clients", "integrations"].forEach(function (kind) {
-      var bar = self.facetBars[kind];
-      if (!bar) return;
+    if (this.facetBar) {
+      var bar = this.facetBar;
       bar.addEventListener("click", function (ev) {
         var pill = ev.target.closest ? ev.target.closest(".filter-pill") : null;
         if (pill && bar.contains(pill)) self.onPillClick(pill);
       });
-    });
+    }
 
     if (this.toggleBtn) {
       this.toggleBtn.addEventListener("click", function () {
@@ -746,7 +646,6 @@
   Controller.prototype.init = function () {
     setScriptingFlag(this.doc);
     this.bind();
-    this.syncKindState();
     this.syncPillPressedState();
     this.syncToggleState();
     this.syncSortState();

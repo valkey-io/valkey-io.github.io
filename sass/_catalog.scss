@@ -70,68 +70,13 @@ $cat-radius-lg: 16px;
 // ---------------------------------------------------------------------------
 // Compact header
 // ---------------------------------------------------------------------------
-// Kind switch (Clients ↔ Integrations)
-// ---------------------------------------------------------------------------
 //
-// Two-way segmented control that swaps the active catalog kind on the
-// Libraries page: a bordered, rounded, padded track holding options that fill
-// with accent-soft + accent border and turn their label the accent colour when
-// selected. JS-only — hidden without scripting by the PE gate below, which
-// keeps both card sets visible instead.
-
-.kind-switch {
-  display: inline-grid;
-  grid-auto-flow: column;
-  gap: 4px;
-  margin: 0 0 2.4rem;
-  padding: 4px;
-  border: 1px solid $cat-border;
-  border-radius: 14px;
-  background: $cat-surface;
-
-  .kind-opt {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.3rem 1.6rem 1.4rem;
-    border: 1px solid transparent;
-    border-radius: 11px;
-    background: transparent;
-    color: $cat-fg;
-    font: inherit;
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background 0.15s ease, border-color 0.15s ease;
-
-    &:hover {
-      background: $cat-fg-soft;
-    }
-
-    &:focus-visible {
-      outline: 2px solid $cat-accent;
-      outline-offset: 2px;
-    }
-
-    &[aria-selected="true"] {
-      background: $cat-accent-soft;
-      border-color: mix($cat-accent, transparent, 45%);
-      color: $cat-accent;
-    }
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Compact header
-// ---------------------------------------------------------------------------
-//
-// A small heading + one lede line, replacing the old intent switcher and
-// briefing panel. Keeps the top of the page tight so cards reach the fold.
+// A small heading, one lede line, and a link to the other catalog, replacing
+// the old intent switcher and briefing panel. Keeps the top of the page tight
+// so cards reach the fold.
 
 .catalog-header {
-  margin: 0 0 2.4rem;
+  margin: 2.4rem 0;
 
   .catalog-title {
     margin: 0 0 0.6rem;
@@ -148,6 +93,21 @@ $cat-radius-lg: 16px;
     font-size: 1.55rem;
     line-height: 1.5;
     color: $cat-muted;
+  }
+
+  // Clients and integrations are separate pages, so each points to the other
+  // for readers browsing the ecosystem rather than looking for one library.
+  .catalog-crosslink {
+    margin: 0.6rem 0 0;
+    max-width: 82ch;
+    font-size: 1.55rem;
+    line-height: 1.5;
+    color: $cat-muted;
+
+    a {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
   }
 }
 
@@ -1023,7 +983,6 @@ $cat-radius-lg: 16px;
 .field-sort,
 .filterbar,
 .fp-toggle,
-.kind-switch,
 .empty-state {
   display: none;
 }
@@ -1045,10 +1004,6 @@ $cat-radius-lg: 16px;
     display: inline-flex;
   }
 
-  .kind-switch {
-    display: inline-grid;
-  }
-
   .filterbar:not([hidden]) {
     display: flex;
   }
@@ -1065,22 +1020,5 @@ $cat-radius-lg: 16px;
 }
 
 .js .catalog-ready [data-catalog] .entry-card.is-hidden {
-  display: none;
-}
-
-// ---------------------------------------------------------------------------
-// Merged page: active-kind gating
-// ---------------------------------------------------------------------------
-//
-// On the merged Libraries page the controller sets `data-active-kind` on the
-// catalog root once ready. Elements tagged `data-catalog-kind` that do not
-// match the active kind are hidden (headers, facet bars, the clients-only
-// legend). Card visibility is still driven by `.is-hidden` (the controller
-// hides inactive-kind cards there), so cards are not gated here.
-//
-// Before the controller is ready (or without JS) all kinds show, so the no-JS
-// fallback presents both catalogs in full.
-.js .catalog-ready[data-active-kind="clients"] [data-catalog-kind="integrations"]:not(.entry-card),
-.js .catalog-ready[data-active-kind="integrations"] [data-catalog-kind="clients"]:not(.entry-card) {
   display: none;
 }
