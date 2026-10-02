@@ -88,7 +88,9 @@
         {% set_global tcount = tcount + 1 %}
       {% endif %}
     {% endfor %}
-    {% if client_count > 0 and tcount * 10 >= client_count * 9 %}
+    {# A feature every client supports, or none does, doesn't tell clients #}
+    {# apart, so it's left off the cards and out of the legend.            #}
+    {% if client_count > 0 and (tcount == client_count or tcount == 0) %}
       {% set_global suppressed = suppressed | concat(with=key) %}
     {% endif %}
   {% endfor %}
