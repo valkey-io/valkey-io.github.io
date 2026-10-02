@@ -27,10 +27,20 @@ group directories, and registered by path in `_data/libraries/manifest.json`:
 - AI & agent libraries (`type: "ai"`) → `_data/libraries/integrations/`
 
 Tools and AI libraries both live in `integrations/` and are shown together on
-the **Integrations** page. The `type` value must match the directory the file
-lives in. Name the file after your entry, lowercase and hyphenated
-(e.g. `valkey-glide-python.json`). The CI build loads every file in the manifest
-and **fails on any malformed or invalid entry**, so problems are caught before merge.
+the **Integrations** page. To choose between them:
+
+- `"tools"`: CLI and GUI apps, deployment and operations tooling, proxies and
+  gateways, frameworks and ORMs, queues and background jobs, data-movement
+  connectors, and observability or testing tools.
+- `"ai"`: AI memory platforms, agent frameworks, vector stores, RAG and
+  retrieval, and inference or serving engines.
+
+The `type` value must match the directory the file lives in. Name the file
+after your entry, lowercase and hyphenated (e.g. `valkey-glide-python.json`).
+The CI build loads every file in the manifest and **fails on any malformed or
+invalid entry**, so problems are caught before merge. To check before CI does,
+run `zola build` with the Zola version CI uses (see
+`.github/workflows/zola-deploy.yml`); no other repositories are needed.
 
 ## Fields
 
@@ -63,16 +73,21 @@ A string of nine `"0"`/`"1"` characters; `"1"` means supported. Positions, in or
 | 9 | `pool` | Connection pooling |
 
 Example: `"111101000"` = replica, backoff, pubsub, scan, and az supported; the rest not.
+The definition of each feature, as shown on the site, is in `featureDescriptions` in `_data/libraries/metadata.json`.
 
 **Optional fields:**
 
 - `language` (string) — primary language. Required in practice for clients and any library imported into code (ORM adapters, SDK wrappers, agent frameworks). Omit for standalone tools. If a library ships separate packages per language, create one entry per language.
-- `tags` (array of strings) — for filtering and discovery. Clients use `["Clients"]`; tools and AI libraries use category tags. Prefer an existing tag:
+- `tags` (array of strings) — for filtering and discovery. Clients use `["Clients"]`; tools and AI libraries use category tags. Use a tag already in use where one fits, and add a new one only if none does. Tags in use:
   - Clients: `["Clients"]`
-  - Tools: `CLI & GUI`, `Deploy & operate`, `Proxies & gateways`, `Frameworks & ORMs`, `Queues & background jobs`, `Data movement`, `Observability & testing`
+  - Tools: `CLI & GUI`, `Deploy & operate`, `Frameworks & ORMs`, `Queues & background jobs`
   - AI: `RAG & retrieval`, `Agent memory`, `Agent frameworks`, `Inference & serving`
 - `documentation` (string or null) — official docs/landing URL, or `null` if none exists.
-- `docsNote` (string) — reviewer-only note explaining a `null` `documentation`; not rendered. Use only with `documentation: null`, and include a `(checked YYYY-MM-DD)` date. Do not present an unverified URL as documentation.
+- `docsNote` (string) — reviewer-only note explaining a `null` `documentation`; not rendered. Use only with `documentation: null`.
+  - Say what you looked for, what exists instead, and when you checked, as `(checked YYYY-MM-DD)`. From `iovalkey.json`:
+    `"No dedicated Valkey-branded docs site; only redis.github.io API docs from the ioredis lineage exist (checked 2026-09-03)."`
+  - If you found a docs URL you couldn't confirm, name it in the note as unverified; don't put it in `documentation`.
+  - A note doesn't replace the README with basic usage that the checklist asks for.
 - `installCommand` (string) — primary install command, e.g. `"pip install valkey-glide"`.
 - `isGlide` (boolean) — marks a Valkey GLIDE client.
 
@@ -129,7 +144,7 @@ on the site.
 - [ ] Tested compatible with Valkey 7.2 or above.
 - [ ] OSI-approved open-source license.
 - [ ] Repository is publicly accessible, active within the last 6 months, and has a README with basic usage.
-- [ ] Description is factual and vendor-neutral.
+- [ ] Description is factual and vendor-neutral, and every `features` flag and compatibility claim is accurate.
 - [ ] Commits are signed per the DCO using `--signoff`.
 
 By submitting this pull request, I confirm that my contribution is made under the terms of the BSD-3-Clause License.
