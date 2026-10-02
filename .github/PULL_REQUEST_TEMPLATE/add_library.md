@@ -54,6 +54,7 @@ ignored by the templates and may fail review.
 - `type` (string) — exactly one of `"clients"`, `"tools"`, or `"ai"`, matching the directory.
 - `license` (string) — SPDX identifier, e.g. `"Apache-2.0"`, `"MIT"`, `"BSD-3-Clause"`. Must be an OSI-approved open-source license.
 - `repository` (string) — public source-code repository URL.
+- `documentation` (string) — an `https://` link to a page that shows how to use the project with Valkey. Link the first of these that exists: a Valkey page in the project's docs, a Valkey example, a getting-started guide, or the README section that shows basic usage. For a library that speaks the Redis protocol, a page that shows the connection setup is enough. A homepage, a docs index, or a directory listing isn't. Link GitHub files at a tag or commit (`/blob/v1.2.3/…`), not a branch.
 - `isFirstParty` (boolean) — `true` for repos under `github.com/valkey-io/`, otherwise `false`.
 
 **Required for clients — `features` (9-character bit-string):**
@@ -82,12 +83,6 @@ The definition of each feature, as shown on the site, is in `featureDescriptions
   - Clients: `["Clients"]`
   - Tools: `CLI & GUI`, `Deploy & operate`, `Frameworks & ORMs`, `Queues & background jobs`
   - AI: `RAG & retrieval`, `Agent memory`, `Agent frameworks`, `Inference & serving`
-- `documentation` (string or null) — official docs/landing URL, or `null` if none exists.
-- `docsNote` (string) — reviewer-only note explaining a `null` `documentation`; not rendered. Use only with `documentation: null`.
-  - Say what you looked for, what exists instead, and when you checked, as `(checked YYYY-MM-DD)`. From `iovalkey.json`:
-    `"No dedicated Valkey-branded docs site; only redis.github.io API docs from the ioredis lineage exist (checked 2026-09-03)."`
-  - If you found a docs URL you couldn't confirm, name it in the note as unverified; don't put it in `documentation`.
-  - A note doesn't replace the README with basic usage that the checklist asks for.
 - `installCommand` (string) — primary install command, e.g. `"pip install valkey-glide"`.
 - `isGlide` (boolean) — marks a Valkey GLIDE client.
 
@@ -140,10 +135,11 @@ on the site.
 ### Submission checklist
 
 - [ ] Valid JSON, placed in the directory matching its `type`, and registered once in `_data/libraries/manifest.json`.
-- [ ] All required fields present: `name`, `description`, `type`, `license`, `repository`, `isFirstParty` — plus a 9-character `features` string for clients.
+- [ ] All required fields present: `name`, `description`, `type`, `license`, `repository`, `documentation`, `isFirstParty` — plus a 9-character `features` string for clients.
 - [ ] Tested compatible with Valkey 7.2 or above.
 - [ ] OSI-approved open-source license.
 - [ ] Repository is publicly accessible, active within the last 6 months, and has a README with basic usage.
+- [ ] `documentation` opens on a page that shows how to use the project with Valkey, not a homepage or an index.
 - [ ] Description is factual and vendor-neutral, and every `features` flag and compatibility claim is accurate.
 - [ ] Commits are signed per the DCO using `--signoff`.
 

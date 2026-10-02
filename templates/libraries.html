@@ -43,6 +43,10 @@
     {% if e.isFirstParty is not defined %}
       {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' is missing required field 'isFirstParty'") }}
     {% endif %}
+    {# The Documentation link is required and must show how to use the entry with Valkey (PR template). #}
+    {% if e.documentation is not defined or e.documentation is not string or e.documentation is not starting_with("https://") %}
+      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' needs 'documentation': an https:// link that shows how to use it with Valkey") }}
+    {% endif %}
     {% set bits = e.features | default(value="") %}
     {% if bits | length != 9 %}
       {{ throw(message="_data/libraries/clients: client entry '" ~ label ~ "' features must be a 9-character bit-string (got '" ~ bits ~ "')") }}
@@ -72,6 +76,10 @@
     {% endif %}
     {% if e.isFirstParty is not defined %}
       {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' is missing required field 'isFirstParty'") }}
+    {% endif %}
+    {# The Documentation link is required and must show how to use the entry with Valkey (PR template). #}
+    {% if e.documentation is not defined or e.documentation is not string or e.documentation is not starting_with("https://") %}
+      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' needs 'documentation': an https:// link that shows how to use it with Valkey") }}
     {% endif %}
   {% endfor %}
 
