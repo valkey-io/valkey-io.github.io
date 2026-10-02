@@ -4,6 +4,7 @@
   "license": "Apache-2.0",
   "description": "Cognee is an AI memory engine building knowledge graphs from your data, which has an adapter for storing embeddings in Valkey (requires valkey-bundle).",
   "repository": "https://github.com/topoteretes/cognee-community",
+  "documentation": "https://github.com/topoteretes/cognee-community/blob/25980633a5d047e6e41b1f65e5607a44ca0dd7a2/packages/vector/valkey/examples/example.py",
   "installCommand": "pip install cognee-community-vector-adapter-valkey",
   "isFirstParty": false,
   "type": "ai",

@@ -3,6 +3,7 @@
   "license": "BSD-3-Clause",
   "description": "Reusable, domain-specific skills that teach coding agents how to work with Valkey correctly.",
   "repository": "https://github.com/valkey-io/valkey-skills",
+  "documentation": "https://github.com/valkey-io/valkey-skills/blob/c7f563970ae4702d1c83c9da27ac8cdbca15fa7b/README.md#install",
   "isFirstParty": true,
   "type": "ai",
   "tags": [

@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "description": "Kubernetes operator for deploying Valkey clusters and managing their lifecycle. Work in progress.",
   "repository": "https://github.com/valkey-io/valkey-operator",
-  "documentation": "https://github.com/valkey-io/valkey-operator/tree/main/docs",
+  "documentation": "https://github.com/valkey-io/valkey-operator/blob/v0.7.1/docs/quickstart.md",
   "isFirstParty": true,
   "type": "tools",
   "tags": [

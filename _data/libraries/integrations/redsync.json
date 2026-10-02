@@ -4,7 +4,7 @@
   "license": "BSD-3-Clause",
   "description": "Distributed mutual-exclusion lock for Go, coordinating a quorum across several independent nodes.",
   "repository": "https://github.com/go-redsync/redsync",
-  "documentation": "https://pkg.go.dev/github.com/go-redsync/redsync/v4",
+  "documentation": "https://github.com/go-redsync/redsync/blob/v4.18.0/examples/valkego/main.go",
   "isFirstParty": false,
   "installCommand": "go get github.com/go-redsync/redsync/v4",
   "type": "tools",

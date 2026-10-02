@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "description": "Document and embedding store for Haystack RAG pipelines, backed by Valkey (requires valkey-bundle).",
   "repository": "https://github.com/deepset-ai/haystack-core-integrations",
-  "documentation": "https://haystack.deepset.ai/integrations",
+  "documentation": "https://haystack.deepset.ai/integrations/valkey",
   "isFirstParty": false,
   "installCommand": "pip install valkey-haystack",
   "type": "ai",

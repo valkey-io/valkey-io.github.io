@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "description": "Chat-bot platform whose knowledge base can use a Valkey vector store, built on the official Valkey GLIDE client (requires valkey-bundle; not available on Windows).",
   "repository": "https://github.com/langbot-app/LangBot",
-  "documentation": "https://langbot.app",
+  "documentation": "https://github.com/langbot-app/LangBot/blob/v4.10.11/docs/VALKEY_SEARCH_INTEGRATION.md",
   "isFirstParty": false,
   "installCommand": "pip install langbot",
   "type": "ai",

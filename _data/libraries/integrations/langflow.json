@@ -4,7 +4,7 @@
   "license": "MIT",
   "description": "Visual builder for agent and RAG flows, with Valkey vector store (requires valkey-bundle) and chat memory components shipped as extensions.",
   "repository": "https://github.com/langflow-ai/langflow",
-  "documentation": "http://www.langflow.org",
+  "documentation": "https://docs.langflow.org/bundles-valkey",
   "isFirstParty": false,
   "installCommand": "pip install \"langflow[bundles]\"",
   "type": "ai",

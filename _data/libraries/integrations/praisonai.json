@@ -4,7 +4,7 @@
   "license": "MIT",
   "description": "Multi-agent framework for building production agent teams, with pluggable retrieval (requires valkey-bundle), and storage.",
   "repository": "https://github.com/MervinPraison/PraisonAI",
-  "documentation": "https://docs.praison.ai/",
+  "documentation": "https://praison.ai/docs/features/persistence#url-schemes-per-store-kind",
   "isFirstParty": false,
   "installCommand": "pip install 'praisonai[valkey]'",
   "type": "ai",
