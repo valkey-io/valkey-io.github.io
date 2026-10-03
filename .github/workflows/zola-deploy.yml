@@ -54,7 +54,7 @@ jobs:
           repository: valkey-io/valkey-json
           path: valkey-json
 
-      - name: Init commands, topics and clients
+      - name: Init commands, topics, clients and security.txt
         run: |
           cd website
           ./build/init-topics-and-clients.sh ../valkey-doc/topics \
@@ -62,6 +62,7 @@ jobs:
           ./build/init-commands.sh ../valkey-doc/commands \
             ../valkey/src/commands ../valkey-bloom/src/commands \
             ../valkey-json/src/commands ../valkey-search/src/commands
+          ./build/init-security-txt.sh .
 
       - name: Build only
         uses: shalzz/zola-deploy-action@v0.22.0
