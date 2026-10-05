@@ -9,6 +9,10 @@
 //
 // The site sets `html { font-size: 10px }`, so in this file 1rem = 10px.
 //
+// This file is part of the sitewide stylesheet, so every rule is scoped under
+// `.catalog` or uses a `catalog-` class name. Generic names such as `.toolbar`,
+// `.chip` or `.copy-btn` must not style or hide elements on other pages.
+//
 // Progressive enhancement: without JS, all cards show and JS-only controls are
 // hidden. A synchronous head snippet adds `js` to <html> before first paint;
 // rules gated behind `.js` then reveal the JS-only controls.
@@ -102,7 +106,7 @@ $cat-radius-lg: 16px;
 // intrinsic/fixed width on the right. Collapses to a single column on narrow
 // viewports.
 
-.toolbar {
+.catalog .toolbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto 180px;
   gap: 1.2rem;
@@ -219,7 +223,7 @@ $cat-radius-lg: 16px;
 // Valkey Project toggle (a switch, distinct from the facet pills)
 // ---------------------------------------------------------------------------
 
-.fp-toggle {
+.catalog .fp-toggle {
   display: inline-flex;
   align-items: center;
   gap: 0.9rem;
@@ -289,7 +293,7 @@ $cat-radius-lg: 16px;
 // Filter pills
 // ---------------------------------------------------------------------------
 
-.filterbar {
+.catalog .filterbar {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -399,7 +403,7 @@ $cat-radius-lg: 16px;
 // shares them through subgrid, so every part lines up across a row whatever its text length.
 // The card must have exactly these three children. minmax(0, 1fr) stops nowrap install
 // commands from widening the card.
-.entry-card {
+.catalog .entry-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: subgrid;
@@ -537,7 +541,7 @@ $cat-radius-lg: 16px;
 // Chips + badges
 // ---------------------------------------------------------------------------
 
-.chip {
+.catalog .chip {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -549,7 +553,7 @@ $cat-radius-lg: 16px;
 }
 
 // Language chip (clients) — outlined neutral.
-.chip-language {
+.catalog .chip-language {
   background: $cat-surface;
   color: $cat-muted;
   border: 1px solid $cat-border;
@@ -559,7 +563,7 @@ $cat-radius-lg: 16px;
 // (color/fg/mono from _data/lang_colors.toml, using MIT-licensed GitHub
 // Linguist color data — no brand logos). The inline `style` on the element
 // sets background/color per language; this rule only handles size and shape.
-.lang-badge {
+.catalog .lang-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -580,14 +584,14 @@ $cat-radius-lg: 16px;
 }
 
 // Tag chip (integrations) — filled ink-soft, no border (the "shelf label").
-.chip-tag {
+.catalog .chip-tag {
   background: $cat-fg-soft;
   color: $cat-fg;
   border: 1px solid transparent;
 }
 
 // Valkey Project chip — accent-tinted, marks first-party entries on both pages.
-.chip-project {
+.catalog .chip-project {
   background: $cat-accent-soft;
   color: mix(#000, $cat-accent, 22%);
   border: 1px solid rgba($cat-accent, 0.4);
@@ -595,7 +599,7 @@ $cat-radius-lg: 16px;
 }
 
 // Icon inside the Valkey Project chip (the Valkey logo mark).
-.chip-icon {
+.catalog .chip-icon {
   flex: none;
   width: 11px;
   height: 12.5px;
@@ -607,7 +611,7 @@ $cat-radius-lg: 16px;
 // Install command + copy button
 // ---------------------------------------------------------------------------
 
-.entry-card .cmd {
+.catalog .entry-card .cmd {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -689,7 +693,7 @@ $cat-radius-lg: 16px;
 // Supported-feature list (clients only)
 // ---------------------------------------------------------------------------
 
-.entry-card .disc {
+.catalog .entry-card .disc {
   border-top: 1px solid $cat-border;
   padding-top: 1.2rem;
   font-size: 1.3rem;
@@ -783,7 +787,7 @@ $cat-radius-lg: 16px;
 // Feature-definition legend (clients only)
 // ---------------------------------------------------------------------------
 
-.legend {
+.catalog .legend {
   margin: 0 0 5.6rem;
   padding: 2.4rem;
   border: 1px solid $cat-border;
@@ -830,7 +834,7 @@ $cat-radius-lg: 16px;
 // Empty state
 // ---------------------------------------------------------------------------
 
-.empty-state {
+.catalog .empty-state {
   grid-column: 1 / -1;
   padding: 4.4rem 2.8rem;
   text-align: center;
@@ -881,7 +885,7 @@ $cat-radius-lg: 16px;
 // Submission CTA
 // ---------------------------------------------------------------------------
 
-.submission-heading {
+.catalog .submission-heading {
   margin: 0 0 0.6rem;
   font-size: 3rem;             // matches .catalog-title
   font-weight: 700;
@@ -890,7 +894,7 @@ $cat-radius-lg: 16px;
   color: $cat-fg;
 }
 
-.submission-lede {
+.catalog .submission-lede {
   margin: 0 0 2rem;
   max-width: 82ch;
   font-size: 1.55rem;
@@ -898,7 +902,7 @@ $cat-radius-lg: 16px;
   color: $cat-muted;
 }
 
-.submission-cta {
+.catalog .submission-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -936,19 +940,19 @@ $cat-radius-lg: 16px;
 // Without JS: show every card on the page, hide JS-only controls so no broken
 // control appears.
 
-.copy-btn,
-.field-search,
-.field-sort,
-.filterbar,
-.fp-toggle,
-.empty-state {
+.catalog .copy-btn,
+.catalog .field-search,
+.catalog .field-sort,
+.catalog .filterbar,
+.catalog .fp-toggle,
+.catalog .empty-state {
   display: none;
 }
 
 // Once `js` is set on <html> (synchronously, before first paint) reveal the
 // JS-only controls. All cards remain visible until the controller's first
 // apply() classifies them via `.is-hidden`.
-.js {
+.js .catalog {
   .copy-btn {
     display: inline-block;
   }
