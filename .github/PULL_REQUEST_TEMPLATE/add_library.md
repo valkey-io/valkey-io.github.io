@@ -127,8 +127,8 @@ Integration (`_data/libraries/integrations/valkey-cli.json`):
 
 Add the file's path (relative to `_data/libraries/`) to the matching array in
 `_data/libraries/manifest.json` — `clients` or `integrations`. List it exactly
-once; manifest order is render order. A file not in the manifest will not appear
-on the site.
+once; the page sorts cards by name, so the position doesn't matter. A file not
+in the manifest will not appear on the site.
 
 ---
 
