@@ -50,7 +50,7 @@ ignored by the templates and may fail review.
 **Required for all entries:**
 
 - `name` (string) — official name; also used to derive the card slug.
-- `description` (string) — 1–2 factual, vendor-neutral sentences, ideally under ~200 characters.
+- `description` (string) — 1–2 factual, vendor-neutral sentences, at most 200 characters (the build fails above that).
 - `type` (string) — exactly one of `"clients"`, `"tools"`, or `"ai"`, matching the directory.
 - `license` (string) — SPDX identifier, e.g. `"Apache-2.0"`, `"MIT"`, `"BSD-3-Clause"`. Must be an OSI-approved open-source license.
 - `repository` (string) — public source-code repository URL.
@@ -140,7 +140,7 @@ on the site.
 - [ ] OSI-approved open-source license.
 - [ ] Repository is publicly accessible, active within the last 6 months, and has a README with basic usage.
 - [ ] `documentation` opens on a page that shows how to use the project with Valkey, not a homepage or an index.
-- [ ] Description is factual and vendor-neutral, and every `features` flag and compatibility claim is accurate.
+- [ ] Description is factual, vendor-neutral and at most 200 characters, and every `features` flag and compatibility claim is accurate.
 - [ ] Commits are signed per the DCO using `--signoff`.
 
 By submitting this pull request, I confirm that my contribution is made under the terms of the BSD-3-Clause License.

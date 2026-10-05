@@ -419,11 +419,16 @@ $cat-radius-lg: 16px;
   }
 }
 
-// Entry card
+// Entry card. Each card spans three rows of the catalog grid (head, description, the rest) and
+// shares them through subgrid, so every part lines up across a row whatever its text length.
+// The card must have exactly these three children. minmax(0, 1fr) stops nowrap install
+// commands from widening the card.
 .entry-card {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: subgrid;
+  grid-row: span 3;
+  row-gap: 1.2rem;
   padding: 2.4rem;
   border: 1px solid $cat-border;
   border-radius: $cat-radius-lg;
@@ -474,14 +479,6 @@ $cat-radius-lg: 16px;
     color: $cat-muted;
     overflow-wrap: anywhere;
 
-    // Fixed five-line height so the copy line below starts at the same offset across cards.
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 5;
-    line-clamp: 5;
-    overflow: hidden;
-    min-height: calc(1.55em * 5);
-
     // Marks the span of a description-only search match (JS-applied). Title
     // matches are not highlighted since the name heading already makes those
     // obvious.
@@ -493,11 +490,10 @@ $cat-radius-lg: 16px;
     }
   }
 
-  // Footer region; flex: 1 lets it fill the shared card height so the license/footer sink to the bottom.
+  // Fills the card's third row, so the license/footer sink to the bottom.
   .entry-anchor {
     display: flex;
     flex-direction: column;
-    flex: 1;
   }
 
   .entry-anchor-top {
@@ -1016,7 +1012,7 @@ $cat-radius-lg: 16px;
 // After the controller marks the root `catalog-ready`, visibility is driven
 // entirely by the `.is-hidden` class the JS toggles on each card.
 .js .catalog-ready [data-catalog] .entry-card {
-  display: flex;
+  display: grid;
 }
 
 .js .catalog-ready [data-catalog] .entry-card.is-hidden {

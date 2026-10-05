@@ -30,6 +30,8 @@
   {% endfor %}
 
   {% set required = ["name", "description", "type", "license", "repository"] %}
+  {# Keeps cards a similar size; the PR template states the same limit. #}
+  {% set max_description = 200 %}
   {% for e in clients %}
     {% set label = e.name | default(value="<missing name>") %}
     {% for f in required %}
@@ -46,6 +48,10 @@
     {# The Documentation link is required and must show how to use the entry with Valkey (PR template). #}
     {% if e.documentation is not defined or e.documentation is not string or e.documentation is not starting_with("https://") %}
       {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' needs 'documentation': an https:// link that shows how to use it with Valkey") }}
+    {% endif %}
+    {% set desc_length = e.description | length %}
+    {% if desc_length > max_description %}
+      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' description is " ~ desc_length ~ " characters (max " ~ max_description ~ ")") }}
     {% endif %}
     {% set bits = e.features | default(value="") %}
     {% if bits | length != 9 %}
@@ -80,6 +86,10 @@
     {# The Documentation link is required and must show how to use the entry with Valkey (PR template). #}
     {% if e.documentation is not defined or e.documentation is not string or e.documentation is not starting_with("https://") %}
       {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' needs 'documentation': an https:// link that shows how to use it with Valkey") }}
+    {% endif %}
+    {% set desc_length = e.description | length %}
+    {% if desc_length > max_description %}
+      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' description is " ~ desc_length ~ " characters (max " ~ max_description ~ ")") }}
     {% endif %}
   {% endfor %}
 
