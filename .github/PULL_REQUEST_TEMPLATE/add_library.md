@@ -75,6 +75,8 @@ A string of nine `"0"`/`"1"` characters; `"1"` means supported. Positions, in or
 
 Example: `"111101000"` = replica, backoff, pubsub, scan, and az supported; the rest not.
 The definition of each feature, as shown on the site, is in `featureDescriptions` in `_data/libraries/metadata.json`.
+A feature that every listed client supports, or that none does, isn't shown on cards or in the legend, because it doesn't tell clients apart.
+So a feature you set can appear or disappear as other clients are added or removed.
 
 **Optional fields:**
 
