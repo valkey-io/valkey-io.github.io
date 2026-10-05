@@ -4,8 +4,8 @@
 // Shared styles for the catalog served at /clients/ and /integrations/. Both
 // use the same compact header, toolbar, filter-pill row, and card grid; the
 // only visual differences are the facet (languages vs. tags) and the
-// advanced-feature list/legend on the clients view. Reuses existing
-// color/typography variables and the `respond-min` mixin.
+// advanced-feature list/legend on the clients view. Reuses the site's
+// colors where one matches exactly, its typography mixins, and `respond-min`.
 //
 // The site sets `html { font-size: 10px }`, so in this file 1rem = 10px.
 //
@@ -18,10 +18,10 @@
 // Catalog-local design tokens
 // ---------------------------------------------------------------------------
 
-$cat-bg:      #f5f7f7;   // page ground (== $background-darker)
-$cat-surface: #ffffff;   // cards, controls
+$cat-bg:      $background-darker;  // page ground
+$cat-surface: $white;              // cards, controls
 $cat-fg:      #1a2026;    // wordmark ink
-$cat-muted:   #647782;   // secondary text (== $text-light)
+$cat-muted:   $text-light;         // secondary text
 $cat-border:  #e2e8f0;   // hairlines
 $cat-accent:  #6983ff;   // valkey mark periwinkle
 
