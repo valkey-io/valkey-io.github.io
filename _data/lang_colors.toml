@@ -53,3 +53,8 @@ mono = "PHP"
 color = "#F05138"
 fg = "#fff"
 mono = "Sw"
+
+[ruby]
+color = "#701516"
+fg = "#fff"
+mono = "Rb"
