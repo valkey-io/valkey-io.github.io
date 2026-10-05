@@ -86,7 +86,6 @@ So a feature you set can appear or disappear as other clients are added or remov
   - Tools: `CLI & GUI`, `Deploy & operate`, `Frameworks & ORMs`, `Queues & background jobs`
   - AI: `RAG & retrieval`, `Agent memory`, `Agent frameworks`, `Inference & serving`
 - `installCommand` (string) — primary install command, e.g. `"pip install valkey-glide"`.
-- `isGlide` (boolean) — marks a Valkey GLIDE client.
 
 ## Example entries
 
@@ -103,7 +102,6 @@ Client (`_data/libraries/clients/valkey-glide-python.json`):
   "isFirstParty": true,
   "installCommand": "pip install valkey-glide",
   "features": "111101000",
-  "isGlide": true,
   "type": "clients",
   "tags": ["Clients"]
 }

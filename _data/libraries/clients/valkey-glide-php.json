@@ -8,7 +8,6 @@
   "isFirstParty": true,
   "installCommand": "pie install valkey-io/valkey-glide-php",
   "features": "111101000",
-  "isGlide": true,
   "type": "clients",
   "tags": [
     "Clients"

@@ -8,7 +8,6 @@
   "isFirstParty": true,
   "installCommand": "gem install valkey-glide-rb",
   "features": "110001000",
-  "isGlide": true,
   "type": "clients",
   "tags": [
     "Clients"

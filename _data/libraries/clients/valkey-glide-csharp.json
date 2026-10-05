@@ -8,7 +8,6 @@
   "isFirstParty": true,
   "installCommand": "dotnet add package Valkey.Glide",
   "features": "111100001",
-  "isGlide": true,
   "type": "clients",
   "tags": [
     "Clients"

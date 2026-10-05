@@ -8,7 +8,6 @@
   "isFirstParty": true,
   "installCommand": "implementation 'io.valkey:valkey-glide:2.+'",
   "features": "111101000",
-  "isGlide": true,
   "type": "clients",
   "tags": [
     "Clients"
