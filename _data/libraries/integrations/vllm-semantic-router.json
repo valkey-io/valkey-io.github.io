@@ -6,7 +6,6 @@
   "repository": "https://github.com/vllm-project/semantic-router",
   "documentation": "https://vllm-sr.ai/docs/installation/valkey-memory/",
   "isFirstParty": false,
-  "installCommand": null,
   "type": "ai",
   "tags": [
     "Inference & serving"
