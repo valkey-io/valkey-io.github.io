@@ -2,6 +2,7 @@
   link: https://www.percona.com/valkey-redis/support/
   image:
     path: /img/percona.svg
+    strip: /img/percona-horizontal.svg
     alt: Percona Logo
   company: >
     Percona is an open source database software, support, and services company that believes organizations should have full control over their data infrastructure. 
@@ -73,6 +74,7 @@
   link: https://www.ericsson.com/
   image:
     path: /img/ericsson.svg
+    strip: /img/ericsson-horizontal.svg
     alt: Ericsson logo
   company: >
     Founded in 1876, Ericsson is a Swedish communication technology and services provider. The company offers software, services, and infrastructure for information and communications technology used by telecommunications operators, including traditional telecommunications, Internet Protocol networking equipment and business support solutions. Ericsson is headquartered in Stockholm, Sweden.
@@ -91,6 +93,7 @@
   link: https://www.instaclustr.com/platform/
   image:
     path: /img/netapp_instaclustr.svg
+    strip: /img/netapp_instaclustr-trimmed.svg
     alt: NetApp Instaclustr logo
   company: >
     The [Instaclustr Platform](https://www.instaclustr.com/platform/) offers a unified approach to optimizing every facet of your data infrastructure, streamlining the process and enhancing your data ecosystem using open source software.
@@ -165,6 +168,7 @@
     Run it [self-hosted](https://hub.docker.com/r/betterdb/monitor), including fully air-gapped, or as [managed cloud](https://betterdb.com/login).
   image:
     path: /img/betterdb.svg
+    strip: /img/betterdb-trimmed.svg
     alt: BetterDB Logo
 
 - name: anynines
@@ -204,6 +208,7 @@
   link: https://www.freshworks.com
   image:
     path: /img/freshworks.png
+    strip: /img/freshworks-horizontal.png
     alt: Freshworks Logo
   company: >
     Freshworks (NASDAQ: FRSH) is a leading provider of uncomplicated, AI-powered software that delivers exceptional employee and customer experiences. Its service, IT, and CRM solutions are designed to be quick to deploy and easy to use, and are trusted by organizations of all sizes worldwide.
@@ -226,6 +231,7 @@
   link: 'https://solanica.io/'
   image:
     path: /img/solanica.svg
+    strip: /img/solanica-trimmed.svg
     alt: 'Solanica Logo'
   company: >
     Solanica is a core contributor to the OpenEverest project and a pioneer in cloud-native data platform automation. The Solanica Platform delivers seamless deployment, observability, and expert support for teams. Designed for AI, analytics, and modern workloads, Solanica helps organizations unlock the full potential of their database infrastructure.
