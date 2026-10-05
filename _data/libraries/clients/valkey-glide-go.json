@@ -6,7 +6,7 @@
   "repository": "https://github.com/valkey-io/valkey-glide/tree/main/go",
   "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=go",
   "isFirstParty": true,
-  "installCommand": "go get github.com/valkey-io/valkey-glide/go",
+  "installCommand": "go get github.com/valkey-io/valkey-glide/go/v2",
   "features": "111101000",
   "isGlide": true,
   "type": "clients",

@@ -6,7 +6,7 @@
   "repository": "https://github.com/valkey-io/valkey-glide-php",
   "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=php",
   "isFirstParty": true,
-  "installCommand": "pie install valkey-io/valkey-glide-php:1.0.0",
+  "installCommand": "pie install valkey-io/valkey-glide-php",
   "features": "111101000",
   "isGlide": true,
   "type": "clients",
