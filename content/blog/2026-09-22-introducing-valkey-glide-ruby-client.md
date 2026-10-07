@@ -135,11 +135,8 @@ threads = 10.times.map do |i|
   end
 end
 threads.each(&:join)
-```
 
-For a single thread, pipelining batches multiple commands into one round trip:
-
-```ruby
+# One thread batching several commands into a single round trip.
 results = client.pipelined do |pipe|
   pipe.set("key1", "value1")
   pipe.get("key1")
@@ -148,7 +145,7 @@ end
 # => ["OK", "value1", 1]
 ```
 
-The threaded example covers concurrent callers and the pipelined example covers a single caller; both route through the same multiplexed connection.
+Threads let multiple callers share one client, while pipelining batches commands from a single caller; both route through the same multiplexed connection.
 
 ### Native Observability: OpenTelemetry and Statistics
 
