@@ -14,7 +14,7 @@ featured_image = "/assets/media/featured/default.webp"
 +++
 
 We are pleased to announce the general availability (GA) of the Ruby client for [Valkey GLIDE](https://github.com/valkey-io/valkey-glide), [valkey-glide-rb](https://github.com/valkey-io/valkey-glide-ruby).
-This release brings the shared Rust core that powers GLIDE's [Java](https://github.com/valkey-io/valkey-glide/tree/main/java), [Python](https://github.com/valkey-io/valkey-glide/tree/main/python), [Node.js](https://github.com/valkey-io/valkey-glide/tree/main/node), and [Go](https://github.com/valkey-io/valkey-glide/tree/main/go) clients to the Ruby community — with an API designed to feel familiar to anyone coming from [redis-rb](https://github.com/redis/redis-rb).
+This release brings the shared Rust core that powers GLIDE's [Java](https://github.com/valkey-io/valkey-glide/tree/main/java), [Python](https://github.com/valkey-io/valkey-glide/tree/main/python), [Node.js](https://github.com/valkey-io/valkey-glide/tree/main/node), and [Go](https://github.com/valkey-io/valkey-glide/tree/main/go) clients to the Ruby community — with an API (application programming interface) designed to feel familiar to anyone coming from [redis-rb](https://github.com/redis/redis-rb).
 
 [Freshworks](https://www.freshworks.com/) needed a Valkey-native Ruby client that could slot into our existing redis-rb based workflows while giving us GLIDE's connection management, reliability, and observability out of the box — but Ruby wasn't on GLIDE's language roadmap.
 Building on top of GLIDE's shared core meant we didn't have to reinvent cluster handling, retries, or tracing ourselves; we could focus purely on the Ruby surface and let the Rust core do the heavy lifting.
@@ -22,7 +22,7 @@ In this post, we cover why Freshworks took this on, what GA means for the Ruby e
 
 ## What GLIDE Brings to Ruby Developers
 
-If you run Ruby services against [Valkey](https://github.com/valkey-io/valkey) or [Redis OSS](https://github.com/redis/redis) today, you're almost certainly using redis-rb, [redis-client](https://github.com/redis-rb/redis-client), or a caching abstraction like [moneta](https://github.com/moneta-rb/moneta) sitting on top of one of them — each with its own connection pooling, retry, and TLS (Transport Layer Security) story.
+If you run Ruby services against [Valkey](https://github.com/valkey-io/valkey) or [Redis OSS](https://github.com/redis/redis) today, you may be using redis-rb, [redis-client](https://github.com/redis-rb/redis-client), or a caching abstraction like [moneta](https://github.com/moneta-rb/moneta) sitting on top of one of them. At Freshworks, each of these came with its own connection pooling, retry, and TLS (Transport Layer Security) story.
 GLIDE gives Ruby a client that's:
 
 - Behaves the same as every other GLIDE language client, so platform/infra teams can reason about client behavior once and apply it everywhere.
@@ -288,7 +288,7 @@ Like the other GLIDE language clients, the Ruby gem is a thin layer over the sha
 - **[ffi](https://github.com/ffi/ffi) gem** — calls into the prebuilt native library (`libglide_ffi.so` on Linux, `.dylib` on macOS 14+ Apple silicon/arm64) with zero compilation step for consumers; Intel Mac users need to build Valkey GLIDE manually.
 - **glide-core** — the same Rust driver used by the Java, Python, Node.js, and Go clients: connection management, cluster topology, retries, OpenTelemetry.
 
-This is the same FFI approach used by GLIDE's Go and Python-sync clients — different from Java (JNI) or Python-async (PyO3 + UDS) — chosen for straightforward native builds across Ruby's supported platforms (glibc- and musl-based Linux, and macOS).
+This is the same FFI approach used by GLIDE's Go and Python-sync clients — different from Java (JNI, the Java Native Interface) or Python-async (PyO3 + UDS, Unix domain sockets) — chosen for straightforward native builds across Ruby's supported platforms (glibc- and musl-based Linux, and macOS).
 
 ## Join the Journey
 
