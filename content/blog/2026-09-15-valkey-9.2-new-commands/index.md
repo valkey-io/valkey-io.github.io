@@ -196,7 +196,8 @@ local function id_greater(left, right)
     local left_ms, left_seq = string.match(left, '^(%d+)%-(%d+)$')
     local right_ms, right_seq = string.match(right, '^(%d+)%-(%d+)$')
     return component_greater(left_ms, right_ms) or
-        (left_ms == right_ms and component_greater(left_seq, right_seq))
+        (not component_greater(right_ms, left_ms) and
+            component_greater(left_seq, right_seq))
 end
 
 -- enumerate every consumer group on the stream
