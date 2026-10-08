@@ -49,7 +49,7 @@
 
 
 
-        | regex_replace(pattern=`\[(?<id>.*)\}\s*(?P<url>.*)`, rep=`[$id]: $url`)
+        | regex_replace(pattern=`\[(?<id>.*)\} (?P<url>https://.*)`, rep=`[$id]: $url`)
 }}
 {%- endmacro fix_links -%}
 
