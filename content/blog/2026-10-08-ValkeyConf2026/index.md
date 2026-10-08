@@ -53,7 +53,7 @@ That is more interesting than adding a feature useful only to one kind of AI app
 
 ## Nobody Owns Valkey. That's by Design.
 
-[Valkey was forked from Redis in 2024]((https://www.linuxfoundation.org/press/linux-foundation-launches-open-source-valkey-community)). What started as an effort to preserve a permissively licensed, open source alternative became a project hosted by The Linux Foundation, giving Valkey a neutral home where no single company controls its future. But keeping the code open is only part of the equation. The harder question is how you actually build software when no single organization gets the final say.
+[Valkey was forked from Redis in 2024](https://www.linuxfoundation.org/press/linux-foundation-launches-open-source-valkey-community). What started as an effort to preserve a permissively licensed, open source alternative became a project hosted by The Linux Foundation, giving Valkey a neutral home where no single company controls its future. But keeping the code open is only part of the equation. The harder question is how you actually build software when no single organization gets the final say.
 
 That was the focus of [Jacob Murphy](https://www.linkedin.com/in/jacob-murphy-801078127/)'s keynote, ***"Evolving Valkey Together: Building Fast Without Central Control."*** As a Valkey maintainer and TSC member, Jacob explained how the project makes decisions and why decentralization is worth the extra coordination.
 ![ValkeyConf](image4.jpg)
