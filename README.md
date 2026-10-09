@@ -95,7 +95,7 @@ Commit your changes to your local copy of `valkey-io/valkey-doc` for description
 
 ### Checking links
 
-Pull requests check the built site for links to missing pages or `#anchors`, and for valkey-doc links that weren't converted to site URLs.
+Pull requests and deploys check the built site for links to missing pages or `#anchors`, and for valkey-doc links that weren't converted to site URLs.
 To run the checks locally (needs [lychee](https://lychee.cli.rs/) and jq), set up the topics and commands as above, then:
 
 ```shell

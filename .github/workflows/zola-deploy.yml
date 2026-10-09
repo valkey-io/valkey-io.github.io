@@ -17,6 +17,10 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      # Stores the link check result. We don't want this to block deployments, so
+      # a separate job marks the run as failed instead.
+      link-check-outcome: ${{ steps.links.outcome }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,6 +30,17 @@ jobs:
 
       - name: Build
         uses: ./website/.github/actions/build-site
+        with:
+          path: website
+
+      # Checks the links without blocking the deploy. Most broken links are in content from other
+      # repositories (valkey-doc, valkey and the modules), and blocking would hold back site updates
+      # until they're fixed there.
+      - name: Check links
+        id: links
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        uses: ./website/.github/actions/check-links
         with:
           path: website
 
@@ -46,3 +61,20 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # Marks the run as failed if the link check failed, so broken links are noticed without blocking
+  # deployments.
+  links:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Internal links
+        env:
+          OUTCOME: ${{ needs.build.outputs.link-check-outcome }}
+        run: |
+          if [ "$OUTCOME" != "success" ]; then
+            echo "::error::Internal links fail on the deployed site. See the build job's log for the list."
+            exit 1
+          fi
+          echo "Every internal link passes."
