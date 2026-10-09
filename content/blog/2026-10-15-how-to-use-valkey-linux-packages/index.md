@@ -2,7 +2,7 @@
 title = "How to use Valkey's new packages"
 date = 2026-10-25
 description = "Installing and using Valkey has never been easier. By using the official packages for Valkey, you ensure that updates, security patches, system integration, and integrity verification are all tied together in a simple solution."
-authors = ["dragosandriciuc", "EvgeniyPatlan"]
+authors = ["dragosandriciuc", "evgeniypatlan"]
 [taxonomies]
 blog_type = ["How-to"]
 [extra]
