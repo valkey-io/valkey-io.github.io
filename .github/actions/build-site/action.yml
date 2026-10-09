@@ -1,0 +1,68 @@
+name: Build the website
+description: >
+  Builds a checkout of this repository into <path>/public, with its topics, clients and
+  commands from valkey-doc and the command metadata from valkey and the modules, checked out
+  next to it in the workspace.
+
+inputs:
+  path:
+    description: The website checkout to build, relative to the workspace (e.g. website).
+    required: true
+  checkout-content:
+    description: Check out the content repositories. Set to false if an earlier build in the job already did.
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout valkey
+      if: inputs.checkout-content == 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: valkey-io/valkey
+        path: valkey
+
+    - name: Checkout valkey-bloom
+      if: inputs.checkout-content == 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: valkey-io/valkey-bloom
+        path: valkey-bloom
+
+    - name: Checkout valkey-doc
+      if: inputs.checkout-content == 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: valkey-io/valkey-doc
+        path: valkey-doc
+
+    - name: Checkout valkey-json
+      if: inputs.checkout-content == 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: valkey-io/valkey-json
+        path: valkey-json
+
+    - name: Checkout valkey-search
+      if: inputs.checkout-content == 'true'
+      uses: actions/checkout@v4
+      with:
+        repository: valkey-io/valkey-search
+        path: valkey-search
+
+    - name: Init commands, topics and clients
+      shell: bash
+      working-directory: ${{ inputs.path }}
+      run: |
+        ./build/init-topics-and-clients.sh ../valkey-doc/topics \
+          ../valkey-doc/clients
+        ./build/init-commands.sh ../valkey-doc/commands \
+          ../valkey/src/commands ../valkey-bloom/src/commands \
+          ../valkey-json/src/commands ../valkey-search/src/commands
+
+    - name: Build only
+      uses: shalzz/zola-deploy-action@v0.22.0
+      env:
+        BUILD_DIR: ${{ inputs.path }}
+        BUILD_ONLY: true
+        BUILD_THEMES: false
