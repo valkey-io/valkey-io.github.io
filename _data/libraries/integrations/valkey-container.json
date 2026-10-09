@@ -1,0 +1,13 @@
+{
+  "name": "valkey-container",
+  "language": "Shell",
+  "license": "BSD-3-Clause",
+  "description": "Sources for the official Valkey container images.",
+  "repository": "https://github.com/valkey-io/valkey-container",
+  "documentation": "https://hub.docker.com/r/valkey/valkey",
+  "isFirstParty": true,
+  "type": "tools",
+  "tags": [
+    "Deploy & operate"
+  ]
+}
