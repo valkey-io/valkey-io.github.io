@@ -30,6 +30,7 @@
         | regex_replace(pattern=`\]\(\.\./commands/(?P<fname>\w.*?)(.md)?\)`, rep=`](/commands/$fname)`)
         | regex_replace(pattern=`\]\(\.\./commands/#(?P<hash>\w.*?)\)`, rep=`](/commands/#$hash)`) 
         | regex_replace(pattern=`\]\(\.\./topics/\)`, rep=`](/topics/)`)
+        | regex_replace(pattern=`\]\(\.\./clients/\)`, rep=`](/clients/)`)
         | regex_replace(pattern=`\]\(\./\)`, rep=`](/topics/)`)
         | regex_replace(pattern=`\]\(index\.md\)`, rep=`](/topics/)`) 
         | regex_replace(pattern=`\]\((?P<fname>\w.*?)(.md)\)`, rep=`](/topics/$fname)`)
