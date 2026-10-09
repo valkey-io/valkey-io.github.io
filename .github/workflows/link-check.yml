@@ -1,0 +1,74 @@
+# Builds the site before and after the PR. Fails if the PR breaks internal links.
+# Links already broken before the PR are listed but don't fail the check.
+
+name: Link check
+
+on:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: link-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  internal-links:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: website
+          fetch-depth: 0 # for the base commit
+
+      - name: Check out the base commit
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: git -C website worktree add --detach ../base "$BASE_SHA"
+
+      # Each side uses its own build-site, so changes to the build itself are checked too.
+      # If the base doesn't build or has no build-site, the checks list every broken link
+      # instead.
+      - name: Build this PR
+        id: head
+        uses: ./website/.github/actions/build-site
+        with:
+          path: website
+
+      - name: Build the base
+        id: base
+        if: hashFiles('base/.github/actions/build-site/action.yml') != ''
+        continue-on-error: true
+        uses: ./base/.github/actions/build-site
+        with:
+          path: base
+          checkout-content: false
+
+      - name: Install lychee
+        env:
+          LYCHEE_VERSION: v0.24.2
+        run: |
+          curl -sSfL "https://github.com/lycheeverse/lychee/releases/download/lychee-${LYCHEE_VERSION}/lychee-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar -xz -C "$RUNNER_TEMP" --strip-components=1 lychee-x86_64-unknown-linux-gnu/lychee
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+
+      - name: Missing pages and anchors
+        if: ${{ !cancelled() && steps.head.outcome == 'success' }}
+        env:
+          BASE_BUILT: ${{ steps.base.outcome == 'success' }}
+        run: |
+          if [ "$BASE_BUILT" = true ]; then ./website/build/broken-links.sh base/public > broken-before.txt; fi
+          ./website/build/broken-links.sh website/public > broken-after.txt
+          ./website/build/compare-link-failures.sh broken-before.txt broken-after.txt
+
+      - name: valkey-doc links the site doesn't convert
+        if: ${{ !cancelled() && steps.head.outcome == 'success' }}
+        env:
+          BASE_BUILT: ${{ steps.base.outcome == 'success' }}
+        run: |
+          if [ "$BASE_BUILT" = true ]; then ./website/build/unconverted-doc-links.sh base/public > unconverted-before.txt; fi
+          ./website/build/unconverted-doc-links.sh website/public > unconverted-after.txt
+          ./website/build/compare-link-failures.sh unconverted-before.txt unconverted-after.txt

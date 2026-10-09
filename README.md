@@ -93,6 +93,17 @@ Point your browser at `http://127.0.0.1:1111/commands/` and you should see the f
 All files created in this process are ignored by git.
 Commit your changes to your local copy of `valkey-io/valkey-doc` for description changes and `valkey-io/valkey` for command JSON changes (if you have any).
 
+### Checking links
+
+Pull requests check the built site for links to missing pages or `#anchors`, and for valkey-doc links that weren't converted to site URLs.
+To run the checks locally (needs [lychee](https://lychee.cli.rs/) and jq), set up the topics and commands as above, then:
+
+```shell
+zola build
+build/broken-links.sh public
+build/unconverted-doc-links.sh public
+```
+
 ## License
 
 This project is licensed under the BSD-3-Clause License.
