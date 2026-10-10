@@ -1462,6 +1462,12 @@ pre table {
   }
 }
 
+.category-link.active,
+.show-all-link.active {
+  font-weight: 700;
+  color: $link-color;
+}
+
 .index-entry {
   padding: 0.5em 1em;
   margin-bottom: 0.5em;
