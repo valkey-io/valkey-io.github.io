@@ -1,0 +1,68 @@
+{% macro release_info(date, release, notice=true) %}
+{# A tag with a suffix is a pre-release. The warning lives here so it reaches
+   every page that offers the artifacts. Callers that have already warned in
+   their own words pass notice=false. #}
+{% if notice and release.tag is matching(".*-.*") %}
+<div class="release-prerelease-notice">
+    <strong>{{ release.tag }} is a release candidate, not a stable release.</strong>
+    Commands, configuration, and behaviour can change between a release candidate
+    and the stable release it leads to. Release candidates are not supported for
+    production use.
+</div>
+{% endif %}
+<p class="release-meta">
+    <strong>Release Date:</strong> {{ date | date(format="%Y-%m-%d") }}<br />
+    <strong>GitHub Release:</strong> <a href="https://github.com/valkey-io/valkey/releases/tag/{{release.tag}}">{{release.tag}}</a>
+</p>
+<hr />
+
+{% for registry in release.container_registry %}
+    <h4>{{registry.name}} <small>(<a href="{{registry.link}}">{{registry.id}}</a>)</small></h4>
+    <p>Tags:</p>
+    <ul>
+        {% for tag in registry.tags %}
+            <li><code>{{ registry.id }}:{{ tag }}</code></li>
+            {% if loop.first %}
+                {% set_global first_tag = registry.id ~ ":" ~ tag %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+    <p>Example:</p>
+    <div class="copy-code">
+        <pre><code>docker run --rm {{first_tag}}</code></pre>
+        <button type="button" class="copy-code-button" aria-label="Copy command to clipboard" title="Copy">
+            <svg class="copy-code-icon copy-code-icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            <svg class="copy-code-icon copy-code-icon-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
+        </button>
+    </div>
+    <hr />
+{% endfor %}
+{% if release.packages %}
+<h4>Package Managers</h4>
+    {% for package_manager in release.packages %}
+        <h5>{{package_manager.name}}:</h5>
+        Package Name: 
+        {% if package_manager.url %}
+            <a href="{{package_manager.url}}">{{ package_manager.id }}</a>
+        {% else %}
+            {{ package_manager.id }}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<h4>Binary Artifacts</h4>
+{% if release.artifacts %}
+{% for artifact in release.artifacts %}
+    {% for arch in  artifact.arch %}
+        {% set fname = release.artifact_source ~ release.artifact_fname ~ "-" ~ release.tag ~ "-" ~ artifact.distro ~ "-" ~ arch ~ ".tar.gz" %}
+        {# {% capture fname %}{{include.content.artifact_source}}{{include.content.artifact_fname}}-{{include.content.tag}}-{{artifact.distro}}-{{arch}}.tar.gz{% endcapture %} #}
+        <a href="{{fname}}">{{arch}} / {{artifact.distro}}</a> <small>(<a href="{{fname}}.sha256">sha256</a>)</small><br />
+    {% endfor %}
+{% endfor  %}
+{% endif %}
+{% endmacro release_info %}
