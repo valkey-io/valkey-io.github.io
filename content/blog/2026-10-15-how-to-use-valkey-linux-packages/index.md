@@ -1,6 +1,7 @@
 +++
 title = "How to use Valkey's new packages"
 date = 2026-10-25
+draft = true 
 description = "Installing and using Valkey has never been easier. By using the official packages for Valkey, you ensure that updates, security patches, system integration, and integrity verification are all tied together in a simple solution."
 authors = ["dragosandriciuc", "evgeniypatlan"]
 [taxonomies]
@@ -13,7 +14,7 @@ Installing databases shouldn't require you to choose between convenience and con
 Valkey packages provide a straightforward way to install Valkey while keeping installation, updates, and system integration within your operating system's package management workflow.
 You can manage Valkey alongside other software on your system without compiling it from source for every update.
 
-The project started publishing official DEB and RPM packages with Valkey 9.1, and the repositories also carry earlier releases back to 7.2.
+The project started publishing official Debian packages (DEB) and Red Hat Package Manager packages (RPM) with Valkey 9.1, and the repositories also carry earlier releases back to 7.2.
 
 Let's look at why packages are useful, where you can get them, and how to install Valkey from the official package repositories.
 
@@ -49,7 +50,7 @@ Choose the package source that matches your operational requirements:
 | ----------------------------------------------- | -------------------------------------- |
 | Get Valkey releases directly from the project   | [Official Valkey packages](https://valkey.io/valkey-release-automation/)               |
 | Follow the distribution's lifecycle             | [Distribution packages](https://valkey.io/download/)                  |
-| Get vendor support or an SLA                    | Vendor packages                        |
+| Get vendor support or a service level agreement (SLA) | Vendor packages                        |
 | Support specific architectures or older systems | Check vendor and distribution coverage |
 
 ## Install Valkey using packages
@@ -64,9 +65,9 @@ The package repositories currently provide packages starting with Valkey 7.2.
 
 Note: We recommend you install the latest version of Valkey.
 
-For example, to install Valkey 9.1 on Oracle Linux 10 / RHEL 10:
+For example, to install Valkey 9.1 on Oracle Linux 10 / Red Hat Enterprise Linux (RHEL) 10:
 
-1. Import the GPG signing key:
+1. Import the GNU Privacy Guard (GPG) signing key:
 
     ```bash
     sudo rpm --import https://download.valkey.io/packaging/GPG-KEY-valkey.asc
@@ -105,7 +106,8 @@ For example, to install Valkey 9.1 on Oracle Linux 10 / RHEL 10:
     valkey-cli ping   # PONG
     ```
 
-That's it! All packages are signed with Valkey's GPG key. Download the public key: [GPG-KEY-valkey.asc](https://valkey.io/valkey-release-automation/GPG-KEY-valkey.asc).
+That's it!
+All packages are signed with Valkey's GPG key. Download the public key: [GPG-KEY-valkey.asc](https://valkey.io/valkey-release-automation/GPG-KEY-valkey.asc).
 
 ## What to do next
 
