@@ -1,7 +1,7 @@
 +++
-title = "Large objects ruin the party - Valkey 9 tames them"
-date = 2026-08-17
-description = "Tail latencies are where promises break. You can have a system that's fast 99% of the time, but that 1% is what users remember."
+title = "How Valkey 9 fixes the large object noisy neighbor problem"
+date = 2026-10-15
+description = "A few 10MB requests per second wrecked the tail latency of a 100K req/s workload on Valkey 8.1. Reply copy avoidance in Valkey 9.0 cuts p99.9 from 26.2ms to 3.10ms."
 authors = ["khawaja"]
 
 [taxonomies]
@@ -38,13 +38,13 @@ If the main thread was blocking on 10MB `memcpy` operations, that would explain 
 
 ## How Copy Avoidance Works
 
-Prior to 9.0, returning a large string meant the main thread copied the entire object into a reply buffer with `memcpy` before moving on. Two copies per `GET`:
+Prior to 9.0, returning a large string meant the main thread copied the entire object into a reply buffer with `memcpy` before moving on. A second copy would then copy the reply out to the network. Two copies per `GET`.
 
 **BEFORE (Valkey 8.1)**
 
 ![Flowchart of the Valkey 8.1 reply path. A 10MB object in the object store is copied by the main thread into the reply buffer with memcpy, making a full 10MB copy, and that buffer is then written to the socket by an I/O thread. Two full copies of the object before it reaches the client.](./copy-avoidance-8.webp)
 
-*Total memory bandwidth: 20MB per `GET`.*
+*Main-thread memory bandwidth: 10MB per `GET`.*
 
 Valkey 9.0 flips the script. Instead of copying 10MB, the main thread writes a 16-byte reference and moves on:
 
@@ -52,13 +52,11 @@ Valkey 9.0 flips the script. Instead of copying 10MB, the main thread writes a 1
 
 ![Flowchart of the Valkey 9.0 reply path with copy avoidance. Instead of the object itself, the main thread writes only a 16-byte bulkStrRef into the reply buffer. An I/O thread builds an iovec from that reference and calls writev. A dashed line labeled "no reply-buffer copy" runs from the 10MB object in the object store directly to the socket: the payload is sent from where it already lives rather than being staged through the reply buffer.](./copy-avoidance-9.webp)
 
-*Main-thread copy bandwidth: ~0 — just pointer/reference management.*
+*Main-thread memory bandwidth: ~0 — just pointer/reference management.*
 
-The reply path builds an `iovec`, a pointer-and-length pair describing one region of memory, aimed straight at `obj->ptr`. It hands an array of them to [`writev()`](https://man7.org/linux/man-pages/man2/writev.2.html), so the payload never gets copied into Valkey's reply buffer at all. The kernel still copies it to the socket, and `writevToClient()` loops over partial writes, yielding after 64KB per event so a single large reply can't monopolize the loop. With I/O threads enabled, that work also moves off the main thread and overlaps command execution.
+The reply path builds an `iovec`, a pointer-and-length pair describing one region of memory, aimed straight at the stored object itself. It hands an array of them to [`writev()`](https://man7.org/linux/man-pages/man2/writev.2.html), so the payload never gets copied into Valkey's reply buffer at all. The kernel still copies it to the socket, and [`writevToClient()`](https://github.com/valkey-io/valkey/blob/df7cdc1d998bcc2f4ab86ac0e8a1c51fa0a7d6c1/src/networking.c#L2711) loops over partial writes, yielding after 64KB per event so a single large reply can't monopolize the loop. With I/O threads enabled, that work also moves off the main thread and overlaps command execution.
 
-For reference, all of this lives in `networking.c`. [`isCopyAvoidPreferred()`](https://github.com/valkey-io/valkey/blob/df7cdc1d998bcc2f4ab86ac0e8a1c51fa0a7d6c1/src/networking.c#L253) decides whether a reply is eligible, [`_addBulkStrRefToBufferOrList()`](https://github.com/valkey-io/valkey/blob/df7cdc1d998bcc2f4ab86ac0e8a1c51fa0a7d6c1/src/networking.c#L753) writes the reference instead of the bytes, and [`writevToClient()`](https://github.com/valkey-io/valkey/blob/df7cdc1d998bcc2f4ab86ac0e8a1c51fa0a7d6c1/src/networking.c#L2711) performs the gather-write.
-
-## Back to the Party
+## The Verdict
 
 Would copy avoidance fix the noisy neighbor problem? We ran the mixed workload test on both versions:
 
@@ -69,13 +67,13 @@ Would copy avoidance fix the noisy neighbor problem? We ran the mixed workload t
 | 9.0 baseline | 291µs | 346µs | 403µs | 479µs | 557µs | 3.26ms |
 | 9.0 + 10MB noise | 295µs | 360µs | 799µs | **3.10ms** | **5.80ms** | **11.9ms** |
 
-In 9.0, the long tail holds up. p99.9 under noise drops from 26.2ms to 3.10ms, and max from 37.2ms to 11.9ms. The main thread isn't blocking on `memcpy`, so small requests keep flowing even when large ones are in flight. There's still a small cost (p99 goes from 403µs to 799µs) but it's marginal.
+In 9.0, the long tail holds up. p99.9 under noise drops from 26.2ms to 3.10ms, and max from 37.2ms to 11.9ms. The main thread isn't blocking on `memcpy`, so small requests keep flowing even when large ones are in flight.
 
-The party crashers got kicked out. Well, not really. They were ushered to the dance floor where they now play nicely with everyone else.
+The noisy neighbors are still there. They just stopped keeping everyone else awake.
 
 ## What to do next
 
-If you are serving large objects out of Valkey today, the path is short. [Upgrade to 9.0](https://download.valkey.io/releases/), enable I/O threads, and re-run your own mixed workload watching p99.9 rather than p99. Start with the defaults values. The configs in the secret menu are there if you need them.
+If you are serving large objects out of Valkey today, the path is short. [Upgrade to 9.0](https://download.valkey.io/releases/), enable I/O threads, and re-run your own mixed workload watching p99.9 rather than p99. Start with the default values.
 
 If your results look different from ours, the community wants to hear about it. Bring them to [Slack](https://valkey.io/slack) or the [community page](https://valkey.io/community/).
 
