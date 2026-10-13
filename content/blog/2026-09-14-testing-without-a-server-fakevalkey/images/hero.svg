@@ -1,51 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="fakeredis">
-  <title>fakeredis</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-label="FakeValkey: testing without a server">
+  <title>FakeValkey: testing without a server</title>
   <defs>
-    <linearGradient id="fr-top" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#FF5A4D"/>
-      <stop offset="1" stop-color="#FF3328"/>
-    </linearGradient>
-    <linearGradient id="fr-left" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#B41E12"/>
-      <stop offset="1" stop-color="#8E160C"/>
-    </linearGradient>
-    <linearGradient id="fr-right" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#E8412F"/>
-      <stop offset="1" stop-color="#C5230F"/>
+    <linearGradient id="fv-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#30176E"/>
+      <stop offset="1" stop-color="#1B0D45"/>
     </linearGradient>
   </defs>
 
-  <rect width="1200" height="630" fill="#F5F7F7"/>
+  <rect width="1200" height="630" fill="url(#fv-bg)"/>
 
-  <!-- The fakeredis logo (cunla/fakeredis-py docs/assets/logo.svg), scaled 1.2x and centered so that
-       the blog hero's object-fit: cover crops only background at any width -->
-  <g transform="translate(118 164) scale(1.2)">
-    <!-- ===== Mark: stacked data blocks (solid) + a "fake" ghost block on top ===== -->
-    <g>
-      <!-- Bottom block -->
-      <path d="M128,125 L192,158 L128,191 L64,158 Z" fill="url(#fr-top)"/>
-      <path d="M64,158 L64,182 L128,215 L128,191 Z" fill="url(#fr-left)"/>
-      <path d="M128,191 L128,215 L192,182 L192,158 Z" fill="url(#fr-right)"/>
+  <!-- Content is centered so that the blog hero's object-fit: cover crops only background at any width -->
 
-      <!-- Middle block -->
-      <path d="M128,83 L192,116 L128,149 L64,116 Z" fill="url(#fr-top)"/>
-      <path d="M64,116 L64,140 L128,173 L128,149 Z" fill="url(#fr-left)"/>
-      <path d="M128,149 L128,173 L192,140 L192,116 Z" fill="url(#fr-right)"/>
-
-      <!-- Top block: the "fake" / simulated layer, drawn as a dashed wireframe -->
-      <g fill="none" stroke="#FF6B5E" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="7 7">
-        <path d="M128,37 L192,70 L128,103 L64,70 Z"/>
-        <path d="M64,70 L64,94 L128,127 L192,94 L192,70"/>
-        <path d="M128,103 L128,127"/>
-      </g>
+  <!-- ===== Mark: a test process window with a dashed (fake) server inside it ===== -->
+  <g fill="none" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Test process window -->
+    <rect x="170" y="185" width="260" height="260" rx="18" stroke="#E7E4F4" stroke-width="4"/>
+    <path d="M170,229 L430,229" stroke="#E7E4F4" stroke-width="4"/>
+    <g fill="#E7E4F4" stroke="none">
+      <circle cx="198" cy="207" r="6"/>
+      <circle cx="220" cy="207" r="6"/>
+      <circle cx="242" cy="207" r="6"/>
     </g>
 
-    <!-- ===== Wordmark ===== -->
-    <g font-family="'Segoe UI', 'Helvetica Neue', Arial, system-ui, sans-serif">
-      <text x="296" y="150" font-size="96" font-weight="800" letter-spacing="-2">
-        <tspan fill="#7B8794">fake</tspan><tspan fill="#E12C1C">redis</tspan>
-      </text>
-      <text x="300" y="192" font-size="25" font-weight="500" letter-spacing="1.5" fill="#9AA4AE">in-memory Redis for your tests</text>
+    <!-- The in-memory server, drawn as a dashed wireframe -->
+    <g stroke="#6983FF" stroke-width="4" stroke-dasharray="8 8">
+      <ellipse cx="300" cy="292" rx="62" ry="20"/>
+      <path d="M238,292 L238,382 A62,20 0 0 0 362,382 L362,292"/>
+      <path d="M238,337 A62,20 0 0 0 362,337"/>
     </g>
+
+    <!-- Passing test badge -->
+    <circle cx="392" cy="407" r="24" fill="#6983FF" stroke="#30176E" stroke-width="6"/>
+    <path d="M381,408 L389,416 L404,399" stroke="#FFFFFF" stroke-width="5"/>
+  </g>
+
+  <!-- ===== Wordmark ===== -->
+  <g font-family="'Open Sans', 'Segoe UI', 'Helvetica Neue', Arial, system-ui, sans-serif">
+    <text x="506" y="330" font-size="92" font-weight="800" letter-spacing="-2">
+      <tspan fill="#A9B8FF">Fake</tspan><tspan fill="#FFFFFF">Valkey</tspan>
+    </text>
+    <text x="510" y="382" font-size="29" font-weight="500" letter-spacing="1.5" fill="#C9C3E6">Testing without a server</text>
   </g>
 </svg>
