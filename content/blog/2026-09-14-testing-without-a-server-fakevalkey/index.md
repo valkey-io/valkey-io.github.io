@@ -1,7 +1,8 @@
 +++
 title = "Testing without a server: inside FakeValkey, the in-memory test double for Valkey"
 date = 2026-09-14
-description = "FakeValkey runs the Valkey command set inside your Python test process, with no server, container, or network connection. Here is how to use it, how it keeps pace with Valkey, and when you still need a real server."
+description = """FakeValkey runs the Valkey command set inside your Python test process, with no server, container, or network connection.
+Here is how to use it, how it keeps pace with Valkey, and when you still need a real server."""
 authors = ["cunla"]
 
 [taxonomies]
@@ -139,7 +140,7 @@ import pytest
 @pytest.fixture(params=["baseline", "valkey-server", "valkey-client"])
 def client(request):
     if request.param == "baseline":
-        return fakeredis.FakeRedis(version=(8, 8))  # the server version you run today
+        return fakeredis.FakeRedis(version=(8, 8))  # example: use the server version you run today
     if request.param == "valkey-server":
         return fakeredis.FakeRedis(server_type="valkey")
     return fakeredis.FakeValkey()
@@ -148,6 +149,7 @@ def client(request):
 Each test now runs three times, and each variant emulates one migration step in-process; none of them connects to a real server:
 
 - `baseline` is your starting point: your current client against the fake's emulation of the server version you run today.
+The example uses 8.8; replace `(8, 8)` with your exact version so the comparison reflects your setup.
 - `valkey-server` keeps your current client and switches the fake to Valkey's server behavior, standing in for pointing that client at a Valkey server.
 - `valkey-client` also replaces your current client with valkey-py.
 
