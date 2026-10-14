@@ -13,8 +13,7 @@ featured = true
 
 TL;DR: [Planet Valkey](https://planet.valkey.io/) replaces [Planet for the Valkey Community](https://valkey-demo.oursqlcommunity.org/).
 If you were following the old site, update your bookmarks because Planet for the Valkey Community will eventually disappear.
-
-TL;DR2: If you enjoy Planet Valkey, please consider starring the [GitHub repository](https://github.com/valkey-io/planet/) and following us on social media ([Mastodon](https://fosstodon.org/@Planet_Valkey), [BlueSky Bridge](https://bsky.app/profile/Planet-Valkey.fosstodon.org.ap.brid.gy), and [X/Twitter](https://x.com/Planet_Valkey)).
+Also, if you enjoy Planet Valkey, please consider starring the [GitHub repository](https://github.com/valkey-io/planet/) and following us on social media ([Mastodon](https://fosstodon.org/@Planet_Valkey), [BlueSky Bridge](https://bsky.app/profile/Planet-Valkey.fosstodon.org.ap.brid.gy), and [X/Twitter](https://x.com/Planet_Valkey)).
 
 I am pleased to announce the availability of [Planet Valkey: a single destination for Valkey content](https://planet.valkey.io/).
 
