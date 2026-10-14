@@ -145,13 +145,16 @@ def client(request):
     return fakeredis.FakeValkey()
 ```
 
-Each test now runs three times, and each variant checks one migration step:
+Each test now runs three times, and each variant emulates one migration step in-process; none of them connects to a real server:
 
-- `baseline` is your starting point: your current client against the server version you run today.
-- `valkey-server` keeps your current client and switches to Valkey server behavior, as when you point that client at a Valkey server.
+- `baseline` is your starting point: your current client against the fake's emulation of the server version you run today.
+- `valkey-server` keeps your current client and switches the fake to Valkey's server behavior, standing in for pointing that client at a Valkey server.
 - `valkey-client` also replaces your current client with valkey-py.
 
-Here is code that calls the `INCREX` command, which the baseline server supports and Valkey does not.
+These variants tell you where to look before you migrate; confirm the result against a real Valkey server, as described in the next section.
+
+Here is code that calls the `INCREX` command, which the baseline server supports and no generally available Valkey release supports yet.
+Valkey 9.2, currently a release candidate, adds its own `INCREX`; fakeredis 2.38.0 does not emulate it for `server_type="valkey"`.
 Running its test against the three variants shows which migration step breaks it.
 
 ```python
@@ -167,7 +170,7 @@ def test_count_request_sets_the_window_once(client):
 ```
 
 This test passes on `baseline`.
-On `valkey-server` the server replies `unknown command 'increx'`, and on `valkey-client` valkey-py has no `increx()` method.
+On `valkey-server` the fake replies `unknown command 'increx'`, just as a Valkey 9.1 server rejects the unknown command, and on `valkey-client` valkey-py has no `increx()` method.
 
 ## When to use a fake and when to use a real server
 
