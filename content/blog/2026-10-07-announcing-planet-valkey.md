@@ -37,11 +37,11 @@ Planet for the Valkey Community was launched as an experimental demonstration.
 While it fulfilled its purpose, the URL (valkey-demo.oursqlcommunity.org) was never intended to be permanent (reusing the [Planet for the MySQL Community](https://planet.oursqlcommunity.org/) domain was convenient for the demo while deciding on a better home for the project).
 The new site is hosted under a URL more closely associated with the Valkey Project, gets rid of the "demo" branding, and has a cleaner name.
 
-Planet Valkey is an open community project to which everyone can contribute.
-If you publish Valkey-related content and would like it to appear on Planet Valkey, proposing a new feed is easy: open an [issue](https://github.com/valkey-io/planet/issues) or submit a [Pull Request](https://github.com/valkey-io/planet/pulls).
-If you would like to learn more, propose a feed, report issues, or contribute improvements, visit the [GitHub repository](https://github.com/valkey-io/planet/).
-If you want to discuss the project, join the [#planet-discussion](https://app.slack.com/client/THDV9665P/C0C4NS3SDQV) channel in the [Valkey Community Slack](https://valkey.io/slack).
-If you enjoy the project, please consider starring the [repository](https://github.com/valkey-io/planet/) and following us on social media ([Mastodon](https://fosstodon.org/@Planet_Valkey), [BlueSky Bridge](https://bsky.app/profile/Planet-Valkey.fosstodon.org.ap.brid.gy), and [X/Twitter](https://x.com/Planet_Valkey)).
+Planet Valkey is an open community project to which everyone can contribute.  If you...
+- **publish Valkey-related content** and would like it to appear on Planet Valkey, submit your feed by filing an [issue](https://github.com/valkey-io/planet/issues) or opening a [Pull Request](https://github.com/valkey-io/planet/pulls).
+- **would like to learn more, propose a feed, report issues, or contribute improvements**, visit the [GitHub repository](https://github.com/valkey-io/planet/).
+- **want to discuss the project**, join the [#planet-discussion](https://app.slack.com/client/THDV9665P/C0C4NS3SDQV) channel in the [Valkey Slack](https://valkey.io/slack).
+- **enjoy the project**, please consider starring the [repository](https://github.com/valkey-io/planet/) and following us on social media ([Mastodon](https://fosstodon.org/@Planet_Valkey), [BlueSky Bridge](https://bsky.app/profile/Planet-Valkey.fosstodon.org.ap.brid.gy), and [X/Twitter](https://x.com/Planet_Valkey)).
 
 Finally, I would like to [thank AWS Open Source](https://jfg-mysql.blogspot.com/2026/04/thanks-aws-open-source.html) for providing two years’ worth of cloud-hosting credits.
 Their support helps make community infrastructure projects like Planet Valkey possible.
