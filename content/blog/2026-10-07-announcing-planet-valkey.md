@@ -1,6 +1,6 @@
 +++
 title = "Announcing Planet Valkey"
-date = 2026-10-07 01:01:01
+date = 2026-10-14 01:01:01
 description = "I am pleased to announce the launch of Planet Valkey: a single destination for Valkey content."
 authors = ["jfg956"]
 
@@ -11,7 +11,7 @@ blog_type = ["Announcements"]
 featured = true
 +++
 
-TL;DR: [Planet Valkey](https://planet.valkey.io/) replaces [Planet for the Valkey Community](https://valkey-demo.oursqlcommunity.org/).
+> **TL;DR:** [Planet Valkey](https://planet.valkey.io/) replaces [Planet for the Valkey Community](https://valkey-demo.oursqlcommunity.org/).
 If you were following the old site, update your bookmarks because Planet for the Valkey Community will be retired.
 Also, if you enjoy Planet Valkey, please consider starring the [GitHub repository](https://github.com/valkey-io/planet/) and following us on social media ([Mastodon](https://fosstodon.org/@Planet_Valkey), [BlueSky Bridge](https://bsky.app/profile/Planet-Valkey.fosstodon.org.ap.brid.gy), and [X/Twitter](https://x.com/Planet_Valkey)).
 
@@ -28,9 +28,7 @@ The best way to follow Planet Valkey is through its Atom feed, using a feed read
 There are many other excellent feed readers available as well (recommendations on [Reddit](https://www.reddit.com/r/rss/comments/1nfvw5o/what_are_the_best_rss_feed_reader_apps_with_a/), [Hacker News](https://news.ycombinator.com/item?id=41378686), and [Read less](https://www.readless.app/blog/best-rss-readers-2026)).
 Alternatively, you can visit the Planet Valkey [website](https://planet.valkey.io/) directly and browse the latest posts.
 
-**Can I follow the news via the [#planet-feed](https://app.slack.com/client/THDV9665P/C0C19F053CP) channel on the [Valkey Slack](https://valkey.io/slack)?** 
-
-Yes, but you will miss some news.  I do not recommend it because [Slack is a Suboptimal Feed Reader](https://jfg-mysql.blogspot.com/2025/11/slack-suboptimal-feed-reader.html).
+> **Can I follow the news via the [#planet-feed](https://app.slack.com/client/THDV9665P/C0C19F053CP) channel on the [Valkey Slack](https://valkey.io/slack)?** <br /> Yes, but you will miss some news.  I do not recommend it because [Slack is a Suboptimal Feed Reader](https://jfg-mysql.blogspot.com/2025/11/slack-suboptimal-feed-reader.html).
 
 Planet for the Valkey Community was launched as an experimental demonstration.
 While it served its purpose, the URL (`valkey-demo.oursqlcommunity.org`) was never intended to be permanent.
