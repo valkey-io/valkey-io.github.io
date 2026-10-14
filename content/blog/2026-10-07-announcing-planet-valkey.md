@@ -26,7 +26,7 @@ The website is available at:
 - Atom Feed: [https://planet.valkey.io/atom.xml](https://planet.valkey.io/atom.xml)
 
 The best way to follow Planet Valkey is through its Atom Feed using a feed reader such as [CommaFeed](https://www.commafeed.com/), [Feeder](https://feeder.co/) or [Feedly](https://feedly.com/news-reader).
-There are many other excellent feed readers available as well ([link1](https://www.reddit.com/r/rss/comments/1nfvw5o/what_are_the_best_rss_feed_reader_apps_with_a/), [link2](https://news.ycombinator.com/item?id=41378686), [link3](https://www.readless.app/blog/best-rss-readers-2026)).
+There are many other excellent feed readers available as well (recommendations on [Reddit](https://www.reddit.com/r/rss/comments/1nfvw5o/what_are_the_best_rss_feed_reader_apps_with_a/), [Hacker News](https://news.ycombinator.com/item?id=41378686), and [Read less](https://www.readless.app/blog/best-rss-readers-2026)).
 You could also follow the [#planet-feed](https://app.slack.com/client/THDV9665P/C0C19F053CP) channel in the [Valkey Community Slack](https://valkey.io/slack), but I do not recommend it because [Slack is a Suboptimal Feed Reader](https://jfg-mysql.blogspot.com/2025/11/slack-suboptimal-feed-reader.html) (you will miss news).
 If you prefer a simpler approach, you can always visit the Planet Valkey [website](https://planet.valkey.io/) directly and browse the latest posts.
 
