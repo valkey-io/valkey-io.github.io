@@ -1,6 +1,7 @@
 +++
 title = "How to use Valkey packages"
 date = 2026-10-25
+draft = true
 description = "Install Valkey from DEB and RPM repositories. Learn how to choose a package source, configure the repository, and verify the installation."
 authors = ["dragosandriciuc", "evgeniypatlan"]
 [taxonomies]
