@@ -1,6 +1,6 @@
 +++
-title = "KV caching on Valkey: 2× faster replies and 25% more requests"
-date = 2026-09-03
+title = "KV caching on Valkey: 2× faster responses and 25% more requests"
+date = 2026-10-20
 description = "Your GPUs spend part of every request re-reading context they already processed. We moved the KV cache to Valkey, and the same two GPU nodes served 25% more requests with replies streaming twice as fast."
 authors = ["omerrubi", "cnuthalapati", "jaduffy"]
 draft = true
@@ -13,11 +13,11 @@ featured = false
 featured_image = "/assets/media/featured/random-03.webp"
 +++
 
-Open-weight large language models (LLMs) now match frontier quality at a fraction of the per-token cost.
+Open-weight large language models (LLMs) now approach frontier quality at a fraction of the per-token cost.
 You can self-host open-weight LLMs on GPUs for better cost economics, accuracy, control, or data privacy.
 Unlike traditional applications that benefit from scaling economies, LLM inference costs scale directly with your application, and the biggest line item is the GPU bill.
 
-A surprising share of that bill is spent on work the model has already done, reprocessing prompt instructions, tool definitions, and conversation history on every call.
+A surprising share of that bill is spent on work the model has already done: reprocessing prompt instructions, tool definitions, and conversation history on every call.
 KV caching eliminates that redundant work.
 This post introduces the fundamentals of KV caching and how it helps you use GPU resources well.
 You will learn how to set up a KV cache with Valkey to serve about 25% more requests on the same GPUs and stream responses about 2× faster.
@@ -53,7 +53,7 @@ The first request still pays a full prefill either way, because it is the one th
 
 ## Valkey as a KV cache
 
-KV caching is already available in your serving stack, inside inference engines such as vLLM, SGLang, and TensorRT.
+KV caching is already available in your serving stack, inside inference engines such as vLLM, SGLang, and TensorRT-LLM.
 You can build a KV cache on your existing stack using GPU memory (the L0 tier) and the CPU host's memory (the L1 tier).
 The catch is how much of that capacity is available to serve real traffic, and two problems limit it.
 
@@ -61,7 +61,7 @@ First, the capacity of both tiers is insufficient, because KV states are big.
 A single long-running conversation of 20K to 30K tokens on Llama-3.1-70B carries 6.5 to 10 GB of KV data.
 Contexts today keep growing.
 Paste one document into a chat and that single conversation can jump into the hundreds of thousands of tokens, displacing a dozen or more others from the cache.
-Even a generous half-terabyte of storage holds only 55 to 75 long conversations.
+Even a generous half-terabyte of storage holds only 50 to 75 long conversations.
 Turns take time, because a person types, a tool call runs, and an agent waits, and reasoning and agent patterns fork several contexts per task.
 By the time a conversation returns, enough others have passed through the cache that it has often been evicted, so it gets recomputed from scratch at full price.
 
@@ -96,108 +96,22 @@ You will benefit from a shared L2 KV cache if any of the following describes you
 
 **Where it will not help.**
 
-- If your whole working set fits in GPU and CPU memory, you do not need an L2 yet. Little is evicted, so there is little to reload. Come back when traffic grows.
+- If your whole working set fits in GPU and CPU memory, for example on a single server or when each user always lands on the same server, you do not need an L2 yet. Little is evicted, so there is little to reload unless your users show a pattern of resuming sessions after long intervals.
 - A cache cannot create GPU capacity. In our run, once conversations outgrew what two nodes could prefill (about 16K tokens of context at this arrival rate), first-token latency became GPU-bound in every configuration. The fix there is more nodes, not more cache. The streaming-speed and throughput gains held across the whole run regardless.
 - Low-reuse workloads gain less. One-shot requests with nothing returning, meaning no growing history and no shared prefix, evict little worth reloading.
 
 ## Follow along: set up a KV cache
 
-Adding the shared KV cache is a configuration change on the open-source stack you already run, which is vLLM, SGLang, or TensorRT plus LMCache, pointed at a Valkey cache.
-Five steps get you there.
-
-**Prerequisites.**
-A GPU host with vLLM installed and an LLM served.
-Follow the steps below or the [vLLM installation guide](https://docs.vllm.ai/en/latest/getting_started/installation.html).
-
-```bash
-pip install vllm
-vllm serve <your-model>
-```
-
-For an ungated model that runs on a single GPU, use `vllm serve Qwen/Qwen2.5-7B-Instruct`.
-You can use the `tensor-parallel-size` parameter to shard a larger model across multiple GPUs.
-
-**Step 1. Create a Valkey cache.**
-Start a Valkey server with the command below.
-For more storage capacity or read bandwidth, run Valkey in cluster mode and add shards.
-
-```bash
-docker run -d -p 6379:6379 valkey/valkey --maxmemory 100gb --maxmemory-policy allkeys-lru
-```
-
-Place the Valkey cache close to your GPU hosts for the lowest latency.
-For production traffic, use a managed cluster-mode cache, and see the best practices below for sizing, instance family, and placement.
-
-**Step 2. Set up LMCache and the Valkey GLIDE client.**
-The open-source [LMCache](https://github.com/LMCache/LMCache) framework integrates with your inference engine and ships a `ValkeyConnector` built on the [Valkey GLIDE](https://github.com/valkey-io/valkey-glide) client.
-LMCache manages the cache tiers, keeping active sessions in GPU and host memory and moving colder ones to the remote cache.
-Valkey GLIDE carries optimizations that move KV-cache-sized payloads efficiently, which matters for the multi-gigabyte transfers between your GPU and the cache.
-
-```bash
-pip install "lmcache>=0.5.1" "valkey-glide-sync>=2.5.1"
-```
-
-**Step 3. Point LMCache at your Valkey cache.**
-Create an `lmcache.yaml` file that points LMCache at your Valkey endpoint.
-The file also sets how much host memory to use for the local tier.
-
-```yaml
-chunk_size: 256
-local_cpu: true
-max_local_cpu_size: 1000            # GB of host RAM for the local tier
-remote_url: "valkey://<your-valkey-endpoint>:6379"
-remote_serde: "naive"               # raw KV on the wire, no compression
-extra_config:
-  valkey_mode: cluster              # set to cluster if running Valkey in cluster mode
-  valkey_num_workers: 16            # connector threads on the L2 path
-  valkey_enable_ttl: true
-  valkey_ttl_sec: 86400             # long TTL, keeps keys evictable and outlasts the reuse window
-```
-
-See the best practices section below for sizing and tuning guidance.
-For the full configuration reference, visit the LMCache [Valkey backend docs](https://docs.lmcache.ai/kv_cache/storage_backends/valkey.html).
-
-**Step 4. Launch vLLM with the LMCache connector.**
-
-```bash
-LMCACHE_CONFIG_FILE=lmcache.yaml vllm serve <your-model> \
-  --kv-transfer-config '{"kv_connector":"LMCacheConnectorV1","kv_role":"kv_both"}'
-```
-
-That is it.
-Returning conversations now load their KV from Valkey instead of recomputing it on the GPU.
-vLLM exposes an OpenAI-compatible API, so point any OpenAI client or a plain curl call at your inference host and port.
-
-```bash
-curl http://<your-inference-host>:<port>/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "<your-model>",
-    "messages": [{"role": "user", "content": "Explain distributed KV caching!"}]
-  }'
-```
-
-**Step 5. Confirm the cache is being used.**
-A reply proves the model works, not that the cache is engaged, and a misconfigured L2 fails silently and simply recomputes every prompt.
-Check the worker logs for both the write and the read path, and check vLLM for a non-zero external hit rate.
-
-```text
-LMCache INFO: Stored 256 out of total 256 tokens ...
-LMCache INFO: Retrieved 256 out of 256 required tokens ...
-External prefix cache hit rate: 0.9%
-```
-
-A repeated `LMCache is unhealthy, skipping store operation` means the connector cannot reach the cache, so check the endpoint, the security group, and `valkey_mode`.
-From the cache side, watch the key count grow as requests flow with `valkey-cli -h <your-valkey-endpoint> -p 6379 DBSIZE`.
+Adding the shared KV cache is a configuration change on the open-source stack you already run, which is vLLM plus LMCache, pointed at a Valkey cache.
+The [KV caching cookbook](https://github.com/valkey-io/valkey-developer-resources/tree/main/cookbooks/kv-caching) walks through it end to end.
 
 ## Performance and results
 
 We recreated what a busy production fleet looks like.
 **100 concurrent conversations that keep growing** (12K to 28K tokens of context) arrived at 8 requests per second across **two GPU nodes** (8 H100 each) serving **Llama-3.1-70B** with vLLM plus LMCache.
 The only difference between the two arms was whether a shared L2 was attached, a right-sized three-shard **Valkey 9** cluster in the same availability zone.
-We changed one setting away from the default, the eviction policy, for the reason explained under best practices below.
+We changed two settings from the defaults: the eviction policy, for the reason explained under best practices below, and a 20 GB cap on each server's host-memory tier, to recreate the eviction pressure of a larger fleet.
 The traffic is synthetic but shaped like production multi-turn chat, so every turn appends to the history and nothing is truncated.
-The three-shard cluster sustained about 7.4 GB/s of reads, peaking near 9.4 GB/s, without a single throttled command, and with headroom to scale by adding shards.
 
 ![Benchmark architecture: two GPU nodes sharing a three-shard Valkey cluster as the L2 KV cache tier](architecture_slide9.png)
 
@@ -234,7 +148,7 @@ Check the flip side first, because if the whole working set already fits in GPU 
 
 **Scale shards for read bandwidth.**
 Provision shards for aggregate read throughput, because a returning conversation pulls its whole KV history before the first new token, and a 20K-token chat is about 6.6 GB at 0.33 MB per token.
-Each 16xlarge memory-optimized shard in our test added about 30 Gbps of network bandwidth and about 420 GB of memory.
+Each 16xlarge memory-optimized shard in our test added about 30 Gbps of network bandwidth and about 450 GB of memory.
 Our three-shard cluster sustained **about 7.4 GB/s** of reads, peaking near 9.4 GB/s, against a ceiling near 11.25 GB/s, with zero throttled commands.
 When your peaks approach the ceiling, add a shard.
 
@@ -247,7 +161,8 @@ The connector supports **TLS** (`tls_enable: true`).
 KV chunks derive from user conversations, so turn TLS on when your security or compliance requirements call for encrypting them in transit, and budget for the CPU on both ends and the added per-fetch latency of encrypting multi-megabyte transfers.
 
 **Make sure every key is evictable, so either set the connector TTL or switch the eviction policy to all keys.**
-A `volatile-lru` eviction policy evicts only keys that carry a TTL, and LMCache's key TTL is **off by default**, so an untouched setup fills to `maxmemory` and starts rejecting writes with out-of-memory errors.
+Valkey's default `noeviction` policy evicts nothing, and `volatile-lru` evicts only keys that carry a TTL.
+LMCache's key TTL is **off by default**, so under either policy an untouched setup fills to `maxmemory` and starts rejecting writes with out-of-memory errors.
 Turn on the connector TTL (`valkey_enable_ttl: true`, see the settings table below), or on a cache dedicated to KV switch the policy to `allkeys-lru`, which is what we ran.
 
 **Route cache-aware.**
@@ -260,9 +175,9 @@ The same property helps when you scale the fleet, because a node you add or repl
 
 | Setting | Value | Why |
 | --- | --- | --- |
-| `chunk_size` | `256` | A value of 512 nearly doubled recompute, from 12% to 20%, because KV is reused only in whole chunks, so coarser chunks lose more tokens at conversation boundaries. It is bounded above too, so keep the per-stored-value size (`chunk × KV-bytes/token ÷ TP`) well under about 32 MiB. Past glibc's mmap threshold, every retrieve page-faults its whole buffer and runs about 3 times slower |
+| `chunk_size` | `256` | A value of 512 nearly doubled recompute in our tuning sweep, because KV is reused only in whole chunks, so coarser chunks lose more tokens at conversation boundaries. It is bounded above too, so keep the per-stored-value size (`chunk × KV-bytes/token ÷ TP`) well under about 32 MiB. Past glibc's mmap threshold, every retrieve page-faults its whole buffer and runs about 3 times slower |
 | `valkey_num_workers` | `16` | Values of 16, 32, and 64 swept flat, and too small a pool starves under load |
-| `remote_serde` | `naive` | The working serializer on 70B. To shrink KV, set the vLLM flag `--kv-cache-dtype fp8` instead, which halves the bytes per cached token at the same 97% to 98% hit rate |
+| `remote_serde` | `naive` | The working serializer on 70B. To shrink KV, set the vLLM flag `--kv-cache-dtype fp8` instead, which halves the bytes per cached token at the same hit rate |
 | `valkey_enable_ttl` and `valkey_ttl_sec` | `true` and `86400` | Makes every key evictable, in LMCache 0.5.1 and later. Set the TTL to comfortably outlast your conversation reuse window |
 
 ## Conclusion
