@@ -12,7 +12,7 @@ featured = true
 featured_image = "/assets/media/featured/banner.png"
 +++
 
-> **TL;DR:** ValkeyConf 2026 brought the community to Prague for a look at Valkey 9.2, from replication and memory improvements to a new data type for AI infrastructure. The bigger story was how a Linux Foundation-hosted project with no single vendor in charge is managing to ship faster without losing the open governance that makes it possible.
+> **TL;DR:** ValkeyConf 2026 brought the community to Prague for a look at Valkey 9.2, from replication and memory improvements to a new general-purpose data type. The bigger story was how a Linux Foundation-hosted project with no single vendor in charge is managing to ship faster without losing the open governance that makes it possible.
 
 ## What's New Across the Valkey Ecosystem
 
