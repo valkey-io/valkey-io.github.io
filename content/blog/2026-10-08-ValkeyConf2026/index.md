@@ -12,13 +12,7 @@ featured = true
 featured_image = "/assets/media/featured/banner.png"
 +++
 
-<div style="background-color: #BCB5E7; border-left: 4px solid #6983FF; border-radius: 6px; padding: 18px 22px; margin: 24px 0;">
-
-<strong>TL;DR</strong>
-
-<p>ValkeyConf 2026 brought the community to Prague for a preview of Valkey 9.2, including replication compression, sorted set improvements, and a general-purpose data type for prefix lookups. The bigger story was how a Linux Foundation-hosted community with no single vendor in charge is keeping development moving while protecting the open governance that makes it possible.</p>
-
-</div>
+> **TL;DR:** ValkeyConf 2026 brought the community to Prague for a look at Valkey 9.2, from replication and memory improvements to a new data type for AI infrastructure. The bigger story was how a Linux Foundation-hosted project with no single vendor in charge is managing to ship faster without losing the open governance that makes it possible.
 
 ## What's New Across the Valkey Ecosystem
 
