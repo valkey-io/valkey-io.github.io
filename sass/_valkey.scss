@@ -1739,29 +1739,76 @@ html.banner-hidden .banner {
     color: rgba(255,255,255,0.9);
 }
 
+.hero-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+
+  @include respond-min(768px) {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+// The light button is the primary call to action. The border matches the fill so
+// the dark variant below can swap colours without changing either button's size.
+// #4A5AD8 on #F2F4FF is 5.12:1, which clears AA at any size. The old #6983FF on
+// white was 3.34:1 and only passed as large text.
 .hero-button {
+  &,
+  &:visited {
+    color: #4A5AD8;
+  }
+
   display: inline-block;
   line-height: 1.2;
+  border: 2px solid #F2F4FF;
   border-radius: 30px;
   font-weight: 600;
   height: auto;
   font-size: 2.2rem;
-  color: #6983FF;
-  padding: 8px 15px;
-  background-image: linear-gradient(to right, #ffffff, #B7C2F7);
+  padding: 10px 15px;
+  background-color: #F2F4FF;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
   transition: all 0.3s ease-in-out;
   min-width: 100%;
 
+  &:hover {
+    background-color: #ffffff;
+    border-color: #ffffff;
+  }
+
   @include respond-min(768px) {
-    min-width: 380px;
+    min-width: 300px;
+  }
+}
+
+// The secondary action takes the hero's own purple so it reads as the quieter of
+// the two. The photo shows through behind the buttons, so the fill alone would
+// not always hold an edge; the light border draws it. White on #30186E is 14:1,
+// and 6:1 on the #5155C1 hover.
+.hero-button-dark {
+  &,
+  &:visited {
+    color: #ffffff;
+  }
+
+  background-color: #30186E;
+  border-color: #F2F4FF;
+
+  &:hover {
+    background-color: #5155C1;
+    border-color: #ffffff;
   }
 }
 
 // Documentation Section Styles
 .documentation-section {
-  padding: 4rem 2rem;
-  background: #6983FF;
+  padding: 2rem 2rem 4rem;
+  // Continues the .whats-new-section gradient, finishing on the #6983ff that
+  // .homepage-participants-section starts from.
+  background: linear-gradient(rgb(81, 85, 193), #6983FF);
   position: relative;
   text-align: center;
   color: white;
@@ -1818,7 +1865,9 @@ html.banner-hidden .banner {
 .documentation-card {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  // Spaces title from description, and keeps the button off the description
+  // even when `margin-top: auto` has no slack left to push it down.
+  gap: 1.5rem;
   padding: 4rem;
   border-radius: 20px;
   color: white;
@@ -1861,10 +1910,12 @@ html.banner-hidden .banner {
 // What's New Section Styles
 .whats-new-section {
   padding-bottom: 4rem;
-  background-image: linear-gradient(rgb(48, 23, 110), rgb(105, 131, 255));
+  // Stops short of the full #6983ff so the section doesn't end glaring bright.
+  // .documentation-section picks the gradient up from here.
+  background-image: linear-gradient(rgb(48, 23, 110), rgb(81, 85, 193));
 
   @include respond-min(768px) {
-    padding: 0 0 8rem;
+    padding: 0 0 4rem;
   }
 
   h2 {
@@ -1890,7 +1941,7 @@ html.banner-hidden .banner {
   background: rgba(255, 255, 255, 0.2);
 
   @include respond-min(768px) {
-    padding: 4rem;
+    padding: 2.5rem;
   }
 
   h3 {
@@ -1907,6 +1958,12 @@ html.banner-hidden .banner {
     border-radius: 10px;
     margin: 0 0 3rem;
 
+    // The panel's own padding closes out the column; a trailing card margin
+    // would stack on top of it.
+    &:last-child {
+      margin-bottom: 0;
+    }
+
     h4 {
       margin: 0 0 1rem;
     }
@@ -1914,6 +1971,179 @@ html.banner-hidden .banner {
     hr {
       margin: 2rem 0;
     }
+  }
+}
+
+.release-headline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+
+  small {
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: #4a5568;
+  }
+}
+
+.release-highlights {
+  ul {
+    margin: 0 0 1rem;
+    padding-left: 18px;
+  }
+
+  li {
+    margin-bottom: .6rem;
+    font-size: 1.5rem;
+    line-height: 1.4;
+  }
+}
+
+.release-table {
+  width: 100%;
+  margin: 0 0 3rem;
+  border-collapse: collapse;
+
+  border: 1px solid #ddd;
+
+  th,
+  td {
+    padding: 1rem 1.6rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  th {
+    background: #f4f4f4;
+    color: #555;
+    font-weight: 700;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #f9f9f9;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  td:first-child {
+    font-weight: 700;
+  }
+}
+
+.copy-code {
+  display: flex;
+  align-items: stretch;
+  margin: 0 0 2rem;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  background: #f5f7f7;
+  overflow: hidden;
+
+  pre {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 1.2rem 1.6rem;
+    background: none;
+    font-size: 1.4rem;
+  }
+
+  code {
+    white-space: pre;
+  }
+}
+
+.copy-code-button {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  border: 0;
+  border-left: 1px solid #eaeaea;
+  padding: 0;
+  background: none;
+  color: #6b7280;
+  cursor: pointer;
+
+  &:hover {
+    background: $white;
+    color: #2054b2;
+  }
+
+  // Swap the clipboard glyph for a checkmark while the copy is fresh.
+  .copy-code-icon-done {
+    display: none;
+  }
+
+  &.copied {
+    color: #1a7f37;
+
+    .copy-code-icon-copy {
+      display: none;
+    }
+
+    .copy-code-icon-done {
+      display: block;
+    }
+  }
+}
+
+.copy-code-icon {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+// Amber rather than red: a release candidate is not broken, it is just not
+// finished. #7A4A00 on #FFF6E5 is 7.4:1.
+.release-prerelease-notice {
+  @include sans-serif;
+  margin: 0 0 2rem;
+  padding: 1.5rem 2rem;
+  border-left: 4px solid #B26A00;
+  border-radius: 4px;
+  background: #FFF6E5;
+  color: #7A4A00;
+  line-height: 1.6;
+}
+
+.release-meta {
+  margin: 0 0 1.5rem;
+  line-height: 1.6;
+}
+
+// The global `hr` has no margin, which reads as cramped between sections.
+.release-rule {
+  margin: 1.5rem 0 0;
+
+  // The default h2 top margin is sized for headings that follow body copy, not
+  // a rule that is already acting as the separator.
+  + h2 {
+    margin-top: 1.5rem;
+  }
+}
+
+.release-links {
+  margin: 0;
+
+  li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: .6rem;
+    font-size: 1.5rem;
+  }
+
+  small {
+    font-size: 1.3rem;
+    color: #4a5568;
   }
 }
 
@@ -2135,121 +2365,106 @@ blockquote {
   }
 }
 
-// Homepage Blog Cards with Featured Images
-.homepage-performance-section,
+// Homepage blog cards: text-only cards stacked vertically, matching the release
+// cards in the other column.
 .homepage-blog-section {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-}
-.homepage-performance-section {
+  gap: 1.5rem;
   margin-bottom: 3rem;
 }
 
-.homepage-performance-card,
+// The card is itself an anchor, so it takes its colour from the global
+// `a, a:visited` rule. That is the same rule the release links next to it use,
+// which is the point: the two white cards in this panel cannot drift apart.
+// Do not set a colour here or on the title.
 .homepage-blog-card {
   background: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  padding: 2rem 2.5rem;
   transition: box-shadow 0.2s ease;
-  display: flex;
-  flex-direction: column;
+  display: block;
+  text-decoration: none;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  }
 }
 
-.homepage-blog-card-image {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-
-.homepage-blog-card-image-placeholder {
-  width: 100%;
-  height: 100px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-}
-
-.homepage-performance-card-content,
-.homepage-blog-card-content {
-  padding: 1.5rem;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.homepage-performance-card h4 p {
-  margin: none;
-}
-.homepage-performance-card h4,
 .homepage-blog-card-title {
-  margin: 0 0 1rem 0;
-  font-size: 1.6rem;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.8rem;
   line-height: 1.3;
   font-weight: 700;
-
-  a {
-    color: #002a3a;
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  a:hover {
-    color: #667eea;
-  }
 }
-.homepage-performance-card h4 + p,
+
+.homepage-blog-card-meta {
+  margin: 0 0 1rem;
+  font-size: 1.3rem;
+  color: #4a5568;
+}
+
 .homepage-blog-card-description {
-  margin: 0 0 1.5rem 0;
+  margin: 0;
   font-size: 1.4rem;
   line-height: 1.4;
   color: #4a5568;
   display: -webkit-box;
-  -webkit-line-clamp: 5;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  flex: 1;
 }
-.homepage-performance-card .view-dashboard,
-.homepage-blog-card-readmore {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1.2;
-  font-weight: 600;
+
+// Sits on the heading row rather than under the cards, so the column ends on a
+// card edge instead of a stray link.
+.homepage-blog-heading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 1.5rem;
+
+  h3 {
+    width: auto;
+  }
+}
+
+// `&:visited` is not redundant: the global `a:visited` is more specific than a
+// bare class, so without it the link falls back to the blue link colour.
+// Held apart from the white heading beside it so it reads as a link.
+.homepage-blog-more {
+  &,
+  &:visited,
+  &:hover {
+    color: #B7C2F7;
+  }
+
+  @include sans-serif;
   font-size: 1.4rem;
-  padding: 0.8rem 1.6rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 50px;
-  color: #2d3748;
+  font-weight: 700;
+  text-transform: uppercase;
   text-decoration: none;
-  align-self: flex-start;
-  transition: all 0.2s ease;
-  background: #fff;
-}
-.homepage-performance-card .view-dashboard:hover,
-.homepage-blog-card-readmore:hover {
-  background: #667eea;
-  color: #fff;
-  border-color: #667eea;
+  white-space: nowrap;
+
+  &:after {
+    content: ' ›';
+    font-size: 1.2em;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 // Responsive adjustments for homepage blog cards
 @media (max-width: 768px) {
-  .homepage-blog-card-image,
-  .homepage-blog-card-image-placeholder {
-    height: 140px;
-  }
-
-  .homepage-blog-card-content {
-    padding: 1.2rem;
+  .homepage-blog-card {
+    padding: 1.5rem 1.8rem;
   }
 
   .homepage-blog-card-title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
 
   .homepage-blog-card-description {
@@ -2273,12 +2488,17 @@ blockquote {
     margin-bottom: 6rem;
   }
   
+  // Same scale as the "Learn more" h2 above it.
   .homepage-participants-title {
     color: $white;
-    font-size: 4.8rem;
+    font-size: 3.75rem;
     font-weight: 700;
     margin: 0 0 2rem 0;
     letter-spacing: -1px;
+
+    @include respond-min(768px) {
+      font-size: 6rem;
+    }
   }
   
   .homepage-participants-description {
@@ -2446,10 +2666,6 @@ blockquote {
     
     .homepage-participants-container {
       padding: 0 1.5rem;
-    }
-    
-    .homepage-participants-title {
-      font-size: 3.6rem;
     }
     
     .homepage-participants-description {

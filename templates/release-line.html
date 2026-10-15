@@ -1,0 +1,70 @@
+{% extends "right-aside.html" %}
+{% import "macros/release.html" as release_macros %}
+
+{% block subhead_content %}
+<h1 class="page-title">Download Valkey {{ page.extra.version }}</h1>
+{% endblock subhead_content %}
+
+{% block main_content %}
+{% set line = page.extra.version %}
+
+{# Every release on this line, newest first, stable and pre-release kept apart. #}
+{% set release_section = get_section(path="download/releases/_index.md") %}
+{% set_global line_releases = [] %}
+{% set_global line_prereleases = [] %}
+{% for candidate in release_section.pages | sort(attribute="date") | reverse %}
+    {% set candidate_line = candidate.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+    {% if candidate_line == line %}
+        {% if candidate.extra.tag is matching(".*-.*") %}
+            {% set_global line_prereleases = line_prereleases | concat(with=candidate) %}
+        {% else %}
+            {% set_global line_releases = line_releases | concat(with=candidate) %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{# A line page is written before its first release ships, so it has to render
+   with nothing to download yet, then with only release candidates, and finally
+   with the stable releases that supersede them. #}
+{% set_global prerelease_only = line_releases | length == 0 %}
+{% if prerelease_only %}
+    {% set_global line_releases = line_prereleases %}
+{% endif %}
+{% set latest = line_releases | first %}
+
+{# Above the highlights, not beside the download link: the highlights describe a
+   version nobody can run in production yet, and that has to be read first. #}
+{% if prerelease_only %}
+<div class="release-prerelease-notice">
+    <strong>Valkey {{ line }} has no stable release yet.</strong> What follows
+    describes a release candidate. Commands, configuration, and behaviour can
+    change before the stable release, and release candidates are not supported
+    for production use.
+</div>
+{% endif %}
+
+{% if page.content %}
+    <h2>Major features in {{ line }}:</h2>
+    <div class="release-highlights">{{ page.content | safe }}</div>
+    {% if page.extra.blog_url %}
+        <a href="{{ page.extra.blog_url }}" class="link-readmore">{{ page.extra.blog_text }}</a>
+    {% endif %}
+    <hr class="release-rule" />
+{% endif %}
+
+{% if latest %}
+    <h2>Get {{ latest.extra.tag }}</h2>
+    {# The notice above the highlights already covers this page. #}
+    {{ release_macros::release_info(date=latest.date, release=latest.extra, notice=false) }}
+
+    <h2>All {{ line }} releases</h2>
+    <ul class="list-links-small release-links">
+        {% for line_release in line_releases %}
+        <li>
+            <a href="{{ line_release.permalink }}">Valkey {{ line_release.extra.tag }}</a>
+            <small>Released {{ line_release.date | date(format="%B %-d, %Y") }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock main_content %}
