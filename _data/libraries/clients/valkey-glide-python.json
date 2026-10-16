@@ -1,0 +1,25 @@
+{
+  "name": "Valkey GLIDE Python",
+  "language": "Python",
+  "license": "Apache-2.0",
+  "description": "Designed for reliability, optimized performance, and high-availability. GLIDE is a multi-language client with one shared Rust core and per-language bindings.",
+  "repository": "https://github.com/valkey-io/valkey-glide/tree/main/python",
+  "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=python",
+  "isFirstParty": true,
+  "installCommand": "pip install valkey-glide",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": true,
+    "latency": false,
+    "az": true,
+    "csc": false,
+    "capa": false,
+    "pool": false
+  },
+  "type": "clients",
+  "tags": [
+    "Clients"
+  ]
+}

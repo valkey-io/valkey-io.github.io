@@ -1,0 +1,25 @@
+{
+  "name": "valkey-py",
+  "language": "Python",
+  "license": "MIT",
+  "description": "The community fork of the long-standing Python client, maintained by the Valkey project. Familiar synchronous and asyncio APIs.",
+  "repository": "https://github.com/valkey-io/valkey-py",
+  "documentation": "https://valkey-py.readthedocs.io/en/latest/",
+  "isFirstParty": true,
+  "installCommand": "pip install valkey",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": false,
+    "latency": false,
+    "az": false,
+    "csc": true,
+    "capa": false,
+    "pool": true
+  },
+  "type": "clients",
+  "tags": [
+    "Clients"
+  ]
+}
