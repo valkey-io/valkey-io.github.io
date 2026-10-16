@@ -301,7 +301,7 @@ Here’s how hash field expirations help:
 * Every time a user queries or updates a link, its TTL can be refreshed, keeping active links alive while letting inactive ones naturally fall off.
 * Expired links are removed automatically, so you don’t need extra cleanup logic and can focus on active links.
 
-Using Valkey’s [HSETEX](/commands/hsetex) and [HGETEX]((/commands/hgetex)), we can update a field’s TTL whenever it’s accessed or modified:
+Using Valkey’s [HSETEX](/commands/hsetex) and [HGETEX](/commands/hgetex), we can update a field’s TTL whenever it’s accessed or modified:
 
 ```python
 # Set or update link metadata with a 30-day TTL
