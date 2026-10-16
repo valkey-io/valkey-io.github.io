@@ -1,7 +1,6 @@
 +++
 title = "Introducing the Valkey GLIDE Ruby Client: Now Generally Available!"
-description = """The Ruby client for Valkey GLIDE, valkey-glide-rb, is now generally available, bringing GLIDE's shared Rust core and native observability to the Ruby ecosystem.
-Freshworks built it to replace years of Ruby client sprawl — redis-rb, redis-client, and moneta — with one client and one set of connection defaults."""
+description = """The Ruby client for Valkey GLIDE, valkey-glide-rb, is now generally available, bringing GLIDE's shared Rust core, proactive connection management, cluster topology handling, and native observability to the Ruby ecosystem."""
 date = 2026-09-22
 authors = ["sasidharan-gopal"]
 
@@ -16,54 +15,17 @@ featured_image = "/assets/media/featured/default.webp"
 We are pleased to announce the general availability (GA) of the Ruby client for [Valkey GLIDE](https://github.com/valkey-io/valkey-glide), [valkey-glide-rb](https://github.com/valkey-io/valkey-glide-ruby).
 This release brings the shared Rust core that powers GLIDE's [Java](https://github.com/valkey-io/valkey-glide/tree/main/java), [Python](https://github.com/valkey-io/valkey-glide/tree/main/python), [Node.js](https://github.com/valkey-io/valkey-glide/tree/main/node), and [Go](https://github.com/valkey-io/valkey-glide/tree/main/go) clients to the Ruby community — with an API (application programming interface) designed to feel familiar to anyone coming from [redis-rb](https://github.com/redis/redis-rb).
 
-[Freshworks](https://www.freshworks.com/) needed a Valkey-native Ruby client that could slot into our existing workflows while giving us GLIDE's connection management, reliability, and observability out of the box — but Ruby wasn't on GLIDE's language roadmap.
-Building on top of GLIDE's shared core meant we didn't have to reinvent cluster handling, retries, or tracing ourselves; we could focus purely on the Ruby surface and let the Rust core do the heavy lifting.
-In this post, we cover why Freshworks took this on, what GA means for the Ruby ecosystem, and how to get started.
+Ruby developers now get GLIDE's connection management, reliability, and observability out of the box, without reimplementing cluster handling, retries, or tracing in Ruby.
+In this post, we cover what GA means for the Ruby ecosystem, the key capabilities of the client, and how to get started.
 
 ## What GLIDE Brings to Ruby Developers
 
-If you run Ruby services against [Valkey](https://github.com/valkey-io/valkey) or [Redis OSS](https://github.com/redis/redis) today, you may be connecting with a variety of client libraries. At Freshworks, each came with their own connection pooling, retry, and TLS (Transport Layer Security) story.
-GLIDE gives Ruby a client that's:
+If you run Ruby services against [Valkey](https://github.com/valkey-io/valkey) or [Redis OSS](https://github.com/redis/redis) today, you may be connecting with a variety of client libraries, each with its own connection pooling, retry, and TLS (Transport Layer Security) story.
+GLIDE gives Ruby a client that:
 
 - Behaves the same as every other GLIDE language client, so platform/infra teams can reason about client behavior once and apply it everywhere.
-- Built on a shared Rust core ([glide-core](https://github.com/valkey-io/valkey-glide/tree/main/glide-core)) instead of a pure-Ruby protocol implementation, which means connection management and retry/backoff logic are inherited — not re-implemented and re-debugged per team.
-- Observable by default, with native OpenTelemetry tracing and client statistics that don't depend on wrapping every call in your own instrumentation.
-
-## The Freshworks Story: Why We Built This
-
-Freshworks runs a large portfolio of SaaS products, and Ruby is a primary language across many of those product engineering teams.
-That scale created a problem that will sound familiar to anyone running Valkey at a large organization: client sprawl with zero standardization.
-
-### The problem
-
-As the team responsible for Valkey infrastructure at Freshworks, we had visibility into the *servers*, but almost none into how client applications talked to them.
-In practice, that meant:
-
-- Different teams depended on different gems for the same job, and in some cases, hand-rolled wrappers.
-- Connection pooling, timeout, and retry/backoff settings were configured independently per team, with no shared defaults — so failure behavior during a network blip was inconsistent across the fleet.
-- There was no shared observability story: when a team reported "the database is slow," the platform team had no client-side traces or statistics to correlate against server-side metrics, and every investigation started from scratch.
-- Upgrading TLS settings, rotating credentials, or rolling out a new connection strategy meant coordinating changes across multiple configuration patterns instead of one.
-
-None of this is a knock on any other library.
-The issue was entirely about not having one client with shared, centrally-owned defaults that the platform team could reason about and evolve.
-
-### Why GLIDE
-
-Freshworks was already evaluating (or using) Valkey GLIDE in other parts of the stack and liked the model: one core, written once in Rust, with consistent behavior — proactive reconnection, connection-storm protection, native observability — exposed through a thin, idiomatic layer per language.
-That's exactly the standardization story the platform team wanted for Ruby.
-
-The problem: GLIDE had no Ruby client.
-Java, Python, Node.js, and Go were covered — Ruby wasn't on the roadmap.
-
-So Freshworks engineers, alongside the broader Valkey GLIDE community, built it.
-From an empty repository to a GA gem: the FFI (Foreign Function Interface) bindings to glide-core, the command surface (strings, hashes, sets, sorted sets, streams, geo, bitmaps, scripting, pub/sub groundwork, JSON and vector-search module support, cluster commands), a redis-rb-flavored API and [lint suite](https://github.com/valkey-io/valkey-glide-ruby/tree/main/test/lint), native builds across Linux (glibc/musl) and macOS, cluster and TLS test infrastructure, and OpenTelemetry integration.
-
-### Why this matters for a company our size
-
-- One client, centrally owned. The Valkey platform team can now set — and evolve — connection, retry, TLS, and observability defaults in one place instead of chasing down every team's Gemfile.
-- Consistency with our other stacks. Although we haven't started using GLIDE in other languages yet, we're looking forward to using it to ensure connection-management behavior is the same for Ruby, creating one mental model and one on-call runbook instead of *N*.
-- Built-in observability. Native OpenTelemetry spans and `get_statistics` give the platform team the client-side signal they never had, without asking every product team to add instrumentation.
-- A path off client sprawl. Teams still on other clients have a clear, supported target to migrate to, backed by the same team that runs the infrastructure.
+- Is built on a shared Rust core ([glide-core](https://github.com/valkey-io/valkey-glide/tree/main/glide-core)) instead of a pure-Ruby protocol implementation, which means connection management and retry/backoff logic are inherited — not re-implemented and re-debugged per team.
+- Is observable by default, with native OpenTelemetry tracing and client statistics that don't depend on wrapping every call in your own instrumentation.
 
 ## Key Features
 
@@ -149,7 +111,7 @@ Threads let multiple callers share one client, while pipelining batches commands
 
 ### Native Observability: OpenTelemetry and Statistics
 
-This is one of the features Freshworks cared most about — client-side observability without instrumenting every call site by hand.
+Client-side observability, without instrumenting every call site by hand.
 
 OpenTelemetry is configured once per process, in the native core (not the Ruby [opentelemetry-sdk](https://rubygems.org/gems/opentelemetry-sdk) gem):
 
@@ -248,7 +210,7 @@ client = Valkey.new(
 ```
 
 Available strategies: `PRIMARY` (always read the freshest data from the primary), `PREFER_REPLICA` (round-robin reads across replicas, falling back to primary if none are available), `AZ_AFFINITY`, and `AZ_AFFINITY_REPLICAS_AND_PRIMARY` (the latter two require `client_az` to also be set).
-The `AZ_AFFINITY` options are particularly valuable in a multi-AZ (availability zone) deployment: keeping read traffic in the same availability zone as the client cuts cross-AZ data-transfer cost and latency, both of which add up quickly at Freshworks' request volume.
+The `AZ_AFFINITY` options are particularly valuable in a multi-AZ (availability zone) deployment: keeping read traffic in the same availability zone as the client cuts cross-AZ data-transfer cost and latency, both of which add up quickly at scale.
 
 ## Migrating from redis-rb, redis-client, or moneta
 
