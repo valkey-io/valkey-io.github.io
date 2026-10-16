@@ -538,13 +538,6 @@
     var desc = this.state.sortDir === "desc";
     var textEl = q(this.sortControl, "[data-sort-text]");
     if (textEl) textEl.textContent = desc ? "Name Z–A" : "Name A–Z";
-    this.sortControl.setAttribute("aria-pressed", desc ? "true" : "false");
-    this.sortControl.setAttribute(
-      "aria-label",
-      desc
-        ? "Sort by name, descending Z to A. Activate to reverse."
-        : "Sort by name, ascending A to Z. Activate to reverse."
-    );
     this.sortControl.classList.toggle("is-desc", desc);
   };
 
