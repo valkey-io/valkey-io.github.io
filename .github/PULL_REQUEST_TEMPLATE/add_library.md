@@ -54,7 +54,7 @@ fields below — extra fields are ignored by the templates and may fail review.
 - `type` (string) — exactly one of `"clients"`, `"tools"`, or `"ai"`, matching the directory.
 - `license` (string) — SPDX identifier, e.g. `"Apache-2.0"`, `"MIT"`, `"BSD-3-Clause"`. Must be an OSI-approved open-source license.
 - `repository` (string) — public source-code repository URL.
-- `documentation` (string) — an `https://` link to a page that shows how to use the project with Valkey. Link the first of these that exists: a Valkey page in the project's docs, a Valkey example, a getting-started guide, or the README section that shows basic usage. For a library that speaks the Redis protocol, a page that shows the connection setup is enough. A homepage, a docs index, or a directory listing isn't. Link GitHub files at a tag or commit (`/blob/v1.2.3/…`), not a branch.
+- `documentation` (string) — a link to a page that shows how to use the project with Valkey. For a page on valkey.io, use a root-relative path such as `/topics/cli/`; for any other site, an `https://` URL. Link the first of these that exists: a Valkey page in the project's docs, a Valkey example, a getting-started guide, or the README section that shows basic usage. For a library that speaks the Redis protocol, a page that shows the connection setup is enough. A homepage, a docs index, or a directory listing isn't. Link GitHub files at a tag or commit (`/blob/v1.2.3/…`), not a branch.
 - `isFirstParty` (boolean) — `true` for repos under `github.com/valkey-io/`, otherwise `false`.
 
 **Required for clients — `features` (object of true/false flags):**
@@ -126,7 +126,7 @@ Integration (`_data/libraries/integrations/valkey-cli.json`):
   "license": "BSD-3-Clause",
   "description": "The interactive terminal client shipped with valkey-server, with cluster-aware routing, --scan, --bigkeys and latency diagnostics built in.",
   "repository": "https://github.com/valkey-io/valkey",
-  "documentation": "https://valkey.io/topics/cli/",
+  "documentation": "/topics/cli/",
   "isFirstParty": true,
   "type": "tools",
   "tags": ["CLI & GUI"]

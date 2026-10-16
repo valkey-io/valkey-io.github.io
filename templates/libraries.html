@@ -49,8 +49,16 @@
       {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' is missing required field 'isFirstParty'") }}
     {% endif %}
     {# The Documentation link is required and must show how to use the entry with Valkey (PR template). #}
-    {% if e.documentation is not defined or e.documentation is not string or e.documentation is not starting_with("https://") %}
-      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' needs 'documentation': an https:// link that shows how to use it with Valkey") }}
+    {# Pages on valkey.io are linked root-relative (/topics/cli/), other sites by https:// URL. #}
+    {% if e.documentation is not defined or e.documentation is not string %}
+      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' needs 'documentation': a link that shows how to use it with Valkey") }}
+    {% endif %}
+    {% set is_root_relative = e.documentation is starting_with("/") and e.documentation is not starting_with("//") %}
+    {% set is_https = e.documentation is starting_with("https://") %}
+    {% if e.documentation is starting_with("https://valkey.io/") %}
+      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' links a valkey.io page by full URL; use a root-relative path, e.g. /topics/cli/") }}
+    {% elif not is_root_relative and not is_https %}
+      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' needs 'documentation': a root-relative path to a valkey.io page or an https:// link") }}
     {% endif %}
     {% set desc_length = e.description | length %}
     {% if desc_length > max_description %}
@@ -97,8 +105,16 @@
       {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' is missing required field 'isFirstParty'") }}
     {% endif %}
     {# The Documentation link is required and must show how to use the entry with Valkey (PR template). #}
-    {% if e.documentation is not defined or e.documentation is not string or e.documentation is not starting_with("https://") %}
-      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' needs 'documentation': an https:// link that shows how to use it with Valkey") }}
+    {# Pages on valkey.io are linked root-relative (/topics/cli/), other sites by https:// URL. #}
+    {% if e.documentation is not defined or e.documentation is not string %}
+      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' needs 'documentation': a link that shows how to use it with Valkey") }}
+    {% endif %}
+    {% set is_root_relative = e.documentation is starting_with("/") and e.documentation is not starting_with("//") %}
+    {% set is_https = e.documentation is starting_with("https://") %}
+    {% if e.documentation is starting_with("https://valkey.io/") %}
+      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' links a valkey.io page by full URL; use a root-relative path, e.g. /topics/cli/") }}
+    {% elif not is_root_relative and not is_https %}
+      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' needs 'documentation': a root-relative path to a valkey.io page or an https:// link") }}
     {% endif %}
     {% set desc_length = e.description | length %}
     {% if desc_length > max_description %}
@@ -208,7 +224,7 @@
                  data-first-party="{% if entry.isFirstParty %}true{% else %}false{% endif %}">
           <div class="entry-head">
             <h3 class="entry-name">
-              {% if entry.documentation and (entry.documentation is starting_with("http://") or entry.documentation is starting_with("https://")) %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
+              {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
             </h3>
             <div class="entry-tags">
               <span class="chip chip-language">
@@ -264,7 +280,7 @@
 
           <footer class="entry-foot">
             {% if entry.repository and (entry.repository is starting_with("http://") or entry.repository is starting_with("https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
-            {% if entry.documentation and (entry.documentation is starting_with("http://") or entry.documentation is starting_with("https://")) %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
+            {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
           </div>
           </div>
@@ -293,7 +309,7 @@
                  data-first-party="{% if entry.isFirstParty %}true{% else %}false{% endif %}">
           <div class="entry-head">
             <h3 class="entry-name">
-              {% if entry.documentation and (entry.documentation is starting_with("http://") or entry.documentation is starting_with("https://")) %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
+              {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
             </h3>
             <div class="entry-tags">
               {% for t in ec_tags %}<span class="chip chip-tag">{{ t }}</span>{% endfor %}
@@ -321,7 +337,7 @@
 
           <footer class="entry-foot">
             {% if entry.repository and (entry.repository is starting_with("http://") or entry.repository is starting_with("https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
-            {% if entry.documentation and (entry.documentation is starting_with("http://") or entry.documentation is starting_with("https://")) %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
+            {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
           </div>
           </div>
