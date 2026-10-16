@@ -7,7 +7,17 @@
   "documentation": "https://swiftpackageindex.com/valkey-io/valkey-swift/documentation/valkey/getting-started",
   "isFirstParty": true,
   "installCommand": "swift package add-dependency https://github.com/valkey-io/valkey-swift",
-  "features": "110000011",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": false,
+    "scan": false,
+    "latency": false,
+    "az": false,
+    "csc": false,
+    "capa": true,
+    "pool": true
+  },
   "type": "clients",
   "tags": [
     "Clients"

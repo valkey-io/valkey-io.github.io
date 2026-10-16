@@ -7,7 +7,17 @@
   "documentation": "https://github.com/valkey-io/valkey-java/blob/v5.5.0/README.md#getting-started",
   "isFirstParty": true,
   "installCommand": "implementation 'io.valkey:valkey-java:5.+'",
-  "features": "010000011",
+  "features": {
+    "replica": false,
+    "backoff": true,
+    "pubsub": false,
+    "scan": false,
+    "latency": false,
+    "az": false,
+    "csc": false,
+    "capa": true,
+    "pool": true
+  },
   "type": "clients",
   "tags": [
     "Clients"

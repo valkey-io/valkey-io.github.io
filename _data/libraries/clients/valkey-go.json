@@ -7,7 +7,17 @@
   "documentation": "https://pkg.go.dev/github.com/valkey-io/valkey-go#readme-getting-started",
   "isFirstParty": true,
   "installCommand": "go get github.com/valkey-io/valkey-go",
-  "features": "111001111",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": false,
+    "latency": false,
+    "az": true,
+    "csc": true,
+    "capa": true,
+    "pool": true
+  },
   "type": "clients",
   "tags": [
     "Clients"

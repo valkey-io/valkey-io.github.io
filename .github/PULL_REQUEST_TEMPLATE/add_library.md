@@ -44,8 +44,8 @@ run `zola build` with the Zola version CI uses (see
 
 ## Fields
 
-Entries are flat JSON objects. Use only the fields below — extra fields are
-ignored by the templates and may fail review.
+Entries are flat JSON objects, apart from a client's `features`. Use only the
+fields below — extra fields are ignored by the templates and may fail review.
 
 **Required for all entries:**
 
@@ -57,23 +57,23 @@ ignored by the templates and may fail review.
 - `documentation` (string) — an `https://` link to a page that shows how to use the project with Valkey. Link the first of these that exists: a Valkey page in the project's docs, a Valkey example, a getting-started guide, or the README section that shows basic usage. For a library that speaks the Redis protocol, a page that shows the connection setup is enough. A homepage, a docs index, or a directory listing isn't. Link GitHub files at a tag or commit (`/blob/v1.2.3/…`), not a branch.
 - `isFirstParty` (boolean) — `true` for repos under `github.com/valkey-io/`, otherwise `false`.
 
-**Required for clients — `features` (9-character bit-string):**
+**Required for clients — `features` (object of true/false flags):**
 
-A string of nine `"0"`/`"1"` characters; `"1"` means supported. Positions, in order:
+One flag per feature below, each `true` (supported) or `false`. Include all nine; the build fails if one is missing, misspelled, or not a boolean.
 
-| Position | Key | Feature |
-| --- | --- | --- |
-| 1 | `replica` | Replica reads |
-| 2 | `backoff` | Retry & backoff |
-| 3 | `pubsub` | Pub/Sub restoration |
-| 4 | `scan` | SCAN family |
-| 5 | `latency` | Low-latency routing |
-| 6 | `az` | AZ affinity |
-| 7 | `csc` | Client-side caching |
-| 8 | `capa` | Advanced capabilities |
-| 9 | `pool` | Connection pooling |
+| Key | Feature |
+| --- | --- |
+| `replica` | Replica reads |
+| `backoff` | Retry & backoff |
+| `pubsub` | Pub/Sub restoration |
+| `scan` | SCAN family |
+| `latency` | Low-latency routing |
+| `az` | AZ affinity |
+| `csc` | Client-side caching |
+| `capa` | Advanced capabilities |
+| `pool` | Connection pooling |
 
-Example: `"111101000"` = replica, backoff, pubsub, scan, and az supported; the rest not.
+The client example below shows the format.
 The definition of each feature, as shown on the site, is in `featureDescriptions` in `_data/libraries/metadata.json`.
 A feature that every listed client supports, or that none does, isn't shown on cards or in the legend, because it doesn't tell clients apart.
 So a feature you set can appear or disappear as other clients are added or removed.
@@ -101,7 +101,17 @@ Client (`_data/libraries/clients/valkey-glide-python.json`):
   "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=python",
   "isFirstParty": true,
   "installCommand": "pip install valkey-glide",
-  "features": "111101000",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": true,
+    "latency": false,
+    "az": true,
+    "csc": false,
+    "capa": false,
+    "pool": false
+  },
   "type": "clients",
   "tags": ["Clients"]
 }
@@ -135,7 +145,7 @@ in the manifest will not appear on the site.
 ### Submission checklist
 
 - [ ] Valid JSON, placed in the directory matching its `type`, and registered once in `_data/libraries/manifest.json`.
-- [ ] All required fields present: `name`, `description`, `type`, `license`, `repository`, `documentation`, `isFirstParty` — plus a 9-character `features` string for clients.
+- [ ] All required fields present: `name`, `description`, `type`, `license`, `repository`, `documentation`, `isFirstParty` — plus `features` for clients, with all nine flags.
 - [ ] Tested compatible with Valkey 7.2 or above.
 - [ ] OSI-approved open-source license.
 - [ ] Repository is publicly accessible, active within the last 6 months, and has a README with basic usage.

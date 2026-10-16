@@ -7,7 +7,17 @@
   "documentation": "https://github.com/predis/predis/blob/v3.6.1/README.md#connecting-to-redis",
   "isFirstParty": false,
   "installCommand": "composer require predis/predis",
-  "features": "110000000",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": false,
+    "scan": false,
+    "latency": false,
+    "az": false,
+    "csc": false,
+    "capa": false,
+    "pool": false
+  },
   "type": "clients",
   "tags": [
     "Clients"

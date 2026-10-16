@@ -7,7 +7,17 @@
   "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=ruby",
   "isFirstParty": true,
   "installCommand": "gem install valkey-glide-rb",
-  "features": "110001000",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": false,
+    "scan": false,
+    "latency": false,
+    "az": true,
+    "csc": false,
+    "capa": false,
+    "pool": false
+  },
   "type": "clients",
   "tags": [
     "Clients"

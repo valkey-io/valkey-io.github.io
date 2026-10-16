@@ -7,7 +7,17 @@
   "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=java",
   "isFirstParty": true,
   "installCommand": "implementation 'io.valkey:valkey-glide:2.+'",
-  "features": "111101000",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": true,
+    "latency": false,
+    "az": true,
+    "csc": false,
+    "capa": false,
+    "pool": false
+  },
   "type": "clients",
   "tags": [
     "Clients"

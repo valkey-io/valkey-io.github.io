@@ -7,7 +7,17 @@
   "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=c%23",
   "isFirstParty": true,
   "installCommand": "dotnet add package Valkey.Glide",
-  "features": "111100001",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": true,
+    "latency": false,
+    "az": false,
+    "csc": false,
+    "capa": false,
+    "pool": true
+  },
   "type": "clients",
   "tags": [
     "Clients"

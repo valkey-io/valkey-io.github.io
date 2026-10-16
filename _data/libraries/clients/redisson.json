@@ -7,7 +7,17 @@
   "documentation": "https://redisson.pro/docs/getting-started/",
   "isFirstParty": false,
   "installCommand": "implementation 'org.redisson:redisson:4.+'",
-  "features": "111100111",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": true,
+    "latency": false,
+    "az": false,
+    "csc": true,
+    "capa": true,
+    "pool": true
+  },
   "type": "clients",
   "tags": [
     "Clients"

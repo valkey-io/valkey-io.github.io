@@ -7,7 +7,17 @@
   "documentation": "https://github.com/valkey-io/iovalkey/blob/v0.4.0/README.md#quick-start",
   "isFirstParty": true,
   "installCommand": "npm install iovalkey",
-  "features": "111000001",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": false,
+    "latency": false,
+    "az": false,
+    "csc": false,
+    "capa": false,
+    "pool": true
+  },
   "type": "clients",
   "tags": [
     "Clients"
