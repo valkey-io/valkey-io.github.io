@@ -12,11 +12,11 @@ featured = false
 featured_image = "/assets/media/featured/default.webp"
 +++
 
-We are pleased to announce the general availability (GA) of the Ruby client for [Valkey GLIDE](https://github.com/valkey-io/valkey-glide), [valkey-glide-rb](https://github.com/valkey-io/valkey-glide-ruby).
+The GLIDE team is pleased to announce the general availability (GA) of the Ruby client for [Valkey GLIDE](https://github.com/valkey-io/valkey-glide), [valkey-glide-rb](https://github.com/valkey-io/valkey-glide-ruby).
 This release brings the shared Rust core that powers GLIDE's [Java](https://github.com/valkey-io/valkey-glide/tree/main/java), [Python](https://github.com/valkey-io/valkey-glide/tree/main/python), [Node.js](https://github.com/valkey-io/valkey-glide/tree/main/node), and [Go](https://github.com/valkey-io/valkey-glide/tree/main/go) clients to the Ruby community — with an API (application programming interface) designed to feel familiar to anyone coming from [redis-rb](https://github.com/redis/redis-rb).
 
-Ruby developers now get GLIDE's connection management, reliability, and observability out of the box, without reimplementing cluster handling, retries, or tracing in Ruby.
-In this post, we cover what GA means for the Ruby ecosystem, the key capabilities of the client, and how to get started.
+Ruby developers now get GLIDE's connection management, reliability, and observability out-of-the-box, without reimplementing cluster handling, retries, or tracing in Ruby.
+This post covers what GA means for the Ruby ecosystem, the key capabilities of the client, and how to get started.
 
 ## What GLIDE Brings to Ruby Developers
 
@@ -248,7 +248,7 @@ This is the same FFI approach used by GLIDE's Go and Python-sync clients — dif
 ## Join the Journey
 
 GA is a milestone, not a finish line.
-We'd love your feedback and contributions:
+The team would love your feedback and contributions:
 
 - File issues or feature requests: [valkey-glide-ruby/issues](https://github.com/valkey-io/valkey-glide-ruby/issues)
 - Check current command coverage: [implementation status wiki](https://github.com/valkey-io/valkey-glide-ruby/wiki/The-implementation-status-of-the-Valkey-commands)
@@ -259,13 +259,13 @@ Pub/Sub support is actively being worked on ([#135](https://github.com/valkey-io
 
 ## Contributors
 
-This client went from nothing to GA because of sustained work from the top four contributors, plus the broader Valkey and Freshworks community:
+This client went from nothing to GA because of sustained work from the top four contributors:
 
 1. **Mohsen Alizadeh**
-2. **Alex Le**
+2. **Alex Le** (Improving)
 3. **Sasidharan Gopal** (Freshworks)
 4. **Pratheep Kumar** (Freshworks)
 
-With additional contributions from Alex Rehnby-Martin, James Xin, Neil Derraugh, Prateek Kumar, Taylor Curran, Yi-Pin Chen, Mos Roshanavand, Alireza Nobakht, and Olle Jonsson.
+With additional contributions from Alex Rehnby-Martin, James Xin, Neil Derraugh, Prateek Kumar, Taylor Curran, Yi-Pin Chen, Mos Roshanavand, Alireza Nobakht, Affonso Moia Vieira, Thomas Zhou, and Olle Jonsson.
 
 Thank you to everyone who filed issues, reviewed PRs, and tested early builds against real workloads.
