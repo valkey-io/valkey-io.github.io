@@ -16,6 +16,10 @@
 {% else %}
     {% set page_contents = docs_file_contents %}
 {% endif %}
+{% set nav_json %}{{< nav_merged extra={config.extra} />}}{% endset %}
+{% set nav_data = load_data(literal=nav_json, format="json") %}
+{% set nav_location_json %}{{< nav_topic_location nav={nav_data} slug={page.slug} />}}{% endset %}
+{% set nav_location = load_data(literal=nav_location_json, format="json") %}
 {%- endblock head -%}
 
 {% block subhead_content %}
@@ -28,11 +32,21 @@
 
 {% block breadcrumbs %}
 {# Breadcrumbs section #}
-<nav class="breadcrumbs">
+<nav class="breadcrumbs" aria-label="Breadcrumb">
     <ul class="breadcrumb-list">
         <li class="breadcrumb-item">
             <a href="/topics/" class="breadcrumb-link">Topics</a>
         </li>
+        {% if nav_location.section and nav_location.landing != page.slug %}
+        <li class="breadcrumb-item">
+            <img src="/img/caret-right.svg" alt="" width="8" height="10"/>
+            {% if nav_location.landing %}
+            <a href="/topics/{{ nav_location.landing }}/" class="breadcrumb-link">{{ nav_location.title }}</a>
+            {% else %}
+            {{ nav_location.title }}
+            {% endif %}
+        </li>
+        {% endif %}
         <li class="breadcrumb-item breadcrumb-current" aria-current="page">
             <img src="/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
             {% if frontmatter_title %}{{ frontmatter_title }}{% else %}{{ page.slug | upper }}{% endif %}
@@ -56,19 +70,10 @@
 {% endblock main_content %}
 
 {% block related_content %}
-<h2 id="topic-list-title">Alphabetical Index</h2>
-<ul id="topic-list"></ul>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var 
-        topicListEl = document.getElementById('topic-list'),
-        f = fetch("/topics-list/");
-
-    f.then((r) => r.text()).then((v) => { topicListEl.innerHTML = v; })
-    f.catch((error) => { topicListEl.innerHTML = "Could not load topic list."; });
-});
-</script>
+{% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
+{% set nav_index = load_data(literal=nav_index_json, format="json") %}
+{% set nav_commands_json %}{{< nav_target_commands nav={nav_data} section={nav_location.section} topic={page.slug} index={nav_index} />}}{% endset %}
+{{< nav_menu nav={nav_data} extra={config.extra} current={page.slug} open={nav_location.section} commands={load_data(literal=nav_commands_json, format="json")} />}}
 
 <div class="edit_box">
     See an error?

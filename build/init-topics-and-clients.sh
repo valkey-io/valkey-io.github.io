@@ -67,6 +67,18 @@ done
 echo "Copied images to topics directory."
 
 
+# Create symlink to the directory with the documentation menu (nav.yml and
+# modules-nav/), next to the topics directory.
+nav_dir="$(dirname "$1")"
+if [ -f "$nav_dir/nav.yml" ]; then
+    if [ ! -L build-nav -o "$(readlink build-nav)" != "$nav_dir" ]; then
+        ln -sfn "$nav_dir" ./build-nav
+    fi
+    echo "Symlink to the documentation menu has been created at ./build-nav"
+else
+    echo "No nav.yml found next to the topics directory; the documentation menu will be empty."
+fi
+
 #create symlink to clients, expect if it already exists
 if [ ! -L build-clients -o "$(readlink build-clients)" != "$2" ]; then
     ln -s $2 ./build-clients

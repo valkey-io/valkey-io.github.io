@@ -551,29 +551,168 @@ p {
       max-width: 420px;
     }
 
+    // Link lists: the documentation menu (templates/macros/nav.html) and the
+    // command categories on the command reference page.
     ul {
       list-style: none;
       padding: 0;
       margin: 0 0 2rem 0;
 
-      li {
+      li a {
+        display: block;
+        padding: 0.6rem 1rem;
+        border-left: 4px solid transparent;
+        border-radius: 4px;
+        color: #1a1a1a;
+        line-height: 1.35;
 
-        a {
-          display: block;
+        &:hover {
           background-color: #d1d9ff;
-          padding: 1.2rem;
-          margin-bottom: 1rem;
-          color: #000;
-          text-transform: uppercase;
-          cursor: pointer;
-          font-weight: 600;
+        }
 
-          &:hover {
-            background-color: #b9c6ff;
-          }
+        &:focus-visible {
+          outline: 2px solid #2054B2;
+          outline-offset: 1px;
         }
       }
     }
+  }
+}
+
+.docs-menu {
+  margin-bottom: 2rem;
+
+  // More specific than the generic `.left-aside aside ul` margin.
+  .docs-menu-sections,
+  details > ul {
+    margin: 0;
+  }
+
+  .docs-menu-sections > li {
+    border-bottom: 1px solid #d5d9ec;
+  }
+
+  summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0.4rem;
+    cursor: pointer;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    // Chevron, rotated when the section is open.
+    &::after {
+      content: '';
+      flex: none;
+      width: 0.7rem;
+      height: 0.7rem;
+      margin-left: 1rem;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(-45deg);
+      transition: transform 0.15s ease;
+
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+      }
+    }
+
+    &:hover {
+      color: #2054B2;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #2054B2;
+      outline-offset: 1px;
+    }
+  }
+
+  details[open] > summary::after {
+    transform: rotate(45deg);
+  }
+
+  details > ul {
+    padding-bottom: 1rem;
+  }
+
+  .docs-menu-current {
+    background-color: #d1d9ff;
+    border-left-color: #2054B2;
+    font-weight: 600;
+  }
+
+  // The topic a command page belongs to.
+  .docs-menu-related {
+    border-left-color: #6983ff;
+  }
+
+  // Commands of the current or related topic, nested under it.
+  .docs-menu-commands {
+    margin: 0.2rem 0 0.6rem 1.4rem;
+    padding-left: 0.6rem;
+    border-left: 1px solid #c5cdea;
+
+    li a {
+      padding: 0.25rem 0.8rem;
+      @include monospace;
+      font-size: 1.3rem;
+    }
+  }
+
+  // Heading of the "Other commands" list: commands that belong to a section
+  // but not to one of its topics.
+  .docs-menu-label {
+    display: block;
+    padding: 0.6rem 1rem 0.2rem;
+    color: #444;
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .docs-menu-badge {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0 0.6rem;
+    border-radius: 1rem;
+    background-color: #e2e8f0;
+    color: #444;
+    font-size: 1.2rem;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+}
+
+// A heading in the left column below the menu, e.g. "Command categories" on
+// the command reference page, aligned with the menu's section titles.
+.left-aside aside h2.docs-menu-heading {
+  margin: 0;
+  padding: 1rem 0.4rem 0.4rem;
+}
+
+// Alphabetical index on the documentation start page.
+.topic-list {
+  list-style: none;
+  padding: 0;
+
+  li {
+    margin-bottom: 1rem;
+  }
+
+  a {
+    font-weight: 600;
+  }
+
+  .topic-description {
+    font-weight: 400;
+    color: #444;
   }
 }
 
@@ -683,30 +822,6 @@ p {
     background: #fff;
     border-radius: 50px;
     font-size: 80%;
-
-    &:focus {
-      border-color: #6983ff;;
-    }
-  }
-}
-
-.sb-search-container {
-  display: flex;
-  align-items: center;
-  margin: 0 -2rem 2rem;
-  padding: 0 2rem 2rem;
-  border-bottom: 1px solid rgb(104, 147, 238);
-
-  input {
-    flex: 1;
-    width: 100%;
-    min-width: 0px;
-    outline: none;
-    padding: 1.15rem;
-    border: 1px solid #ccc;
-    background: #fff;
-    border-radius: 50px;
-    font-size: 16px;
 
     &:focus {
       border-color: #6983ff;;

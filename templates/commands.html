@@ -103,7 +103,11 @@ document.addEventListener("DOMContentLoaded", function() {
 {% endblock main_content %}
 
 {% block related_content %}
-<h2 id="top">Command Categories</h2>
+{% set nav_json %}{{< nav_merged extra={config.extra} />}}{% endset %}
+{% set nav_data = load_data(literal=nav_json, format="json") %}
+{{< nav_menu nav={nav_data} extra={config.extra} />}}
+
+<h2 id="top" class="docs-menu-heading">Command categories</h2>
 <ul>
 {% if group_descriptions %}
 {# Sort category keys for a stable order; Tera v2 does not guarantee map iteration order. #}
@@ -113,14 +117,6 @@ document.addEventListener("DOMContentLoaded", function() {
     {% if grouped[replaced_group_id]  %}<li>  <a href="#{{ command_group_name }}">{{ group_description.display }}</a></li>{% endif %}
 {% endfor %}
 {% endif %}
-</ul>
-
-<h2>Alphabetical Command List</h2>
-<ul>
-{% set alpha_entries = commands_entries | sort(attribute="0")  %}
-{% for entry in alpha_entries  %}
-    <li><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code></li>
-{% endfor %}
 </ul>
 {% endblock related_content %}
 
