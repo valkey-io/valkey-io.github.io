@@ -3,7 +3,6 @@ title = "KV caching on Valkey: 2× faster responses and 25% more requests"
 date = 2026-10-20
 description = "Your GPUs spend part of every request re-reading context they already processed. We moved the KV cache to Valkey, and the same two GPU nodes served 25% more requests with replies streaming twice as fast."
 authors = ["omerrubi", "cnuthalapati", "jaduffy"]
-draft = true
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
