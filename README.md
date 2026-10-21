@@ -13,7 +13,7 @@ If you discover potential security issues, see the reporting instructions on our
 
 ## Build Locally
 
-This site is built with [Zola](https://www.getzola.org/).
+This site is built with [Zola](https://www.getzola.org/) 0.23.
 
 Follow these steps to build the site locally:
 
