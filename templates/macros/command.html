@@ -33,10 +33,13 @@
         {%- else -%}
             {%- set display_separator = "" -%}
         {%- endif -%}
-        {%- set arguments_str = start ~ " " ~ token ~ " " ~ name ~ " " ~ next ~ " " ~ end ~ display_separator %}
-        {{ arguments_str }}
+        {#- Escape the JSON-sourced token and name here. `next` was already
+            escaped by the nested call, so the result is marked safe. -#}
+        {%- set arguments_str = start ~ " " ~ (token | escape) ~ " "
+            ~ (name | escape) ~ " " ~ next ~ " " ~ end ~ display_separator %}
+        {{ arguments_str | safe }}
         {% if arguments.multiple %}
-            [ {{ arguments_str }} ... ]
+            [ {{ arguments_str | safe }} ... ]
         {% endif %}
     {%- endfor -%}
 {% endcomponent arguments_parse %}
