@@ -28,7 +28,7 @@
             <p>{{ card.description }}</p>
             <div class="community-card-actions">
               {% for link in card.links %}
-                <a href="{{ link.url }}" class="btn"{% if link.url is starting_with("http") %} target="_blank" rel="noopener"{% endif %}>{{ link.text }}</a>
+                <a href="{{ link.url }}" class="btn"{% if link.url is starting_with(pat="http") %} target="_blank" rel="noopener"{% endif %}>{{ link.text }}</a>
               {% endfor %}
             </div>
           </div>
