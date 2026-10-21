@@ -122,23 +122,29 @@
 {#-
     All commands that have a page, as a JSON list of
     {"name": "CONFIG GET", "container": "CONFIG", "group": "server", "slug": "config-get"}.
-    Build it once per page and pass it to nav_target_commands and nav_menu:
-    reading the command JSON files is the expensive part.
+    The data comes from the command pages' front matter, written by
+    build/init-commands.sh from the command JSON files. For pages without it
+    (no jq, or stubs from an older init run), the command JSON file is read
+    instead: same result, slower build.
 -#}
 {% component nav_command_index(extra) %}
-{%- set index = [] -%}
 {%- set commands_section = get_section(path="commands/_index.md") -%}
+{%- set index = [] -%}
 {%- for page in commands_section.pages -%}
-    {%- for json_path in [extra.command_json_path, extra.command_bloom_json_path, extra.command_json_json_path, extra.command_search_json_path] -%}
-        {%- set data = load_data(path=json_path ~ page.slug ~ ".json", required=false) -%}
-        {%- if data -%}
-            {%- set key = data | keys | first -%}
-            {%- set command = data[key] -%}
-            {%- set container = command?.container | default(value="") | upper -%}
-            {%- set_global index = [...index, {"name": (container ~ " " ~ key) | trim | upper, "container": container, "group": command.group, "slug": page.slug}] -%}
-            {%- break -%}
-        {%- endif -%}
-    {%- endfor -%}
+    {%- if page.extra?.command_name -%}
+        {%- set_global index = [...index, {"name": page.extra.command_name, "container": page.extra.command_container, "group": page.extra.command_group, "slug": page.slug}] -%}
+    {%- else -%}
+        {%- for json_path in [extra.command_json_path, extra.command_bloom_json_path, extra.command_json_json_path, extra.command_search_json_path] -%}
+            {%- set data = load_data(path=json_path ~ page.slug ~ ".json", required=false) -%}
+            {%- if data -%}
+                {%- set key = data | keys | first -%}
+                {%- set command = data[key] -%}
+                {%- set container = command?.container | default(value="") | upper -%}
+                {%- set_global index = [...index, {"name": (container ~ " " ~ key) | trim | upper, "container": container, "group": command.group, "slug": page.slug}] -%}
+                {%- break -%}
+            {%- endif -%}
+        {%- endfor -%}
+    {%- endif -%}
 {%- endfor -%}
 {{ index | json_encode | safe }}
 {% endcomponent nav_command_index %}
