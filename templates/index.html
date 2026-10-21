@@ -28,17 +28,19 @@
             {% set_global release_lines = [] %}
             {% set_global seen_lines = [] %}
             {% for candidate in release_section.pages | sort(attribute="date") | reverse %}
-                {% if candidate.extra.tag is not matching(".*-.*") %}
-                    {% set candidate_line = candidate.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+                {% if candidate.extra.tag is not matching(pat=".*-.*") %}
+                    {% set candidate_parts = candidate.extra.tag | split(pat=".") %}
+                    {% set candidate_line = candidate_parts[:2] | join(sep=".") %}
                     {% if candidate_line not in seen_lines %}
-                        {% set_global seen_lines = seen_lines | concat(with=candidate_line) %}
-                        {% set_global release_lines = release_lines | concat(with=candidate) %}
+                        {% set_global seen_lines = [...seen_lines, candidate_line] %}
+                        {% set_global release_lines = [...release_lines, candidate] %}
                     {% endif %}
                 {% endif %}
             {% endfor %}
 
             {% set latest = release_lines | first %}
-            {% set latest_line = latest.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+            {% set latest_parts = latest.extra.tag | split(pat=".") %}
+            {% set latest_line = latest_parts[:2] | join(sep=".") %}
 
             {# Highlights and the line URL both come from the /download/<line>/ page.
                get_page fails the build if a release ships without its line page. #}
@@ -61,8 +63,9 @@
             <h3>Latest supported version of past releases</h3>
             <div class="inner-card">
                 <ul class="list-links-small release-links">
-                    {% for older_release in release_lines | slice(start=1) %}
-                        {% set older_line = older_release.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+                    {% for older_release in release_lines[1:] %}
+                        {% set older_parts = older_release.extra.tag | split(pat=".") %}
+                        {% set older_line = older_parts[:2] | join(sep=".") %}
                         {% set older_slug = older_line | replace(from=".", to="-") %}
                         {% set older_line_page = get_page(path="download/versions/" ~ older_slug ~ ".md") %}
                         <li>
@@ -81,7 +84,8 @@
             </div>
             <div class="homepage-blog-section">
                 {% set blog_post_section = get_section(path="blog/_index.md") %}
-                {% set blog_posts = blog_post_section.pages | slice(end=section.extra.latest_blog_posts) %}
+                {% set blog_count = section.extra.latest_blog_posts %}
+                {% set blog_posts = blog_post_section.pages[:blog_count] %}
                 {% for post in blog_posts %}
                     {# The whole card is the link, so there is no separate call to action.
                        Featured images are 16:9 decoration; a thumbnail this narrow could only

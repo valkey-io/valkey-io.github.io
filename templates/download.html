@@ -1,5 +1,4 @@
 {% extends "right-aside.html" %}
-{% import "macros/release.html" as release_macros %}
 
 {% block subhead_content%}
 <h1 class="page-title">Download Valkey</h1>
@@ -11,11 +10,12 @@
 {% set_global release_lines = [] %}
 {% set_global seen_lines = [] %}
 {% for candidate in release_section.pages | sort(attribute="date") | reverse %}
-    {% if candidate.extra.tag is not matching(".*-.*") %}
-        {% set candidate_line = candidate.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+    {% if candidate.extra.tag is not matching(pat=".*-.*") %}
+        {% set candidate_parts = candidate.extra.tag | split(pat=".") %}
+        {% set candidate_line = candidate_parts[:2] | join(sep=".") %}
         {% if candidate_line not in seen_lines %}
-            {% set_global seen_lines = seen_lines | concat(with=candidate_line) %}
-            {% set_global release_lines = release_lines | concat(with=candidate) %}
+            {% set_global seen_lines = [...seen_lines, candidate_line] %}
+            {% set_global release_lines = [...release_lines, candidate] %}
         {% endif %}
     {% endif %}
 {% endfor %}
@@ -25,7 +25,7 @@
 {{ page.content | safe }}
 
 <h2>Latest release: Valkey {{ latest.extra.tag }}</h2>
-{{ release_macros::release_info(date=latest.date, release=latest.extra) }}
+{{< release_info date={latest.date} release={latest.extra} />}}
 
 <h2>Supported versions</h2>
 <p>Each version page has the release highlights, containers, and binaries for the newest release on that line.</p>
@@ -39,7 +39,8 @@
     </thead>
     <tbody>
         {% for line_release in release_lines %}
-            {% set line = line_release.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+            {% set line_parts = line_release.extra.tag | split(pat=".") %}
+            {% set line = line_parts[:2] | join(sep=".") %}
             {# get_page fails the build if a release ships without its line page. #}
             {% set line_slug = line | replace(from=".", to="-") %}
             {% set line_page = get_page(path="download/versions/" ~ line_slug ~ ".md") %}
@@ -57,10 +58,11 @@
    them here would only add noise. #}
 {% set_global upcoming = [] %}
 {% for candidate in release_section.pages | sort(attribute="date") | reverse %}
-    {% if candidate.extra.tag is matching(".*-.*") %}
-        {% set candidate_line = candidate.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+    {% if candidate.extra.tag is matching(pat=".*-.*") %}
+        {% set candidate_parts = candidate.extra.tag | split(pat=".") %}
+        {% set candidate_line = candidate_parts[:2] | join(sep=".") %}
         {% if candidate_line not in seen_lines %}
-            {% set_global upcoming = upcoming | concat(with=candidate) %}
+            {% set_global upcoming = [...upcoming, candidate] %}
         {% endif %}
     {% endif %}
 {% endfor %}
