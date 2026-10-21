@@ -70,12 +70,18 @@ echo "Copied images to topics directory."
 # Create symlink to the directory with the documentation menu (nav.yml and
 # modules-nav/), next to the topics directory.
 nav_dir="$(dirname "$1")"
+if [ -e build-nav ] && [ ! -L build-nav ]; then
+    echo "build-nav exists and is not a symlink. Remove it before proceeding."
+    exit 1
+fi
 if [ -f "$nav_dir/nav.yml" ]; then
-    if [ ! -L build-nav -o "$(readlink build-nav)" != "$nav_dir" ]; then
-        ln -sfn "$nav_dir" ./build-nav
+    if [ ! -L build-nav ] || [ "$(readlink build-nav)" != "$nav_dir" ]; then
+        ln -sfn "$nav_dir" ./build-nav || exit 1
     fi
     echo "Symlink to the documentation menu has been created at ./build-nav"
 else
+    # Remove a link to a previous docs checkout, so that its menu isn't used.
+    rm -f ./build-nav
     echo "No nav.yml found next to the topics directory; the documentation menu will be empty."
 fi
 
