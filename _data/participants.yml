@@ -253,7 +253,7 @@
 - name: DBine
   link: https://dbine.com
   company: >
-    AddLayer builds DBine, a free desktop database manager for Windows, macOS and Linux, released under the MIT license on [GitHub](https://github.com/addlayer-io/dbine).
+    AddLayer builds DBine, a free desktop database manager for Windows, macOS and Linux, released under the Apache 2.0 license on [GitHub](https://github.com/addlayer-io/dbine).
     It works with 130+ databases and cloud services in the same window.
   offering: >
     [DBine](https://dbine.com) connects to Valkey over TCP or TLS, directly or through an SSH tunnel.
