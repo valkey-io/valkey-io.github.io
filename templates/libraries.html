@@ -203,13 +203,11 @@
 
       {% if kind == "clients" %}
       {% for entry in clients %}
-        {% set slug = entry.name | slugify %}
         {% set is_first_party = entry.repository is starting_with(pat="https://github.com/valkey-io/") %}
         {% set lang = entry.language | default(value="") %}
         {% set search_text = entry.name ~ " " ~ entry.description ~ " " ~ lang %}
         {% set lang_slug = lang | lower | replace(from='#', to='-sharp') | replace(from='.', to='-') | replace(from=' ', to='-') %}
         <article class="entry-card"
-                 data-slug="{{ slug }}"
                  data-name-lower="{{ entry.name | lower }}"
                  data-search="{{ search_text | lower }}"
                  data-desc="{{ entry.description | lower }}"
@@ -283,7 +281,6 @@
 
       {% else %}
       {% for entry in integrations %}
-        {% set slug = entry.name | slugify %}
         {% set is_first_party = entry.repository is starting_with(pat="https://github.com/valkey-io/") %}
         {% set_global ec_tags = [] %}
         {% if entry.tags is defined and entry.tags is iterable %}
@@ -295,7 +292,6 @@
         {% set tagstr = ec_tags | join(sep=" ") %}
         {% set search_text = entry.name ~ " " ~ entry.description ~ " " ~ tagstr %}
         <article class="entry-card"
-                 data-slug="{{ slug }}"
                  data-name-lower="{{ entry.name | lower }}"
                  data-search="{{ search_text | lower }}"
                  data-desc="{{ entry.description | lower }}"

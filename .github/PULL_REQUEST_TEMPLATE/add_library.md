@@ -48,7 +48,7 @@ fields below — extra fields are ignored by the templates and may fail review.
 
 **Required for all entries:**
 
-- `name` (string) — official name; also used to derive the card slug.
+- `name` (string) — official name.
 - `description` (string) — 1–2 factual, vendor-neutral sentences, at most 200 characters (the build fails above that).
 - `type` (string) — exactly one of `"clients"`, `"tools"`, or `"ai"`, matching the directory.
 - `license` (string) — SPDX identifier, e.g. `"Apache-2.0"`, `"MIT"`, `"BSD-3-Clause"`. Must be an OSI-approved open-source license.
