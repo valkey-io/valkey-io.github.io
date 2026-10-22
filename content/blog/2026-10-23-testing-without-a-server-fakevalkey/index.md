@@ -1,12 +1,12 @@
 +++
-title = "Testing without a server: inside FakeValkey, the in-memory test double for Valkey"
-date = 2026-09-14
+title = "Testing without a server: using FakeValkey, the in-memory test double for Valkey"
+date = 2026-10-23
 description = """FakeValkey runs the Valkey command set inside your Python test process, with no server, container, or network connection.
 Here is how to use it, how it keeps pace with Valkey, and when you still need a real server."""
 authors = ["cunla"]
 
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["How-to"]
 
 [extra]
 featured = false
@@ -21,7 +21,7 @@ A test double sits between the two: an implementation of the server's behavior t
 
 I maintain [fakeredis](https://github.com/cunla/fakeredis-py), a pure-Python, in-memory implementation of the Valkey command set that plugs into [valkey-py](https://github.com/valkey-io/valkey-py) as a client class.
 It has about 40 million [downloads per month](https://pypistats.org/packages/fakeredis) (September 2026).
-This post covers its `FakeValkey` class: how to use it, how it keeps pace with Valkey, where matching Valkey's behavior gets hard, how to check a migration to Valkey with it, and when you should use a real server instead.
+This post covers its `FakeValkey` class: how to use it, how it keeps pace with Valkey, how to write tests that hold up across Valkey versions, how to check a migration to Valkey with it, and when you should use a real server instead.
 
 ## Replacing a Valkey client with FakeValkey
 
@@ -111,21 +111,17 @@ A test that applies to some versions only carries a marker such as `@pytest.mark
 Seen this way, the suite is an executable specification of observed Valkey behavior.
 A test that passes against Valkey and fails against the fake is a bug report against the fake with the reproduction already attached.
 
-## Where matching Valkey gets hard
+## Writing tests that hold up across Valkey versions
 
-The documented behavior of a command is the part you can implement from the docs.
-The hard part is behavior that tests depend on without anyone writing it down.
-Three examples from recent releases:
+Some behavior that tests depend on is not in the command docs, and the fake has had to match it case by case.
+Each of these cases suggests a habit for your own tests:
 
-- **Lua globals.** Valkey scripts can call `server.call()` as well as `redis.call()`, because Valkey 9.1.2 [registers a `server` global](https://github.com/valkey-io/valkey/blob/9.1.2/src/modules/lua/engine_lua.c#L113-L133).
-  Under the fake, a script written that way failed with `attempt to index global 'server' (a nil value)` until [Przemysław Buczkowski](https://github.com/przemub) added the alias in [version 2.36.0](https://github.com/cunla/fakeredis-py/pull/480).
-- **Error text.** Valkey 9.1.2 rejects a Lua table passed as a command argument with [`Command arguments must be strings or integers`](https://github.com/valkey-io/valkey/blob/9.1.2/src/modules/lua/script_lua.c#L729), while Valkey 7.2.4, the first Valkey release, [used `Lua redis lib command arguments must be strings or integers`](https://github.com/valkey-io/valkey/blob/7.2.4/src/script_lua.c#L851).
-  A test that asserts on the message passes only if the fake uses the same wording, so the fake [picks the message by `server_type`](https://github.com/cunla/fakeredis-py/blob/v2.38.0/fakeredis/commands_mixins/scripting_mixin.py#L530-L536).
-- **Exception classes.** Code written against valkey-py catches `valkey.ResponseError`, which is a different class from the one redis-py raises.
-  Until [version 2.31.0](https://github.com/cunla/fakeredis-py/issues/402), `FakeValkey` raised that other class, so an `except valkey.ResponseError` block in the code under test never ran.
-
-Today Valkey is a first-class target in the test suite.
-The fixtures read the `valkey_version` field that Valkey reports and gate tests on it, rather than on the `redis_version` field that Valkey also reports for compatibility.
+- **Use `server.call()` in new Lua scripts.** Valkey 8.0 [registers `server` as the scripting API and keeps `redis` as an alias](https://github.com/valkey-io/valkey/blob/8.0.0/src/script_lua.c#L1478-L1486), so existing scripts keep working.
+  `FakeValkey` supports the `server` global from [version 2.36.0](https://github.com/cunla/fakeredis-py/pull/480), added by [Przemysław Buczkowski](https://github.com/przemub); if a script fails under the fake with `attempt to index global 'server' (a nil value)`, upgrade the library.
+- **Assert on the exception class, not the error text.** Messages can change between releases: Valkey 7.2.4 rejects a Lua table passed as a command argument with [`Lua redis lib command arguments must be strings or integers`](https://github.com/valkey-io/valkey/blob/7.2.4/src/script_lua.c#L851), and Valkey 9.1.2 with [`Command arguments must be strings or integers`](https://github.com/valkey-io/valkey/blob/9.1.2/src/modules/lua/script_lua.c#L729).
+  The fake [picks the message by `server_type`](https://github.com/cunla/fakeredis-py/blob/v2.38.0/fakeredis/commands_mixins/scripting_mixin.py#L530-L536), but a test that checks only `pytest.raises(valkey.ResponseError)` passes on every version.
+- **Catch `valkey.ResponseError` in code written against valkey-py.** It is a different class from the one redis-py raises, and `FakeValkey` raises it from [version 2.31.0](https://github.com/cunla/fakeredis-py/issues/402), so require at least that version if your code has `except valkey.ResponseError` blocks.
+- **Gate version-specific integration tests on `valkey_version`.** Valkey also reports a `redis_version` field for compatibility, but it stays at `7.2.4` in every Valkey release, so it cannot tell 8.1 from 9.1; the library's own fixtures read `valkey_version`.
 
 ## Checking a migration to Valkey
 
