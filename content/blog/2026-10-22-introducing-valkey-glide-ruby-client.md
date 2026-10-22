@@ -1,7 +1,7 @@
 +++
 title = "Introducing the Valkey GLIDE Ruby Client: Now Generally Available!"
 description = """The Ruby client for Valkey GLIDE, valkey-glide-rb, is now generally available, bringing GLIDE's shared Rust core, proactive connection management, cluster topology handling, and native observability to the Ruby ecosystem."""
-date = 2026-09-22
+date = 2026-10-22
 authors = ["sasidharan-gopal"]
 
 [taxonomies]
@@ -42,8 +42,8 @@ client = Valkey.new(
   host: "localhost",
   port: 6379,
   reconnect_attempts: 10,
-  reconnect_delay: 5,        # initial delay, ms
-  reconnect_delay_max: 50,   # max delay, ms
+  reconnect_delay: 0.005,    # initial delay, seconds (5 ms)
+  reconnect_delay_max: 0.05, # max delay, seconds (50 ms)
   timeout: 2.0,              # per-request timeout, seconds
   connect_timeout: 1.0,      # connection timeout, seconds
   username: "myuser",        # authentication
