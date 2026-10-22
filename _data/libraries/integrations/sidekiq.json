@@ -1,7 +1,7 @@
 {
   "name": "Sidekiq",
   "language": "Ruby",
-  "license": "LGPL-3.0",
+  "license": "LGPL-3.0-only",
   "description": "Background job processing for Ruby applications, with maintained support for Valkey 7.2 and above.",
   "repository": "https://github.com/sidekiq/sidekiq",
   "documentation": "https://github.com/sidekiq/sidekiq/wiki/Using-Redis/b685f8063a1147679a5221f675433d40588bdaff",
