@@ -101,7 +101,7 @@ do
                 | ((.value.container // "") | ascii_upcase) as $c
                 | "command_name = \((($c + " " + .key) | ltrimstr(" ") | ascii_upcase) | @json)",
                   "command_container = \($c | @json)",
-                  "command_group = \(.value.group | @json)"' "$json_file")
+                  "command_group = \((.value.group // "") | @json)"' "$json_file")
             menu_data=$(printf '[extra]\n%s' "$menu_fields")
         fi
         if [ "$with_aliases" = 1 ]; then

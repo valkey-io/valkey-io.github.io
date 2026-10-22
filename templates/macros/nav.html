@@ -140,7 +140,7 @@
                 {%- set key = data | keys | first -%}
                 {%- set command = data[key] -%}
                 {%- set container = command?.container | default(value="") | upper -%}
-                {%- set_global index = [...index, {"name": (container ~ " " ~ key) | trim | upper, "container": container, "group": command.group, "slug": page.slug}] -%}
+                {%- set_global index = [...index, {"name": (container ~ " " ~ key) | trim | upper, "container": container, "group": command?.group | default(value=""), "slug": page.slug}] -%}
                 {%- break -%}
             {%- endif -%}
         {%- endfor -%}
