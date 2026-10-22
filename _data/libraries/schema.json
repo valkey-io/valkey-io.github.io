@@ -183,17 +183,16 @@
       "additionalProperties": false,
       "required": ["featureDescriptions"],
       "properties": {
-        "version": { "description": "The metadata version, as a string.", "type": "string" },
-        "updated": { "description": "The date of the last metadata change, as a string.", "type": "string" },
         "featureDescriptions": {
-          "description": "An object with the label and definition shown for each client feature key.",
-          "type": "object",
-          "additionalProperties": {
-            "description": "An object with the feature's `label` and `definition`, both non-empty strings.",
+          "description": "A list of the client features in the order that cards and the legend show them.",
+          "type": "array",
+          "items": {
+            "description": "An object with a feature's `key`, `label` and `definition`.",
             "type": "object",
             "additionalProperties": false,
-            "required": ["label", "definition"],
+            "required": ["key", "label", "definition"],
             "properties": {
+              "key": { "description": "The feature's key in an entry's `features`.", "type": "string" },
               "label": { "description": "The feature name that cards and the legend show. It must not be blank or have spaces at either end.", "type": "string", "pattern": "\\S", "not": { "type": "string", "pattern": "^\\s|\\s$" } },
               "definition": { "description": "The explanation that the legend shows. It must not be blank or have spaces at either end.", "type": "string", "pattern": "\\S", "not": { "type": "string", "pattern": "^\\s|\\s$" } }
             }

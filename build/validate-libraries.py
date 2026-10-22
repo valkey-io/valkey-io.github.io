@@ -248,11 +248,13 @@ def main():
         if not metadata_problems:
             feature_keys = list(entry_schema["properties"]["features"]["properties"])
             where = f"{repo_path(metadata_path)}: featureDescriptions"
-            described = set(metadata["featureDescriptions"])
+            described = [item["key"] for item in metadata["featureDescriptions"]]
+            for key in sorted({key for key in described if described.count(key) > 1}):
+                problems.append(f"{where}: '{key}' is listed more than once")
             for key in feature_keys:
                 if key not in described:
                     problems.append(f"{where}: has no entry for the feature key `{key}`")
-            for key in sorted(described - set(feature_keys)):
+            for key in sorted(set(described) - set(feature_keys)):
                 problems.append(f"{where}: '{key}' is not a feature key in {repo_path(schema_path)}")
 
     if problems:

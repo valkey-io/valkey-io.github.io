@@ -36,52 +36,40 @@ the **Integrations** page. To choose between them:
 
 The `type` value must match the directory the file lives in. Name the file
 after your entry, lowercase and hyphenated (e.g. `valkey-glide-python.json`).
-The CI build loads every file in the manifest and **fails on any malformed or
-invalid entry**, so problems are caught before merge. To check before CI does,
-run `zola build` with the Zola version CI uses (see
-`.github/workflows/zola-deploy.yml`); no other repositories are needed.
+CI checks every entry with `build/validate-libraries.py`, against
+`_data/libraries/schema.json`, the manifest, and the SPDX license list. To run
+the check locally, use `./build/validate-libraries.py` with
+[uv](https://docs.astral.sh/uv/) installed. The README's "Checking catalog
+entries" section shows how to run it without uv. No other repositories are
+needed.
 
 ## Fields
 
 Entries are flat JSON objects, apart from a client's `features`. Use only the
-fields below — extra fields are ignored by the templates and may fail review.
+fields below.
 
 **Required for all entries:**
 
 - `name` (string) — official name.
-- `description` (string) — 1–2 factual, vendor-neutral sentences, at most 200 characters (the build fails above that).
+- `description` (string) — one or two factual, vendor-neutral sentences. The maximum length is set in `_data/libraries/schema.json`.
 - `type` (string) — exactly one of `"clients"`, `"tools"`, or `"ai"`, matching the directory.
 - `license` (string) — SPDX identifier, e.g. `"Apache-2.0"`, `"MIT"`, `"BSD-3-Clause"`. Must be an OSI-approved open-source license.
 - `repository` (string) — public source-code repository URL. Entries whose repository is under `https://github.com/valkey-io/` are shown as maintained by Valkey.
 - `documentation` (string) — a link to a page that shows how to use the project with Valkey. For a page on valkey.io, use a root-relative path such as `/topics/cli/`; for any other site, an `https://` URL. Link the first of these that exists: a Valkey page in the project's docs, a Valkey example, a getting-started guide, or the README section that shows basic usage. For a library that speaks the Redis protocol, a page that shows the connection setup is enough. A homepage, a docs index, or a directory listing isn't. Link GitHub files at a tag or commit (`/blob/v1.2.3/…`), not a branch.
 
-**Required for clients — `features` (object of true/false flags):**
+**Required for clients:**
 
-One flag per feature below, each `true` (supported) or `false`. Include all nine; the build fails if one is missing, misspelled, or not a boolean.
-
-| Key | Feature |
-| --- | --- |
-| `replica` | Replica reads |
-| `backoff` | Retry & backoff |
-| `pubsub` | Pub/Sub restoration |
-| `scan` | SCAN family |
-| `latency` | Low-latency routing |
-| `az` | AZ affinity |
-| `csc` | Client-side caching |
-| `capa` | Advanced capabilities |
-| `pool` | Connection pooling |
+- `language` (string) — primary language. Tools and AI libraries that are imported into code, such as ORM adapters, SDK wrappers and agent frameworks, set it too. Standalone tools leave it out. If a library has a separate package for each language, add one entry per language. The allowed languages are in `_data/libraries/schema.json`. If yours isn't there, add it to the schema in your PR.
+- `features` (object of true/false flags) — one flag for each feature key listed under `features` in `_data/libraries/schema.json`. Set a flag to `true` if the client supports the feature, otherwise `false`. Include them all.
 
 The client example below shows the format.
-The definition of each feature, as shown on the site, is in `featureDescriptions` in `_data/libraries/metadata.json`.
+The label and definition of each feature, as shown on the site, are in `featureDescriptions` in `_data/libraries/metadata.json`.
 A feature that every listed client supports, or that none does, isn't shown on cards or in the legend, because it doesn't tell clients apart.
 So a feature you set can appear or disappear as other clients are added or removed.
 
 **Optional fields:**
 
-- `language` (string) — primary language. Required in practice for clients and any library imported into code (ORM adapters, SDK wrappers, agent frameworks). Omit for standalone tools. If a library ships separate packages per language, create one entry per language.
-- `tags` (array of strings) — category tags that tools and AI libraries use for filtering and discovery. Client entries have no tags. Use a tag already in use where one fits, and add a new one only if none does. Tags in use:
-  - Tools: `CLI & GUI`, `Deploy & operate`, `Frameworks & ORMs`, `Queues & background jobs`
-  - AI: `RAG & retrieval`, `Agent memory`, `Agent frameworks`, `Inference & serving`
+- `tags` (array of strings) — category tags that tools and AI libraries use for filtering and discovery. Client entries have no tags. The tags allowed for each `type` are in `_data/libraries/schema.json`. Use one of those where it fits. If none does, propose a new tag by adding it to the schema in your PR.
 - `installCommand` (string) — primary install command, e.g. `"pip install valkey-glide"`.
 
 ## Example entries
@@ -139,12 +127,12 @@ in the manifest will not appear on the site.
 ### Submission checklist
 
 - [ ] Valid JSON, placed in the directory matching its `type`, and registered once in `_data/libraries/manifest.json`.
-- [ ] All required fields present: `name`, `description`, `type`, `license`, `repository`, `documentation` — plus `features` for clients, with all nine flags.
+- [ ] All required fields present: `name`, `description`, `type`, `license`, `repository`, `documentation` — plus `language` and `features` for clients, with every flag.
 - [ ] Tested compatible with Valkey 7.2 or above.
 - [ ] OSI-approved open-source license.
 - [ ] Repository is publicly accessible, active within the last 6 months, and has a README with basic usage.
 - [ ] `documentation` opens on a page that shows how to use the project with Valkey, not a homepage or an index.
-- [ ] Description is factual, vendor-neutral and at most 200 characters, and every `features` flag and compatibility claim is accurate.
+- [ ] Description is factual, vendor-neutral and within the length limit in `_data/libraries/schema.json`. Every `features` flag and compatibility claim is accurate.
 - [ ] Commits are signed per the DCO using `--signoff`.
 
 By submitting this pull request, I confirm that my contribution is made under the terms of the BSD-3-Clause License.

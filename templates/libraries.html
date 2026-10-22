@@ -3,7 +3,8 @@
 {# Libraries catalog page. Each URL renders one catalog:                    #}
 {#   content/clients/_index.md      → kind = "clients"                       #}
 {#   content/integrations/_index.md → kind = "integrations"                  #}
-{# Both pages load and validate every entry, then render only their kind.   #}
+{# Both pages load every entry, then render only their kind. Entries are     #}
+{# validated elsewhere, so this template trusts them.                        #}
 {# Cards are rendered at build time from _data/libraries/ (no runtime fetch); #}
 {# libraries.js filters and sorts them. Without JS the JS-only controls are  #}
 {# hidden and every card shows.                                              #}
@@ -15,6 +16,7 @@
 
   {# Data assembly #}
   {% set manifest = load_data(path="_data/libraries/manifest.json", format="json") %}
+  {# featureDescriptions is an array so cards and the legend list features in its order. #}
   {% set meta = load_data(path="_data/libraries/metadata.json", format="json") %}
 
   {# Per-language colors from GitHub Linguist (MIT-licensed color data, not #}
@@ -28,58 +30,6 @@
     {% set_global clients = [...clients, entry] %}
   {% endfor %}
 
-  {# Client feature flags, in the order cards and the legend list them. #}
-  {% set fkeys = ["replica", "backoff", "pubsub", "scan", "latency", "az", "csc", "capa", "pool"] %}
-
-  {% set required = ["name", "description", "type", "license", "repository"] %}
-  {# Keeps cards a similar size; the PR template states the same limit. #}
-  {% set max_description = 200 %}
-  {% for e in clients %}
-    {% set label = e.name | default(value="<missing name>") %}
-    {% for f in required %}
-      {% if e[f] is not defined or e[f] == "" %}
-        {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' is missing required field '" ~ f ~ "'") }}
-      {% endif %}
-    {% endfor %}
-    {% if e.type != "clients" %}
-      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' has type '" ~ e.type ~ "' (expected clients)") }}
-    {% endif %}
-    {# The Documentation link is required and must show how to use the entry with Valkey (PR template). #}
-    {# Pages on valkey.io are linked root-relative (/topics/cli/), other sites by https:// URL. #}
-    {% if e.documentation is not defined or e.documentation is not string %}
-      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' needs 'documentation': a link that shows how to use it with Valkey") }}
-    {% endif %}
-    {% set is_root_relative = e.documentation is starting_with(pat="/") and e.documentation is not starting_with(pat="//") %}
-    {% set is_https = e.documentation is starting_with(pat="https://") %}
-    {% if e.documentation is starting_with(pat="https://valkey.io/") %}
-      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' links a valkey.io page by full URL; use a root-relative path, e.g. /topics/cli/") }}
-    {% elif not is_root_relative and not is_https %}
-      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' needs 'documentation': a root-relative path to a valkey.io page or an https:// link") }}
-    {% endif %}
-    {% set desc_length = e.description | length %}
-    {% if desc_length > max_description %}
-      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' description is " ~ desc_length ~ " characters (max " ~ max_description ~ ")") }}
-    {% endif %}
-    {# Every flag must be spelled out, so a missing one can't silently read as "not supported". #}
-    {% if e.features is not defined or e.features is not map %}
-      {{ throw(message="_data/libraries/clients: client entry '" ~ label ~ "' needs 'features': an object with a true/false flag for each feature") }}
-    {% endif %}
-    {% for key in fkeys %}
-      {% set flag = e.features[key] | default(value="missing") %}
-      {# Tera's != is false between a number and a boolean, so test for a boolean with ==. #}
-      {% set is_boolean = flag == true or flag == false %}
-      {% if not is_boolean %}
-        {{ throw(message="_data/libraries/clients: client entry '" ~ label ~ "' needs features." ~ key ~ ": true or false") }}
-      {% endif %}
-    {% endfor %}
-    {% for key, flag in e.features %}
-      {% if key not in fkeys %}
-        {% set known_features = fkeys | join(sep=", ") %}
-        {{ throw(message="_data/libraries/clients: client entry '" ~ label ~ "' has unknown feature '" ~ key ~ "' (known: " ~ known_features ~ ")") }}
-      {% endif %}
-    {% endfor %}
-  {% endfor %}
-
   {# --- Integrations ------------------------------------------------------ #}
   {% set_global integrations = [] %}
   {% for rel in manifest.integrations %}
@@ -87,48 +37,20 @@
     {% set_global integrations = [...integrations, entry] %}
   {% endfor %}
 
-  {% for e in integrations %}
-    {% set label = e.name | default(value="<missing name>") %}
-    {% for f in required %}
-      {% if e[f] is not defined or e[f] == "" %}
-        {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' is missing required field '" ~ f ~ "'") }}
-      {% endif %}
-    {% endfor %}
-    {% if e.type != "tools" and e.type != "ai" %}
-      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' has type '" ~ e.type ~ "' (expected tools or ai)") }}
-    {% endif %}
-    {# The Documentation link is required and must show how to use the entry with Valkey (PR template). #}
-    {# Pages on valkey.io are linked root-relative (/topics/cli/), other sites by https:// URL. #}
-    {% if e.documentation is not defined or e.documentation is not string %}
-      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' needs 'documentation': a link that shows how to use it with Valkey") }}
-    {% endif %}
-    {% set is_root_relative = e.documentation is starting_with(pat="/") and e.documentation is not starting_with(pat="//") %}
-    {% set is_https = e.documentation is starting_with(pat="https://") %}
-    {% if e.documentation is starting_with(pat="https://valkey.io/") %}
-      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' links a valkey.io page by full URL; use a root-relative path, e.g. /topics/cli/") }}
-    {% elif not is_root_relative and not is_https %}
-      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' needs 'documentation': a root-relative path to a valkey.io page or an https:// link") }}
-    {% endif %}
-    {% set desc_length = e.description | length %}
-    {% if desc_length > max_description %}
-      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' description is " ~ desc_length ~ " characters (max " ~ max_description ~ ")") }}
-    {% endif %}
-  {% endfor %}
-
   {# --- Clients: feature suppression + languages -------------------------- #}
   {% set client_count = clients | length %}
   {% set_global suppressed = [] %}
-  {% for key in fkeys %}
+  {% for feat in meta.featureDescriptions %}
     {% set_global tcount = 0 %}
     {% for e in clients %}
-      {% if e.features[key] %}
+      {% if e.features[feat.key] %}
         {% set_global tcount = tcount + 1 %}
       {% endif %}
     {% endfor %}
     {# A feature every client supports, or none does, doesn't tell clients #}
     {# apart, so it's left off the cards and out of the legend.            #}
     {% if client_count > 0 and (tcount == client_count or tcount == 0) %}
-      {% set_global suppressed = [...suppressed, key] %}
+      {% set_global suppressed = [...suppressed, feat.key] %}
     {% endif %}
   {% endfor %}
 
@@ -245,8 +167,8 @@
           {% endif %}
 
           {% set_global disc_count = 0 %}
-          {% for key in fkeys %}
-            {% if entry.features[key] and key not in suppressed %}
+          {% for feat in meta.featureDescriptions %}
+            {% if entry.features[feat.key] and feat.key not in suppressed %}
               {% set_global disc_count = disc_count + 1 %}
             {% endif %}
           {% endfor %}
@@ -254,10 +176,9 @@
             <summary>Advanced features supported <span class="disc-count">({{ disc_count }})</span></summary>
             {% if disc_count > 0 %}
             <ul class="feature-list">
-              {% for key in fkeys %}
-                {% if entry.features[key] and key not in suppressed %}
-                {% set feat = meta.featureDescriptions[key] %}
-                <li class="feature-badge" title="{{ feat.definition }}" data-feature="{{ key }}">{{ feat.label }}</li>
+              {% for feat in meta.featureDescriptions %}
+                {% if entry.features[feat.key] and feat.key not in suppressed %}
+                <li class="feature-badge" title="{{ feat.definition }}" data-feature="{{ feat.key }}">{{ feat.label }}</li>
                 {% endif %}
               {% endfor %}
             </ul>
@@ -343,11 +264,9 @@
     <section class="legend" data-legend aria-label="Feature definitions">
       <h2 class="legend-title">Feature definitions</h2>
       <dl class="legend-list">
-        {# Maps iterate alphabetically; walk fkeys so the legend keeps the card order. #}
-        {% for key in fkeys %}
-        {% if key not in suppressed %}
-        {% set feat = meta.featureDescriptions[key] %}
-        <div class="legend-item" data-feature="{{ key }}">
+        {% for feat in meta.featureDescriptions %}
+        {% if feat.key not in suppressed %}
+        <div class="legend-item" data-feature="{{ feat.key }}">
           <dt class="legend-term">{{ feat.label }}</dt>
           <dd class="legend-def">{{ feat.definition }}</dd>
         </div>
