@@ -105,7 +105,10 @@ document.addEventListener("DOMContentLoaded", function() {
 {% block related_content %}
 {% set nav_json %}{{< nav_merged extra={config.extra} />}}{% endset %}
 {% set nav_data = load_data(literal=nav_json, format="json") %}
-{{< nav_menu nav={nav_data} extra={config.extra} />}}
+{% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
+{% set nav_map_json %}{{< nav_command_map nav={nav_data} index={load_data(literal=nav_index_json, format="json")} />}}{% endset %}
+{% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
+{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} />}}
 
 <h2 id="top" class="docs-menu-heading">Command categories</h2>
 <ul>

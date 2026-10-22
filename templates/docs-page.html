@@ -71,9 +71,9 @@
 
 {% block related_content %}
 {% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
-{% set nav_index = load_data(literal=nav_index_json, format="json") %}
-{% set nav_commands_json %}{{< nav_target_commands nav={nav_data} section={nav_location.section} topic={page.slug} index={nav_index} />}}{% endset %}
-{{< nav_menu nav={nav_data} extra={config.extra} current={page.slug} open={nav_location.section} commands={load_data(literal=nav_commands_json, format="json")} />}}
+{% set nav_map_json %}{{< nav_command_map nav={nav_data} index={load_data(literal=nav_index_json, format="json")} />}}{% endset %}
+{% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
+{{< nav_menu nav={nav_data} extra={config.extra} current={page.slug} open={nav_location.section} command_map={nav_command_map} />}}
 
 <div class="edit_box">
     See an error?

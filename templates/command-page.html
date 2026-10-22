@@ -223,12 +223,13 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 {% endblock main_content %}
 
 {% block related_content %}
-{% if nav_location %}
 {% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
-{% set nav_index = load_data(literal=nav_index_json, format="json") %}
-{% set nav_commands_json %}{{< nav_target_commands nav={nav_data} section={nav_location.section} topic={nav_location.topic} index={nav_index} />}}{% endset %}
-{{< nav_menu nav={nav_data} extra={config.extra} related={nav_location.topic} open={nav_location.section} commands={load_data(literal=nav_commands_json, format="json")} current_command={page.slug} />}}
+{% set nav_map_json %}{{< nav_command_map nav={nav_data} index={load_data(literal=nav_index_json, format="json")} />}}{% endset %}
+{% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
+{% if nav_location and nav_location.section %}
+{% set nav_related = nav_location.topic if nav_location.topic else "section:" ~ nav_location.section %}
+{{< nav_menu nav={nav_data} extra={config.extra} related={nav_related} open={nav_location.section} command_map={nav_command_map} current_command={page.slug} />}}
 {% else %}
-{{< nav_menu nav={nav_data} extra={config.extra} />}}
+{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} />}}
 {% endif %}
 {% endblock related_content %}

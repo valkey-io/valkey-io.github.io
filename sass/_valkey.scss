@@ -653,10 +653,65 @@ p {
     border-left-color: #6983ff;
   }
 
-  // Commands of the current or related topic, nested under it.
+  // A topic with commands: the link leaves room for the toggle's arrow,
+  // which sits at the right end of the link's row.
+  .docs-menu-has-commands {
+    position: relative;
+
+    > a {
+      padding-right: 3.6rem;
+    }
+  }
+
+  .docs-menu-commands-toggle > summary {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 3.2rem;
+    height: calc(1.35em + 1.2rem);
+    padding: 0;
+    justify-content: center;
+    border-radius: 4px;
+
+    &::after {
+      margin-left: 0;
+    }
+
+    &:hover {
+      background-color: #d1d9ff;
+    }
+  }
+
+  // "Other commands", and the current topic if it has commands: a toggle
+  // that looks like a topic link. The right padding puts the arrow where the
+  // other topics' arrows are.
+  .docs-menu-other-commands > summary,
+  .docs-menu-current-topic > summary {
+    padding: 0.6rem 1rem;
+    border-left: 4px solid transparent;
+    border-radius: 4px;
+    padding-right: 1.25rem;
+    font-weight: 400;
+    text-transform: none;
+    line-height: 1.35;
+    color: #1a1a1a;
+
+    &:hover {
+      background-color: #d1d9ff;
+      color: #1a1a1a;
+    }
+  }
+
+  .docs-menu-current-topic > summary.docs-menu-current {
+    background-color: #d1d9ff;
+    border-left-color: #2054B2;
+    font-weight: 600;
+  }
+
+  // The commands in a toggle.
   .docs-menu-commands {
     margin: 0.2rem 0 0.6rem 1.4rem;
-    padding-left: 0.6rem;
+    padding: 0 0 0 0.6rem;
     border-left: 1px solid #c5cdea;
 
     li a {
@@ -664,17 +719,6 @@ p {
       @include monospace;
       font-size: 1.3rem;
     }
-  }
-
-  // Heading of the "Other commands" list: commands that belong to a section
-  // but not to one of its topics.
-  .docs-menu-label {
-    display: block;
-    padding: 0.6rem 1rem 0.2rem;
-    color: #444;
-    font-size: 1.3rem;
-    font-weight: 600;
-    text-transform: uppercase;
   }
 
   .docs-menu-badge {
