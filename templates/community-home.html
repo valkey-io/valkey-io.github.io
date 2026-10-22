@@ -1,5 +1,4 @@
 {% extends "default.html" %}
-{% import "macros/community.html" as community %}
 
 {% block content %}
 {% set extra = section.extra %}
@@ -16,8 +15,8 @@
     </div>
     <div class="community-logo-row" role="group" aria-label="Valkey participant organizations">
       <div class="community-logo-track" id="communityLogoTrack">
-        {{ community::logo_set(participants=participants) }}
-        {{ community::logo_set(participants=participants, duplicate=true) }}
+        {{< logo_set participants={participants} />}}
+        {{< logo_set participants={participants} duplicate={true} />}}
       </div>
     </div>
   </div>
@@ -44,7 +43,7 @@
   </div>
   <div class="community-home-connect-actions">
     {% for link in extra.connect.links %}
-    <a href="{{ link.url }}" class="community-home-btn"{% if link.url is starting_with("http") %} target="_blank" rel="noopener"{% endif %}>{{ link.text }}</a>
+    <a href="{{ link.url }}" class="community-home-btn"{% if link.url is starting_with(pat="http") %} target="_blank" rel="noopener"{% endif %}>{{ link.text }}</a>
     {% endfor %}
   </div>
 </section>
@@ -89,7 +88,7 @@
       <p>{{ card.description }}</p>
       <div class="community-card-actions">
         {% for link in card.links %}
-        <a href="{{ link.url }}" class="btn"{% if link.url is starting_with("http") %} target="_blank" rel="noopener"{% endif %}>{{ link.text }}</a>
+        <a href="{{ link.url }}" class="btn"{% if link.url is starting_with(pat="http") %} target="_blank" rel="noopener"{% endif %}>{{ link.text }}</a>
         {% endfor %}
       </div>
     </div>

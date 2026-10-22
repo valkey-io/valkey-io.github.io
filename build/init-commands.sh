@@ -39,6 +39,24 @@ if [ ! -d "$5" ]; then
     exit 1
 fi
 
+# Uppercase aliases (/commands/GET/) collide with the lowercase pages
+# (/commands/get/) on case-insensitive filesystems (macOS default). Since
+# Zola 0.23, `zola build` may then write the alias redirect over the real
+# page, so skip the aliases there. Override with VALKEY_COMMAND_ALIASES=1
+# (always generate) or VALKEY_COMMAND_ALIASES=0 (never generate).
+if [ -n "$VALKEY_COMMAND_ALIASES" ]; then
+    with_aliases=$VALKEY_COMMAND_ALIASES
+else
+    probe=$(mktemp ./.case-probe-XXXXXX)
+    if [ -e "$(tr '[:lower:]' '[:upper:]' <<< "$probe")" ]; then
+        with_aliases=0
+        echo "Case-insensitive filesystem detected: skipping uppercase command aliases."
+    else
+        with_aliases=1
+    fi
+    rm -f "$probe"
+fi
+
 ln -s $1 ./build-command-docs
 ln -s $2 ./build-command-json
 ln -s $3 ./build-bloom-command-json
@@ -60,12 +78,17 @@ do
         elif [ -f "$5/$command.json" ]; then
             metadata_path="/commands/$command.json in the 'valkey-search' repo"
         fi
+        if [ "$with_aliases" = 1 ]; then
+            aliases_line="aliases = [\"/commands/$command_upper/\"]"
+        else
+            aliases_line="# Uppercase alias skipped, see build/init-commands.sh"
+        fi
         cat << EOF > "./content/commands/$command.md"
 +++
 # This is a generated stub file.
 # To edit the command description see /commands/$command.md in the 'valkey-doc' repo
 # The command metadata is generated from $metadata_path
-aliases = ["/commands/$command_upper/"]
+$aliases_line
 +++
 EOF
 fi
