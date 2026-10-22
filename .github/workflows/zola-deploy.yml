@@ -76,13 +76,21 @@ jobs:
         with:
           path: ./website/public
 
+  validate:
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/validate-libraries.yml
+    with:
+      ref: main
+    permissions:
+      contents: read
+
   deploy:
     if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, validate]
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

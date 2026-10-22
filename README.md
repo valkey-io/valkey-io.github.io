@@ -29,6 +29,7 @@ Changes to external content (command reference, documentation topics) require a 
 ### Checking catalog entries
 
 The clients and integrations entries in `_data/libraries/` are checked by `build/validate-libraries.py`, against the rules in `_data/libraries/schema.json` and the SPDX license list.
+CI runs it on pull requests that change the catalog and before every deploy.
 To run it locally with [uv](https://docs.astral.sh/uv/), which installs the dependencies pinned in the script's `# /// script` header:
 
 ```shell
