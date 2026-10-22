@@ -26,6 +26,19 @@ Open your browser to `http://127.0.0.1:1111/`
 Zola will automatically rebuild on changes to the template or any content stored in this repo.
 Changes to external content (command reference, documentation topics) require a restart of the Zola server process (`ctrl-c` then `zola serve` again, a browser refresh may also be needed).
 
+### Checking catalog entries
+
+The clients and integrations entries in `_data/libraries/` are checked by `build/validate-libraries.py`, against the rules in `_data/libraries/schema.json` and the SPDX license list.
+To run it locally with [uv](https://docs.astral.sh/uv/), which installs the dependencies pinned in the script's `# /// script` header:
+
+```shell
+./build/validate-libraries.py
+```
+
+Without uv, install the dependencies listed in that header yourself, then run `python3 build/validate-libraries.py` with the Python version the header requires.
+
+The script downloads the SPDX license list, so it needs network access.
+
 ## Building additional content
 
 **By default, the site will build without documentation topics or the command reference.**
