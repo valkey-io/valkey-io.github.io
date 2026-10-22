@@ -79,8 +79,7 @@ So a feature you set can appear or disappear as other clients are added or remov
 **Optional fields:**
 
 - `language` (string) — primary language. Required in practice for clients and any library imported into code (ORM adapters, SDK wrappers, agent frameworks). Omit for standalone tools. If a library ships separate packages per language, create one entry per language.
-- `tags` (array of strings) — for filtering and discovery. Clients use `["Clients"]`; tools and AI libraries use category tags. Use a tag already in use where one fits, and add a new one only if none does. Tags in use:
-  - Clients: `["Clients"]`
+- `tags` (array of strings) — category tags that tools and AI libraries use for filtering and discovery. Client entries have no tags. Use a tag already in use where one fits, and add a new one only if none does. Tags in use:
   - Tools: `CLI & GUI`, `Deploy & operate`, `Frameworks & ORMs`, `Queues & background jobs`
   - AI: `RAG & retrieval`, `Agent memory`, `Agent frameworks`, `Inference & serving`
 - `installCommand` (string) — primary install command, e.g. `"pip install valkey-glide"`.
@@ -109,8 +108,7 @@ Client (`_data/libraries/clients/valkey-glide-python.json`):
     "capa": false,
     "pool": false
   },
-  "type": "clients",
-  "tags": ["Clients"]
+  "type": "clients"
 }
 ```
 

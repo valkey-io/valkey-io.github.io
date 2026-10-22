@@ -17,8 +17,5 @@
     "capa": true,
     "pool": true
   },
-  "type": "clients",
-  "tags": [
-    "Clients"
-  ]
+  "type": "clients"
 }
