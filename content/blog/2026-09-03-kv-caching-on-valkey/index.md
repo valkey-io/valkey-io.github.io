@@ -9,7 +9,7 @@ blog_type = ["Technical Deep Dive"]
 
 [extra]
 featured = false
-featured_image = "/assets/media/featured/random-03.webp"
+featured_image = "/assets/media/featured/kv-caching-on-valkey.webp"
 +++
 
 Open-weight large language models (LLMs) now approach frontier quality at a fraction of the per-token cost.
