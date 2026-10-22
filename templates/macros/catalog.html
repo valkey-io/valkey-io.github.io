@@ -3,7 +3,7 @@
 {# submission-CTA / noscript footer. Kind-specific parts stay in libraries.html. #}
 
 {# Toolbar: search box + Valkey toggle + sort control. #}
-{%- macro toolbar(search_placeholder) -%}
+{% component catalog.toolbar(search_placeholder) %}
     <div class="toolbar" data-toolbar>
       <div class="field field-search">
         <label for="catalog-q">Search</label>
@@ -38,10 +38,10 @@
         </button>
       </div>
     </div>
-{%- endmacro toolbar -%}
+{% endcomponent catalog.toolbar %}
 
 {# Empty state shown by JS when no card matches. #}
-{%- macro empty_state(noun) -%}
+{% component catalog.empty_state(noun) %}
       <div class="empty-state" data-empty-state hidden>
         <p class="empty-msg">No {{ noun }} match your current search and filters.</p>
         <ul class="empty-recovery" data-recovery>
@@ -49,10 +49,10 @@
           <li><button type="button" data-recover="clear-search">Clear search</button></li>
         </ul>
       </div>
-{%- endmacro empty_state -%}
+{% endcomponent catalog.empty_state %}
 
 {# Contribute heading + submission CTA + noscript note. #}
-{%- macro footer_cta(cta_text, noscript_noun) -%}
+{% component catalog.footer_cta(cta_text, noscript_noun) %}
     <h2 class="submission-heading">Add your client, tool or integration</h2>
     <p class="submission-lede">Building something on Valkey - a client, a module, a tool, or an AI integration? We'd love to see it here alongside the rest. Everything on this page lives in valkey-io repo, so adding yours is just a pull request away.</p>
     <a class="submission-cta" href="https://github.com/valkey-io/valkey-io.github.io/compare?template=add_library.md">{{ cta_text }}</a>
@@ -61,4 +61,4 @@
   <noscript>
     <p class="catalog-nojs-note">Showing every {{ noscript_noun }}. Interactive filtering, search, and sorting require JavaScript.</p>
   </noscript>
-{%- endmacro footer_cta -%}
+{% endcomponent catalog.footer_cta %}

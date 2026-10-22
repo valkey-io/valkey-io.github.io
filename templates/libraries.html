@@ -1,5 +1,4 @@
 {% extends "default.html" %}
-{% import "macros/catalog.html" as catalog %}
 
 {# Libraries catalog page. Each URL renders one catalog:                    #}
 {#   content/clients/_index.md      → kind = "clients"                       #}
@@ -26,10 +25,10 @@
   {% set_global clients = [] %}
   {% for rel in manifest.clients %}
     {% set entry = load_data(path="_data/libraries/" ~ rel, format="json") %}
-    {% set_global clients = clients | concat(with=entry) %}
+    {% set_global clients = [...clients, entry] %}
   {% endfor %}
 
-  {# Client feature flags, in the order cards list them. #}
+  {# Client feature flags, in the order cards and the legend list them. #}
   {% set fkeys = ["replica", "backoff", "pubsub", "scan", "latency", "az", "csc", "capa", "pool"] %}
 
   {% set required = ["name", "description", "type", "license", "repository"] %}
@@ -53,9 +52,9 @@
     {% if e.documentation is not defined or e.documentation is not string %}
       {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' needs 'documentation': a link that shows how to use it with Valkey") }}
     {% endif %}
-    {% set is_root_relative = e.documentation is starting_with("/") and e.documentation is not starting_with("//") %}
-    {% set is_https = e.documentation is starting_with("https://") %}
-    {% if e.documentation is starting_with("https://valkey.io/") %}
+    {% set is_root_relative = e.documentation is starting_with(pat="/") and e.documentation is not starting_with(pat="//") %}
+    {% set is_https = e.documentation is starting_with(pat="https://") %}
+    {% if e.documentation is starting_with(pat="https://valkey.io/") %}
       {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' links a valkey.io page by full URL; use a root-relative path, e.g. /topics/cli/") }}
     {% elif not is_root_relative and not is_https %}
       {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' needs 'documentation': a root-relative path to a valkey.io page or an https:// link") }}
@@ -65,7 +64,7 @@
       {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' description is " ~ desc_length ~ " characters (max " ~ max_description ~ ")") }}
     {% endif %}
     {# Every flag must be spelled out, so a missing one can't silently read as "not supported". #}
-    {% if e.features is not defined or e.features is not object %}
+    {% if e.features is not defined or e.features is not map %}
       {{ throw(message="_data/libraries/clients: client entry '" ~ label ~ "' needs 'features': an object with a true/false flag for each feature") }}
     {% endif %}
     {% for key in fkeys %}
@@ -88,7 +87,7 @@
   {% set_global integrations = [] %}
   {% for rel in manifest.integrations %}
     {% set entry = load_data(path="_data/libraries/" ~ rel, format="json") %}
-    {% set_global integrations = integrations | concat(with=entry) %}
+    {% set_global integrations = [...integrations, entry] %}
   {% endfor %}
 
   {% for e in integrations %}
@@ -109,9 +108,9 @@
     {% if e.documentation is not defined or e.documentation is not string %}
       {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' needs 'documentation': a link that shows how to use it with Valkey") }}
     {% endif %}
-    {% set is_root_relative = e.documentation is starting_with("/") and e.documentation is not starting_with("//") %}
-    {% set is_https = e.documentation is starting_with("https://") %}
-    {% if e.documentation is starting_with("https://valkey.io/") %}
+    {% set is_root_relative = e.documentation is starting_with(pat="/") and e.documentation is not starting_with(pat="//") %}
+    {% set is_https = e.documentation is starting_with(pat="https://") %}
+    {% if e.documentation is starting_with(pat="https://valkey.io/") %}
       {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' links a valkey.io page by full URL; use a root-relative path, e.g. /topics/cli/") }}
     {% elif not is_root_relative and not is_https %}
       {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' needs 'documentation': a root-relative path to a valkey.io page or an https:// link") }}
@@ -135,7 +134,7 @@
     {# A feature every client supports, or none does, doesn't tell clients #}
     {# apart, so it's left off the cards and out of the legend.            #}
     {% if client_count > 0 and (tcount == client_count or tcount == 0) %}
-      {% set_global suppressed = suppressed | concat(with=key) %}
+      {% set_global suppressed = [...suppressed, key] %}
     {% endif %}
   {% endfor %}
 
@@ -143,7 +142,7 @@
   {% for e in clients %}
     {% set lang = e.language | default(value="") %}
     {% if lang != "" and lang not in languages %}
-      {% set_global languages = languages | concat(with=lang) %}
+      {% set_global languages = [...languages, lang] %}
     {% endif %}
   {% endfor %}
 
@@ -153,7 +152,7 @@
     {% if e.tags is defined and e.tags is iterable %}
       {% for t in e.tags %}
         {% set v = t | trim %}
-        {% if v != "" and v not in tags %}{% set_global tags = tags | concat(with=v) %}{% endif %}
+        {% if v != "" and v not in tags %}{% set_global tags = [...tags, v] %}{% endif %}
       {% endfor %}
     {% endif %}
   {% endfor %}
@@ -175,7 +174,7 @@
     {% endif %}
 
     {# Shared toolbar: search + Valkey toggle + sort                         #}
-    {{ catalog::toolbar(search_placeholder="Search " ~ kind ~ "…") }}
+    {{<catalog.toolbar search_placeholder={"Search " ~ kind ~ "…"} />}}
 
     {# The facet bar's data-facet names the card attribute it filters on.    #}
     {% if kind == "clients" %}
@@ -279,7 +278,7 @@
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
-            {% if entry.repository and (entry.repository is starting_with("http://") or entry.repository is starting_with("https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
+            {% if entry.repository and (entry.repository is starting_with(pat="http://") or entry.repository is starting_with(pat="https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
             {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
           </div>
@@ -294,7 +293,7 @@
         {% if entry.tags is defined and entry.tags is iterable %}
           {% for t in entry.tags %}
             {% set v = t | trim %}
-            {% if v != "" and v not in ec_tags %}{% set_global ec_tags = ec_tags | concat(with=v) %}{% endif %}
+            {% if v != "" and v not in ec_tags %}{% set_global ec_tags = [...ec_tags, v] %}{% endif %}
           {% endfor %}
         {% endif %}
         {% set tagstr = ec_tags | join(sep=" ") %}
@@ -336,7 +335,7 @@
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
-            {% if entry.repository and (entry.repository is starting_with("http://") or entry.repository is starting_with("https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
+            {% if entry.repository and (entry.repository is starting_with(pat="http://") or entry.repository is starting_with(pat="https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
             {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
           </div>
@@ -345,15 +344,17 @@
       {% endfor %}
       {% endif %}
 
-      {{ catalog::empty_state(noun=kind) }}
+      {{<catalog.empty_state noun={kind} />}}
     </section>
 
     {% if kind == "clients" %}
     <section class="legend" data-legend aria-label="Feature definitions">
       <h2 class="legend-title">Feature definitions</h2>
       <dl class="legend-list">
-        {% for key, feat in meta.featureDescriptions %}
+        {# Maps iterate alphabetically; walk fkeys so the legend keeps the card order. #}
+        {% for key in fkeys %}
         {% if key not in suppressed %}
+        {% set feat = meta.featureDescriptions[key] %}
         <div class="legend-item" data-feature="{{ key }}">
           <dt class="legend-term">{{ feat.label }}</dt>
           <dd class="legend-def">{{ feat.definition }}</dd>
@@ -364,7 +365,7 @@
     </section>
     {% endif %}
 
-    {{ catalog::footer_cta(cta_text="Add your library", noscript_noun="library") }}
+    {{<catalog.footer_cta cta_text="Add your library" noscript_noun="library" />}}
 
   <script defer src="/assets/js/libraries.js"></script>
 {% endblock content %}
