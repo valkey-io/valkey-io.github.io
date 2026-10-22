@@ -5,7 +5,6 @@
   "description": "A pure-PHP client with no extension to compile. Supports clustering, replication and transparent key prefixing.",
   "repository": "https://github.com/predis/predis",
   "documentation": "https://github.com/predis/predis/blob/v3.6.1/README.md#connecting-to-redis",
-  "isFirstParty": false,
   "installCommand": "composer require predis/predis",
   "features": {
     "replica": true,

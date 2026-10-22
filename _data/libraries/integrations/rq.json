@@ -5,7 +5,6 @@
   "description": "Minimalistic Python task queue that supports Valkey.",
   "repository": "https://github.com/rq/rq",
   "documentation": "https://python-rq.org/",
-  "isFirstParty": false,
   "installCommand": "pip install rq",
   "type": "tools",
   "tags": [

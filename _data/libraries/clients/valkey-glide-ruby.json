@@ -5,7 +5,6 @@
   "description": "Designed for reliability, optimized performance, and high-availability. A synchronous Ruby client over the shared Rust core, prebuilt for Linux and Apple silicon macOS.",
   "repository": "https://github.com/valkey-io/valkey-glide-ruby",
   "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=ruby",
-  "isFirstParty": true,
   "installCommand": "gem install valkey-glide-rb",
   "features": {
     "replica": true,

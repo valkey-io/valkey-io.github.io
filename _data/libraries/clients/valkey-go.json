@@ -5,7 +5,6 @@
   "description": "A fast Go client with automatic pipelining, server-assisted client-side caching and generic-typed command building.",
   "repository": "https://github.com/valkey-io/valkey-go",
   "documentation": "https://pkg.go.dev/github.com/valkey-io/valkey-go#readme-getting-started",
-  "isFirstParty": true,
   "installCommand": "go get github.com/valkey-io/valkey-go",
   "features": {
     "replica": true,

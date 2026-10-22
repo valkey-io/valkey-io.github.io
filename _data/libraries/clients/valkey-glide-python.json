@@ -5,7 +5,6 @@
   "description": "Designed for reliability, optimized performance, and high-availability. GLIDE is a multi-language client with one shared Rust core and per-language bindings.",
   "repository": "https://github.com/valkey-io/valkey-glide/tree/main/python",
   "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=python",
-  "isFirstParty": true,
   "installCommand": "pip install valkey-glide",
   "features": {
     "replica": true,

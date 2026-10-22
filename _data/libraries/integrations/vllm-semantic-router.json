@@ -5,7 +5,6 @@
   "description": "Mixture-of-Models router for LLM inference, with a Valkey-backed semantic cache, conversation memory and vector store (requires valkey-bundle).",
   "repository": "https://github.com/vllm-project/semantic-router",
   "documentation": "https://vllm-sr.ai/docs/installation/valkey-memory/",
-  "isFirstParty": false,
   "type": "ai",
   "tags": [
     "Inference & serving"

@@ -13,7 +13,6 @@
 - **Name:**
 - **Repository:**
 - **License (SPDX):**
-- **Maintained by the Valkey project (`isFirstParty`)?** yes / no
 
 ---
 
@@ -53,9 +52,8 @@ fields below — extra fields are ignored by the templates and may fail review.
 - `description` (string) — 1–2 factual, vendor-neutral sentences, at most 200 characters (the build fails above that).
 - `type` (string) — exactly one of `"clients"`, `"tools"`, or `"ai"`, matching the directory.
 - `license` (string) — SPDX identifier, e.g. `"Apache-2.0"`, `"MIT"`, `"BSD-3-Clause"`. Must be an OSI-approved open-source license.
-- `repository` (string) — public source-code repository URL.
+- `repository` (string) — public source-code repository URL. Entries whose repository is under `https://github.com/valkey-io/` are shown as maintained by Valkey.
 - `documentation` (string) — a link to a page that shows how to use the project with Valkey. For a page on valkey.io, use a root-relative path such as `/topics/cli/`; for any other site, an `https://` URL. Link the first of these that exists: a Valkey page in the project's docs, a Valkey example, a getting-started guide, or the README section that shows basic usage. For a library that speaks the Redis protocol, a page that shows the connection setup is enough. A homepage, a docs index, or a directory listing isn't. Link GitHub files at a tag or commit (`/blob/v1.2.3/…`), not a branch.
-- `isFirstParty` (boolean) — `true` for repos under `github.com/valkey-io/`, otherwise `false`.
 
 **Required for clients — `features` (object of true/false flags):**
 
@@ -99,7 +97,6 @@ Client (`_data/libraries/clients/valkey-glide-python.json`):
   "description": "Designed for reliability, optimized performance, and high-availability. GLIDE is a multi-language client with one shared Rust core and per-language bindings.",
   "repository": "https://github.com/valkey-io/valkey-glide/tree/main/python",
   "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=python",
-  "isFirstParty": true,
   "installCommand": "pip install valkey-glide",
   "features": {
     "replica": true,
@@ -127,7 +124,6 @@ Integration (`_data/libraries/integrations/valkey-cli.json`):
   "description": "The interactive terminal client shipped with valkey-server, with cluster-aware routing, --scan, --bigkeys and latency diagnostics built in.",
   "repository": "https://github.com/valkey-io/valkey",
   "documentation": "/topics/cli/",
-  "isFirstParty": true,
   "type": "tools",
   "tags": ["CLI & GUI"]
 }
@@ -145,7 +141,7 @@ in the manifest will not appear on the site.
 ### Submission checklist
 
 - [ ] Valid JSON, placed in the directory matching its `type`, and registered once in `_data/libraries/manifest.json`.
-- [ ] All required fields present: `name`, `description`, `type`, `license`, `repository`, `documentation`, `isFirstParty` — plus `features` for clients, with all nine flags.
+- [ ] All required fields present: `name`, `description`, `type`, `license`, `repository`, `documentation` — plus `features` for clients, with all nine flags.
 - [ ] Tested compatible with Valkey 7.2 or above.
 - [ ] OSI-approved open-source license.
 - [ ] Repository is publicly accessible, active within the last 6 months, and has a README with basic usage.

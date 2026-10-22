@@ -44,9 +44,6 @@
     {% if e.type != "clients" %}
       {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' has type '" ~ e.type ~ "' (expected clients)") }}
     {% endif %}
-    {% if e.isFirstParty is not defined %}
-      {{ throw(message="_data/libraries/clients: entry '" ~ label ~ "' is missing required field 'isFirstParty'") }}
-    {% endif %}
     {# The Documentation link is required and must show how to use the entry with Valkey (PR template). #}
     {# Pages on valkey.io are linked root-relative (/topics/cli/), other sites by https:// URL. #}
     {% if e.documentation is not defined or e.documentation is not string %}
@@ -99,9 +96,6 @@
     {% endfor %}
     {% if e.type != "tools" and e.type != "ai" %}
       {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' has type '" ~ e.type ~ "' (expected tools or ai)") }}
-    {% endif %}
-    {% if e.isFirstParty is not defined %}
-      {{ throw(message="_data/libraries/integrations: entry '" ~ label ~ "' is missing required field 'isFirstParty'") }}
     {% endif %}
     {# The Documentation link is required and must show how to use the entry with Valkey (PR template). #}
     {# Pages on valkey.io are linked root-relative (/topics/cli/), other sites by https:// URL. #}
@@ -210,6 +204,7 @@
       {% if kind == "clients" %}
       {% for entry in clients %}
         {% set slug = entry.name | slugify %}
+        {% set is_first_party = entry.repository is starting_with(pat="https://github.com/valkey-io/") %}
         {% set lang = entry.language | default(value="") %}
         {% set search_text = entry.name ~ " " ~ entry.description ~ " " ~ lang %}
         {% set lang_slug = lang | lower | replace(from='#', to='-sharp') | replace(from='.', to='-') | replace(from=' ', to='-') %}
@@ -220,7 +215,7 @@
                  data-desc="{{ entry.description | lower }}"
                  data-group="{{ entry.type }}"
                  data-language="{{ lang }}"
-                 data-first-party="{% if entry.isFirstParty %}true{% else %}false{% endif %}">
+                 data-first-party="{% if is_first_party %}true{% else %}false{% endif %}">
           <div class="entry-head">
             <h3 class="entry-name">
               {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
@@ -233,7 +228,7 @@
                       style="background:{{ lc.color }};color:{{ lc.fg }}">{{ lc.mono }}</span>
                 {%- endif -%}
                 {{ lang }}</span>
-              {% if entry.isFirstParty == true %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
+              {% if is_first_party %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
             </div>
           </div>
 
@@ -289,6 +284,7 @@
       {% else %}
       {% for entry in integrations %}
         {% set slug = entry.name | slugify %}
+        {% set is_first_party = entry.repository is starting_with(pat="https://github.com/valkey-io/") %}
         {% set_global ec_tags = [] %}
         {% if entry.tags is defined and entry.tags is iterable %}
           {% for t in entry.tags %}
@@ -305,14 +301,14 @@
                  data-desc="{{ entry.description | lower }}"
                  data-group="{{ entry.type }}"
                  data-tags="{{ ec_tags | join(sep='|') }}"
-                 data-first-party="{% if entry.isFirstParty %}true{% else %}false{% endif %}">
+                 data-first-party="{% if is_first_party %}true{% else %}false{% endif %}">
           <div class="entry-head">
             <h3 class="entry-name">
               {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
             </h3>
             <div class="entry-tags">
               {% for t in ec_tags %}<span class="chip chip-tag">{{ t }}</span>{% endfor %}
-              {% if entry.isFirstParty == true %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
+              {% if is_first_party %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
             </div>
           </div>
 
