@@ -73,7 +73,7 @@ The noisy neighbors are still there. They just stopped keeping everyone else awa
 
 ## What to do next
 
-If you are serving large objects out of Valkey today, the path is short. [Upgrade to 9.0](https://download.valkey.io/releases/), enable I/O threads, and re-run your own mixed workload watching p99.9 rather than p99. Start with the default values.
+If you are serving large objects out of Valkey today, the path is short. [Move to at least Valkey 9.0](https://download.valkey.io/releases/), enable I/O threads, and re-run your own mixed workload watching p99.9 rather than p99. Start with the default values.
 
 If your results look different from ours, the community wants to hear about it. Bring them to [Slack](https://valkey.io/slack) or the [community page](https://valkey.io/community/).
 
