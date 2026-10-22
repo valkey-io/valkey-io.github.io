@@ -283,8 +283,11 @@
                Commands that a section without a landing page claims itself
                are listed under "Other commands" at the end of the section.
       current_command: slug of the current command page.
+      index:   from nav_command_index; used to list the command categories
+               (groups) that have documented commands.
+      on_command_reference: true on the command reference page.
 -#}
-{% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="") %}
+{% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false) %}
 <nav class="docs-menu" aria-label="Documentation">
     <ul class="docs-menu-sections">
     {%- for section in nav %}
@@ -318,6 +321,26 @@
             </details>
         </li>
     {%- endfor %}
+        {#- The command reference, with a link to each command category on
+            it. Only categories with documented commands are listed. -#}
+        {%- set groups = load_data(path="../_data/groups.json", required=false) %}
+        {%- set used_groups = [c.group for c in index] %}
+        <li>
+            <details{% if on_command_reference %} open{% endif %}>
+                <summary>Command reference</summary>
+                <ul>
+                    <li><a href="/commands/"{% if on_command_reference %} class="docs-menu-current" aria-current="page"{% endif %}>All commands</a></li>
+                    {%- if groups %}
+                    {#- groups.json uses "-" where the command JSON uses "_", e.g. "sorted-set". -#}
+                    {%- for key in groups | keys | sort %}
+                    {%- if key | replace(from="-", to="_") in used_groups %}
+                    <li><a href="/commands/#{{ key }}">{{ groups[key].display }}</a></li>
+                    {%- endif %}
+                    {%- endfor %}
+                    {%- endif %}
+                </ul>
+            </details>
+        </li>
     </ul>
 </nav>
 {% endcomponent nav_menu %}

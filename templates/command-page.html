@@ -224,12 +224,13 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 
 {% block related_content %}
 {% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
-{% set nav_map_json %}{{< nav_command_map nav={nav_data} index={load_data(literal=nav_index_json, format="json")} />}}{% endset %}
+{% set nav_index = load_data(literal=nav_index_json, format="json") %}
+{% set nav_map_json %}{{< nav_command_map nav={nav_data} index={nav_index} />}}{% endset %}
 {% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
 {% if nav_location and nav_location.section %}
 {% set nav_related = nav_location.topic if nav_location.topic else "section:" ~ nav_location.section %}
-{{< nav_menu nav={nav_data} extra={config.extra} related={nav_related} open={nav_location.section} command_map={nav_command_map} current_command={page.slug} />}}
+{{< nav_menu nav={nav_data} extra={config.extra} related={nav_related} open={nav_location.section} command_map={nav_command_map} index={nav_index} current_command={page.slug} />}}
 {% else %}
-{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} />}}
+{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} />}}
 {% endif %}
 {% endblock related_content %}
