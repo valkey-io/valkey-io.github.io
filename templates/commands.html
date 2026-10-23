@@ -103,25 +103,39 @@ document.addEventListener("DOMContentLoaded", function() {
 {% endblock main_content %}
 
 {% block related_content %}
-<h2 id="top">Command Categories</h2>
-<ul>
-{% if group_descriptions %}
-{# Sort category keys for a stable order; Tera v2 does not guarantee map iteration order. #}
-{% for command_group_name in group_descriptions | keys | sort %}
-    {% set group_description = group_descriptions[command_group_name] %}
-    {% set replaced_group_id = command_group_name | replace(from="-", to="_") %}
-    {% if grouped[replaced_group_id]  %}<li>  <a href="#{{ command_group_name }}">{{ group_description.display }}</a></li>{% endif %}
-{% endfor %}
-{% endif %}
-</ul>
+{% set nav_json %}{{< nav_merged extra={config.extra} />}}{% endset %}
+{% set nav_data = load_data(literal=nav_json, format="json") %}
+{% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
+{% set nav_index = load_data(literal=nav_index_json, format="json") %}
+{% set nav_map_json %}{{< nav_command_map nav={nav_data} index={nav_index} />}}{% endset %}
+{% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
+{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} on_command_reference={true} />}}
+<script>
+// The menu marks "All commands" as the current page. If the URL points to a
+// command category (e.g. /commands/#hash), mark that category's link instead.
+(function () {
+    function markCurrent() {
+        var links = document.querySelectorAll('.docs-menu a[href^="/commands/"]');
+        var target = '/commands/' + window.location.hash;
+        var found = Array.prototype.some.call(links, function (a) {
+            return a.getAttribute('href') === target;
+        });
+        if (!found) target = '/commands/';
+        links.forEach(function (a) {
+            if (a.getAttribute('href') === target) {
+                a.classList.add('docs-menu-current');
+                a.setAttribute('aria-current', target === '/commands/' ? 'page' : 'location');
+            } else {
+                a.classList.remove('docs-menu-current');
+                a.removeAttribute('aria-current');
+            }
+        });
+    }
+    markCurrent();
+    window.addEventListener('hashchange', markCurrent);
+})();
+</script>
 
-<h2>Alphabetical Command List</h2>
-<ul>
-{% set alpha_entries = commands_entries | sort(attribute="0")  %}
-{% for entry in alpha_entries  %}
-    <li><code><a href="{{ entry[1] }}">{{ entry[0] }}</a></code></li>
-{% endfor %}
-</ul>
 {% endblock related_content %}
 
 

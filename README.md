@@ -82,8 +82,12 @@ and `valkey-io/valkey` reside in the same directories.
 First, stop the `zola serve` process if you're running it.
 From the root directory of this repo run:
 
+The script uses [jq](https://jqlang.org/), if installed, to store each command's group and container for the documentation menu.
+Without jq, the site still builds correctly, but more slowly.
+
 ```shell
-# You should only need to run this once or when you add a new command.
+# You should only need to run this once or when you add a new command,
+# or when a command's group or container changes.
 ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands \
     ../valkey-bloom/src/commands ../valkey-json/src/commands ../valkey-search/src/commands
 ```

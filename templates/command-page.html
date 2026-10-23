@@ -29,6 +29,16 @@
 {% else %}
     {% set command_data_error = "ERROR. Command JSON Not loaded." %}
 {% endif %}
+
+{# Where this command belongs in the documentation menu. #}
+{% set nav_json %}{{< nav_merged extra={config.extra} />}}{% endset %}
+{% set nav_data = load_data(literal=nav_json, format="json") %}
+{% set nav_location = {} %}
+{% if command_data_obj %}
+    {% set command_container = command_data_obj?.container | default(value="") | upper %}
+    {% set nav_location_json %}{{< nav_command_location nav={nav_data} name={command_title} container={command_container} group={command_data_obj.group} />}}{% endset %}
+    {% set nav_location = load_data(literal=nav_location_json, format="json") %}
+{% endif %}
 {%- endblock -%}
 
 {% block subhead_content%}
@@ -40,14 +50,38 @@
 {% endblock subhead_content%}
 
 {% block breadcrumbs %}
-{# Breadcrumbs section #}
-<nav class="breadcrumbs">
+{#
+    The command's place in the documentation menu: Topics > section > topic >
+    command, the same path as in the menu. Commands that aren't in the menu
+    fall back to Commands > command.
+#}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
     <ul class="breadcrumb-list">
+        {% if nav_location and nav_location.section %}
+        <li class="breadcrumb-item">
+            <a href="/topics/" class="breadcrumb-link">Topics</a>
+        </li>
+        <li class="breadcrumb-item">
+            <img src="/img/caret-right.svg" alt="" width="8" height="10"/>
+            {% if nav_location.landing %}
+            <a href="/topics/{{ nav_location.landing }}/" class="breadcrumb-link">{{ nav_location.title }}</a>
+            {% else %}
+            {{ nav_location.title }}
+            {% endif %}
+        </li>
+        {% if nav_location.topic and nav_location.topic != nav_location.landing %}
+        <li class="breadcrumb-item">
+            <img src="/img/caret-right.svg" alt="" width="8" height="10"/>
+            <a href="/topics/{{ nav_location.topic }}/" class="breadcrumb-link">{{< nav_topic_title slug={nav_location.topic} extra={config.extra} />}}</a>
+        </li>
+        {% endif %}
+        {% else %}
         <li class="breadcrumb-item">
             <a href="/commands/" class="breadcrumb-link">Commands</a>
         </li>
+        {% endif %}
         <li class="breadcrumb-item breadcrumb-current" aria-current="page">
-            <img src="/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
+            <img src="/img/caret-right.svg" alt="" width="8" height="10"/>
             {% if command_title %}{{ command_title }}{% else %}{{ page.slug | upper }}{% endif %}
         </li>
     </ul>
@@ -184,55 +218,14 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 {% endblock main_content %}
 
 {% block related_content %}
-{# Set up variables for sidebar, similar to commands.html #}
-
-<div class="sb-search-container">
-    <input type="text" id="sidebar-search-box" placeholder="Search within documents" onkeyup="searchSidebarCommands()" />
-</div>
-
-<!-- No results message for sidebar search -->
-<div id="sidebar-no-results-message" class="no-results-message" style="display: none;">
-    <span>&lt;/&gt;</span>
-    <h4>No commands found</h4>
-    <p>Check your spelling or try different keywords</p>
-</div>
-
-<h2 id="command-list-title">Alphabetical Command List</h2>
-<ul id="command-list"></ul>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var 
-        commandListEl = document.getElementById('command-list'),
-        f =  fetch("/command-list/");
-
-    f.then((r) => r.text()).then((v) => { commandListEl.innerHTML = v; })
-    f.catch((error) => { commandListEl.innerHTML = "Could not load command list."; });
-});
-
-
-function searchSidebarCommands() {
-    var input = document.getElementById("sidebar-search-box").value.toLowerCase();
-    var commandList = document.getElementById("command-list");
-    var commandListTitle = document.getElementById("command-list-title");
-    var items = commandList.querySelectorAll(".command-list-item");
-    var noResultsMessage = document.getElementById("sidebar-no-results-message");
-    var totalVisible = 0;
-
-    items.forEach(function (item) {
-        var text = item.querySelector("a").innerText.toLowerCase();
-        if (text.includes(input)) {
-            item.style.display = "";
-            totalVisible++;
-        } else {
-            item.style.display = "none";
-        }
-    });
-
-    // Show/hide no results message and title based on search results
-    var hasResults = totalVisible > 0;
-    noResultsMessage.style.display = hasResults ? "none" : "block";
-    commandListTitle.style.display = hasResults ? "" : "none";
-    commandList.style.display = hasResults ? "" : "none";
-}
-</script>
+{% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
+{% set nav_index = load_data(literal=nav_index_json, format="json") %}
+{% set nav_map_json %}{{< nav_command_map nav={nav_data} index={nav_index} />}}{% endset %}
+{% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
+{% if nav_location and nav_location.section %}
+{% set nav_related = nav_location.topic if nav_location.topic else "section:" ~ nav_location.section %}
+{{< nav_menu nav={nav_data} extra={config.extra} related={nav_related} open={nav_location.section} command_map={nav_command_map} index={nav_index} current_command={page.slug} />}}
+{% else %}
+{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} />}}
+{% endif %}
 {% endblock related_content %}
