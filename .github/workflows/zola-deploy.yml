@@ -17,8 +17,11 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      commit: ${{ steps.checkout.outputs.commit }}
     steps:
       - name: Checkout
+        id: checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event_name != 'pull_request' && 'main' || '' }}
@@ -77,10 +80,11 @@ jobs:
           path: ./website/public
 
   validate:
+    needs: build
     if: github.event_name != 'pull_request'
     uses: ./.github/workflows/validate-libraries.yml
     with:
-      ref: main
+      ref: ${{ needs.build.outputs.commit }}
     permissions:
       contents: read
 
