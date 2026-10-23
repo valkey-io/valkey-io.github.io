@@ -12,14 +12,20 @@ document.addEventListener('click', async function(event) {
         return;
     }
 
+    // The icon swap is invisible to screen readers, so the result is also
+    // announced through the block's status region.
+    const status = block.querySelector('.copy-code-status');
+
     try {
         await navigator.clipboard.writeText(source.textContent.trim());
+        button.classList.add('copied');
+        status.textContent = 'Copied to clipboard';
     } catch (error) {
-        return;
+        status.textContent = 'Copy failed';
     }
 
-    button.classList.add('copied');
     setTimeout(function() {
         button.classList.remove('copied');
+        status.textContent = '';
     }, 2000);
 });

@@ -36,10 +36,15 @@
    version nobody can run in production yet, and that has to be read first. #}
 {% if prerelease_only %}
 <div class="release-prerelease-notice">
+    {% if latest %}
     <strong>Valkey {{ line }} has no stable release yet.</strong> What follows
     describes a release candidate. Commands, configuration, and behaviour can
     change before the stable release, and release candidates are not supported
     for production use.
+    {% else %}
+    <strong>Valkey {{ line }} has not been released yet.</strong> What follows
+    describes work in progress, and can change before the first release.
+    {% endif %}
 </div>
 {% endif %}
 

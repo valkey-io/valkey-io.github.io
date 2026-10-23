@@ -25,7 +25,7 @@
         <div class="col col-6">
             {# The newest stable release on each major.minor line, newest line first. #}
             {% set release_section = get_section(path="download/releases/_index.md") %}
-            {% set_global release_lines = [] %}
+            {% set_global keyed_lines = [] %}
             {% set_global seen_lines = [] %}
             {% for candidate in release_section.pages | sort(attribute="date") | reverse %}
                 {% if candidate.extra.tag is not matching(pat=".*-.*") %}
@@ -33,9 +33,16 @@
                     {% set candidate_line = candidate_parts[:2] | join(sep=".") %}
                     {% if candidate_line not in seen_lines %}
                         {% set_global seen_lines = [...seen_lines, candidate_line] %}
-                        {% set_global release_lines = [...release_lines, candidate] %}
+                        {% set_global keyed_lines = [...keyed_lines, {"version": (candidate_parts[0] | int) * 1000 + (candidate_parts[1] | int), "release": candidate}] %}
                     {% endif %}
                 {% endif %}
+            {% endfor %}
+
+            {# Dates pick each line's newest patch but cannot order the lines: every
+               supported line usually ships a patch on the same day. #}
+            {% set_global release_lines = [] %}
+            {% for keyed in keyed_lines | sort(attribute="version") | reverse %}
+                {% set_global release_lines = [...release_lines, keyed.release] %}
             {% endfor %}
 
             {% set latest = release_lines | first %}

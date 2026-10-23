@@ -1806,6 +1806,7 @@ html.banner-hidden .banner {
 // Documentation Section Styles
 .documentation-section {
   padding: 2rem 2rem 4rem;
+
   // Continues the .whats-new-section gradient, finishing on the #6983ff that
   // .homepage-participants-section starts from.
   background: linear-gradient(rgb(81, 85, 193), #6983FF);
@@ -1865,6 +1866,7 @@ html.banner-hidden .banner {
 .documentation-card {
   display: flex;
   flex-direction: column;
+
   // Spaces title from description, and keeps the button off the description
   // even when `margin-top: auto` has no slack left to push it down.
   gap: 1.5rem;
@@ -1910,6 +1912,7 @@ html.banner-hidden .banner {
 // What's New Section Styles
 .whats-new-section {
   padding-bottom: 4rem;
+
   // Stops short of the full #6983ff so the section doesn't end glaring bright.
   // .documentation-section picks the gradient up from here.
   background-image: linear-gradient(rgb(48, 23, 110), rgb(81, 85, 193));
@@ -2007,7 +2010,6 @@ html.banner-hidden .banner {
   width: 100%;
   margin: 0 0 3rem;
   border-collapse: collapse;
-
   border: 1px solid #ddd;
 
   th,
@@ -2432,28 +2434,25 @@ blockquote {
 
 // `&:visited` is not redundant: the global `a:visited` is more specific than a
 // bare class, so without it the link falls back to the blue link colour.
-// Held apart from the white heading beside it so it reads as a link.
+// Underlined rather than tinted to set it apart from the white heading: no tint
+// distinct from white keeps 4.5:1 contrast where the gradient sits on mobile.
 .homepage-blog-more {
   &,
   &:visited,
   &:hover {
-    color: #B7C2F7;
+    color: white;
   }
 
   @include sans-serif;
   font-size: 1.4rem;
   font-weight: 700;
   text-transform: uppercase;
-  text-decoration: none;
+  text-decoration: underline;
   white-space: nowrap;
 
   &:after {
     content: ' ›';
     font-size: 1.2em;
-  }
-
-  &:hover {
-    text-decoration: underline;
   }
 }
 
