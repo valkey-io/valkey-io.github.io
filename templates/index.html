@@ -23,12 +23,12 @@
                 
                 {% set_global active_releases = [] %}
                 {% for release in releases %}
-                    {% if release.extra.tag is not matching(".*-.*") %}
-                        {% set_global active_releases = active_releases | concat(with=release) %}
+                    {% if release.extra.tag is not matching(pat=".*-.*") %}
+                        {% set_global active_releases = [...active_releases, release] %}
                     {% endif %}
                 {% endfor %}
                 
-                {% set most_recent_release_page = active_releases | slice(end= 1) %}
+                {% set most_recent_release_page = active_releases[:1] %}
                 {% set release_date = most_recent_release_page[0].date %}
                 {% set release = most_recent_release_page[0].extra %}
                 
@@ -76,7 +76,7 @@
                 <h3>Latest Blog Posts</h3>
                 <div class="homepage-blog-section">
                     {% set blog_post_section = get_section(path="blog/_index.md") %}
-                    {% set blog_posts = blog_post_section.pages | slice(end=2) %}
+                    {% set blog_posts = blog_post_section.pages[:2] %}
                     {% for post in blog_posts %}
                         <div class="homepage-blog-card">
                             <div class="homepage-blog-card-content">

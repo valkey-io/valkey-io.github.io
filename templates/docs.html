@@ -1,7 +1,5 @@
 {% extends "left-aside.html" %}
 
-{% import "macros/docs.html" as docs %}
-
 {% block subhead_content %}
 <div class="styled-title">
     <h1>Documentation by Topic</h1>
@@ -15,10 +13,10 @@
 <strong>No docs pages found.</strong> You likely need to build the documentation pages. See "Building additional content" in README.md file.
 {% endif %}
 
-{% set docs_file_contents = docs::load(slug= "index") %}
-{% set frontmatter = docs::extract_frontmatter(content= docs_file_contents) %}
-{% set page_contents = docs::extract_markdown(content= docs_file_contents) %}
-{%- set content_with_fixed_links = docs::fix_links(content= page_contents) -%}
+{% set docs_file_contents %}{{< load slug="index" topic_path={config.extra.doc_topic_path} exceptions={config.extra.slug_source_exceptions} />}}{% endset %}
+{% set frontmatter %}{{< extract_frontmatter content={docs_file_contents} />}}{% endset %}
+{% set page_contents %}{{< extract_markdown content={docs_file_contents} />}}{% endset %}
+{%- set content_with_fixed_links %}{{< fix_links_docs content={page_contents} />}}{% endset -%}
 
 
 {{ content_with_fixed_links  | markdown | safe }}
@@ -27,16 +25,17 @@
 {% block related_content %}
 <h2>Alphabetical Index</h2>
 {% for page in section.pages %}
-    {% set docs_file_contents = docs::load(slug= page.slug) %}
-    {% set frontmatter = docs::extract_frontmatter(content= docs_file_contents) %}
+    {% set docs_file_contents %}{{< load slug={page.slug} topic_path={config.extra.doc_topic_path} exceptions={config.extra.slug_source_exceptions} />}}{% endset %}
+    {% set frontmatter %}{{< extract_frontmatter content={docs_file_contents} />}}{% endset %}
+    {% set frontmatter = frontmatter | trim %}
     {% set frontmatter_length = frontmatter | length() %}
 
     {% if frontmatter_length > 0 %}
         {% set frontmatter_data = load_data(literal= frontmatter, format="yaml") %}
-        {% set description = frontmatter_data.description | escape | safe %}
-        {% set description_no_line_breaks = description | regex_replace(pattern=`[\u0000-\u001F]`, rep=` `) %}
+        {% set description = frontmatter_data.description | escape_html | safe %}
+        {% set description_no_line_breaks = description | regex_replace(pattern="[\\u0000-\\u001F]", rep=" ") %}
 
-        {% set_global list = list | concat(with= ['{ "title" : "' ~ frontmatter_data.title ~ '", "path" : "' ~ page.path ~ '", "description" : "' ~ description_no_line_breaks ~ '" }']) %}
+        {% set_global list = [...list, '{ "title" : "' ~ frontmatter_data.title ~ '", "path" : "' ~ page.path ~ '", "description" : "' ~ description_no_line_breaks ~ '" }'] %}
     {% endif %}
    
 

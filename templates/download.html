@@ -10,12 +10,12 @@
 
 {% set_global active_releases = [] %}
 {% for release in releases %}
-    {% if release.extra.tag is not matching(".*-.*") %}
-        {% set_global active_releases = active_releases | concat(with=release) %}
+    {% if release.extra.tag is not matching(pat=".*-.*") %}
+        {% set_global active_releases = [...active_releases, release] %}
     {% endif %}
 {% endfor %}
 
-{% set most_recent_release_page = active_releases | slice(end= 1) %}
+{% set most_recent_release_page = active_releases[:1] %}
 {% set release_date = most_recent_release_page[0].date %}
 {% set release = most_recent_release_page[0].extra %}
 

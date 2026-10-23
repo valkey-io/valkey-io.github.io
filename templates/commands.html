@@ -1,7 +1,5 @@
 {% extends "left-aside.html" %}
 
-{% import "macros/command.html" as commands %}
-
 {% block main_content %}
 {% if section.pages | length == 0 %}
 <strong>No command pages found.</strong> You likely need to build the command pages. See "Building additional content" in README.md file.
@@ -25,14 +23,14 @@
 
 {% for page in section.pages %}
     {% for json_path in [
-        commands::command_json_path(slug=page.slug),
-        commands::command_bloom_json_path(slug=page.slug),
-        commands::command_json_json_path(slug=page.slug),
-        commands::command_search_json_path(slug=page.slug)
+        config.extra.command_json_path ~ page.slug ~ ".json",
+        config.extra.command_bloom_json_path ~ page.slug ~ ".json",
+        config.extra.command_json_json_path ~ page.slug ~ ".json",
+        config.extra.command_search_json_path ~ page.slug ~ ".json"
     ] %}
         {% set command_data = load_data(path= json_path, required= false) %}
         {% if command_data %}
-            {% set command_obj_name = commands::command_obj_name(command_data= command_data) %}
+            {% set command_obj_name = command_data | keys | first %}
             {% set command_data_obj = command_data[command_obj_name] %}
             {% set command_display = command_obj_name %}
             {% if command_data_obj.container %}
@@ -44,14 +42,17 @@
                 command_data_obj.summary,
                 command_data_obj.group
             ] %}
-            {% set_global commands_entries = commands_entries | concat(with= [ command_entry ]) %}
+            {% set_global commands_entries = [...commands_entries, command_entry] %}
         {% endif %}
     {% endfor %}
 {% endfor %}
 {% set_global grouped = commands_entries | sort(attribute="3") | group_by(attribute="3") %}
 
 
-{% for command_group_name, command_group in grouped %}
+{# Iterate groups in an explicit, stable alphabetical order. Tera v2 no longer
+   guarantees the iteration order of a group_by map, so sort the keys. #}
+{% for command_group_name in grouped | keys | sort %}
+    {% set command_group = grouped[command_group_name] %}
     <div class="command-group">
         {% set command_group_description_name = command_group_name | replace(from="_", to="-") %}
         <h2 id="{{command_group_description_name}}">{{ group_descriptions[command_group_description_name].display }}
@@ -105,7 +106,9 @@ document.addEventListener("DOMContentLoaded", function() {
 <h2 id="top">Command Categories</h2>
 <ul>
 {% if group_descriptions %}
-{% for command_group_name, group_description in group_descriptions %}
+{# Sort category keys for a stable order; Tera v2 does not guarantee map iteration order. #}
+{% for command_group_name in group_descriptions | keys | sort %}
+    {% set group_description = group_descriptions[command_group_name] %}
     {% set replaced_group_id = command_group_name | replace(from="-", to="_") %}
     {% if grouped[replaced_group_id]  %}<li>  <a href="#{{ command_group_name }}">{{ group_description.display }}</a></li>{% endif %}
 {% endfor %}

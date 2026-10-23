@@ -17,35 +17,35 @@ runs:
   steps:
     - name: Checkout valkey
       if: inputs.checkout-content == 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey
         path: valkey
 
     - name: Checkout valkey-bloom
       if: inputs.checkout-content == 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-bloom
         path: valkey-bloom
 
     - name: Checkout valkey-doc
       if: inputs.checkout-content == 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-doc
         path: valkey-doc
 
     - name: Checkout valkey-json
       if: inputs.checkout-content == 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-json
         path: valkey-json
 
     - name: Checkout valkey-search
       if: inputs.checkout-content == 'true'
-      uses: actions/checkout@v4
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-search
         path: valkey-search
@@ -61,7 +61,7 @@ runs:
           ../valkey-json/src/commands ../valkey-search/src/commands
 
     - name: Build only
-      uses: shalzz/zola-deploy-action@v0.22.0
+      uses: shalzz/zola-deploy-action@1be083648a1db2853ce4970e381740c0e2fd06de # v0.23.6
       env:
         BUILD_DIR: ${{ inputs.path }}
         BUILD_ONLY: true

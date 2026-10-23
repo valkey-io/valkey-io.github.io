@@ -1,5 +1,3 @@
-{% import "macros/docs.html" as docs %}
-
 {% block main_content %}
     <hr/>
     <h2 >Feature Comparison Table</h2>
@@ -15,12 +13,12 @@
             </thead>
             <tbody>
                 {%- for path in client_paths %}
-                    {% set json_data = load_data(path = docs::client_json_path(client_path= path), format="json") %}
+                    {% set json_data = load_data(path = config.extra.client_json_path ~ path, format="json") %}
                     <tr class="table-row {% if loop.index is even %}even-row{% else %}odd-row{% endif %}">
                         {% for field in client_fields %}
                             <td class="table-cell">
                                 {% if field not in ["name", "language"] %}
-                                    {{ docs::boolean_to_checkmark(value=json_data[field]) }}
+                                    {{< boolean_to_checkmark value={json_data[field]} />}}
                                 {% else %}
                                     {{ json_data[field] }}
                                 {% endif %}
