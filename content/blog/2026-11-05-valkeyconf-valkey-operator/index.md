@@ -58,7 +58,7 @@ Generic pod affinity rules don't automatically understand shard identity, primar
 
 ![Why a shared PodSpec cannot express Valkey-specific placement constraints](02_pod_placement_problem.png)
 
-The operator introduces placement controls at the Valkey topology level, including scheduling modes for distributing primaries and replicas across infrastructure. In the keynote, the team showed how **required** and **preferred** placement policies express the difference between a hard rule and a best-effort preference.
+The operator introduces placement controls at the Valkey topology level, including scheduling modes for distributing primaries and replicas across infrastructure. In the session, the team showed how **required** and **preferred** placement policies express the difference between a hard rule and a best-effort preference.
 
 Hard constraints protect availability but can leave pods unscheduled when capacity is tight. The tradeoff needs to be explicit.
 
@@ -78,7 +78,7 @@ A healthy pod doesn't necessarily mean a healthy Valkey cluster.
 
 Security isn't something the project plans to bolt on after the happy-path demo.
 
-The keynote showed declarative Valkey access-control lists (ACLs), including users, command permissions, and key-access patterns. Managing permissions alongside the cluster specification makes configuration repeatable rather than relying on ad hoc commands issued after deployment.
+The session showed declarative Valkey access-control lists (ACLs), including users, command permissions, and key-access patterns. Managing permissions alongside the cluster specification makes configuration repeatable rather than relying on ad hoc commands issued after deployment.
 
 The team also demonstrated the operator managing a cluster in real time. Kubernetes resources and Valkey state changed through the controller, not manual coordination.
 
