@@ -215,11 +215,6 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 </table>
 {% endif %}
 
-{% if nav_location and nav_location.topic %}
-<h3>See also</h3>
-<p><a href="/topics/{{ nav_location.topic }}/">{{< nav_topic_title slug={nav_location.topic} extra={config.extra} />}}</a></p>
-{% endif %}
-
 {% endblock main_content %}
 
 {% block related_content %}
