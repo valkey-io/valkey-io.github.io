@@ -35,12 +35,12 @@ client_json_path = "../build-clients/"
 doc_topic_path = "../build-topics/"
 
 # Documentation menu. The core menu is nav.yml in the valkey docs, next to
-# the topics directory; each module can provide a menu file that is merged
-# into it, in the order listed here. Without nav.yml, the menu only has the
-# command reference.
+# the topics directory. Other sources, such as modules, can provide a menu
+# file that is merged into it, in the order listed here. Without nav.yml, the
+# menu only has the command reference.
 nav_path = "../build-topics/../nav.yml"
-nav_modules_path = "../build-topics/../modules-nav/"
-nav_modules = ["valkey-bloom", "valkey-json", "valkey-search", "valkey-ldap", "valkey-bundle"]
+nav_sources_path = "../build-topics/../modules-nav/"
+nav_sources = ["valkey-bloom", "valkey-json", "valkey-search", "valkey-ldap", "valkey-bundle"]
 
 review_list = [
     "/topics/license/",
@@ -67,7 +67,8 @@ publish_hold = [
     "/topics/rdd/"
 ]
 
-# Labels shown next to menu entries that come from a module's menu file.
+# Labels shown next to menu entries from other sources, by source name. Only
+# modules get one; valkey-bundle isn't a module.
 [extra.nav_badges]
 "valkey-bloom" = "module"
 "valkey-json" = "module"
