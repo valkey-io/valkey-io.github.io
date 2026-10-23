@@ -2450,8 +2450,11 @@ blockquote {
   text-decoration: underline;
   white-space: nowrap;
 
+  // inline-block keeps the underline off the chevron.
   &:after {
-    content: ' ›';
+    content: '›';
+    display: inline-block;
+    margin-left: 0.3em;
     font-size: 1.2em;
   }
 }
