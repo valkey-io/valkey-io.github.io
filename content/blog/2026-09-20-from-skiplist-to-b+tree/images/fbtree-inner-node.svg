@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 682 194" style="width:100%;max-width:682px;height:auto">
+<style>
+  .fd-background      { fill: #ffffff; fill: var(--fd-background, #ffffff); }
+  .fd-title   { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-field-box   { fill: #6983ff; fill: var(--fd-field-fill, #6983ff); stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; }
+  .fd-role-pointer   { fill: #e07b39; fill: var(--fd-role-pointer, #e07b39); stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; }
+  .fd-role-overhead   { fill: #9aa7b5; fill: var(--fd-role-overhead, #9aa7b5); stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; }
+  .fd-role-data   { fill: #6983ff; fill: var(--fd-role-data, #6983ff); stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; }
+  .fd-padding-box     { fill: url(#fd-hatch); stroke: #b9c2cc; stroke: var(--fd-padding-stroke, #b9c2cc); stroke-width: 1; }
+  .fd-flexible-array    { fill: none; stroke: #666666; stroke: var(--fd-muted, #666666); stroke-width: 1; stroke-dasharray: 4 3; }
+  .fd-extra-box   { fill: #6983ff; fill: var(--fd-field-fill, #6983ff); fill-opacity: 0.55; stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; stroke-dasharray: 5 3; }
+  .fd-slack-box   { fill: #666666; fill: var(--fd-muted, #666666); fill-opacity: 0.10; stroke: #666666; stroke: var(--fd-muted, #666666); stroke-width: 1; stroke-dasharray: 2 3; }
+  .fd-slack-label { fill: #666666; fill: var(--fd-muted, #666666); }
+  .fd-allocation-plus    { fill: #666666; fill: var(--fd-muted, #666666); }
+  .fd-field-label   { fill: #ffffff; fill: var(--fd-field-text, #ffffff); }
+  .fd-padding-label  { fill: #666666; fill: var(--fd-muted, #666666); }
+  .fd-callout-label { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-leader-line  { stroke: #666666; stroke: var(--fd-muted, #666666); stroke-width: 1; fill: none; }
+  .fd-ruler-line   { stroke: #666666; stroke: var(--fd-muted, #666666); stroke-width: 1; }
+  .fd-cache-line   { stroke: #002a3a; stroke: var(--fd-text, #002a3a); stroke-width: 3; stroke-dasharray: 7 4; opacity: 0.8; }
+  .fd-cache-line-label    { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-pointer-arrow  { stroke: #002a3a; stroke: var(--fd-text, #002a3a); stroke-width: 1.5; fill: none; }
+  .fd-pointer-head   { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-ruler-label    { fill: #666666; fill: var(--fd-muted, #666666); }
+  .fd-note  { fill: #1e8e3e; fill: var(--fd-highlight, #1e8e3e); }
+  .fd-note-plain { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  text        { font-family: 'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace; font-family: var(--fd-font, 'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace); }
+  .fd-hatch-background { fill: #f5f7f7; fill: var(--fd-padding-fill, #f5f7f7); }
+  .fd-hatch-lines { stroke: #b9c2cc; stroke: var(--fd-padding-stroke, #b9c2cc); stroke-width: 1.5; }
+  .fd-subdivision-line  { stroke: #ffffff; stroke: var(--fd-field-text, #ffffff); stroke-width: 1; opacity: 0.25; }
+</style>
+<rect class="fd-background" fill="#ffffff" width="100%" height="100%" rx="8"/>
+<defs><pattern id="fd-hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect class="fd-hatch-background" fill="#f5f7f7" width="6" height="6"/><line class="fd-hatch-lines" stroke="#b9c2cc" stroke-width="1.5" x1="0" y1="0" x2="0" y2="6"/></pattern></defs>
+<text class="fd-title" fill="#002a3a" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="24.0" y="38.0" font-size="15" font-weight="700" text-anchor="start">fbtree inner node: 2048 B, 61-way fanout</text>
+<rect class="fd-role-overhead" fill="#9aa7b5" stroke="#30176e" stroke-width="1" x="24.0" y="92.0" width="0.6" height="56" rx="4"/>
+<rect class="fd-role-overhead" fill="#9aa7b5" stroke="#30176e" stroke-width="1" x="24.6" y="92.0" width="78.7" height="56" rx="4"/>
+<rect class="fd-role-overhead" fill="#9aa7b5" stroke="#30176e" stroke-width="1" x="103.4" y="92.0" width="2.5" height="56" rx="4"/>
+<rect class="fd-role-overhead" fill="#9aa7b5" stroke="#30176e" stroke-width="1" x="105.8" y="92.0" width="79.4" height="56" rx="4"/>
+<line class="fd-subdivision-line" stroke="#ffffff" stroke-width="1" opacity="0.25" x1="125.7" y1="95.0" x2="125.7" y2="145.0"/>
+<line class="fd-subdivision-line" stroke="#ffffff" stroke-width="1" opacity="0.25" x1="145.5" y1="95.0" x2="145.5" y2="145.0"/>
+<line class="fd-subdivision-line" stroke="#ffffff" stroke-width="1" opacity="0.25" x1="165.4" y1="95.0" x2="165.4" y2="145.0"/>
+<rect class="fd-role-pointer" fill="#e07b39" stroke="#30176e" stroke-width="1" x="185.2" y="92.0" width="151.3" height="56" rx="4"/>
+<rect class="fd-role-pointer" fill="#e07b39" stroke="#30176e" stroke-width="1" x="336.5" y="92.0" width="151.3" height="56" rx="4"/>
+<rect class="fd-role-overhead" fill="#9aa7b5" stroke="#30176e" stroke-width="1" x="487.8" y="92.0" width="151.3" height="56" rx="4"/>
+<rect class="fd-role-overhead" fill="#9aa7b5" stroke="#30176e" stroke-width="1" x="639.0" y="92.0" width="18.9" height="56" rx="4"/>
+<rect class="fd-padding-box" fill="url(#fd-hatch)" stroke="#b9c2cc" stroke-width="1" x="658.0" y="92.0" width="0.9" height="56" rx="4"/>
+<text class="fd-field-label" fill="#ffffff" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="64.0" y="125.0" font-size="15" font-weight="700" text-anchor="middle">prefix</text>
+<text class="fd-field-label" fill="#ffffff" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="260.8" y="125.0" font-size="15" font-weight="700" text-anchor="middle">anchors</text>
+<text class="fd-field-label" fill="#ffffff" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="412.1" y="125.0" font-size="15" font-weight="700" text-anchor="middle">children</text>
+<text class="fd-field-label" fill="#ffffff" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="563.4" y="125.0" font-size="15" font-weight="700" text-anchor="middle">sizes</text>
+<text class="fd-callout-label" fill="#002a3a" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="46.3" y="70.0" font-size="12" font-weight="600" text-anchor="middle">header</text>
+<path class="fd-leader-line" stroke="#666666" stroke-width="1" fill="none" d="M 46.3 74.0 V 84.0 H 24.3 V 91.0"/>
+<text class="fd-callout-label" fill="#002a3a" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="145.5" y="70.0" font-size="12" font-weight="600" text-anchor="middle">features</text>
+<line class="fd-leader-line" stroke="#666666" stroke-width="1" fill="none" x1="145.5" y1="74.0" x2="145.5" y2="91.0"/>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="24.0" y1="156" x2="658.9" y2="156"/>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="24.0" y1="156" x2="24.0" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="24.0" y="176.0" font-size="11" font-weight="600" text-anchor="middle">0</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="63.7" y1="156" x2="63.7" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="63.7" y="176.0" font-size="11" font-weight="600" text-anchor="middle">128</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="103.4" y1="156" x2="103.4" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="103.4" y="176.0" font-size="11" font-weight="600" text-anchor="middle">256</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="143.0" y1="156" x2="143.0" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="143.0" y="176.0" font-size="11" font-weight="600" text-anchor="middle">384</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="182.7" y1="156" x2="182.7" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="182.7" y="176.0" font-size="11" font-weight="600" text-anchor="middle">512</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="222.4" y1="156" x2="222.4" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="222.4" y="176.0" font-size="11" font-weight="600" text-anchor="middle">640</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="262.1" y1="156" x2="262.1" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="262.1" y="176.0" font-size="11" font-weight="600" text-anchor="middle">768</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="301.8" y1="156" x2="301.8" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="301.8" y="176.0" font-size="11" font-weight="600" text-anchor="middle">896</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="341.4" y1="156" x2="341.4" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="341.4" y="176.0" font-size="11" font-weight="600" text-anchor="middle">1024</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="381.1" y1="156" x2="381.1" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="381.1" y="176.0" font-size="11" font-weight="600" text-anchor="middle">1152</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="420.8" y1="156" x2="420.8" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="420.8" y="176.0" font-size="11" font-weight="600" text-anchor="middle">1280</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="460.5" y1="156" x2="460.5" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="460.5" y="176.0" font-size="11" font-weight="600" text-anchor="middle">1408</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="500.2" y1="156" x2="500.2" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="500.2" y="176.0" font-size="11" font-weight="600" text-anchor="middle">1536</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="539.8" y1="156" x2="539.8" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="539.8" y="176.0" font-size="11" font-weight="600" text-anchor="middle">1664</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="579.5" y1="156" x2="579.5" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="579.5" y="176.0" font-size="11" font-weight="600" text-anchor="middle">1792</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="619.2" y1="156" x2="619.2" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="619.2" y="176.0" font-size="11" font-weight="600" text-anchor="middle">1920</text>
+<line class="fd-ruler-line" stroke="#666666" stroke-width="1" x1="658.9" y1="156" x2="658.9" y2="162"/>
+<text class="fd-ruler-label" fill="#666666" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" x="658.9" y="176.0" font-size="11" font-weight="600" text-anchor="middle">2048</text>
+</svg>
