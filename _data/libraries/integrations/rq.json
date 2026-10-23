@@ -1,0 +1,13 @@
+{
+  "name": "Rq",
+  "language": "Python",
+  "license": "BSD-2-Clause",
+  "description": "Minimalistic Python task queue that supports Valkey.",
+  "repository": "https://github.com/rq/rq",
+  "documentation": "https://python-rq.org/",
+  "installCommand": "pip install rq",
+  "type": "tools",
+  "tags": [
+    "Queues & background jobs"
+  ]
+}

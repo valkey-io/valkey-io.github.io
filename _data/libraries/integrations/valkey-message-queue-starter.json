@@ -1,0 +1,13 @@
+{
+  "name": "Valkey Message Queue Starter",
+  "language": "TypeScript",
+  "license": "MIT",
+  "description": "Next.js starter template demonstrating a reliable message queue built on Valkey Streams, using consumer groups and pending-entry acknowledgement.",
+  "repository": "https://github.com/vercel/examples/tree/main/solutions/aws-message-queue-elasticache",
+  "documentation": "https://vercel.com/templates/next.js/valkey-message-queue-with-elasticache-and-next-js",
+  "installCommand": "pnpm create next-app --example https://github.com/vercel/examples/tree/main/solutions/aws-message-queue-elasticache",
+  "type": "tools",
+  "tags": [
+    "Deploy & operate"
+  ]
+}

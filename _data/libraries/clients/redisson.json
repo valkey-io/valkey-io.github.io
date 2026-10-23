@@ -1,0 +1,21 @@
+{
+  "name": "redisson",
+  "language": "Java",
+  "license": "Apache-2.0",
+  "description": "A Java client that exposes Valkey as familiar JDK structures — Map, Lock, Queue, ExecutorService — plus client-side caching.",
+  "repository": "https://github.com/redisson/redisson",
+  "documentation": "https://redisson.pro/docs/getting-started/",
+  "installCommand": "implementation 'org.redisson:redisson:4.+'",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": true,
+    "latency": false,
+    "az": false,
+    "csc": true,
+    "capa": true,
+    "pool": true
+  },
+  "type": "clients"
+}

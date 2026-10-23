@@ -1,0 +1,282 @@
+{% extends "default.html" %}
+
+{# Libraries catalog page. Each URL renders one catalog:                    #}
+{#   content/clients/_index.md      → kind = "clients"                       #}
+{#   content/integrations/_index.md → kind = "integrations"                  #}
+{# Both pages load every entry, then render only their kind. Entries are     #}
+{# validated elsewhere, so this template trusts them.                        #}
+{# Cards are rendered at build time from _data/libraries/ (no runtime fetch); #}
+{# libraries.js filters and sorts them. Without JS the JS-only controls are  #}
+{# hidden and every card shows.                                              #}
+
+{% block content %}
+  <script>document.documentElement.classList.add('js');</script>
+
+  {%- set kind = section.extra.kind | default(value="clients") -%}
+
+  {# Data assembly #}
+  {% set manifest = load_data(path="_data/libraries/manifest.json", format="json") %}
+  {# featureDescriptions is an array so cards and the legend list features in its order. #}
+  {% set meta = load_data(path="_data/libraries/metadata.json", format="json") %}
+
+  {# Per-language colors from GitHub Linguist (MIT-licensed color data, not #}
+  {# brand logos). See _data/lang_colors.toml. #}
+  {% set lang_colors = load_data(path="_data/lang_colors.toml", format="toml") %}
+
+  {# --- Clients ----------------------------------------------------------- #}
+  {% set_global clients = [] %}
+  {% for rel in manifest.clients %}
+    {% set entry = load_data(path="_data/libraries/" ~ rel, format="json") %}
+    {% set_global clients = [...clients, entry] %}
+  {% endfor %}
+
+  {# --- Integrations ------------------------------------------------------ #}
+  {% set_global integrations = [] %}
+  {% for rel in manifest.integrations %}
+    {% set entry = load_data(path="_data/libraries/" ~ rel, format="json") %}
+    {% set_global integrations = [...integrations, entry] %}
+  {% endfor %}
+
+  {# --- Clients: feature suppression + languages -------------------------- #}
+  {% set client_count = clients | length %}
+  {% set_global suppressed = [] %}
+  {% for feat in meta.featureDescriptions %}
+    {% set_global tcount = 0 %}
+    {% for e in clients %}
+      {% if e.features[feat.key] %}
+        {% set_global tcount = tcount + 1 %}
+      {% endif %}
+    {% endfor %}
+    {# A feature every client supports, or none does, doesn't tell clients #}
+    {# apart, so it's left off the cards and out of the legend.            #}
+    {% if client_count > 0 and (tcount == client_count or tcount == 0) %}
+      {% set_global suppressed = [...suppressed, feat.key] %}
+    {% endif %}
+  {% endfor %}
+
+  {% set_global languages = [] %}
+  {% for e in clients %}
+    {% set lang = e.language | default(value="") %}
+    {% if lang != "" and lang not in languages %}
+      {% set_global languages = [...languages, lang] %}
+    {% endif %}
+  {% endfor %}
+
+  {# --- Integrations: distinct tags --------------------------------------- #}
+  {% set_global tags = [] %}
+  {% for e in integrations %}
+    {% if e.tags is defined and e.tags is iterable %}
+      {% for t in e.tags %}
+        {% set v = t | trim %}
+        {% if v != "" and v not in tags %}{% set_global tags = [...tags, v] %}{% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+
+  <div class="catalog" data-catalog-root data-page="libraries">
+
+    {% if kind == "clients" %}
+    <header class="catalog-header">
+      <h1 class="catalog-title">Clients</h1>
+      <p class="catalog-lede">Client libraries and tools used for connecting to Valkey. Anything that speaks the Redis 7.2 wire protocol works with Valkey 7.2 and later, so most existing clients need no changes to migrate.</p>
+      <p class="catalog-crosslink">See also: <a href="/integrations/">Integrations</a></p>
+    </header>
+    {% else %}
+    <header class="catalog-header">
+      <h1 class="catalog-title">Integrations</h1>
+      <p class="catalog-lede">Frameworks, job queues, AI libraries, and operations tools that work with Valkey.</p>
+      <p class="catalog-crosslink">See also: <a href="/clients/">Clients</a></p>
+    </header>
+    {% endif %}
+
+    {# Shared toolbar: search + Valkey toggle + sort                         #}
+    {{<catalog.toolbar search_placeholder={"Search " ~ kind ~ "…"} />}}
+
+    {# The facet bar's data-facet names the card attribute it filters on.    #}
+    {% if kind == "clients" %}
+    <div class="filterbar" data-facet="language" data-select="multi">
+      <span class="filterbar-label">Language</span>
+      <div class="pills">
+        <button type="button" class="filter-pill" data-value="__all__" aria-pressed="true">All</button>
+        {% for v in languages %}
+          {% set_global fp_n = 0 %}
+          {% for e in clients %}{% if e.language == v %}{% set_global fp_n = fp_n + 1 %}{% endif %}{% endfor %}
+          <button type="button" class="filter-pill" data-value="{{ v }}" aria-pressed="false">
+            {{ v }} <span class="pill-count" data-count>{{ fp_n }}</span></button>
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div class="filterbar" data-facet="tags" data-select="multi">
+      <span class="filterbar-label">Category</span>
+      <div class="pills">
+        <button type="button" class="filter-pill" data-value="__all__" aria-pressed="true">All</button>
+        {% for v in tags %}
+          {% set_global fp_n = 0 %}
+          {% for e in integrations %}{% if e.tags is defined and v in e.tags %}{% set_global fp_n = fp_n + 1 %}{% endif %}{% endfor %}
+          <button type="button" class="filter-pill" data-value="{{ v }}" aria-pressed="false">
+            {{ v }} <span class="pill-count" data-count>{{ fp_n }}</span></button>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <section class="catalog-grid" data-catalog>
+
+      {% if kind == "clients" %}
+      {% for entry in clients %}
+        {% set is_first_party = entry.repository is starting_with(pat="https://github.com/valkey-io/") %}
+        {% set lang = entry.language | default(value="") %}
+        {% set search_text = entry.name ~ " " ~ entry.description ~ " " ~ lang %}
+        {% set lang_slug = lang | lower | replace(from='#', to='-sharp') | replace(from='.', to='-') | replace(from=' ', to='-') %}
+        <article class="entry-card"
+                 data-name-lower="{{ entry.name | lower }}"
+                 data-search="{{ search_text | lower }}"
+                 data-desc="{{ entry.description | lower }}"
+                 data-group="{{ entry.type }}"
+                 data-language="{{ lang }}"
+                 data-first-party="{% if is_first_party %}true{% else %}false{% endif %}">
+          <div class="entry-head">
+            <h3 class="entry-name">
+              {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
+            </h3>
+            <div class="entry-tags">
+              <span class="chip chip-language">
+                {%- set lc = lang_colors[lang_slug] | default(value="") -%}
+                {%- if lang != "" and lc != "" -%}
+                <span class="lang-badge" aria-hidden="true"
+                      style="background:{{ lc.color }};color:{{ lc.fg }}">{{ lc.mono }}</span>
+                {%- endif -%}
+                {{ lang }}</span>
+              {% if is_first_party %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
+            </div>
+          </div>
+
+          <p class="entry-desc">{{ entry.description }}</p>
+
+          {# Copy box + features flow after the description; only the license/footer #}
+          {# is pinned to the bottom to absorb extra row height. #}
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          {% if entry.installCommand %}
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">{{ entry.installCommand }}</code></span>
+            <button type="button" class="copy-btn" data-copy="{{ entry.installCommand }}"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          {% endif %}
+
+          {% set_global disc_count = 0 %}
+          {% for feat in meta.featureDescriptions %}
+            {% if entry.features[feat.key] and feat.key not in suppressed %}
+              {% set_global disc_count = disc_count + 1 %}
+            {% endif %}
+          {% endfor %}
+          <details class="disc"{% if disc_count == 0 %} data-disc-empty{% endif %}>
+            <summary>Advanced features supported <span class="disc-count">({{ disc_count }})</span></summary>
+            {% if disc_count > 0 %}
+            <ul class="feature-list">
+              {% for feat in meta.featureDescriptions %}
+                {% if entry.features[feat.key] and feat.key not in suppressed %}
+                <li class="feature-badge" title="{{ feat.definition }}" data-feature="{{ feat.key }}">{{ feat.label }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+            {% else %}
+            <p class="disc-none">None reported.</p>
+            {% endif %}
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
+
+          <footer class="entry-foot">
+            {% if entry.repository and (entry.repository is starting_with(pat="http://") or entry.repository is starting_with(pat="https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
+            {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
+          </footer>
+          </div>
+          </div>
+        </article>
+      {% endfor %}
+
+      {% else %}
+      {% for entry in integrations %}
+        {% set is_first_party = entry.repository is starting_with(pat="https://github.com/valkey-io/") %}
+        {% set_global ec_tags = [] %}
+        {% if entry.tags is defined and entry.tags is iterable %}
+          {% for t in entry.tags %}
+            {% set v = t | trim %}
+            {% if v != "" and v not in ec_tags %}{% set_global ec_tags = [...ec_tags, v] %}{% endif %}
+          {% endfor %}
+        {% endif %}
+        {% set tagstr = ec_tags | join(sep=" ") %}
+        {% set search_text = entry.name ~ " " ~ entry.description ~ " " ~ tagstr %}
+        <article class="entry-card"
+                 data-name-lower="{{ entry.name | lower }}"
+                 data-search="{{ search_text | lower }}"
+                 data-desc="{{ entry.description | lower }}"
+                 data-group="{{ entry.type }}"
+                 data-tags="{{ ec_tags | join(sep='|') }}"
+                 data-first-party="{% if is_first_party %}true{% else %}false{% endif %}">
+          <div class="entry-head">
+            <h3 class="entry-name">
+              {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
+            </h3>
+            <div class="entry-tags">
+              {% for t in ec_tags %}<span class="chip chip-tag">{{ t }}</span>{% endfor %}
+              {% if is_first_party %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
+            </div>
+          </div>
+
+          <p class="entry-desc">{{ entry.description }}</p>
+
+          {# Copy box flows after the description; only the license/footer is #}
+          {# pinned to the bottom to absorb extra row height. #}
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          {% if entry.installCommand %}
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">{{ entry.installCommand }}</code></span>
+            <button type="button" class="copy-btn" data-copy="{{ entry.installCommand }}"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          {% endif %}
+          </div>
+
+          <div class="entry-anchor-bottom">
+          {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
+
+          <footer class="entry-foot">
+            {% if entry.repository and (entry.repository is starting_with(pat="http://") or entry.repository is starting_with(pat="https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
+            {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
+          </footer>
+          </div>
+          </div>
+        </article>
+      {% endfor %}
+      {% endif %}
+
+      {{<catalog.empty_state noun={kind} />}}
+    </section>
+
+    {% if kind == "clients" %}
+    <section class="legend" data-legend aria-label="Feature definitions">
+      <h2 class="legend-title">Feature definitions</h2>
+      <dl class="legend-list">
+        {% for feat in meta.featureDescriptions %}
+        {% if feat.key not in suppressed %}
+        <div class="legend-item" data-feature="{{ feat.key }}">
+          <dt class="legend-term">{{ feat.label }}</dt>
+          <dd class="legend-def">{{ feat.definition }}</dd>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </dl>
+    </section>
+    {% endif %}
+
+    {{<catalog.footer_cta cta_text="Add your library" noscript_noun="library" />}}
+
+  <script defer src="/assets/js/libraries.js"></script>
+{% endblock content %}

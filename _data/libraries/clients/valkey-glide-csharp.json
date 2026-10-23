@@ -1,0 +1,21 @@
+{
+  "name": "Valkey GLIDE C#",
+  "language": "C#",
+  "license": "Apache-2.0",
+  "description": "Designed for reliability, optimized performance, and high-availability. The .NET client over the shared Rust core, with StackExchange.Redis API compatibility.",
+  "repository": "https://github.com/valkey-io/valkey-glide-csharp",
+  "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=c%23",
+  "installCommand": "dotnet add package Valkey.Glide",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": true,
+    "latency": false,
+    "az": false,
+    "csc": false,
+    "capa": false,
+    "pool": true
+  },
+  "type": "clients"
+}

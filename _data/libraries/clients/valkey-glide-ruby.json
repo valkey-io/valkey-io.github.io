@@ -1,0 +1,21 @@
+{
+  "name": "Valkey GLIDE Ruby",
+  "language": "Ruby",
+  "license": "Apache-2.0",
+  "description": "Designed for reliability, optimized performance, and high-availability. A synchronous Ruby client over the shared Rust core, prebuilt for Linux and Apple silicon macOS.",
+  "repository": "https://github.com/valkey-io/valkey-glide-ruby",
+  "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=ruby",
+  "installCommand": "gem install valkey-glide-rb",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": false,
+    "scan": false,
+    "latency": false,
+    "az": true,
+    "csc": false,
+    "capa": false,
+    "pool": false
+  },
+  "type": "clients"
+}

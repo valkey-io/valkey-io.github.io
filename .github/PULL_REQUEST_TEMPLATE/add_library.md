@@ -1,0 +1,138 @@
+<!-- Thanks for contributing to valkey.io! Everything you need is in this template. -->
+
+### What are you adding?
+
+<!-- Name of the client, tool, or integration, and a one-line summary. -->
+
+- [ ] Client library (`type: "clients"` → `_data/libraries/clients/`)
+- [ ] Tool or framework (`type: "tools"` → `_data/libraries/integrations/`)
+- [ ] AI or agent library (`type: "ai"` → `_data/libraries/integrations/`)
+
+### Entry details
+
+- **Name:**
+- **Repository:**
+- **License (SPDX):**
+
+---
+
+## How entries work
+
+Each entry is a single flat JSON file under `_data/libraries/`, in one of two
+group directories, and registered by path in `_data/libraries/manifest.json`:
+
+- Client libraries → `_data/libraries/clients/` (appear on the **Clients** page)
+- Tools & frameworks (`type: "tools"`) → `_data/libraries/integrations/`
+- AI & agent libraries (`type: "ai"`) → `_data/libraries/integrations/`
+
+Tools and AI libraries both live in `integrations/` and are shown together on
+the **Integrations** page. To choose between them:
+
+- `"tools"`: CLI and GUI apps, deployment and operations tooling, proxies and
+  gateways, frameworks and ORMs, queues and background jobs, data-movement
+  connectors, and observability or testing tools.
+- `"ai"`: AI memory platforms, agent frameworks, vector stores, RAG and
+  retrieval, and inference or serving engines.
+
+The `type` value must match the directory the file lives in. Name the file
+after your entry, lowercase and hyphenated (e.g. `valkey-glide-python.json`).
+CI checks every entry with `build/validate-libraries.py`, against
+`_data/libraries/schema.json`, the manifest, and the SPDX license list. To run
+the check locally, use `./build/validate-libraries.py` with
+[uv](https://docs.astral.sh/uv/) installed. The README's "Checking catalog
+entries" section shows how to run it without uv. No other repositories are
+needed.
+
+## Fields
+
+Entries are flat JSON objects, apart from a client's `features`. Use only the
+fields below.
+
+**Required for all entries:**
+
+- `name` (string) — official name.
+- `description` (string) — one or two factual, vendor-neutral sentences. The maximum length is set in `_data/libraries/schema.json`.
+- `type` (string) — exactly one of `"clients"`, `"tools"`, or `"ai"`, matching the directory.
+- `license` (string) — SPDX identifier, e.g. `"Apache-2.0"`, `"MIT"`, `"BSD-3-Clause"`. Must be an OSI-approved open-source license.
+- `repository` (string) — public source-code repository URL. Entries whose repository is under `https://github.com/valkey-io/` are shown as maintained by Valkey.
+- `documentation` (string) — a link to a page that shows how to use the project with Valkey. For a page on valkey.io, use a root-relative path such as `/topics/cli/`; for any other site, an `https://` URL. Link the first of these that exists: a Valkey page in the project's docs, a Valkey example, a getting-started guide, or the README section that shows basic usage. For a library that speaks the Redis protocol, a page that shows the connection setup is enough. A homepage, a docs index, or a directory listing isn't. Link GitHub files at a tag or commit (`/blob/v1.2.3/…`), not a branch.
+
+**Required for clients:**
+
+- `language` (string) — primary language. Tools and AI libraries that are imported into code, such as ORM adapters, SDK wrappers and agent frameworks, set it too. Standalone tools leave it out. If a library has a separate package for each language, add one entry per language. The allowed languages are in `_data/libraries/schema.json`. If yours isn't there, add it to the schema in your PR.
+- `features` (object of true/false flags) — one flag for each feature key listed under `features` in `_data/libraries/schema.json`. Set a flag to `true` if the client supports the feature, otherwise `false`. Include them all.
+
+The client example below shows the format.
+The label and definition of each feature, as shown on the site, are in `featureDescriptions` in `_data/libraries/metadata.json`.
+A feature that every listed client supports, or that none does, isn't shown on cards or in the legend, because it doesn't tell clients apart.
+So a feature you set can appear or disappear as other clients are added or removed.
+
+**Optional fields:**
+
+- `tags` (array of strings) — category tags that tools and AI libraries use for filtering and discovery. Client entries have no tags. The tags allowed for each `type` are in `_data/libraries/schema.json`. Use one of those where it fits. If none does, propose a new tag by adding it to the schema in your PR.
+- `installCommand` (string) — primary install command, e.g. `"pip install valkey-glide"`.
+
+## Example entries
+
+Client (`_data/libraries/clients/valkey-glide-python.json`):
+
+```json
+{
+  "name": "Valkey GLIDE Python",
+  "language": "Python",
+  "license": "Apache-2.0",
+  "description": "Designed for reliability, optimized performance, and high-availability. GLIDE is a multi-language client with one shared Rust core and per-language bindings.",
+  "repository": "https://github.com/valkey-io/valkey-glide/tree/main/python",
+  "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=python",
+  "installCommand": "pip install valkey-glide",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": true,
+    "latency": false,
+    "az": true,
+    "csc": false,
+    "capa": false,
+    "pool": false
+  },
+  "type": "clients"
+}
+```
+
+Integration (`_data/libraries/integrations/valkey-cli.json`):
+
+```json
+{
+  "name": "valkey-cli",
+  "language": "C",
+  "license": "BSD-3-Clause",
+  "description": "The interactive terminal client shipped with valkey-server, with cluster-aware routing, --scan, --bigkeys and latency diagnostics built in.",
+  "repository": "https://github.com/valkey-io/valkey",
+  "documentation": "/topics/cli/",
+  "type": "tools",
+  "tags": ["CLI & GUI"]
+}
+```
+
+## Register in the manifest
+
+Add the file's path (relative to `_data/libraries/`) to the matching array in
+`_data/libraries/manifest.json` — `clients` or `integrations`. List it exactly
+once; the page sorts cards by name, so the position doesn't matter. A file not
+in the manifest will not appear on the site.
+
+---
+
+### Submission checklist
+
+- [ ] Valid JSON, placed in the directory matching its `type`, and registered once in `_data/libraries/manifest.json`.
+- [ ] All required fields present: `name`, `description`, `type`, `license`, `repository`, `documentation` — plus `language` and `features` for clients, with every flag.
+- [ ] Tested compatible with Valkey 7.2 or above.
+- [ ] OSI-approved open-source license.
+- [ ] Repository is publicly accessible, active within the last 6 months, and has a README with basic usage.
+- [ ] `documentation` opens on a page that shows how to use the project with Valkey, not a homepage or an index.
+- [ ] Description is factual, vendor-neutral and within the length limit in `_data/libraries/schema.json`. Every `features` flag and compatibility claim is accurate.
+- [ ] Commits are signed per the DCO using `--signoff`.
+
+By submitting this pull request, I confirm that my contribution is made under the terms of the BSD-3-Clause License.

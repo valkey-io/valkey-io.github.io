@@ -1,0 +1,13 @@
+{
+  "name": "Agno",
+  "language": "Python",
+  "license": "Apache-2.0",
+  "description": "Agent framework with Valkey as a session and state store, plus a Valkey vector store (requires valkey-bundle) supporting vector and keyword search.",
+  "repository": "https://github.com/agno-agi/agno",
+  "documentation": "https://docs.agno.com/database/providers/valkey/overview",
+  "installCommand": "pip install 'agno[valkey]'",
+  "type": "ai",
+  "tags": [
+    "Agent frameworks"
+  ]
+}
