@@ -1,6 +1,7 @@
 ---
 title: Omer Rubinstein
 extra:
+    photo: '/assets/media/authors/omerrubi.png'
     github: omerrubi-amzn
 ---
 
