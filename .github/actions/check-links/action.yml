@@ -1,0 +1,43 @@
+name: Check the website's links
+description: >
+  Checks a built site (<path>/public) for links to missing pages or #anchors. If base-path is
+  provided, only surfaces issues that don't appear in both.
+
+inputs:
+  path:
+    description: The website to check the build for, relative to the workspace (e.g. website).
+    required: true
+  base-path:
+    description: A checkout of the base commit to compare with. If it has no public directory, every broken link is listed.
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Install lychee
+      shell: bash
+      env:
+        LYCHEE_VERSION: v0.24.2
+      run: |
+        curl -sSfL "https://github.com/lycheeverse/lychee/releases/download/lychee-${LYCHEE_VERSION}/lychee-x86_64-unknown-linux-gnu.tar.gz" \
+          | tar -xz -C "$RUNNER_TEMP" --strip-components=1 lychee-x86_64-unknown-linux-gnu/lychee
+        echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+
+    - name: Check links
+      shell: bash
+      env:
+        CHECKOUT: ${{ inputs.path }}
+        BASE_CHECKOUT: ${{ inputs.base-path }}
+      run: |
+        status=0
+        for check in broken-links unconverted-doc-links; do
+          echo "build/$check.sh:"
+          before=-
+          if [ -n "$BASE_CHECKOUT" ]; then
+            before=$RUNNER_TEMP/$check-before.txt
+            if [ -d "$BASE_CHECKOUT/public" ]; then "$CHECKOUT/build/$check.sh" "$BASE_CHECKOUT/public" > "$before"; fi
+          fi
+          "$CHECKOUT/build/$check.sh" "$CHECKOUT/public" > "$RUNNER_TEMP/$check.txt"
+          "$CHECKOUT/build/compare-link-failures.sh" "$before" "$RUNNER_TEMP/$check.txt" || status=1
+        done
+        exit "$status"
