@@ -13,10 +13,12 @@ unconverted='href="(\.\./[^"]*|[^":]*\.md(#[^"]*)?)"'
 
 # grep prints one "topics/x/index.html:href=\"../y.md\"" per match. It exits 1 when nothing
 # matches, which means the site is clean.
+# Keyed by page too, since the same link opens a different page under topics and commands.
 { grep -roE "$unconverted" topics commands --include=index.html || [ $? -eq 1 ]; } |
   while IFS= read -r match; do
     page=/${match%%index.html:*}   # topics/x/index.html:… → /topics/x/
     link=${match#*:href=\"}        # …:href="../y.md" → ../y.md"
     link=${link%\"}                # → ../y.md
-    printf '%s\t%s links to %s, a valkey-doc link that was not converted to a site URL\n' "$link" "$page" "$link"
+    printf '%s\t%s links to %s, a valkey-doc link that was not converted to a site URL\n' \
+      "$page $link" "$page" "$link"
   done | sort -u
