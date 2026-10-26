@@ -32,7 +32,7 @@ fi
 
 # Create symlink to topics, except if it already exists and points to the same directory.
 if [ ! -L build-topics -o "$(readlink build-topics)" != "$1" ]; then
-    ln -s $1 ./build-topics
+    ln -sfn $1 ./build-topics
 fi
 
 for fname in $(find $1 -maxdepth 1  -iname "*.md")
@@ -69,7 +69,7 @@ echo "Copied images to topics directory."
 
 #create symlink to clients, expect if it already exists
 if [ ! -L build-clients -o "$(readlink build-clients)" != "$2" ]; then
-    ln -s $2 ./build-clients
+    ln -sfn $2 ./build-clients
 fi
 echo "Symlink to clients has been created at ./build-clients "
 

@@ -57,11 +57,11 @@ else
     rm -f "$probe"
 fi
 
-ln -s $1 ./build-command-docs
-ln -s $2 ./build-command-json
-ln -s $3 ./build-bloom-command-json
-ln -s $4 ./build-json-command-json
-ln -s $5 ./build-search-command-json
+ln -sfn $1 ./build-command-docs
+ln -sfn $2 ./build-command-json
+ln -sfn $3 ./build-bloom-command-json
+ln -sfn $4 ./build-json-command-json
+ln -sfn $5 ./build-search-command-json
 
 # The documentation menu needs each command's full name, container and group.
 # They're written to the stub files below (using jq), so that the templates
@@ -124,7 +124,7 @@ done
 echo "Command stub files created."
 
 for datafile in groups.json resp2_replies.json resp3_replies.json modules.json; do
-    ln -s "../${1}/../${datafile}" "./_data/${datafile}"
+    ln -sf "../${1}/../${datafile}" "./_data/${datafile}"
 
     echo "Created link to ${datafile}"
 done
