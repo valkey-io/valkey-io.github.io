@@ -9,6 +9,7 @@
     "clients/redisson.json",
     "clients/valkey-glide-go.json",
     "clients/valkey-go.json",
+    "clients/phpredis.json",
     "clients/predis.json",
     "clients/valkey-swift.json",
     "clients/valkey-glide-csharp.json",

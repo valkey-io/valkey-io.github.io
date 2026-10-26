@@ -1,0 +1,21 @@
+{
+  "name": "phpredis",
+  "language": "PHP",
+  "license": "PHP-3.01",
+  "description": "A client implemented as a PHP extension in C. Supports clustering, Sentinel, client-side sharding and storing PHP sessions.",
+  "repository": "https://github.com/phpredis/phpredis",
+  "documentation": "https://github.com/phpredis/phpredis/blob/6.3.0/README.md#connect-open",
+  "installCommand": "pie install phpredis/phpredis",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": false,
+    "scan": false,
+    "latency": false,
+    "az": false,
+    "csc": false,
+    "capa": false,
+    "pool": true
+  },
+  "type": "clients"
+}
