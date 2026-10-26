@@ -68,7 +68,7 @@ From the root directory of this repo run:
 
 ```shell
 # You should only need to run this once or when you add a new topic.
-./build/init-topics-and-clients.sh ../valkey-doc/topics ../valkey-doc/clients
+./build/init-topics-and-clients.sh ../valkey-doc/topics
 ```
 
 Then, restart Zola.
