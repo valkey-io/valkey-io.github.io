@@ -1,7 +1,6 @@
 +++
 title = "Testing without a server: using FakeValkey, the in-memory test double for Valkey"
 date = 2026-10-26
-draft = true
 description = """FakeValkey runs the Valkey command set inside your Python test process, with no server, container, or network connection.
 Here is how to use it, how it keeps pace with Valkey, and when you still need a real server."""
 authors = ["cunla"]
