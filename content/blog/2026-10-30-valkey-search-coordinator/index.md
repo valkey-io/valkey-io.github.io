@@ -10,7 +10,9 @@ blog_type = ["How-to"]
 [extra]
 +++
 
-[Valkey-search](https://github.com/valkey-io/valkey-search) brings powerful full-text and vector search capabilities to Valkey databases, but running it in a cluster deployment has challenges such as  how to synchronize index definitions and searching for data when each node only hold a portion of the whole dataset.
+[Valkey-search](https://github.com/valkey-io/valkey-search) brings powerful full-text and vector search capabilities to Valkey databases,
+but running it in a cluster deployment has challenges such as how to synchronize index definitions and searching for data
+when each node only holds a portion of the whole dataset.
 In this blog post, we will analyze the role of the Coordinator service to help you seamlessly integrate valkey-search into your cluster infrastructure.
 
 ## How does Valkey-search work
@@ -24,9 +26,13 @@ For example, with an index created using the following command:
 FT.CREATE index SCHEMA color TAG city TAG
 ```
 
-When a new hash key is created (`HSET key hello world`), valkey-search will receive the following information from the keyspace event subscription:
+When a new hash key is created ([`HSET key hello world`](https://valkey.io/commands/hset)), valkey-search will receive the information from the keyspace event subscription.
+We can get the same info by running [`PSUBSCRIBE`](https://valkey.io/commands/psubscribe) [through `valkey-cli`](https://valkey.io/topics/notifications/)
 
-```plaintext
+```bash
+valkey-cli config set notify-keyspace-events KA
+# run HSET key hello world in another terminal
+valkey-cli --csv psubscribe '__keyspace*__:*'
 "pmessage","__keyspace*__:*","__keyspace@0__:key","hset"
 ```
 
@@ -117,6 +123,7 @@ x-service-defaults: &default-config
       "valkey-server",
       "--protected-mode no",
       "--loadmodule /usr/lib/valkey/libsearch.so --use-coordinator",
+      "--appendonly yes",
       "--cluster-enabled yes",
       "--cluster-config-file /data/nodes.conf",
     ]
@@ -146,7 +153,7 @@ You can verify that the Coordinator service has been started by checking the con
 The port it uses is <valkey port + 20294>. So in this example, it is 26673:
 
 ```shell
-docker logs v1 | grep -i 'Coordinator Server listening'
+docker logs vk1 | grep -i 'Coordinator Server listening'
 <search> [notice], tid: 281473449222176, /src/coordinator/server.cc:430: Coordinator Server listening on [::]:26673
 ```
 
@@ -169,7 +176,7 @@ done
 `FT.SEARCH` outputs will also be merged from each node, so we only need to run it once:
 
 ```shell
-valkey-cli -c -p 30001 FT.SEARCH index "@color:{green}" RETURN 1 color
+docker exec vk1 valkey-cli -c FT.SEARCH index "@color:{green}" RETURN 1 color
 1) (integer) 3
 2) "key5"
 3) 1) "color"
@@ -179,12 +186,19 @@ valkey-cli -c -p 30001 FT.SEARCH index "@color:{green}" RETURN 1 color
    2) "green"
 6) "key1"
 7) 1) "color"
-   2) "green"
+   2) "green, blue"
 ```
 
-## How the Coordinator communicate between instances
+## How the Coordinator communicates between instances
 
-When an index is created or modified, the module will send `FT.INTERNAL_UPDATE` to other primaries through AOF, so that the index's definition can be replicated on other nodes. You can see this by opening the AOF file; the 3 parameters of the command are the index name (which also includes the database number if it is >0), `GlobalMetadataEntry`, and `GlobalMetadataVersionHeader`. Since the data is being sent in protobuf message format, is it not human-readable:
+If enabled, Coordinator will start a gRPC server to communicate between primaries. When an index is created or modified,
+the node receiving `FT.CREATE` will notify other primaries through the cluster bus. The other primaries will then get the new index's definition through the gRPC server.
+After the primaries created the index, they will send `FT.INTERNAL_UPDATE` through the replication stream (and AOF if persistence is enabled) so that their replicas can also create the index.
+
+Since the data sent through gRPC and AOF are the same, we can read the AOF file to see what data is being sent between nodes.
+The 3 parameters of `FT.INTERNAL_UPDATE` are the index name (which also includes the database number if it is >0),
+`GlobalMetadataEntry` (the index's definition retrieved through gRPC) , and `GlobalMetadataVersionHeader` (the index's version header sent through cluster bus).
+Since the data is being sent in protobuf message format, it is not human-readable:
 
 ```bash
 cat appendonly.aof.1.incr.aof
@@ -210,55 +224,73 @@ wget "${URL_BASE_PATH}/index_schema.proto" -O index_schema.proto
 # convert them to Python classes at current directory
 protoc --proto_path=. --python_out=. coordinator.proto
 protoc --proto_path=. --python_out=. index_schema.proto
+
+# get the AOF file from inside the container 
+docker cp vk1:/data/appendonlydir/appendonly.aof.1.incr.aof .
 ```
 
 - Then parse the message written in the AOF file using the below Python script:
 
 ```python
+import re
 import json
 from google.protobuf.json_format import MessageToJson
 import coordinator_pb2  
 import index_schema_pb2  
 
+def extract_bin(aof):
+  """Extract the protobuf binary message from AOF"""
+  # regex pattern to get the parameter value length
+  pattern = rb"\$(\d+)\r\n"
+  output = []
+  match = re.search(pattern, aof)
+  while match is not None:
+    p_len = match.group(1)
+    byte_offset = 3 + len(p_len)
+    output.append(aof[byte_offset: byte_offset + int(p_len)])
+    aof = aof[byte_offset + int(p_len) + 2:]
+    match = re.search(pattern, aof)
+  return output
+
 # read the AOF file as byte array
 with open("./appendonly.aof.1.incr.aof", "rb") as f:
     content = f.read()  
-# split the AOF file by CRCF delimiter
-content = content.split(b"\r\n")  
+# split the AOF file by FT.INTERNAL_UPDATE commands 
+content = content.split(b"$18\r\nFT.INTERNAL_UPDATE\r\n")[1:]
 
 mt_entry = coordinator_pb2.GlobalMetadataEntry()
 mt_header = coordinator_pb2.GlobalMetadataVersionHeader()
 
-for i, t in enumerate(content):
-    if t == b"FT.INTERNAL_UPDATE":
-        # GlobalMetadataEntry protobuf message is 4 lines away from FT.INTERNAL_UPDATE
-        mt_entry.ParseFromString(content[i + 4]) 
-        # GlobalMetadataVersionHeader protobuf message is 6 lines away from FT.INTERNAL_UPDATE
-        mt_header.ParseFromString(content[i + 6])
-        # The search's IndexSchema is embedded in the GlobalMetadataEntry message
-        # index_schema = index_schema_pb2.IndexSchema()
-        # index_schema.ParseFromString(mt_entry.content.value)
-        print("# GlobalMetadataEntry:")
-        print(mt_entry)
-        print("# GlobalMetadataVersionHeader:")
-        print(mt_header)
+for c in content:
+  params = extract_bin(c)
+  # GlobalMetadataEntry protobuf message is the second parameter
+  mt_entry.ParseFromString(params[1])
+  # GlobalMetadataVersionHeader protobuf message is the third parameter
+  mt_header.ParseFromString(params[2])
+  print("# GlobalMetadataEntry:")
+  print(mt_entry)
+  print("# GlobalMetadataVersionHeader:")
+  print(mt_header)
+  # the index definition is nested inside GlobalMetadataEntry
+  # index_schema = index_schema_pb2.IndexSchema()
+  # index_schema.ParseFromString(mt_entry.content.value)
 ```
 
 So we can see that the Coordinator syncs the data between nodes by sending Protobuf messages about the IndexSchema so that other nodes can replicate the object, as well as some additional information about the message metadata, so it won’t mistakenly apply obsolete information:
 
 ```markdown
-# GlobalMetadataEntry
-fingerprint: 9777546038505867454
+# GlobalMetadataEntry:
+fingerprint: 11620754165290179806
 encoding_version: 66049
 content {
   type_url: "type.googleapis.com/valkey_search.data_model.IndexSchema"
-  value: "\n\ridx:{bicycle}\022\n{bicycle}:\030\001 \0012\'\n\013description\022\013description\032\013\"\t\031\000\000\000\000\000\000\360?2\022\n\005price\022\005price\032\002\022\0002\035\n\tcondition\022\tcondition\032\005\032\003\n\001,@\001J\036,.<>{}[]\"\':;!@#$%^&*()-+=~/\\|?P\001Z\001aZ\002isZ\003theZ\002anZ\003andZ\003areZ\002asZ\002atZ\002beZ\003butZ\002byZ\003forZ\002ifZ\002inZ\004intoZ\002itZ\002noZ\003notZ\002ofZ\002onZ\002orZ\004suchZ\004thatZ\005theirZ\004thenZ\005thereZ\005theseZ\004theyZ\004thisZ\002toZ\003wasZ\004willZ\004with`\004"
+  value: "\n\005index...."
 }
 
-# GlobalMetadataVersionHeader
-top_level_fingerprint: 14994554756449409797
+# GlobalMetadataVersionHeader:
+top_level_fingerprint: 6020290978218369518
 top_level_version: 1
-top_level_min_version: 66048
+top_level_min_version: 65536
 ```
 
 ### What data is being sent when querying
