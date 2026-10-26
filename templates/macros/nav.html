@@ -274,6 +274,33 @@
 {% endcomponent nav_menu_item %}
 
 {#-
+    The command reference section of the menu: a link to all commands and one
+    to each command category. Only categories with documented commands are
+    listed. It's rendered where nav.yml has a section with the id
+    "command-reference", or at the end of the menu if there's none.
+-#}
+{% component nav_command_reference(title, index, on_command_reference) %}
+{%- set groups = load_data(path="../_data/groups.json", required=false) %}
+{%- set used_groups = [c.group for c in index] %}
+<li>
+    <details{% if on_command_reference %} open{% endif %}>
+        <summary>{{ title }}</summary>
+        <ul>
+            <li><a href="/commands/"{% if on_command_reference %} class="docs-menu-current" aria-current="page"{% endif %}>All commands</a></li>
+            {%- if groups %}
+            {#- groups.json uses "-" where the command JSON uses "_", e.g. "sorted-set". -#}
+            {%- for key in groups | keys | sort %}
+            {%- if key | replace(from="-", to="_") in used_groups %}
+            <li><a href="/commands/#{{ key }}">{{ groups[key].display }}</a></li>
+            {%- endif %}
+            {%- endfor %}
+            {%- endif %}
+        </ul>
+    </details>
+</li>
+{% endcomponent nav_command_reference %}
+
+{#-
     The menu.
       current: slug of the current topic.
       related: key of the menu entry the current command belongs to (on
@@ -292,6 +319,9 @@
 <nav class="docs-menu" aria-label="Documentation">
     <ul class="docs-menu-sections">
     {%- for section in nav %}
+        {%- if section.id == "command-reference" %}
+        {{< nav_command_reference title={section.title} index={index} on_command_reference={on_command_reference} />}}
+        {%- else %}
         <li>
             <details{% if section.id == open %} open{% endif %}>
                 <summary>{{ section.title }}</summary>
@@ -321,27 +351,11 @@
                 </ul>
             </details>
         </li>
+        {%- endif %}
     {%- endfor %}
-        {#- The command reference, with a link to each command category on
-            it. Only categories with documented commands are listed. -#}
-        {%- set groups = load_data(path="../_data/groups.json", required=false) %}
-        {%- set used_groups = [c.group for c in index] %}
-        <li>
-            <details{% if on_command_reference %} open{% endif %}>
-                <summary>Command reference</summary>
-                <ul>
-                    <li><a href="/commands/"{% if on_command_reference %} class="docs-menu-current" aria-current="page"{% endif %}>All commands</a></li>
-                    {%- if groups %}
-                    {#- groups.json uses "-" where the command JSON uses "_", e.g. "sorted-set". -#}
-                    {%- for key in groups | keys | sort %}
-                    {%- if key | replace(from="-", to="_") in used_groups %}
-                    <li><a href="/commands/#{{ key }}">{{ groups[key].display }}</a></li>
-                    {%- endif %}
-                    {%- endfor %}
-                    {%- endif %}
-                </ul>
-            </details>
-        </li>
+        {%- if "command-reference" not in [x.id for x in nav] %}
+        {{< nav_command_reference title="Command reference" index={index} on_command_reference={on_command_reference} />}}
+        {%- endif %}
     </ul>
 </nav>
 {% endcomponent nav_menu %}
