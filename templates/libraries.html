@@ -139,9 +139,9 @@
                  data-language="{{ lang }}"
                  data-first-party="{% if is_first_party %}true{% else %}false{% endif %}">
           <div class="entry-head">
-            <h3 class="entry-name">
+            <h2 class="entry-name">
               {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
-            </h3>
+            </h2>
             <div class="entry-tags">
               <span class="chip chip-language">
                 {%- set lc = lang_colors[lang_slug] | default(value="") -%}
@@ -222,9 +222,9 @@
                  data-tags="{{ ec_tags | join(sep='|') }}"
                  data-first-party="{% if is_first_party %}true{% else %}false{% endif %}">
           <div class="entry-head">
-            <h3 class="entry-name">
+            <h2 class="entry-name">
               {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
-            </h3>
+            </h2>
             <div class="entry-tags">
               {% for t in ec_tags %}<span class="chip chip-tag">{{ t }}</span>{% endfor %}
               {% if is_first_party %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
