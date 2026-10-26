@@ -67,7 +67,7 @@
         {%- set_global entries = [{"entry": e, "source": o.source} for e in o.section?.topics | default(value=[])] -%}
         {%- for source in sources -%}{%- for item in source.entries -%}
             {%- if item?.section == o.section.id -%}
-                {%- set_global entries = [...entries, ...[{"entry": e, "source": source.name} for e in item.topics]] -%}
+                {%- set_global entries = [...entries, ...[{"entry": e, "source": source.name} for e in item?.topics | default(value=[])]] -%}
             {%- endif -%}
         {%- endfor -%}{%- endfor -%}
         {%- set_global topics = [] -%}
