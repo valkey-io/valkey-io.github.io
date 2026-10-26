@@ -6,7 +6,6 @@
   "repository": "https://github.com/sidekiq/sidekiq",
   "documentation": "https://github.com/sidekiq/sidekiq/wiki/Using-Redis/b685f8063a1147679a5221f675433d40588bdaff",
   "installCommand": "gem install sidekiq",
-  "type": "tools",
   "tags": [
     "Queues & background jobs"
   ]

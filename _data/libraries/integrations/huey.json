@@ -6,7 +6,6 @@
   "repository": "https://github.com/coleifer/huey",
   "documentation": "https://huey.readthedocs.io/en/latest/recipes.html#high-availability-redis-sentinel-valkey-and-cluster",
   "installCommand": "pip install huey valkey-glide-sync",
-  "type": "tools",
   "tags": [
     "Queues & background jobs"
   ]

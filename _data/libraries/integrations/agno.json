@@ -6,7 +6,6 @@
   "repository": "https://github.com/agno-agi/agno",
   "documentation": "https://docs.agno.com/database/providers/valkey/overview",
   "installCommand": "pip install 'agno[valkey]'",
-  "type": "ai",
   "tags": [
     "Agent frameworks"
   ]

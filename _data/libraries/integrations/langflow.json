@@ -6,7 +6,6 @@
   "repository": "https://github.com/langflow-ai/langflow",
   "documentation": "https://docs.langflow.org/bundles-valkey",
   "installCommand": "pip install \"langflow[bundles]\"",
-  "type": "ai",
   "tags": [
     "RAG & retrieval"
   ]

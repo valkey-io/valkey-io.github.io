@@ -6,7 +6,6 @@
   "repository": "https://github.com/awslabs/mcp/tree/main/src/valkey-mcp-server",
   "documentation": "https://awslabs.github.io/mcp/servers/valkey-mcp-server",
   "installCommand": "uvx awslabs.valkey-mcp-server@latest",
-  "type": "ai",
   "tags": [
     "Agent frameworks"
   ]

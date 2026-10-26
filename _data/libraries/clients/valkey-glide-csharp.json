@@ -16,6 +16,5 @@
     "csc": false,
     "capa": false,
     "pool": true
-  },
-  "type": "clients"
+  }
 }

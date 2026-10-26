@@ -5,7 +5,6 @@
   "description": "The interactive terminal client shipped with valkey-server, with cluster-aware routing, --scan, --bigkeys and latency diagnostics built in.",
   "repository": "https://github.com/valkey-io/valkey",
   "documentation": "/topics/cli/",
-  "type": "tools",
   "tags": [
     "CLI & GUI"
   ]

@@ -6,7 +6,6 @@
   "repository": "https://github.com/langbot-app/LangBot",
   "documentation": "https://github.com/langbot-app/LangBot/blob/v4.10.11/docs/VALKEY_SEARCH_INTEGRATION.md",
   "installCommand": "pip install langbot",
-  "type": "ai",
   "tags": [
     "Agent frameworks"
   ]

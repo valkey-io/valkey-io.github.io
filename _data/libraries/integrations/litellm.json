@@ -6,7 +6,6 @@
   "repository": "https://github.com/BerriAI/litellm",
   "documentation": "https://docs.litellm.ai/docs/proxy/caching_semantic#valkey",
   "installCommand": "pip install litellm 'redis<6'",
-  "type": "ai",
   "tags": [
     "Inference & serving"
   ]

@@ -6,7 +6,6 @@
   "repository": "https://github.com/deepset-ai/haystack-core-integrations",
   "documentation": "https://haystack.deepset.ai/integrations/valkey",
   "installCommand": "pip install valkey-haystack",
-  "type": "ai",
   "tags": [
     "RAG & retrieval"
   ]

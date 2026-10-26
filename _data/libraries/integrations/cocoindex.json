@@ -6,7 +6,6 @@
   "repository": "https://github.com/cocoindex-io/cocoindex",
   "documentation": "https://cocoindex.io/docs/connectors/valkey/",
   "installCommand": "pip install 'cocoindex[valkey]'",
-  "type": "ai",
   "tags": [
     "RAG & retrieval"
   ]

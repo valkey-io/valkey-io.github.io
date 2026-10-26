@@ -5,7 +5,6 @@
   "description": "Sources for the official Valkey container images.",
   "repository": "https://github.com/valkey-io/valkey-container",
   "documentation": "https://hub.docker.com/r/valkey/valkey",
-  "type": "tools",
   "tags": [
     "Deploy & operate"
   ]

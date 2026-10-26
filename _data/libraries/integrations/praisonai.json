@@ -6,7 +6,6 @@
   "repository": "https://github.com/MervinPraison/PraisonAI",
   "documentation": "https://praison.ai/docs/features/persistence#url-schemes-per-store-kind",
   "installCommand": "pip install 'praisonai[valkey]'",
-  "type": "ai",
   "tags": [
     "Agent frameworks"
   ]

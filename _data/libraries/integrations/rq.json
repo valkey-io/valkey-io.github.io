@@ -6,7 +6,6 @@
   "repository": "https://github.com/rq/rq",
   "documentation": "https://python-rq.org/",
   "installCommand": "pip install rq",
-  "type": "tools",
   "tags": [
     "Queues & background jobs"
   ]

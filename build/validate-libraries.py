@@ -26,8 +26,9 @@ DOWNLOAD_ATTEMPTS = 3
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 LIBRARIES = ROOT / "_data" / "libraries"
-TYPES_FOR_GROUP = {"clients": ["clients"], "integrations": ["tools", "ai"]}
-GROUPS = list(TYPES_FOR_GROUP)
+# Each manifest group, and the directory of the same name, holds entries of one `$defs` kind.
+DEFINITION_FOR_GROUP = {"clients": "client", "integrations": "integration"}
+GROUPS = list(DEFINITION_FOR_GROUP)
 FILE_NAME = r"[a-z0-9]+(-[a-z0-9]+)*\.json"
 
 # `load_json` returns this for a file it has already reported. It isn't `None`,
@@ -61,10 +62,11 @@ def load_json(path, problems):
         return INVALID
 
 
-def schema_problems(path, data, schema):
-    """Return one line per way `data` breaks `schema`."""
+def schema_problems(path, data, schema, definition):
+    """Return one line per way `data` breaks `schema["$defs"][definition]`."""
     lines = []
-    validator = jsonschema.Draft202012Validator(schema)
+    # The root keeps `$defs`, so the definition's `$ref`s to the shared fields resolve.
+    validator = jsonschema.Draft202012Validator({"$defs": schema["$defs"], "$ref": f"#/$defs/{definition}"})
     for error in sorted(validator.iter_errors(data), key=lambda e: e.json_path):
         field = error.json_path.removeprefix("$").removeprefix(".")
         where = f"{repo_path(path)}: {field}" if field else repo_path(path)
@@ -142,7 +144,6 @@ def main():
     schema_path = LIBRARIES / "schema.json"
     schema = json.loads(schema_path.read_text(encoding="utf-8"))
     jsonschema.Draft202012Validator.check_schema(schema)
-    entry_schema = schema["$defs"]["entry"]
 
     try:
         licenses = {item["licenseId"]: item for item in download_spdx_list("licenses.json")["licenses"]}
@@ -166,7 +167,7 @@ def main():
     manifest_path = LIBRARIES / "manifest.json"
     manifest = load_json(manifest_path, problems)
     if manifest is not INVALID:
-        problems += schema_problems(manifest_path, manifest, schema["$defs"]["manifest"])
+        problems += schema_problems(manifest_path, manifest, schema, "manifest")
     if problems:
         # Without a usable manifest there is no list of entries to check.
         print_problems(problems)
@@ -212,17 +213,9 @@ def main():
         entry = load_json(path, problems)
         if entry is INVALID:
             continue
-        problems += schema_problems(path, entry, entry_schema)
+        problems += schema_problems(path, entry, schema, DEFINITION_FOR_GROUP[group])
         if not isinstance(entry, dict):
             continue
-
-        entry_type = entry.get("type")
-        allowed_types = TYPES_FOR_GROUP[group]
-        # The schema already reports a missing `type` or one it doesn't allow.
-        is_valid_type = entry_type in entry_schema["properties"]["type"]["enum"]
-        if is_valid_type and entry_type not in allowed_types:
-            expected = " or ".join(f"`{t}`" for t in allowed_types)
-            problems.append(f"{repo_path(path)}: type: is '{entry_type}', but entries listed under {group} must be {expected}")
 
         name = entry.get("name")
         if isinstance(name, str) and name.strip():
@@ -243,10 +236,10 @@ def main():
     metadata_path = LIBRARIES / "metadata.json"
     metadata = load_json(metadata_path, problems)
     if metadata is not INVALID:
-        metadata_problems = schema_problems(metadata_path, metadata, schema["$defs"]["metadata"])
+        metadata_problems = schema_problems(metadata_path, metadata, schema, "metadata")
         problems += metadata_problems
         if not metadata_problems:
-            feature_keys = list(entry_schema["properties"]["features"]["properties"])
+            feature_keys = list(schema["$defs"]["client"]["properties"]["features"]["properties"])
             where = f"{repo_path(metadata_path)}: featureDescriptions"
             described = [item["key"] for item in metadata["featureDescriptions"]]
             for key in sorted({key for key in described if described.count(key) > 1}):

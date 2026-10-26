@@ -135,7 +135,6 @@
                  data-name-lower="{{ entry.name | lower }}"
                  data-search="{{ search_text | lower }}"
                  data-desc="{{ entry.description | lower }}"
-                 data-group="{{ entry.type }}"
                  data-language="{{ lang }}"
                  data-first-party="{% if is_first_party %}true{% else %}false{% endif %}">
           <div class="entry-head">
@@ -218,7 +217,6 @@
                  data-name-lower="{{ entry.name | lower }}"
                  data-search="{{ search_text | lower }}"
                  data-desc="{{ entry.description | lower }}"
-                 data-group="{{ entry.type }}"
                  data-tags="{{ ec_tags | join(sep='|') }}"
                  data-first-party="{% if is_first_party %}true{% else %}false{% endif %}">
           <div class="entry-head">
