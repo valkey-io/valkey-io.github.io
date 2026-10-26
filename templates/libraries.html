@@ -92,6 +92,8 @@
     {# Shared toolbar: search + Valkey toggle + sort                         #}
     {{<catalog.toolbar search_placeholder={"Search " ~ kind ~ "…"} />}}
 
+    <div class="sr-only" role="status" data-result-count data-noun="{{ kind }}" data-noun-one="{% if kind == "clients" %}client{% else %}integration{% endif %}"></div>
+
     {# The facet bar's data-facet names the card attribute it filters on.    #}
     {% if kind == "clients" %}
     <div class="filterbar" data-facet="language" data-select="multi">

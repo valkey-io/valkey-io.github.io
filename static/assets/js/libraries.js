@@ -252,6 +252,7 @@
 
   var HIDDEN_CLASS = "is-hidden";
   var SEARCH_DEBOUNCE_MS = 120;
+  var ANNOUNCE_DELAY_MS = 500;
   var COPY_RESET_MS = 1500;
   var FACET_ALL = "__all__";
 
@@ -332,12 +333,7 @@
     this.emptyState = q(root, "[data-empty-state]");
     this.toggleBtn = q(root, "[data-first-party-toggle]");
     this.facetBar = q(root, ".filterbar[data-facet]");
-
-    // Apply live region semantics to empty state for screen reader announcement
-    if (this.emptyState) {
-      this.emptyState.setAttribute("role", "status");
-      this.emptyState.setAttribute("aria-live", "polite");
-    }
+    this.resultCount = q(root, "[data-result-count]");
 
     var facetName = this.facetBar ? this.facetBar.getAttribute("data-facet") : "";
     this.cardEls = this.grid ? qa(this.grid, ".entry-card") : [];
@@ -353,6 +349,7 @@
     };
 
     this._searchTimer = null;
+    this._announceTimer = null;
     this._copyTimers = [];
   }
 
@@ -389,6 +386,7 @@
 
     this.refreshPillCounts();
     this.updateEmptyState(ordered.length);
+    this.visibleCount = ordered.length;
   };
 
   // Highlights the search term in a card's description, but only for cards
@@ -446,6 +444,21 @@
     }
   };
 
+  // Called from the search, pill, toggle and recovery handlers rather than
+  // apply(), so loading and sorting stay silent. The delay turns typing into
+  // one announcement instead of one per pause.
+  Controller.prototype.announceCount = function () {
+    if (!this.resultCount) return;
+    var self = this;
+    root.clearTimeout(this._announceTimer);
+    this._announceTimer = root.setTimeout(function () {
+      var n = self.visibleCount;
+      var region = self.resultCount;
+      var noun = n === 1 ? region.getAttribute("data-noun-one") : region.getAttribute("data-noun");
+      region.textContent = n === 0 ? "No " + noun + " match" : n + " " + noun + " shown";
+    }, ANNOUNCE_DELAY_MS);
+  };
+
   Controller.prototype.renderRecovery = function () {
     var list = q(this.emptyState, "[data-recovery]");
     if (!list) return;
@@ -477,6 +490,7 @@
     this.syncPillPressedState();
     this.syncToggleState();
     this.apply();
+    this.announceCount();
   };
 
   // --- Facet pills --------------------------------------------------------
@@ -490,6 +504,7 @@
     }
     this.syncPillPressedState();
     this.apply();
+    this.announceCount();
   };
 
   Controller.prototype.toggleInSet = function (set, value) {
@@ -516,6 +531,7 @@
     this.state.firstPartyOnly = !this.state.firstPartyOnly;
     this.syncToggleState();
     this.apply();
+    this.announceCount();
   };
 
   Controller.prototype.syncToggleState = function () {
@@ -600,6 +616,7 @@
         self._searchTimer = root.setTimeout(function () {
           self.state.search = self.searchInput.value.toLowerCase();
           self.apply();
+          self.announceCount();
         }, SEARCH_DEBOUNCE_MS);
       });
     }
