@@ -938,13 +938,12 @@ $cat-radius-lg: 16px;
 // ===========================================================================
 //
 // Without JS: show every card on the page, hide JS-only controls so no broken
-// control appears.
+// control appears. Every toolbar control needs JS, so the whole toolbar is
+// hidden rather than its fields one by one.
 
+.catalog .toolbar,
 .catalog .copy-btn,
-.catalog .field-search,
-.catalog .field-sort,
 .catalog .filterbar,
-.catalog .fp-toggle,
 .catalog .empty-state {
   display: none;
 }
@@ -953,17 +952,12 @@ $cat-radius-lg: 16px;
 // JS-only controls. All cards remain visible until the controller's first
 // apply() classifies them via `.is-hidden`.
 .js .catalog {
+  .toolbar {
+    display: grid;
+  }
+
   .copy-btn {
     display: inline-block;
-  }
-
-  .field-search,
-  .field-sort {
-    display: flex;
-  }
-
-  .fp-toggle {
-    display: inline-flex;
   }
 
   .filterbar:not([hidden]) {
