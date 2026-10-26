@@ -1,6 +1,6 @@
 +++
 title = "From Skiplists to B+ Trees: Making Valkey Sorted Sets More Memory Efficient"
-date = 2026-09-22
+date = 2026-10-30
 
 description = "How Valkey 9.2 replaces the skiplist used by large sorted sets with a cache-friendly B+ tree, reducing memory overhead while improving several ordered-set operations." 
 authors =  ["dragosandriciuc","rainvalentine"]
@@ -10,12 +10,12 @@ blog_type = ["Technical Deep Dive"]
 
 A [sorted set](https://valkey.io/topics/sorted-sets/) can spend more memory describing how its elements are ordered than storing the elements themselves.
 
-In Valkey 9.2, however, that changes: the skiplist is replaced by a high-fanout B+ tree variant called **fbtree**.
+In Valkey 9.2 that changes: the skiplist is replaced by a high-fanout B+ tree variant called **fbtree**.
 
 fbtree combines the high fanout and contiguous storage of a conventional B+ tree with several optimizations designed for Valkey's workload and memory allocator, including feature-based lookups, SIMD searches, linked leaves, and fast paths for sequential inserts and pops.
 
 Let's take a look at why this change happened, how it works, and why it's important for memory optimization moving forward.
-A benchmarking example is also provided, to get a clearer view of the amount saved if you update to Valkey 9.2.
+A benchmarking example is also provided, showing the savings you can expect in Valkey 9.2.
 
 ## Why replace the skiplist?
 
@@ -57,14 +57,12 @@ Both structures retain O(log n) search complexity, but the B+ tree has substanti
 
 ![Skiplist structure showing one heap allocation per sorted-set member](images/skiplist-structure.svg)
 
-This also isn't the first time sorted set memory has gotten smaller.
-An earlier release folded Valkey's `dict` into the newer `hashtable` implementation, reducing the overhead of the hash table used alongside the ordered index.
-Another optimization embedded the member string directly into the skiplist node, eliminating an 8B pointer per item.
+In previous releases we [replaced `dict` with the new `hashtable` data structure](https://valkey.io/blog/new-hash-table/) and embedded the member in the hashtable entry.
 The B+ tree change builds on these earlier improvements, further reducing the memory overhead of the ordered index rather than replacing those savings [^3].
 
 ## What replaced it: fbtree
 
-fbtree, short for FB+ Tree or Feature B+ Tree, has inner nodes that store a small “feature” for each child.
+fbtree, short for FB+ Tree or Feature B+ Tree, has inner nodes that store the first member of each child, called its anchor, along with a small four-byte “feature.”
 
 ![fbtree architecture showing members packed in leaf arrays and routing data stored in inner nodes](images/fbtree-architecture.svg)
 
@@ -81,23 +79,19 @@ Structurally, the tree uses a 61-way fanout, with leaf and inner nodes sized to 
 ![Layout of an fbtree inner node with 61-way fanout](images/fbtree-inner-node.svg)
 
 A 512-byte leaf can hold up to 61 values, grouping up to 61 value pointers under one leaf allocation instead of giving every member its own node.
-Leaf nodes (which hold the actual scored elements) are linked together in a doubly-linked list, so range operations like `ZRANGE` can walk forward without climbing back up the tree at every step.
-Several targeted optimizations round it out, including a fast path for pushing and popping at either end of the set.
-This preserves the O(1) behavior that the skiplist naturally provides for end operations, allowing commands such as `ZPOPMIN` to maintain parity rather than regress to O(log n).
-fbtree also provides an efficient way to delete a contiguous range of elements without rebuilding the surrounding structure.
-
-The payoff shows up in how the CPU reads it.
-A 512-byte leaf spans eight typical 64-byte cache lines, but those lines are adjacent.
-Hardware prefetching can therefore bring much of the node into cache as the CPU scans it.
-The skiplist has the opposite access pattern: each node is a separate allocation, so following the structure means chasing pointers to unrelated memory locations.
-Each dependent fetch can stall progress until the required data arrives, and the next pointer cannot be followed until then.
-Same O(log n) complexity, much smaller constant factor.
-
-![Animated diagram comparing skiplist and fbtree with 3,721 items. To insert an item, skiplist takes 19 fetches while fbtree takes 7.](images/skiplist-v-fbtree-insert-animated.svg)
-
-Another change happens at the leaf level.
 Instead of storing the score and member separately, fbtree stores them together as a single packed value: the normalized 8-byte score followed by the member bytes.
 This keeps the data needed for comparisons together and removes another level of pointer indirection.
+Leaf nodes (which hold the actual scored elements) are linked together in a doubly-linked list, so range operations like `ZRANGE` can walk forward without climbing back up the tree at every step.
+Several targeted optimizations round it out. For example, fbtree caches its leftmost and rightmost leaves, allowing them to be found in O(1) as they are in a skiplist instead of O(log n). This means that pop and append operations such as `ZPOPMIN` are at parity rather than regressing.
+fbtree also provides an efficient way to delete a contiguous range of elements without rebuilding the surrounding structure.
+
+The payoff is this: When performing a lookup, both data structures have to perform a linear sequence of memory fetches and round trips one after the other, but fbtree requires far fewer than skiplist. Part of this is the reduced depth from having a higher fanout, but the rest is because of carefully designed metadata hints in each B+ tree node which usually provide enough information that the lookup knows exactly which path to take without having to fetch additional memory and wait.
+
+Scanning a range is faster too. The skiplist requests an item, waits to receive it, and only knows the next item to fetch when it's received the first. The B+ tree can work on up to 61 items in parallel, and while it's happily working on those it can fetch the next leaf node which provides it the next list of 61 items.
+
+It's true that the B+ structs are larger, larger in fact than a cache line (the memory system always deals in cache line size chunks). One might think that this would require multiple fetches, but in practice it is basically no slower than fetching a single cache line. This is because all can be fetched in parallel, and DRAM hardware usually makes adjacent cache lines very fast to fetch as well [^5].
+
+![Animated diagram comparing skiplist and fbtree with 3,721 items. To insert an item, skiplist takes 19 fetches while fbtree takes 7.](images/skiplist-v-fbtree-insert-animated.svg)
 
 ## What actually changed for you
 
@@ -130,17 +124,17 @@ The same underlying design changes also improve throughput for several sorted se
 
 **Note:** `ZSCORE` and `ZRANDMEMBER` barely move because they use the companion hashtable rather than the ordered index.
 
-| Command | Throughput improvement |
-|---|---:|
-| `ZADD` | +105% |
-| `ZREM` | +76% |
-| `ZCOUNT` | +27% |
-| `ZRANK` | +19% |
-| `ZRANGE` | +6% |
-| `ZRANDMEMBER` | +2% |
-| `ZSCORE` | +2% |
-| `ZRANGEBYSCORE` | +1% |
-| `ZPOPMIN` | ~0% |
+| Command | Workload | Throughput improvement |
+|---|---|---:|
+| `ZADD` | Score update (all hits) | +105% |
+| `ZREM` | 50/50 random add/remove | +76% |
+| `ZCOUNT` | Score-range count | +27% |
+| `ZRANK` | Point rank lookup | +19% |
+| `ZRANGE` | 100-element rank scan | +6% |
+| `ZRANDMEMBER` | 100 random samples | +2% |
+| `ZSCORE` | Point score lookup | +2% |
+| `ZRANGEBYSCORE` | 100-element score scan | +1% |
+| `ZPOPMIN` | Pop min + append new member | ~0% |
 
 The pattern makes sense once you look at what each command actually does: `ZADD` and `ZREM` reposition elements in the tree, so they benefit most directly from fbtree's shallower structure and fewer pointer updates.
 Range operations see smaller gains because once the index traversal becomes cheap, producing and returning the requested elements becomes a larger part of the total cost.
@@ -150,18 +144,15 @@ Range operations see smaller gains because once the index traversal becomes chea
 One gap worth knowing about if you run delete-heavy sorted set workloads: fbtree doesn't yet merge or rebalance nodes on delete.
 If your workload adds and removes elements at similar rates over a long period, leaf nodes can end up sparse, which is technically correct, but no longer packed as tightly as a fresh insert would be.
 
-Background compaction is planned as a follow-up.
-If you're running a workload with heavy churn, it's worth watching `MEMORY USAGE` over time rather than assuming the benchmarks above hold indefinitely.
+Background compaction is planned as a follow-up. Until it is available, deletes do not merge or rebalance fbtree nodes, so a churned sorted set can retain mostly empty leaves and use more memory than a skiplist with the same live members. For example, one exercised workload with 2,000 surviving members used 1,305,368 bytes for fbtree versus 175,760 bytes for a skiplist; this workload-specific result is not a general ratio, but it shows why capacity planning should account for sparse leaves. For delete-heavy workloads, monitor `MEMORY USAGE` over time rather than assuming the insertion benchmarks above hold indefinitely.
 
-Exactly how sparse depends on your workload's mix of adds and removes, but even at its sparsest, fbtree stays ahead of the skiplist's one-allocation-per-member baseline; steady-state, it's never worse, only better.
-
-## Test in Valkey 9.2
+## Test Valkey 9.2 before GA
 
 The important takeaway is simple: **the commands didn't change**, but the cost of keeping them fast did.
 
 The goal wasn't simply to make the data structure faster in isolation: the implementation was repeatedly benchmarked against the existing skiplist through the full Valkey server, with optimizations added until fbtree matched or exceeded the skiplist across the tested sorted set commands.
 
-If large sorted sets are a significant part of your Valkey workload, test Valkey 9.2 against your real workload, particularly if you're dominated by `ZADD`, `ZREM`, `ZRANK`, or `ZCOUNT`.
+Valkey 9.2 is currently in release-candidate testing. Before GA, try the release candidate with your real workload—especially if large sorted sets or commands such as `ZADD`, `ZREM`, `ZRANK`, or `ZCOUNT` are important to you. Your testing and feedback can help surface issues before the final release.
 
 ## References
 
