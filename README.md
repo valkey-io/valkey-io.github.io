@@ -26,6 +26,16 @@ Open your browser to `http://127.0.0.1:1111/`
 Zola will automatically rebuild on changes to the template or any content stored in this repo.
 Changes to external content (command reference, documentation topics) require a restart of the Zola server process (`ctrl-c` then `zola serve` again, a browser refresh may also be needed).
 
+### Site search (optional)
+
+The search index is built in CI after `zola build`. `zola serve` doesn't build or update it, so search doesn't work there. To try search locally, download `pagefind` for your platform from the [Pagefind releases](https://github.com/Pagefind/pagefind/releases) (the version in `.github/actions/build-site/action.yml`) and run, from the root of this repo:
+
+```shell
+zola build && pagefind --serve
+```
+
+Open the URL Pagefind prints after `Serving "public" at`. The server doesn't rebuild on changes, so run the command again after editing.
+
 ## Building additional content
 
 **By default, the site will build without documentation topics, command reference, or the clients page.**

@@ -156,6 +156,11 @@ p {
     font-size: 1.6rem;
     font-weight: 600;
 
+    // Tighter spacing so the nav still fits with the search button
+    @media (max-width: 1200px) {
+      gap: 1rem;
+    }
+
     a {
       white-space: nowrap;
       color: inherit;
@@ -254,6 +259,35 @@ p {
         margin-top: 0.5rem;
         justify-content: center;
         text-align: center;
+      }
+    }
+
+    // Match the search button to the GitHub button
+    #site-search {
+      display: flex;
+      --pf-background: #f8f9fa;
+      --pf-border: #dfe1e4;
+      --pf-input-height: 100%;
+
+      pagefind-modal-trigger {
+        flex-grow: 1;
+      }
+
+      // Pagefind hides its other keyboard hints on touch devices, but not this one
+      @media (hover: none) {
+        .pf-trigger-shortcut {
+          display: none !important;
+        }
+      }
+
+      // The mobile menu is a column, where 100% would shrink the button
+      @media (max-width: 1024px) {
+        --pf-input-height: 3.9rem;
+
+        // Pagefind resets its elements with a high-specificity selector
+        .pf-trigger-btn {
+          justify-content: center !important;
+        }
       }
     }
   }

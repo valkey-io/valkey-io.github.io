@@ -1,6 +1,6 @@
 name: Build the website
 description: >
-  Builds a checkout of this repository into <path>/public, with its topics, clients and
+  Builds a checkout of this repository and its search index into <path>/public, with its topics, clients and
   commands from valkey-doc and the command metadata from valkey and the modules, checked out
   next to it in the workspace.
 
@@ -66,3 +66,22 @@ runs:
         BUILD_DIR: ${{ inputs.path }}
         BUILD_ONLY: true
         BUILD_THEMES: false
+
+    - name: Install Pagefind
+      shell: bash
+      env:
+        PAGEFIND_VERSION: v1.5.2
+        PAGEFIND_SHA256: afb824a9e7f64905a934900481cea5be679c03975e527329e0e5e6cc70f5feda
+      run: |
+        curl -sSfL --retry 3 "https://github.com/Pagefind/pagefind/releases/download/${PAGEFIND_VERSION}/pagefind-${PAGEFIND_VERSION}-x86_64-unknown-linux-musl.tar.gz" \
+          -o "$RUNNER_TEMP/pagefind.tar.gz"
+        echo "${PAGEFIND_SHA256}  $RUNNER_TEMP/pagefind.tar.gz" | sha256sum -c -
+        tar -xzf "$RUNNER_TEMP/pagefind.tar.gz" -C "$RUNNER_TEMP" pagefind
+
+    - name: Build search index
+      shell: bash
+      working-directory: ${{ inputs.path }}
+      # The Zola action runs as root in Docker, so public/ is owned by root.
+      run: |
+        sudo chown -R "$(id -u):$(id -g)" public
+        "$RUNNER_TEMP/pagefind"

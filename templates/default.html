@@ -78,11 +78,13 @@
           GitHub
           <!-- Star count will be injected here by JS -->
         </a>
+        <div id="site-search"></div>
         
       </nav>
     </div>
   </div>
-  <div class="body">
+  {#- Search results use the page's name, since a page's first heading isn't always its title. #}
+  <div class="body" data-pagefind-meta="title:{% if page_name %}{{ page_name }}{% else %}{{ name_prefix }}{% endif %}">
       {% block content %}{% endblock %}
   </div>
   <div class="footer">
