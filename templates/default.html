@@ -1,4 +1,14 @@
-{%- block head -%}{%- endblock -%}<!DOCTYPE html>
+{%- block head -%}{%- endblock -%}
+{#- The page's name, for the page title and og:title. Templates set the variables below in their head
+    block, which must stay above this. #}
+{%- set name_prefix = "Valkey" %}
+{%- if command_title is defined and command_title %}{% set page_name = command_title %}{% set name_prefix = "Valkey Command" %}
+{%- elif frontmatter_title is defined and frontmatter_title %}{% set page_name = frontmatter_title %}{% set name_prefix = "Valkey Documentation" %}
+{%- elif release_title is defined and release_title %}{% set page_name = release_title %}
+{%- elif page is defined and page.title %}{% set page_name = page.title %}
+{%- elif section is defined and section.title %}{% set page_name = section.title %}
+{%- else %}{% set page_name = "" %}{% endif -%}
+<!DOCTYPE html>
 <html lang="{{ page?.lang | default(value=config.default_language) }}">
 {% include "includes/head.html" %}
 <script>

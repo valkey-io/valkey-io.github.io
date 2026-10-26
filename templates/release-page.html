@@ -1,7 +1,9 @@
 {% extends "right-aside.html" %}
 
+{%- block head -%}{% set release_title = "Valkey " ~ page.title %}{%- endblock head -%}
+
 {% block subhead_content%}
-<h1 class="page-title">Download Valkey {{page.title}}</h1>
+<h1 class="page-title">Download {{ release_title }}</h1>
 {% endblock subhead_content%}
 {% block main_content %}
 {% set release = page.extra %}
