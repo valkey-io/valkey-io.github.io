@@ -12,7 +12,7 @@ extra:
             id: "valkey/valkey"
             tags:
 {tags}
-    packages:
+    packages: []
 
     artifacts:
         -   distro: jammy
