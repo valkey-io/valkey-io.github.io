@@ -1,6 +1,6 @@
 +++
-title = "How Valkey 9 fixes the large object noisy neighbor problem"
-date = 2026-10-15
+title = "How Valkey 9.0 reduces the large object noisy neighbor problem"
+date = 2026-10-28
 description = "A few 10MB requests per second wrecked the tail latency of a 100K req/s workload on Valkey 8.1. Reply copy avoidance in Valkey 9.0 cuts p99.9 from 26.2ms to 3.10ms."
 authors = ["khawaja"]
 
@@ -11,9 +11,9 @@ featured = false
 featured_image = "/assets/media/featured/random-05.webp"
 +++
 
-Imagine you have a Valkey cluster humming along at 100K requests/second serving 1KB objects. Latency is tight. Then someone started fetching a few 10MB blobs. Ten requests per second. The small object workload fell apart.
+Imagine you have a Valkey cluster handling 100K requests per second, each serving 1 KB objects. Latency is tight. Then a new workload begins fetching a few 10 MB blobs at ten requests per second. Suddenly, the small-object workload experiences a sharp increase in tail latency.
 
-10MB items are common in media use cases, like a live origin caching video segments, which is one of the workloads we run at [Momento](https://gomomento.com). We're sensitive to tail latencies in this kind of workload since a p99 spike means buffering for end users. This is particularly problematic in [multi-tenant systems](https://gomomento.com/blog/the-dark-art-of-multi-tenancy/) where one workflow's large items can affect the experience for everyone else.
+10MB items are common in media use cases, like a live origin caching video segments, which is [one of the workloads](https://www.gomomento.com/blog/a-new-live-streaming-origin-built-for-global-scale/) we run at [Momento](https://gomomento.com). We're sensitive to tail latencies in this kind of workload since a p99 spike means buffering for end users. This is particularly problematic in [multi-tenant systems](https://gomomento.com/blog/the-dark-art-of-multi-tenancy/) where one workflow's large items can affect the experience for everyone else.
 
 ## The Problem
 
@@ -71,9 +71,11 @@ In 9.0, the long tail holds up. p99.9 under noise drops from 26.2ms to 3.10ms, a
 
 The noisy neighbors are still there. They just stopped keeping everyone else awake.
 
-## What to do next
+## What To Do Next
 
-If you are serving large objects out of Valkey today, the path is short. [Move to at least Valkey 9.0](https://download.valkey.io/releases/), enable I/O threads, and re-run your own mixed workload watching p99.9 rather than p99. Start with the default values.
+If you are serving large objects out of Valkey today, the path is short.
+
+[Move to at least Valkey 9.0](https://download.valkey.io/releases/), enable I/O threads, and re-run your own mixed workload watching p99.9 rather than p99.
 
 If your results look different from ours, the community wants to hear about it. Bring them to [Slack](https://valkey.io/slack) or the [community page](https://valkey.io/community/).
 
