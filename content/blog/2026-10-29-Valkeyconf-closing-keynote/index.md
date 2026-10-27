@@ -54,7 +54,7 @@ Instead of nodes independently propagating topology changes, Raft elects a leade
 
 This matters because **durability and cluster coordination are closely connected.**
 
-Synchronous replication requires reliable agreement on which replicas are eligible for failover. If nodes disagree about cluster membership or topology, maintaining strong durability guarantees becomes significantly harder.
+Synchronous replication requires reliable agreement on which replicas are eligible for failover. If nodes disagree about cluster membership or topology, data might be acknowledged by an inactive node and return inconsistent results to the user.
 
 ## Data Tiering: DRAM Doesn't Need Every Key
 
