@@ -24,7 +24,7 @@ Their focus was extending what developers can reliably build with Valkey without
 
 ## Durability: If Valkey Says "OK," the Write Should Stick
 
-Valkey uses asynchronous replication, meaning a primary can acknowledge a write before its replicas receive it. If the primary crashes during that window, acknowledged data can be lost.
+On a single node, Valkey is already durable. With AOF and `appendfsync always`, a write is fsynced to disk before the client sees "OK," so it survives a crash. Across multiple nodes, that guarantee doesn't hold. Replication is asynchronous, so the primary acknowledges a write before its replicas have it. If the primary fails in that window, the promoted replica never saw the write and the acknowledged data is lost.
 
 For caching, that tradeoff is often acceptable. For workloads requiring stronger data guarantees, it becomes a limitation.
 
