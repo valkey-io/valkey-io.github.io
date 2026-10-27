@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Valkey clients and integrations catalog",
+  "description": "Rules for the files in `_data/libraries/`. `build/validate-libraries.py` checks each entry file listed under `clients` in `manifest.json` against `$defs/client` and each listed under `integrations` against `$defs/integration`. It checks `manifest.json` against `$defs/manifest` and `metadata.json` against `$defs/metadata`. It then runs the checks that span files or need the SPDX license list.",
+  "$comment": "The script prints a rule's description when that rule fails, so each description is on the subschema that fails. Each `not` rule repeats `\"type\": \"string\"` so that a value of the wrong type is reported once, by `type`. The URL patterns' character classes allow whitespace, and in Python `$` also matches before a final newline, so a `not` rule rejects whitespace in URLs. The fields that clients and integrations share are each defined once in `$defs` and referenced with `$ref`.",
+  "$defs": {
+    "client": {
+      "description": "A client entry, stored in `clients/`, is a JSON object that describes one client library.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "license", "repository", "documentation", "language", "features"],
+      "properties": {
+        "name": { "$ref": "#/$defs/name" },
+        "description": { "$ref": "#/$defs/description" },
+        "license": { "$ref": "#/$defs/license" },
+        "repository": { "$ref": "#/$defs/repository" },
+        "documentation": { "$ref": "#/$defs/documentation" },
+        "language": { "$ref": "#/$defs/language" },
+        "installCommand": { "$ref": "#/$defs/installCommand" },
+        "tags": {
+          "description": "Only integration entries, in `integrations/`, have `tags`.",
+          "not": {}
+        },
+        "features": {
+          "description": "An object of client feature flags with exactly the keys `replica`, `backoff`, `pubsub`, `scan`, `latency`, `az`, `csc`, `capa` and `pool`, each set to `true` or `false`.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["replica", "backoff", "pubsub", "scan", "latency", "az", "csc", "capa", "pool"],
+          "properties": {
+            "replica": { "description": "Set to `true` if the client supports this feature, otherwise `false`.", "type": "boolean" },
+            "backoff": { "description": "Set to `true` if the client supports this feature, otherwise `false`.", "type": "boolean" },
+            "pubsub": { "description": "Set to `true` if the client supports this feature, otherwise `false`.", "type": "boolean" },
+            "scan": { "description": "Set to `true` if the client supports this feature, otherwise `false`.", "type": "boolean" },
+            "latency": { "description": "Set to `true` if the client supports this feature, otherwise `false`.", "type": "boolean" },
+            "az": { "description": "Set to `true` if the client supports this feature, otherwise `false`.", "type": "boolean" },
+            "csc": { "description": "Set to `true` if the client supports this feature, otherwise `false`.", "type": "boolean" },
+            "capa": { "description": "Set to `true` if the client supports this feature, otherwise `false`.", "type": "boolean" },
+            "pool": { "description": "Set to `true` if the client supports this feature, otherwise `false`.", "type": "boolean" }
+          }
+        }
+      }
+    },
+    "integration": {
+      "description": "An integration entry, stored in `integrations/`, is a JSON object that describes one tool, framework or AI library.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "license", "repository", "documentation"],
+      "properties": {
+        "name": { "$ref": "#/$defs/name" },
+        "description": { "$ref": "#/$defs/description" },
+        "license": { "$ref": "#/$defs/license" },
+        "repository": { "$ref": "#/$defs/repository" },
+        "documentation": { "$ref": "#/$defs/documentation" },
+        "language": { "$ref": "#/$defs/language" },
+        "installCommand": { "$ref": "#/$defs/installCommand" },
+        "tags": {
+          "$comment": "The tag set is fixed on purpose: adding a tag is a deliberate change to this schema.",
+          "description": "A non-empty list of distinct tags.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "description": "Integration tags must be one of `CLI & GUI`, `Deploy & operate`, `Frameworks & ORMs`, `Queues & background jobs`, `RAG & retrieval`, `Agent memory`, `Agent frameworks` or `Inference & serving`.",
+            "enum": ["CLI & GUI", "Deploy & operate", "Frameworks & ORMs", "Queues & background jobs", "RAG & retrieval", "Agent memory", "Agent frameworks", "Inference & serving"]
+          }
+        },
+        "features": {
+          "description": "Only client entries, in `clients/`, have `features`.",
+          "not": {}
+        }
+      }
+    },
+    "name": {
+      "description": "The project's official name. It must not be blank or have spaces at either end.",
+      "type": "string",
+      "pattern": "\\S",
+      "not": { "type": "string", "pattern": "^\\s|\\s$" }
+    },
+    "description": {
+      "description": "One or two factual, vendor-neutral sentences of at most 200 characters. The text must not have spaces at either end.",
+      "type": "string",
+      "maxLength": 200,
+      "pattern": "\\S",
+      "not": { "type": "string", "pattern": "^\\s|\\s$" }
+    },
+    "license": {
+      "description": "An SPDX license expression made of OSI-approved licenses, such as `MIT` or `MIT OR Apache-2.0`. It must not be blank or have spaces at either end.",
+      "type": "string",
+      "pattern": "\\S",
+      "not": { "type": "string", "pattern": "^\\s|\\s$" }
+    },
+    "repository": {
+      "$comment": "The Valkey chip is derived from this URL, so dot segments are rejected: `https://github.com/valkey-io/x/tree/a/../../../rq/rq` would otherwise give a third-party repository the chip.",
+      "description": "The public source repository, as an `https://` URL with a lowercase host and no port or user name. Its path must not contain spaces, `?`, `#`, `\\`, `%` or a `.` or `..` segment.",
+      "type": "string",
+      "pattern": "^https://[a-z0-9-]+(\\.[a-z0-9-]+)+(/[^?#\\\\%]*)?$",
+      "not": { "type": "string", "pattern": "\\s|/\\.\\.?(/|$)" },
+      "if": { "pattern": "^https://(www\\.)?github\\.com(/|$)" },
+      "then": {
+        "description": "A GitHub repository URL is `https://github.com/OWNER/REPO`, or `https://github.com/OWNER/REPO/tree/REF/PATH` for a project in a subdirectory. It has no trailing slash and no `.git` suffix.",
+        "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+(?<!\\.git)(/tree/[^/]+(/[^/]+)+)?$"
+      }
+    },
+    "documentation": {
+      "description": "A page that shows how to use the project with Valkey. For a page on valkey.io, use a root-relative path that ends in `/`, such as `/topics/cli/` or `/topics/cli/#section`. Its segments use letters, digits, `.`, `_` and `-`, and none starts with `.`. For any other site, use an `https://` URL with a lowercase host and no port or user name. The link must not contain spaces or `\\`.",
+      "type": "string",
+      "pattern": "^(/([A-Za-z0-9_-][A-Za-z0-9._-]*/)+(#[A-Za-z0-9_-]+)?|https://[a-z0-9-]+(\\.[a-z0-9-]+)+(/[^\\\\]*)?)$",
+      "not": { "type": "string", "pattern": "\\s" },
+      "allOf": [
+        {
+          "description": "Link a page on `valkey.io` or `www.valkey.io` with a root-relative path such as `/topics/cli/` instead of a full URL.",
+          "not": { "type": "string", "pattern": "^https://(www\\.)?valkey\\.io(/|$)" }
+        },
+        {
+          "if": { "pattern": "^https://(www\\.)?github\\.com(/|$)" },
+          "then": {
+            "description": "GitHub links must start with `https://github.com/` and point at a tag such as `v1.2.3` or a commit hash. Link a file as `/OWNER/REPO/blob/REF/PATH` and a directory as `/OWNER/REPO/tree/REF` or `/OWNER/REPO/tree/REF/PATH`. `REF` must be a tag that contains a digit or a 40-character lowercase commit hash, so branch names such as `main` are rejected. Link a wiki page as `/OWNER/REPO/wiki/PAGE/REVISION`, where `REVISION` is the 40-character hash of a page revision. Repository roots and `#readme` links are rejected.",
+            "anyOf": [
+              { "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/blob/([0-9a-f]{40}|[^/?#]*[0-9][^/?#]*)/.+$" },
+              { "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/tree/([0-9a-f]{40}|[^/?#]*[0-9][^/?#]*)([/?#].*)?$" },
+              { "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+/wiki/[^/?#]+/[0-9a-f]{40}(#.*)?$" }
+            ]
+          }
+        }
+      ]
+    },
+    "language": {
+      "$comment": "The language set is fixed on purpose: adding a language is a deliberate change to this schema.",
+      "description": "The primary programming language, required for client entries and optional for integrations. It must be one of `C`, `C#`, `Go`, `Java`, `Node.js`, `PHP`, `Python`, `Ruby`, `Shell`, `Swift` or `TypeScript`.",
+      "enum": ["C", "C#", "Go", "Java", "Node.js", "PHP", "Python", "Ruby", "Shell", "Swift", "TypeScript"]
+    },
+    "installCommand": {
+      "description": "The primary install command, such as `pip install valkey-glide`, on one line with no spaces at either end.",
+      "type": "string",
+      "pattern": "\\S",
+      "not": { "type": "string", "pattern": "^\\s|\\s$|[\\r\\n]" }
+    },
+    "manifest": {
+      "description": "A JSON object that lists the entry files to show in two groups, `clients` and `integrations`, by path relative to `_data/libraries/`.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clients", "integrations"],
+      "properties": {
+        "clients": {
+          "description": "The paths of client entry files, such as `clients/valkey-py.json`.",
+          "type": "array",
+          "items": { "description": "A path such as `clients/valkey-py.json`.", "type": "string" }
+        },
+        "integrations": {
+          "description": "The paths of tool and AI library entry files, such as `integrations/rq.json`.",
+          "type": "array",
+          "items": { "description": "A path such as `integrations/rq.json`.", "type": "string" }
+        }
+      }
+    },
+    "metadata": {
+      "description": "A JSON object holding site text for the catalog pages.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["featureDescriptions"],
+      "properties": {
+        "featureDescriptions": {
+          "description": "A list of the client features in the order that cards and the legend show them.",
+          "type": "array",
+          "items": {
+            "description": "An object with a feature's `key`, `label` and `definition`.",
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["key", "label", "definition"],
+            "properties": {
+              "key": { "description": "The feature's key in an entry's `features`.", "type": "string" },
+              "label": { "description": "The feature name that cards and the legend show. It must not be blank or have spaces at either end.", "type": "string", "pattern": "\\S", "not": { "type": "string", "pattern": "^\\s|\\s$" } },
+              "definition": { "description": "The explanation that the legend shows. It must not be blank or have spaces at either end.", "type": "string", "pattern": "\\S", "not": { "type": "string", "pattern": "^\\s|\\s$" } }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -60,21 +60,3 @@
     | safe
 }}
 {% endcomponent fix_links_docs %}
-
-{% component boolean_to_checkmark(value) %}
-    {% if value == true %}
-        <span class="checkmark-true">✓</span>
-    {% else %}
-        <span class="checkmark-false">✗</span>
-    {% endif %}
-{% endcomponent boolean_to_checkmark %}
-
-{% component format_language(language) %}
-    {% if language == "php" %}
-        {{ language | upper }}
-    {% elif language == "csharp" %}
-        C#
-    {% else %}
-        {{ language | title }}
-    {% endif %}
-{% endcomponent format_language %}
