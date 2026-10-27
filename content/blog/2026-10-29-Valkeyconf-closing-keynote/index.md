@@ -1,7 +1,7 @@
 +++
 title = "Valkey's Next Chapter: Durability and Beyond"
 date = 2026-10-29
-description = "Technical recap of the ValkeyConf 2026 closing keynote by Harkrishn Patro and Viktor Söderqvist. Covers features in development including durability, Cluster V2, data tiering, and active-active replication.."
+description = "Technical recap of the ValkeyConf 2026 closing keynote by Harkrishn Patro and Viktor Söderqvist. Covers durability, Cluster V2, data tiering, and active-active replication, and more."
 authors = ["crystalpham"]
 
 [taxonomies]
@@ -56,13 +56,13 @@ This matters because **durability and cluster coordination are closely connected
 
 Synchronous replication requires reliable agreement on which replicas are eligible for failover. If nodes disagree about cluster membership or topology, data might be acknowledged by an inactive node and return inconsistent results to the user.
 
-## Data Tiering: DRAM Doesn't Need Every Key
+## Data Tiering: Not Every Key Needs to Stay in Memory
 
-Valkey's in-memory architecture delivers high throughput and low latency, but keeping increasingly large datasets entirely in DRAM comes at a cost.
+Valkey's in-memory architecture delivers high throughput and low latency, but keeping increasingly large datasets entirely in memory comes at a cost.
 
 Data tiering, one of the community's most requested capabilities, aims to separate frequently accessed data from colder data.
 
-Under the proposed design, hot data remains in memory while less frequently accessed data moves to lower-cost storage, including SSDs and NVMe devices.
+Under the proposed design, hot data remains in memory while less frequently accessed data moves to lower-cost storage on disk.
 
 Rather than requiring developers to manually select which keys move between storage tiers, Valkey would automatically determine data placement based on access patterns.
 
@@ -70,7 +70,7 @@ When a client requests cold data, asynchronous retrieval would fetch it from sto
 
 ![Data tiering: hot data remains in memory while cold data moves to lower-cost storage](Valkey_Data_Tiering.gif)
 
-Applications could potentially maintain larger datasets without provisioning enough DRAM to hold every key, preserving in-memory performance for frequently accessed data while reducing overall storage costs.
+Applications could potentially maintain larger datasets without provisioning enough memory to hold every key, preserving in-memory performance for frequently accessed data while reducing overall storage costs.
 
 ## Active-Active: Everyone Can Write. Now What?
 
@@ -88,8 +88,6 @@ Conflict-free replicated data types (CRDTs) are also being explored as a possibl
 
 Some applications require local writes during partitions, accepting temporary divergence until connectivity returns and state converges.
 
-Active-active remains early-stage, with topology and conflict resolution open for discussion.
-
 ## Four Features. One Bigger Test: Keep Valkey Simple
 
 These capabilities address different problems, but their underlying architectures overlap.
@@ -97,10 +95,6 @@ These capabilities address different problems, but their underlying architecture
 Durability tracks committed writes. Cluster V2 coordinates distributed state. Data tiering manages data placement. Active-active tracks replication and reconciliation across regions.
 
 Rather than building entirely separate mechanisms, the community is exploring reusable components that keep Valkey maintainable and understandable.
-
-Observability is another priority. Operators need metrics and mechanisms to verify cluster health, replication state, and whether configured guarantees are actually being met.
-
-None of this means Valkey is trying to replace every database. Stronger durability doesn't automatically provide the full capabilities of PostgreSQL, nor does improved stream reliability make Kafka unnecessary.
 
 ## More Capabilities. Same Valkey Simplicity.
 
