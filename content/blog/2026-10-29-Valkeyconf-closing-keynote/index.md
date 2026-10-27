@@ -1,7 +1,7 @@
 +++
 title = "Valkey's Next Chapter: Durability and Beyond"
 date = 2026-10-29
-description = "Technical recap of the ValkeyConf 2026 closing keynote by Harkrishn Patro and Viktor Söderqvist. Covers durability, Cluster V2, data tiering, and active-active replication, and more."
+description = "Technical recap of the ValkeyConf 2026 closing keynote by Harkrishn Patro and Viktor Söderqvist. Covers features in development including durability, Cluster V2, data tiering, and active-active replication.."
 authors = ["crystalpham"]
 
 [taxonomies]
