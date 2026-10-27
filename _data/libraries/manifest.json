@@ -14,7 +14,8 @@
     "clients/valkey-swift.json",
     "clients/valkey-glide-csharp.json",
     "clients/valkey-glide-php.json",
-    "clients/valkey-glide-ruby.json"
+    "clients/valkey-glide-ruby.json",
+    "clients/kotlin-valkey.json"
   ],
   "integrations": [
     "integrations/valkey-admin.json",
