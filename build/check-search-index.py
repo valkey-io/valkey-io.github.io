@@ -86,6 +86,8 @@ def main():
     for name, urls in failures.items():
         for url in sorted(urls):
             print(f"{name}: {url}")
+    if failures["duplicate title"]:
+        print("hint: every page needs a unique title. Change `title` in the front matter of one of the pages listed above.")
     return 1 if any(failures.values()) else 0
 
 
