@@ -17,8 +17,11 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      commit: ${{ steps.checkout.outputs.commit }}
     steps:
       - name: Checkout
+        id: checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.event_name != 'pull_request' && 'main' || '' }}
@@ -54,11 +57,10 @@ jobs:
           repository: valkey-io/valkey-json
           path: valkey-json
 
-      - name: Init commands, topics and clients
+      - name: Init commands and topics
         run: |
           cd website
-          ./build/init-topics-and-clients.sh ../valkey-doc/topics \
-            ../valkey-doc/clients
+          ./build/init-topics.sh ../valkey-doc/topics
           ./build/init-commands.sh ../valkey-doc/commands \
             ../valkey/src/commands ../valkey-bloom/src/commands \
             ../valkey-json/src/commands ../valkey-search/src/commands
@@ -76,13 +78,22 @@ jobs:
         with:
           path: ./website/public
 
+  validate:
+    needs: build
+    if: github.event_name != 'pull_request'
+    uses: ./.github/workflows/validate-libraries.yml
+    with:
+      ref: ${{ needs.build.outputs.commit }}
+    permissions:
+      contents: read
+
   deploy:
     if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, validate]
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

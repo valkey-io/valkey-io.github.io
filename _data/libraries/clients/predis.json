@@ -1,0 +1,20 @@
+{
+  "name": "predis",
+  "language": "PHP",
+  "license": "MIT",
+  "description": "A pure-PHP client with no extension to compile. Supports clustering, replication and transparent key prefixing.",
+  "repository": "https://github.com/predis/predis",
+  "documentation": "https://github.com/predis/predis/blob/v3.6.1/README.md#connecting-to-redis",
+  "installCommand": "composer require predis/predis",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": false,
+    "scan": false,
+    "latency": false,
+    "az": false,
+    "csc": false,
+    "capa": false,
+    "pool": false
+  }
+}

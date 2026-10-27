@@ -3,14 +3,13 @@ title = "KV caching on Valkey: 2× faster responses and 25% more requests"
 date = 2026-10-20
 description = "Your GPUs spend part of every request re-reading context they already processed. We moved the KV cache to Valkey, and the same two GPU nodes served 25% more requests with replies streaming twice as fast."
 authors = ["omerrubi", "cnuthalapati", "jaduffy"]
-draft = true
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
 
 [extra]
 featured = false
-featured_image = "/assets/media/featured/random-03.webp"
+featured_image = "/assets/media/featured/kv-caching-on-valkey.webp"
 +++
 
 Open-weight large language models (LLMs) now approach frontier quality at a fraction of the per-token cost.
