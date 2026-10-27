@@ -106,4 +106,11 @@ None of this means Valkey is trying to replace every database. Stronger durabili
 
 Valkey's next chapter isn't just about making data access faster. It's about making more workloads possible without losing the simplicity that developers depend on.
 
-Much of this work is still evolving, and the design decisions being made today will shape what Valkey becomes next. Explore the ongoing discussions and contribute at [github.com/valkey-io/valkey](https://github.com/valkey-io/valkey).
+All of this is still in development, and the design decisions being made now will shape what Valkey becomes next. Follow along or contribute:
+
+- Durability: [#3037](https://github.com/valkey-io/valkey/issues/3037)
+- Cluster V2: [#3856](https://github.com/valkey-io/valkey/issues/3856)
+- Data tiering: [#3326](https://github.com/valkey-io/valkey/issues/3326)
+- Active-active: [#512](https://github.com/valkey-io/valkey/issues/512)
+
+The developers working on these are on the [Valkey Slack](https://valkey.io/slack).
