@@ -27,6 +27,8 @@
 {% component nav_merged(extra) %}
 {%- set core = load_data(path=extra.nav_path, format="yaml", required=false) -%}
 {%- if core -%}
+    {#- Sections without an id can't be referred to or opened; leave them out. -#}
+    {%- set core = [s for s in core if s?.id] -%}
     {#- Slugs of the existing topic pages; other topics are left out. -#}
     {%- set topics_section = get_section(path="topics/_index.md") -%}
     {%- set existing = [p.slug for p in topics_section.pages] -%}
@@ -42,7 +44,9 @@
     {%- endfor -%}
 
     {#- Sections in menu order: core sections, each followed by other sources'
-        sections placed after it, then sections without a placement. -#}
+        sections placed after it, then sections without a placement or placed
+        after a section that doesn't exist. -#}
+    {%- set core_ids = [s.id for s in core] -%}
     {%- set ordered = [] -%}
     {%- for section in core -%}
         {%- set_global ordered = [...ordered, {"section": section, "source": "valkey"}] -%}
@@ -53,7 +57,7 @@
         {%- endfor -%}{%- endfor -%}
     {%- endfor -%}
     {%- for source in sources -%}{%- for item in source.entries -%}
-        {%- if item?.id and not item?.after -%}
+        {%- if item?.id and item?.after not in core_ids -%}
             {%- set_global ordered = [...ordered, {"section": item, "source": source.name}] -%}
         {%- endif -%}
     {%- endfor -%}{%- endfor -%}
@@ -78,6 +82,9 @@
                 {%- set_global topics = [...topics, {"topic": x.entry.topic, "title": x.entry?.title | default(value=""), "commands": x.entry?.commands | default(value=[]), "source": x.source}] -%}
             {%- endif -%}
         {%- endfor -%}
+        {#- Leave out sections with nothing to show, except the command
+            reference placeholder, which the menu fills itself. -#}
+        {%- if topics or o.section?.landing in existing or o.section?.commands or o.section.id == "command-reference" -%}
         {%- set_global sections = [...sections, {
             "id": o.section.id,
             "title": o.section.title,
@@ -86,6 +93,7 @@
             "commands": o.section?.commands | default(value=[]),
             "topics": topics
         }] -%}
+        {%- endif -%}
     {%- endfor -%}
     {{ sections | json_encode | safe }}
 {%- else -%}[]{%- endif -%}
@@ -324,15 +332,16 @@
         {%- else %}
         <li>
             <details{% if section.id == open %} open{% endif %}>
-                <summary>{{ section.title }}</summary>
+                {%- set section_badge = extra.nav_badges[section.source] | default(value="") %}
+                <summary>{{ section.title }}{% if section_badge %} <span class="docs-menu-badge">{{ section_badge }}</span>{% endif %}</summary>
                 <ul>
                     {%- if section.landing %}
                     {%- set commands = command_map[section.landing] if section.landing in command_map else [] %}
-                    {{< nav_menu_item slug={section.landing} title="Overview" source={section.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} label={section.title} />}}
+                    {{< nav_menu_item slug={section.landing} title="Overview" source={"" if section_badge else section.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} label={section.title} />}}
                     {%- endif %}
                     {%- for entry in section.topics %}
                     {%- set commands = command_map[entry.topic] if entry.topic in command_map else [] %}
-                    {{< nav_menu_item slug={entry.topic} title={entry.title} source={entry.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} />}}
+                    {{< nav_menu_item slug={entry.topic} title={entry.title} source={"" if section_badge and entry.source == section.source else entry.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} />}}
                     {%- endfor %}
                     {%- set other_key = "section:" ~ section.id %}
                     {%- if other_key in command_map %}

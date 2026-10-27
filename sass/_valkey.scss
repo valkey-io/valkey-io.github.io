@@ -721,6 +721,15 @@ p {
     }
   }
 
+  // A badge on a section title, for a section that comes from a module. The
+  // section titles are uppercase; the badge isn't. The margin keeps it away
+  // from the arrow.
+  summary > .docs-menu-badge {
+    margin-left: 0.6rem;
+    margin-right: auto;
+    text-transform: none;
+  }
+
   .docs-menu-badge {
     display: inline-block;
     margin-left: 0.4rem;
