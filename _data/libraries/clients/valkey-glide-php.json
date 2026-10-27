@@ -1,0 +1,20 @@
+{
+  "name": "Valkey GLIDE PHP",
+  "language": "PHP",
+  "license": "Apache-2.0",
+  "description": "Designed for reliability, optimized performance, and high-availability. GLIDE is a multi-language client with one shared Rust core and per-language bindings.",
+  "repository": "https://github.com/valkey-io/valkey-glide-php",
+  "documentation": "https://glide.valkey.io/getting-started/quickstart/?lang=php",
+  "installCommand": "pie install valkey-io/valkey-glide-php",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": true,
+    "latency": false,
+    "az": true,
+    "csc": false,
+    "capa": false,
+    "pool": false
+  }
+}
