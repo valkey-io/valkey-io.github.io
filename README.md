@@ -36,6 +36,8 @@ zola build && pagefind --serve
 
 Open the URL Pagefind prints after `Serving "public" at`. The server doesn't rebuild on changes, so run the command again after editing.
 
+Every page needs a unique `<title>`. CI checks this when it checks the search index, so if it reports a `duplicate title`, change the `title` in the front matter of one of the listed pages.
+
 ### Checking catalog entries
 
 The clients and integrations entries in `_data/libraries/` are checked by `build/validate-libraries.py`, against the rules in `_data/libraries/schema.json` and the SPDX license list.
