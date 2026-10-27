@@ -20,7 +20,7 @@ Fast writes are great. But what happens when a node crashes, your dataset outgro
 
 At [ValkeyConf 2026](https://events.linuxfoundation.org/valkeyconf/), Valkey maintainers and Technical Steering Committee (TSC) members [Harkrishn Patro (Apple)](https://uk.linkedin.com/in/harkrishn-patro) and [Viktor Söderqvist (Ericsson)](https://github.com/zuiderkwast) took the stage for the closing keynote, ["Valkey's Next Chapter: Durability and Beyond"](https://www.youtube.com/watch?v=2OaLqzYljlQ), to outline what's next for Valkey 10 and beyond.
 
-Their focus wasn't simply adding features. It was extending what developers can reliably build with Valkey without sacrificing the performance and simplicity that made it useful in the first place.
+Their focus was extending what developers can reliably build with Valkey without sacrificing the performance and simplicity that made it useful in the first place.
 
 ## Durability: If Valkey Says "OK," the Write Should Stick
 
