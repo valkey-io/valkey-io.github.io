@@ -30,7 +30,7 @@ For caching, that tradeoff is often acceptable. For workloads requiring stronger
 
 The proposed durability work introduces synchronous replication and stronger consistency.
 
-When a write arrives, the primary applies it in memory but marks the affected keys as uncommitted. The system continues processing commands while holding responses that depend on uncommitted data until the required replication acknowledgments arrive.
+When a write arrives, the primary applies it in-memory but marks the affected keys as uncommitted. The system continues processing commands while holding responses that depend on uncommitted data until the required replication acknowledgments arrive.
 
 Replicas also avoid exposing uncommitted writes, ensuring clients don't read data that could disappear after failover.
 
@@ -56,19 +56,19 @@ This matters because **durability and cluster coordination are closely connected
 
 Synchronous replication requires reliable agreement on which replicas are eligible for failover. If nodes disagree about cluster membership or topology, data might be acknowledged by an inactive node and return inconsistent results to the user.
 
-## Data Tiering: Not Every Key Needs to Stay in Memory
+## Data Tiering: Not Every Key Needs to Stay In-Memory
 
-Valkey's in-memory architecture delivers high throughput and low latency, but keeping increasingly large datasets entirely in memory comes at a cost.
+Valkey's in-memory architecture delivers high throughput and low latency, but keeping increasingly large datasets entirely in-memory comes at a cost.
 
 Data tiering, one of the community's most requested capabilities, aims to separate frequently accessed data from colder data.
 
-Under the proposed design, hot data remains in memory while less frequently accessed data moves to lower-cost storage on disk.
+Under the proposed design, hot data remains in-memory while less frequently accessed data moves to lower-cost storage on disk.
 
 Rather than requiring developers to manually select which keys move between storage tiers, Valkey would automatically determine data placement based on access patterns.
 
 When a client requests cold data, asynchronous retrieval would fetch it from storage without blocking the main thread. Only clients waiting on that data would experience the additional latency, while requests for resident data continue.
 
-![Data tiering: hot data remains in memory while cold data moves to lower-cost storage](Valkey_Data_Tiering.gif)
+![Data tiering: hot data remains in-memory while cold data moves to lower-cost storage](Valkey_Data_Tiering.gif)
 
 Applications could potentially maintain larger datasets without provisioning enough memory to hold every key, preserving in-memory performance for frequently accessed data while reducing overall storage costs.
 
