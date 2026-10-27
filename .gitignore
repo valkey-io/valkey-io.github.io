@@ -7,7 +7,6 @@ build-command-json
 build-json-command-json
 build-search-command-json
 build-topics
-build-clients
 content/commands/*
 !content/commands/_index.md
 content/topics/*

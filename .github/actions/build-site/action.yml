@@ -1,6 +1,6 @@
 name: Build the website
 description: >
-  Builds a checkout of this repository into <path>/public, with its topics, clients and
+  Builds a checkout of this repository into <path>/public, with its topics and
   commands from valkey-doc and the command metadata from valkey and the modules, checked out
   next to it in the workspace.
 
@@ -50,12 +50,11 @@ runs:
         repository: valkey-io/valkey-search
         path: valkey-search
 
-    - name: Init commands, topics and clients
+    - name: Init commands and topics
       shell: bash
       working-directory: ${{ inputs.path }}
       run: |
-        ./build/init-topics-and-clients.sh ../valkey-doc/topics \
-          ../valkey-doc/clients
+        ./build/init-topics.sh ../valkey-doc/topics
         ./build/init-commands.sh ../valkey-doc/commands \
           ../valkey/src/commands ../valkey-bloom/src/commands \
           ../valkey-json/src/commands ../valkey-search/src/commands

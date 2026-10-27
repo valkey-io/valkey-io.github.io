@@ -1,0 +1,37 @@
+name: Validate library catalog
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - '_data/libraries/**'
+      - 'build/validate-libraries.py'
+      - '.github/workflows/validate-libraries.yml'
+  workflow_call:
+    inputs:
+      ref:
+        description: The Git ref to validate. Leave it empty to validate the commit that triggered the run.
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          # The script's header pins its dependencies, so it is the cache key.
+          cache-dependency-glob: build/validate-libraries.py
+
+      - name: Validate catalog entries
+        run: ./build/validate-libraries.py

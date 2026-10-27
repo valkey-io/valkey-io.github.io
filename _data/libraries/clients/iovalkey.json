@@ -1,0 +1,20 @@
+{
+  "name": "iovalkey",
+  "language": "Node.js",
+  "license": "MIT",
+  "description": "A friendly fork of a widely used Node.js client, tracking Valkey. Promise-based API, Lua scripting and cluster support.",
+  "repository": "https://github.com/valkey-io/iovalkey",
+  "documentation": "https://github.com/valkey-io/iovalkey/blob/v0.4.0/README.md#quick-start",
+  "installCommand": "npm install iovalkey",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": false,
+    "latency": false,
+    "az": false,
+    "csc": false,
+    "capa": false,
+    "pool": true
+  }
+}
