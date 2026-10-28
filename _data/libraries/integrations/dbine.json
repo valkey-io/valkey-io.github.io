@@ -1,0 +1,10 @@
+{
+  "name": "DBine",
+  "license": "Apache-2.0",
+  "description": "Desktop database manager for Windows, macOS and Linux: browse keys with SCAN, edit values as commands you review first, run any Valkey command, and inspect clients, ACL users and server stats.",
+  "repository": "https://github.com/addlayer-io/dbine",
+  "documentation": "https://dbine.com/en/engines/valkey",
+  "tags": [
+    "CLI & GUI"
+  ]
+}
