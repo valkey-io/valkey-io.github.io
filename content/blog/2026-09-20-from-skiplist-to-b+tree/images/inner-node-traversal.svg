@@ -301,7 +301,7 @@
 <line x1="118.0" y1="216.0" x2="606.0" y2="216.0" stroke="#30176e" stroke-width="0.8" opacity="0.7"/>
 <text x="362.0" y="227.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="8.5" font-weight="400" text-anchor="middle" fill="#666666">61 children compared per row in one SIMD pass (64 B = one cache line)</text>
 <text x="614.0" y="227.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="9" font-weight="600" text-anchor="start" fill="#c2185b">→ child 30</text>
-<text x="362.0" y="242.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="8" font-weight="400" text-anchor="middle" fill="#c2185b">child 30 (anchor "i love valkeys"): no anchor matched all four bytes, so no string is compared</text>
+<text x="362.0" y="242.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="8" font-weight="400" text-anchor="middle" fill="#c2185b">no anchor fetch needed: the lookup is between anchors 29 and 30</text>
 <rect x="24.0" y="257.0" width="10.0" height="10.0" fill="#e07b39" stroke="none" rx="0"/>
 <text x="38.0" y="266.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="10" font-weight="400" text-anchor="start" fill="#666666">pointers</text>
 <rect x="102.0" y="257.0" width="10.0" height="10.0" fill="#9aa7b5" stroke="none" rx="0"/>
