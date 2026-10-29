@@ -65,7 +65,7 @@ Hard constraints protect availability but can leave pods unscheduled when capaci
 
 The architecture also introduces a `ValkeyNode` resource alongside `ValkeyCluster`.
 
-A cluster-level resource captures the intended deployment, including shard and replica counts. Node-level resources give the controller a way to reason about individual instances and their roles as Kubernetes objects and Valkey topology change independently.
+A cluster-level resource captures the intended deployment, including shard and replica counts. Node-level resources let the controller track individual instances and their roles, even when Kubernetes objects and Valkey topology change separately.
 
 The presentation walked through the ownership chain from `ValkeyCluster` to Kubernetes workloads and pods, and showed how `ValkeyNode` participates in reconciliation. A `kubectl get valkeynodes` example made the model tangible: the operator exposes node identity, readiness, and primary/replica roles through the Kubernetes API.
 
