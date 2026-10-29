@@ -99,7 +99,7 @@ But the team's immediate challenge is clear: make the cluster lifecycle predicta
 
 Kubernetes could already run Valkey. Operating it correctly was the harder problem.
 
-Now there's a growing community putting that knowledge into a controller, one reconciliation and one failure scenario at a time. The 1.0 milestone matters, but the bigger test is whether the operator can turn fragile runbooks into repeatable behavior without taking control away from developers and operators.
+Operating Valkey correctly on Kubernetes is the problem the operator exists to solve. A growing community is encoding that operational knowledge into a controller. Beyond the 1.0 milestone, the real test is whether it turns manual runbooks into repeatable behavior while leaving developers and operators in control.
 
 **Kubernetes handles the pods. The Valkey Operator is being built to understand the cluster.**
 
