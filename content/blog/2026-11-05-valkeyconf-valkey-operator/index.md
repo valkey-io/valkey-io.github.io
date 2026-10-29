@@ -34,7 +34,7 @@ That's where the [Valkey Operator](https://github.com/valkey-io/valkey-operator)
 
 A Kubernetes Operator extends Kubernetes with application-specific knowledge. For Valkey, the goal is to automate cluster deployment, failover, upgrades, and recovery instead of coordinating them manually.
 
-The idea started with a hallway conversation at Valkey Keyspace in Amsterdam. One year later, at ValkeyConf 2026 in Prague, Valkey Operator maintainers Joe Heyburn of Braze, and Björn Svensson of Ericsson showed what the community has built since then and what's next.
+The idea started with a hallway conversation at Valkey Keyspace in Amsterdam. One year later, at ValkeyConf 2026 in Prague, Valkey Operator maintainers Joe Heyburn of Braze and Björn Svensson of Ericsson showed what the community has built since then and what's next.
 
 ## An Operator Is More Than a YAML Generator
 
