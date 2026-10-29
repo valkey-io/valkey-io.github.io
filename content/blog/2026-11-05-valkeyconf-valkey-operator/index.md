@@ -24,7 +24,7 @@ blog_type = ["Events"]
 
 > **TL;DR:** Valkey can run on Kubernetes, but managing distributed clusters takes more than keeping pods alive. One year after a hallway conversation sparked the effort, Valkey Operator maintainers Joe Heyburn and Björn Svensson returned to ValkeyConf 2026 to discuss cluster reconciliation, topology-aware scheduling, access controls, and the road to 1.0.
 
-## Valkey on Kubernetes? Here's Where It Gets Interesting.
+## Why Valkey Needs an Operator
 
 Valkey is known for its speed as an open source, in-memory data store. But what happens when you need to run and manage Valkey clusters on Kubernetes?
 
