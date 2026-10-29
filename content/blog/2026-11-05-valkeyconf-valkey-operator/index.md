@@ -77,7 +77,7 @@ A healthy pod doesn't necessarily mean a healthy Valkey cluster.
 
 Security is part of the initial design.
 
-The session showed declarative Valkey access-control lists (ACLs), including users, command permissions, and key-access patterns. Managing permissions alongside the cluster specification makes configuration repeatable rather than relying on ad hoc commands issued after deployment.
+The session showed declarative Valkey access-control lists (ACLs), including users, command permissions, and key-access patterns. Declaring permissions in the cluster specification makes access configuration repeatable across deployments.
 
 The team also demonstrated the operator managing a live cluster, with the controller updating both Kubernetes resources and Valkey state.
 
