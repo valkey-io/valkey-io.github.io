@@ -1,0 +1,20 @@
+{
+  "name": "kotlin-valkey",
+  "language": "Kotlin",
+  "license": "MIT",
+  "description": "A Kotlin client for the JVM with no dependencies besides SLF4J. Streaming-first and pipelining-first, binary safe, with transactions, Pub/Sub and TLS support.",
+  "repository": "https://codeberg.org/sebdehne/kotlin-valkey",
+  "documentation": "https://dehnes.com/kotlin-valkey/",
+  "installCommand": "implementation(\"com.dehnes.kotlinvalkey:kotlin-valkey:0.+\")",
+  "features": {
+    "replica": false,
+    "backoff": false,
+    "pubsub": true,
+    "scan": false,
+    "latency": false,
+    "az": false,
+    "csc": false,
+    "capa": false,
+    "pool": true
+  }
+}
