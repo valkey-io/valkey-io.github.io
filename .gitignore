@@ -20,3 +20,4 @@ _data/modules.json
 .idea/*
 tmp/*
 static/debug
+static/processed_images

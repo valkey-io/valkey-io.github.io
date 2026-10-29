@@ -1,0 +1,370 @@
+{#
+    Documentation menu, built from nav.yml (core) and the menu files of other
+    sources, such as modules.
+
+    The core menu defines the sections. A source's menu file can add topics to
+    a core section ("section: <id>") or add a new section ("id: ..."),
+    optionally placed after a core section ("after: <id>"). The files are
+    merged in the order given by config.extra.nav_sources.
+
+    The menu is lenient: it leaves out what doesn't fit instead of failing the
+    build. Topics that don't exist, entries for unknown sections, and
+    entries without a topic are skipped. Topics and commands that aren't in
+    the menu are still reachable from the topic index and the command
+    reference.
+
+    Components can't see `config`, so they take `config.extra` as `extra`.
+    Components only return text, so `nav_merged` returns the merged menu as
+    JSON:
+
+        {% set nav_json %}{{< nav_merged extra={config.extra} />}}{% endset %}
+        {% set nav_data = load_data(literal=nav_json, format="json") %}
+
+    Each section in the result has: id, title, source, landing, commands and
+    topics, where each topic has: topic, title, commands, source. "source" is
+    "valkey" for the core menu, or the source's name.
+#}
+{% component nav_merged(extra) %}
+{%- set core = load_data(path=extra.nav_path, format="yaml", required=false) -%}
+{%- if core -%}
+    {#- Sections without an id can't be referred to or opened; leave them out. -#}
+    {%- set core = [s for s in core if s?.id] -%}
+    {#- Slugs of the existing topic pages; other topics are left out. -#}
+    {%- set topics_section = get_section(path="topics/_index.md") -%}
+    {%- set existing = [p.slug for p in topics_section.pages] -%}
+
+    {#- Menu files of other sources that exist. Entries that refer to unknown sections are
+        never matched below, so they're left out. -#}
+    {%- set sources = [] -%}
+    {%- for name in extra.nav_sources -%}
+        {%- set entries = load_data(path=extra.nav_sources_path ~ name ~ ".yml", format="yaml", required=false) -%}
+        {%- if entries -%}
+            {%- set_global sources = [...sources, {"name": name, "entries": entries}] -%}
+        {%- endif -%}
+    {%- endfor -%}
+
+    {#- Sections in menu order: core sections, each followed by other sources'
+        sections placed after it, then sections without a placement or placed
+        after a section that doesn't exist. -#}
+    {%- set core_ids = [s.id for s in core] -%}
+    {%- set ordered = [] -%}
+    {%- for section in core -%}
+        {%- set_global ordered = [...ordered, {"section": section, "source": "valkey"}] -%}
+        {%- for source in sources -%}{%- for item in source.entries -%}
+            {%- if item?.id and item?.after == section.id -%}
+                {%- set_global ordered = [...ordered, {"section": item, "source": source.name}] -%}
+            {%- endif -%}
+        {%- endfor -%}{%- endfor -%}
+    {%- endfor -%}
+    {%- for source in sources -%}{%- for item in source.entries -%}
+        {%- if item?.id and item?.after not in core_ids -%}
+            {%- set_global ordered = [...ordered, {"section": item, "source": source.name}] -%}
+        {%- endif -%}
+    {%- endfor -%}{%- endfor -%}
+
+    {%- set sections = [] -%}
+    {%- for o in ordered -%}
+        {#- The section's own topics, then topics that other sources add to it.
+            `set` inside a loop is local to the loop body in Tera 2, and
+            `set_global` writes the outer variable, so the lists that the
+            inner loops append to are initialized with `set_global`. -#}
+        {%- set_global entries = [{"entry": e, "source": o.source} for e in o.section?.topics | default(value=[])] -%}
+        {%- for source in sources -%}{%- for item in source.entries -%}
+            {%- if item?.section == o.section.id -%}
+                {%- set_global entries = [...entries, ...[{"entry": e, "source": source.name} for e in item?.topics | default(value=[])]] -%}
+            {%- endif -%}
+        {%- endfor -%}{%- endfor -%}
+        {%- set_global topics = [] -%}
+        {%- for x in entries -%}
+            {%- if x.entry is string and x.entry in existing -%}
+                {%- set_global topics = [...topics, {"topic": x.entry, "title": "", "commands": [], "source": x.source}] -%}
+            {%- elif x.entry is not string and x.entry?.topic in existing -%}
+                {%- set_global topics = [...topics, {"topic": x.entry.topic, "title": x.entry?.title | default(value=""), "commands": x.entry?.commands | default(value=[]), "source": x.source}] -%}
+            {%- endif -%}
+        {%- endfor -%}
+        {#- Leave out sections with nothing to show, except the command
+            reference placeholder, which the menu fills itself. -#}
+        {%- if topics or o.section?.landing in existing or o.section?.commands or o.section.id == "command-reference" -%}
+        {%- set_global sections = [...sections, {
+            "id": o.section.id,
+            "title": o.section.title,
+            "source": o.source,
+            "landing": o.section.landing if o.section?.landing in existing else "",
+            "commands": o.section?.commands | default(value=[]),
+            "topics": topics
+        }] -%}
+        {%- endif -%}
+    {%- endfor -%}
+    {{ sections | json_encode | safe }}
+{%- else -%}[]{%- endif -%}
+{% endcomponent nav_merged %}
+
+{#-
+    Where a command belongs in the menu, as JSON:
+    {"section": id, "title": section title, "landing": slug, "topic": slug}.
+    The topic is the section's landing page if the section itself claims the
+    command, or "" if that section has no landing page. Everything is "" if no
+    menu entry claims the command.
+
+    A full command name (e.g. "CONFIG GET" or "BGSAVE") wins over a container
+    ("CONFIG"), which wins over a group ("server").
+-#}
+{% component nav_command_location(nav, name, container, group) %}
+{%- set by_name = {} -%}
+{%- set by_container = {} -%}
+{%- set by_group = {} -%}
+{%- for section in nav -%}
+    {%- set targets = [{"topic": section.landing, "commands": section.commands}, ...section.topics] -%}
+    {%- for target in targets -%}
+        {%- set location = {"section": section.id, "title": section.title, "landing": section.landing, "topic": target.topic} -%}
+        {%- if name in target.commands -%}{%- set_global by_name = location -%}{%- endif -%}
+        {%- if container and container in target.commands -%}{%- set_global by_container = location -%}{%- endif -%}
+        {%- if group in target.commands -%}{%- set_global by_group = location -%}{%- endif -%}
+    {%- endfor -%}
+{%- endfor -%}
+{%- if by_name -%}{{ by_name | json_encode | safe }}
+{%- elif by_container -%}{{ by_container | json_encode | safe }}
+{%- elif by_group -%}{{ by_group | json_encode | safe }}
+{%- else -%}{"section": "", "title": "", "landing": "", "topic": ""}{%- endif -%}
+{% endcomponent nav_command_location %}
+
+{#-
+    All commands that have a page, as a JSON list of
+    {"name": "CONFIG GET", "container": "CONFIG", "group": "server", "slug": "config-get"}.
+    The data comes from the command pages' front matter, written by
+    build/init-commands.sh from the command JSON files. For pages without it
+    (no jq, or stubs from an older init run), the command JSON file is read
+    instead: same result, slower build.
+-#}
+{% component nav_command_index(extra) %}
+{%- set commands_section = get_section(path="commands/_index.md") -%}
+{%- set index = [] -%}
+{%- for page in commands_section.pages -%}
+    {%- if page.extra?.command_name -%}
+        {%- set_global index = [...index, {"name": page.extra.command_name, "container": page.extra.command_container, "group": page.extra.command_group, "slug": page.slug}] -%}
+    {%- else -%}
+        {%- for json_path in [extra.command_json_path, extra.command_bloom_json_path, extra.command_json_json_path, extra.command_search_json_path] -%}
+            {%- set data = load_data(path=json_path ~ page.slug ~ ".json", required=false) -%}
+            {%- if data -%}
+                {%- set key = data | keys | first -%}
+                {%- set command = data[key] -%}
+                {%- set container = command?.container | default(value="") | upper -%}
+                {%- set_global index = [...index, {"name": (container ~ " " ~ key) | trim | upper, "container": container, "group": command?.group | default(value=""), "slug": page.slug}] -%}
+                {%- break -%}
+            {%- endif -%}
+        {%- endfor -%}
+    {%- endif -%}
+{%- endfor -%}
+{{ index | json_encode | safe }}
+{% endcomponent nav_command_index %}
+
+{#-
+    The documented commands of every menu entry, as a JSON map from the
+    entry's key to a list of {"name": "BITCOUNT", "slug": "bitcount"}, sorted
+    by name. The key is a topic's slug, or for commands that a section claims
+    itself, the section's landing page, or "section:<id>" if it has none.
+    Entries without documented commands aren't in the map. `index` is from
+    nav_command_index.
+
+    A command goes to the entry that claims it most specifically: its full
+    name (e.g. "CONFIG GET"), then its container ("CONFIG"), then its group
+    ("server"). This is one pass over the commands per page.
+-#}
+{% component nav_command_map(nav, index) %}
+{#- Map from each claim to the key of the entry that makes it. -#}
+{%- set pairs = [] -%}
+{%- for section in nav -%}
+    {%- set section_key = section.landing if section.landing else "section:" ~ section.id -%}
+    {%- for claim in section.commands -%}
+        {%- set_global pairs = [...pairs, (claim | json_encode) ~ ": " ~ (section_key | json_encode)] -%}
+    {%- endfor -%}
+    {%- for entry in section.topics -%}
+        {%- for claim in entry.commands -%}
+            {%- set_global pairs = [...pairs, (claim | json_encode) ~ ": " ~ (entry.topic | json_encode)] -%}
+        {%- endfor -%}
+    {%- endfor -%}
+{%- endfor -%}
+{%- set claims = load_data(literal="{" ~ pairs | join(sep=", ") ~ "}", format="json") -%}
+{%- set placed = [] -%}
+{%- for command in index | sort(attribute="name") -%}
+    {%- if command.name in claims -%}
+        {%- set key = claims[command.name] -%}
+    {%- elif command.container and command.container in claims -%}
+        {%- set key = claims[command.container] -%}
+    {%- elif command.group in claims -%}
+        {%- set key = claims[command.group] -%}
+    {%- else -%}
+        {%- set key = "" -%}
+    {%- endif -%}
+    {%- if key -%}
+        {%- set_global placed = [...placed, {"key": key, "name": command.name, "slug": command.slug}] -%}
+    {%- endif -%}
+{%- endfor -%}
+{{ placed | group_by(attribute="key") | json_encode | safe }}
+{% endcomponent nav_command_map %}
+
+{#- A menu entry's commands, in a toggle that's open if `open` is true. -#}
+{% component nav_command_list(commands, current_command, label, open) %}
+<details class="docs-menu-commands-toggle"{% if open %} open{% endif %}>
+    <summary><span class="sr-only">{{ label }}</span></summary>
+    <ul class="docs-menu-commands" aria-label="{{ label }}">
+        {%- for command in commands %}
+        <li><a href="/commands/{{ command.slug }}/"
+            {%- if command.slug == current_command %} class="docs-menu-current" aria-current="page"{% endif %}>{{ command.name }}</a></li>
+        {%- endfor %}
+    </ul>
+</details>
+{% endcomponent nav_command_list %}
+
+{#- Where a topic is in the menu, as JSON: {"section": id, "title": section title, "landing": slug}. -#}
+{% component nav_topic_location(nav, slug) %}
+{%- set found = {"section": "", "title": "", "landing": ""} -%}
+{%- for section in nav -%}
+    {%- if section.landing == slug or slug in [t.topic for t in section.topics] -%}
+        {%- set_global found = {"section": section.id, "title": section.title, "landing": section.landing} -%}
+    {%- endif -%}
+{%- endfor -%}
+{{ found | json_encode | safe }}
+{% endcomponent nav_topic_location %}
+
+{#- A topic's title: `title` if set, otherwise the title in the topic's front matter. -#}
+{% component nav_topic_title(slug, extra, title="") %}
+{%- if title -%}{{ title }}{%- else -%}
+    {%- set content %}{{< load slug={slug} topic_path={extra.doc_topic_path} exceptions={extra.slug_source_exceptions} />}}{% endset -%}
+    {%- set frontmatter %}{{< extract_frontmatter content={content} />}}{% endset -%}
+    {%- set frontmatter = frontmatter | trim -%}
+    {%- if frontmatter -%}
+        {%- set data = load_data(literal=frontmatter, format="yaml") -%}
+        {{ data?.title | default(value=slug) | trim }}
+    {%- else -%}{{ slug }}{%- endif -%}
+{%- endif -%}
+{% endcomponent nav_topic_title %}
+
+{#-
+    One menu link to a topic, with a toggle for its commands if it has any.
+    `label` names the command list for screen readers; it defaults to the
+    topic's title.
+
+    The current topic, if it has commands, isn't a link to itself: the whole
+    row is the toggle for its commands instead.
+-#}
+{% component nav_menu_item(slug, title, source, current, related, extra, commands=[], current_command="", label="") %}
+{%- set badge = extra.nav_badges[source] | default(value="") -%}
+{%- if commands and slug == current %}
+<li>
+    <details class="docs-menu-current-topic" open>
+        <summary class="docs-menu-current" aria-current="page">
+            {{- "" -}}<span>{{< nav_topic_title slug={slug} title={title} extra={extra} />}}
+            {%- if badge %} <span class="docs-menu-badge">{{ badge }}</span>{% endif -%}</span>
+        </summary>
+        {%- if not label %}{% set label %}{{< nav_topic_title slug={slug} title={title} extra={extra} />}}{% endset %}{% endif %}
+        <ul class="docs-menu-commands" aria-label="{{ label | trim }} commands">
+            {%- for command in commands %}
+            <li><a href="/commands/{{ command.slug }}/">{{ command.name }}</a></li>
+            {%- endfor %}
+        </ul>
+    </details>
+</li>
+{%- else %}
+<li{% if commands %} class="docs-menu-has-commands"{% endif %}>
+    <a href="/topics/{{ slug }}/"
+        {%- if slug == current %} class="docs-menu-current" aria-current="page"
+        {%- elif slug == related %} class="docs-menu-related"{% endif %}>
+        {{- "" -}}{{< nav_topic_title slug={slug} title={title} extra={extra} />}}
+        {%- if badge %} <span class="docs-menu-badge">{{ badge }}</span>{% endif -%}
+    </a>
+    {%- if commands %}
+    {%- if not label %}{% set label %}{{< nav_topic_title slug={slug} title={title} extra={extra} />}}{% endset %}{% endif %}
+    {{< nav_command_list commands={commands} current_command={current_command} label={(label | trim) ~ " commands"} open={slug == related} />}}
+    {%- endif %}
+</li>
+{%- endif %}
+{% endcomponent nav_menu_item %}
+
+{#-
+    The command reference section of the menu: a link to all commands and one
+    to each command category. Only categories with documented commands are
+    listed. It's rendered where nav.yml has a section with the id
+    "command-reference", or at the end of the menu if there's none.
+-#}
+{% component nav_command_reference(title, index, on_command_reference) %}
+{%- set groups = load_data(path="../_data/groups.json", required=false) %}
+{%- set used_groups = [c.group for c in index] %}
+<li>
+    <details{% if on_command_reference %} open{% endif %}>
+        <summary>{{ title }}</summary>
+        <ul>
+            <li><a href="/commands/"{% if on_command_reference %} class="docs-menu-current" aria-current="page"{% endif %}>All commands</a></li>
+            {%- if groups %}
+            {#- groups.json uses "-" where the command JSON uses "_", e.g. "sorted-set". -#}
+            {%- for key in groups | keys | sort %}
+            {%- if key | replace(from="-", to="_") in used_groups %}
+            <li><a href="/commands/#{{ key }}">{{ groups[key].display }}</a></li>
+            {%- endif %}
+            {%- endfor %}
+            {%- endif %}
+        </ul>
+    </details>
+</li>
+{% endcomponent nav_command_reference %}
+
+{#-
+    The menu.
+      current: slug of the current topic.
+      related: key of the menu entry the current command belongs to (on
+               command pages), see nav_command_map.
+      open:    id of the section to expand.
+      command_map: from nav_command_map. Each entry's commands are listed in
+               a toggle under it, open for the current or related entry.
+               Commands that a section without a landing page claims itself
+               are listed under "Other commands" at the end of the section.
+      current_command: slug of the current command page.
+      index:   from nav_command_index; used to list the command categories
+               (groups) that have documented commands.
+      on_command_reference: true on the command reference page.
+-#}
+{% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false) %}
+<nav class="docs-menu" aria-label="Documentation">
+    <ul class="docs-menu-sections">
+    {%- for section in nav %}
+        {%- if section.id == "command-reference" %}
+        {{< nav_command_reference title={section.title} index={index} on_command_reference={on_command_reference} />}}
+        {%- else %}
+        <li>
+            <details{% if section.id == open %} open{% endif %}>
+                {%- set section_badge = extra.nav_badges[section.source] | default(value="") %}
+                <summary>{{ section.title }}{% if section_badge %} <span class="docs-menu-badge">{{ section_badge }}</span>{% endif %}</summary>
+                <ul>
+                    {%- if section.landing %}
+                    {%- set commands = command_map[section.landing] if section.landing in command_map else [] %}
+                    {{< nav_menu_item slug={section.landing} title="Overview" source={"" if section_badge else section.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} label={section.title} />}}
+                    {%- endif %}
+                    {%- for entry in section.topics %}
+                    {%- set commands = command_map[entry.topic] if entry.topic in command_map else [] %}
+                    {{< nav_menu_item slug={entry.topic} title={entry.title} source={"" if section_badge and entry.source == section.source else entry.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} />}}
+                    {%- endfor %}
+                    {%- set other_key = "section:" ~ section.id %}
+                    {%- if other_key in command_map %}
+                    <li>
+                        <details class="docs-menu-other-commands"{% if related == other_key %} open{% endif %}>
+                            <summary{% if related == other_key %} class="docs-menu-related"{% endif %}>Other commands</summary>
+                            <ul class="docs-menu-commands" aria-label="{{ section.title }} commands">
+                                {%- for command in command_map[other_key] %}
+                                <li><a href="/commands/{{ command.slug }}/"
+                                    {%- if command.slug == current_command %} class="docs-menu-current" aria-current="page"{% endif %}>{{ command.name }}</a></li>
+                                {%- endfor %}
+                            </ul>
+                        </details>
+                    </li>
+                    {%- endif %}
+                </ul>
+            </details>
+        </li>
+        {%- endif %}
+    {%- endfor %}
+        {%- if "command-reference" not in [x.id for x in nav] %}
+        {{< nav_command_reference title="Command reference" index={index} on_command_reference={on_command_reference} />}}
+        {%- endif %}
+    </ul>
+</nav>
+{% endcomponent nav_menu %}

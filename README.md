@@ -98,10 +98,14 @@ First, stop the `zola serve` process if you're running it.
 From the root directory of this repo run:
 
 ```shell
-# You should only need to run this once or when you add a new command.
+# You should only need to run this once or when you add a new command,
+# or when a command's group or container changes.
 ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands \
     ../valkey-bloom/src/commands ../valkey-json/src/commands ../valkey-search/src/commands
 ```
+
+The script uses [jq](https://jqlang.org/), if installed, to store each command's group and container for the documentation menu.
+Without jq, the site still builds correctly, but more slowly.
 
 Then, restart Zola.
 Point your browser at `http://127.0.0.1:1111/commands/` and you should see the fully populated list of topics.
