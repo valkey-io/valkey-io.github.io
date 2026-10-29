@@ -32,7 +32,7 @@ Kubernetes can restart a failed pod. What it doesn't automatically understand is
 
 That's where the [Valkey Operator](https://github.com/valkey-io/valkey-operator) comes in.
 
-A Kubernetes Operator extends Kubernetes with application-specific knowledge. For Valkey, the goal is to automate cluster deployment, failover, upgrades, and recovery instead of coordinating them manually.
+A Kubernetes Operator extends Kubernetes with application-specific knowledge. For Valkey, that means automating cluster deployment, failover, upgrades, and recovery.
 
 The idea started with a hallway conversation at Valkey Keyspace in Amsterdam. One year later, at ValkeyConf 2026 in Prague, Valkey Operator maintainers Joe Heyburn of Braze and Björn Svensson of Ericsson showed what the community has built since then and what's next.
 
