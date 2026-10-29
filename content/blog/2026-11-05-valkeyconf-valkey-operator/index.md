@@ -75,7 +75,7 @@ A healthy pod doesn't necessarily mean a healthy Valkey cluster.
 
 ## ACLs and Day-Two Operations Are Part of the Design
 
-Security isn't something the project plans to bolt on after the happy-path demo.
+Security is part of the initial design.
 
 The session showed declarative Valkey access-control lists (ACLs), including users, command permissions, and key-access patterns. Managing permissions alongside the cluster specification makes configuration repeatable rather than relying on ad hoc commands issued after deployment.
 
