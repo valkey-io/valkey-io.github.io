@@ -101,6 +101,5 @@ Kubernetes could already run Valkey. Operating it correctly was the harder probl
 
 Operating Valkey correctly on Kubernetes is the problem the operator exists to solve. A growing community is encoding that operational knowledge into a controller. Beyond the 1.0 milestone, the real test is whether it turns manual runbooks into repeatable behavior while leaving developers and operators in control.
 
-**Kubernetes handles the pods. The Valkey Operator is being built to understand the cluster.**
 
 Follow the work, review the open design decisions, or contribute at [github.com/valkey-io/valkey-operator](https://github.com/valkey-io/valkey-operator).
