@@ -79,7 +79,7 @@ Security isn't something the project plans to bolt on after the happy-path demo.
 
 The session showed declarative Valkey access-control lists (ACLs), including users, command permissions, and key-access patterns. Managing permissions alongside the cluster specification makes configuration repeatable rather than relying on ad hoc commands issued after deployment.
 
-The team also demonstrated the operator managing a cluster in real time. Kubernetes resources and Valkey state changed through the controller, not manual coordination.
+The team also demonstrated the operator managing a live cluster, with the controller updating both Kubernetes resources and Valkey state.
 
 There is still substantial work ahead. The public repository continues to describe the `v1alpha1` API as **early development and not production-ready**. That warning matters more than any demo: controller correctness needs to hold under node failure, interrupted upgrades, and partial recovery, not just when everything goes according to plan.
 
