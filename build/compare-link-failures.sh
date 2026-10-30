@@ -7,7 +7,8 @@
 #   build/compare-link-failures.sh - <failures>
 #       Fails if there are any failures.
 #
-# Compares links, not pages, so a new page that inherits a dead footer link doesn't fail.
+# Compares the first field of each failure. broken-links.sh puts only the link there, so a new
+# page that inherits a dead footer link doesn't fail.
 set -euo pipefail
 before=${1:?usage: compare-link-failures.sh <before|-> <after>} after=${2:?}
 
