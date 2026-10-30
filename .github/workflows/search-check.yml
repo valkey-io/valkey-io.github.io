@@ -42,3 +42,18 @@ jobs:
         with:
           before: ${{ steps.base.outputs.site }}
           after: website/public
+
+      # Only checks when this PR changes the Pagefind version or the list of sites. Those are the
+      # only changes in this repo that can stop search from merging the other sites.
+      - name: Check the other Valkey sites have a copy of their search index for this Pagefind version
+        if: ${{ !cancelled() }}
+        env:
+          BASE: ${{ steps.base.outputs.site }}
+        run: |
+          version() { jq -r .version "$1/pagefind/pagefind-entry.json" 2>/dev/null || echo none; }
+          if [ "$(version "$BASE")" = "$(version website/public)" ] \
+            && cmp -s base/static/cross-site-search.json website/static/cross-site-search.json; then
+            echo "This PR doesn't change the Pagefind version or the list of sites, so there's nothing to check."
+            exit 0
+          fi
+          ./website/build/index-copies.sh check

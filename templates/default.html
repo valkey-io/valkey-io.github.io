@@ -86,6 +86,8 @@
   </div>
   {#- Search results use the page's name, since a page's first heading isn't always its title. #}
   <div class="body" data-pagefind-meta="title:{% if page_name %}{{ page_name }}{% else %}{{ name_prefix }}{% endif %}">
+      {#- Names this site so the other Valkey sites can label its results. #}
+      <span hidden data-pagefind-filter="site:valkey.io" data-pagefind-meta="site:valkey.io"></span>
       {% block content %}{% endblock %}
   </div>
   <div class="footer">
