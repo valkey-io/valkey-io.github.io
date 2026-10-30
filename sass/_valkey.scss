@@ -2840,3 +2840,62 @@ blockquote {
   .calendar-day { min-height: 40px; font-size: 1.1rem; }
   .calendar-nav .calendar-nav-title { font-size: 1.8rem; min-width: auto; }
 }
+
+// The site shown on each search result
+pagefind-modal .search-result-site {
+  // Otherwise it stretches across the result
+  width: fit-content;
+  margin: 6px 0 0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--pf-hover);
+  color: var(--pf-text-secondary);
+  font-size: 13px;
+}
+
+// The site filter's pills, above the results
+pagefind-modal .search-site-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 12px;
+
+  &[hidden] {
+    display: none;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border: 1px solid var(--pf-border);
+    border-radius: 999px;
+    background: var(--pf-background);
+    color: var(--pf-text);
+    font: inherit;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--pf-border-focus);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--pf-outline-focus);
+      outline-offset: 2px;
+    }
+
+    &[aria-pressed="true"] {
+      border-color: var(--pf-text);
+      background: var(--pf-text);
+      color: var(--pf-background);
+    }
+  }
+
+  .search-site-filter-count {
+    font-size: 12px;
+    opacity: 0.7;
+  }
+}
