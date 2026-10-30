@@ -1,0 +1,41 @@
+name: Build the website at another commit
+description: >
+  Checks out and builds a specified version of this repository. Useful for build comparisons with
+  newer repo versions. If it doesn't build, or has no build-site, there's no site at the "site" output.
+
+inputs:
+  ref:
+    description: The commit to build, such as a pull request's base commit.
+    required: true
+  drafts:
+    description: Include scheduled posts (draft = true).
+    default: 'false'
+
+outputs:
+  site:
+    description: The built site, relative to the workspace.
+    value: base/public
+
+runs:
+  using: composite
+  steps:
+    - name: Check out the commit
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      with:
+        ref: ${{ inputs.ref }}
+        path: base
+
+    - name: Build
+      id: build
+      if: hashFiles('base/.github/actions/build-site/action.yml') != ''
+      continue-on-error: true
+      uses: ./base/.github/actions/build-site
+      with:
+        path: base
+        drafts: ${{ inputs.drafts }}
+
+    # A failed build can leave part of a site behind.
+    - name: Discard a failed build
+      if: steps.build.outcome == 'failure'
+      shell: bash
+      run: sudo rm -rf base/public

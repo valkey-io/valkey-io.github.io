@@ -2,11 +2,14 @@
 # /// script
 # requires-python = ">=3.9"
 # ///
-"""Check the site's Pagefind search index.
+"""Lists problems with a built site's Pagefind search index, one "key<TAB>message" line each.
 
-Usage: build/check-search-index.py [public-dir]
+    build/check-search-index.py public
 
-Fails on:
+Exits 0 if there are no problems, 1 if there are, and 2 if it couldn't check (such as a site
+with no search index).
+
+Problems:
 - missing: a rendered page is not in the index.
 - unexpected: the index has a page that isn't rendered, such as the 404 page.
 - title mismatch: a page's search title isn't the name in its <title>.
@@ -64,31 +67,35 @@ def matches_page_title(record, page_title):
 
 
 def main():
-    public = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "public")
+    if len(sys.argv) != 2:
+        print(f"usage: {pathlib.Path(sys.argv[0]).name} <built site>", file=sys.stderr)
+        return 2
+    public = pathlib.Path(sys.argv[1])
     expected = expected_pages(public)
     records = indexed_records(public)
     if not records:
-        print(f"error: no search index records under {public / 'pagefind'}")
-        return 1
+        print(f"error: no search index records under {public / 'pagefind'}", file=sys.stderr)
+        return 2
 
     indexed = {record["url"] for record in records}
     indexed_titles = {url: title for url, title in expected.items() if url in indexed}
     title_counts = collections.Counter(indexed_titles.values())
-    failures = {
+    problems = {
         "missing": expected.keys() - indexed,
         "unexpected": indexed - expected.keys(),
         "title mismatch": {r["url"] for r in records if not matches_page_title(r, expected.get(r["url"], ""))},
         "duplicate title": {f'{url} ("{title}")' for url, title in indexed_titles.items() if title_counts[title] > 1},
     }
 
-    counts = ", ".join(f"{len(urls)} {name}" for name, urls in failures.items())
-    print(f"{len(records)} pages indexed, {len(expected)} expected: {counts}")
-    for name, urls in failures.items():
+    counts = ", ".join(f"{len(urls)} {name}" for name, urls in problems.items())
+    print(f"{len(records)} pages indexed, {len(expected)} expected: {counts}", file=sys.stderr)
+    for name, urls in problems.items():
         for url in sorted(urls):
-            print(f"{name}: {url}")
-    if failures["duplicate title"]:
-        print("hint: every page needs a unique title. Change `title` in the front matter of one of the pages listed above.")
-    return 1 if any(failures.values()) else 0
+            message = f"{name}: {url}"
+            if name == "duplicate title":
+                message += ". Every page needs a unique title, so change `title` in the front matter of one of them."
+            print(f"{name}: {url}\t{message}")
+    return 1 if any(problems.values()) else 0
 
 
 if __name__ == "__main__":

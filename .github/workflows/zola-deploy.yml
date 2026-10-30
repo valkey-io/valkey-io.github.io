@@ -81,12 +81,16 @@ jobs:
           name: github-pages
 
       - name: Unpack the built site
+        id: unpack
         run: mkdir public && tar -xf artifact.tar -C public
 
       - name: Check links
         uses: ./.github/actions/check-links
         with:
-          path: .
+          after: public
 
       - name: Check search index
-        run: python3 build/check-search-index.py public
+        if: ${{ !cancelled() && steps.unpack.outcome == 'success' }}
+        uses: ./.github/actions/check-search-index
+        with:
+          after: public

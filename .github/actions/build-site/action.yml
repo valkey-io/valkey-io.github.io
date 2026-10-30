@@ -2,15 +2,13 @@ name: Build the website
 description: >
   Builds a checkout of this repository and its search index into <path>/public, with its topics and
   commands from valkey-doc and the command metadata from valkey and the modules, checked out
-  next to it in the workspace.
+  next to it in the workspace. Content repositories that are already checked out there, such as by
+  an earlier build in the job, are reused.
 
 inputs:
   path:
     description: The website checkout to build, relative to the workspace (e.g. website).
     required: true
-  checkout-content:
-    description: Check out the content repositories. Set to false if an earlier build in the job already did.
-    default: 'true'
   drafts:
     description: Include scheduled posts (draft = true). Only for checks, since deploying it would publish them early.
     default: 'false'
@@ -19,35 +17,35 @@ runs:
   using: composite
   steps:
     - name: Checkout valkey
-      if: inputs.checkout-content == 'true'
+      if: hashFiles('valkey/.git/HEAD') == ''
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey
         path: valkey
 
     - name: Checkout valkey-bloom
-      if: inputs.checkout-content == 'true'
+      if: hashFiles('valkey-bloom/.git/HEAD') == ''
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-bloom
         path: valkey-bloom
 
     - name: Checkout valkey-doc
-      if: inputs.checkout-content == 'true'
+      if: hashFiles('valkey-doc/.git/HEAD') == ''
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-doc
         path: valkey-doc
 
     - name: Checkout valkey-json
-      if: inputs.checkout-content == 'true'
+      if: hashFiles('valkey-json/.git/HEAD') == ''
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-json
         path: valkey-json
 
     - name: Checkout valkey-search
-      if: inputs.checkout-content == 'true'
+      if: hashFiles('valkey-search/.git/HEAD') == ''
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-search

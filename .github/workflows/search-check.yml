@@ -1,5 +1,6 @@
-# Builds the site and checks its search index. Includes scheduled posts (drafts) so they are checked
-# before being merged.
+# Builds the site before and after the PR and checks its search index. Fails if the PR causes a
+# problem. Problems already there before the PR, such as ones from other repos, are listed but don't
+# fail the check. Includes scheduled posts (drafts) so they are checked before being merged.
 
 name: Search check
 
@@ -23,12 +24,21 @@ jobs:
         with:
           path: website
 
-      - name: Build with drafts
+      - name: Build this PR
         uses: ./website/.github/actions/build-site
         with:
           path: website
           drafts: true
 
+      - name: Build the base
+        id: base
+        uses: ./website/.github/actions/build-base
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          drafts: true
+
       - name: Check search index
-        working-directory: website
-        run: python3 build/check-search-index.py public
+        uses: ./website/.github/actions/check-search-index
+        with:
+          before: ${{ steps.base.outputs.site }}
+          after: website/public
