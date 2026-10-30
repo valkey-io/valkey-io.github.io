@@ -83,5 +83,10 @@ jobs:
       - name: Unpack the built site
         run: mkdir public && tar -xf artifact.tar -C public
 
+      - name: Check links
+        uses: ./.github/actions/check-links
+        with:
+          path: .
+
       - name: Check search index
         run: python3 build/check-search-index.py public
