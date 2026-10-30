@@ -1,5 +1,5 @@
 +++
-title = "House of Valkey: The Family Reunion You Actually Want to Attend"
+title = "House of Valkey: The Family Reunion"
 date = 2026-11-02
 description = "Technical recap of the ValkeyConf 2026 closing keynote by Harkrishn Patro and Viktor Söderqvist. Covers features in development including durability, Cluster V2, data tiering, and active-active replication."
 authors = ["crystalpham"]
@@ -161,7 +161,7 @@ blog_type = ["Events"]
 
 <h2>Last Year, We Took Over Taco Bell</h2>
 
-<p>Last year, House of Valkey took over three floors of Taco Bell Cantina in Las Vegas with a custom menu, a 3D printer prize, and spiked Baja Blasts. Turns out, the people you know from GitHub are very good company outside a comment thread. Following a three-story Taco Bell takeover takes some thought, so this year we found a living room big enough for the family.</p>
+<p>Last year, House of Valkey took over three floors of Taco Bell Cantina in Las Vegas with a custom menu, and spiked Baja Blasts. Turns out, the people you know from GitHub are very good company outside a comment thread. Following a three-story Taco Bell takeover takes some thought, so this year we found a living room big enough for the family.</p>
 
 <figure class="hov-memory">
   <img src="house-of-valkey-footage.gif" alt="Guests gathering at last year’s House of Valkey in Las Vegas" loading="lazy">
