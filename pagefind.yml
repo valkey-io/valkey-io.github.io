@@ -1,0 +1,8 @@
+site: public
+
+# Only the page content, not the header and footer
+root_selector: ".body"
+
+exclude_selectors:
+  # Sidebars repeat on many pages.
+  - "aside"

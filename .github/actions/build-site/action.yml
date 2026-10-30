@@ -1,50 +1,51 @@
 name: Build the website
 description: >
-  Builds a checkout of this repository into <path>/public, with its topics and
+  Builds a checkout of this repository and its search index into <path>/public, with its topics and
   commands from valkey-doc and the command metadata from valkey and the modules, checked out
-  next to it in the workspace.
+  next to it in the workspace. Content repositories that are already checked out there, such as by
+  an earlier build in the job, are reused.
 
 inputs:
   path:
     description: The website checkout to build, relative to the workspace (e.g. website).
     required: true
-  checkout-content:
-    description: Check out the content repositories. Set to false if an earlier build in the job already did.
-    default: 'true'
+  drafts:
+    description: Include scheduled posts (draft = true). Only for checks, since deploying it would publish them early.
+    default: 'false'
 
 runs:
   using: composite
   steps:
     - name: Checkout valkey
-      if: inputs.checkout-content == 'true'
+      if: hashFiles('valkey/.git/HEAD') == ''
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey
         path: valkey
 
     - name: Checkout valkey-bloom
-      if: inputs.checkout-content == 'true'
+      if: hashFiles('valkey-bloom/.git/HEAD') == ''
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-bloom
         path: valkey-bloom
 
     - name: Checkout valkey-doc
-      if: inputs.checkout-content == 'true'
+      if: hashFiles('valkey-doc/.git/HEAD') == ''
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-doc
         path: valkey-doc
 
     - name: Checkout valkey-json
-      if: inputs.checkout-content == 'true'
+      if: hashFiles('valkey-json/.git/HEAD') == ''
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-json
         path: valkey-json
 
     - name: Checkout valkey-search
-      if: inputs.checkout-content == 'true'
+      if: hashFiles('valkey-search/.git/HEAD') == ''
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       with:
         repository: valkey-io/valkey-search
@@ -65,3 +66,23 @@ runs:
         BUILD_DIR: ${{ inputs.path }}
         BUILD_ONLY: true
         BUILD_THEMES: false
+        BUILD_FLAGS: ${{ inputs.drafts == 'true' && '--drafts' || '' }}
+
+    - name: Install Pagefind
+      shell: bash
+      env:
+        PAGEFIND_VERSION: v1.5.2
+        PAGEFIND_SHA256: afb824a9e7f64905a934900481cea5be679c03975e527329e0e5e6cc70f5feda
+      run: |
+        curl -sSfL --retry 3 "https://github.com/Pagefind/pagefind/releases/download/${PAGEFIND_VERSION}/pagefind-${PAGEFIND_VERSION}-x86_64-unknown-linux-musl.tar.gz" \
+          -o "$RUNNER_TEMP/pagefind.tar.gz"
+        echo "${PAGEFIND_SHA256}  $RUNNER_TEMP/pagefind.tar.gz" | sha256sum -c -
+        tar -xzf "$RUNNER_TEMP/pagefind.tar.gz" -C "$RUNNER_TEMP" pagefind
+
+    - name: Build search index
+      shell: bash
+      working-directory: ${{ inputs.path }}
+      # The Zola action runs as root in Docker, so public/ is owned by root.
+      run: |
+        sudo chown -R "$(id -u):$(id -g)" public
+        "$RUNNER_TEMP/pagefind"

@@ -1,0 +1,29 @@
+name: Check the website's search index
+description: >
+  Checks a built site's search index for missing or unexpected pages and wrong or duplicate titles.
+  Given a build from before the change, fails only on problems the change causes. Without, fails
+  on every problem.
+
+inputs:
+  after:
+    description: The built site to check, relative to the workspace (e.g. website/public).
+    required: true
+  before:
+    description: A built site from before the change to compare with, relative to the workspace. Leave empty if there is none.
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    # Uses the script from the same commit as this action, so a change to the check is used on
+    # both builds. Runs it with python3, since the runner doesn't have uv.
+    - name: Check search index
+      shell: bash
+      env:
+        BEFORE: ${{ inputs.before }}
+        AFTER: ${{ inputs.after }}
+      run: |
+        build=$(git -C "$GITHUB_ACTION_PATH" rev-parse --show-toplevel)/build
+        before=-
+        if [ -n "$BEFORE" ]; then before=$BEFORE; fi
+        "$build/compare-problems.sh" "$before" "$AFTER" python3 "$build/check-search-index.py"
