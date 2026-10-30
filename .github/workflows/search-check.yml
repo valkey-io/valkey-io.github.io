@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  drafts:
+  search-index:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
