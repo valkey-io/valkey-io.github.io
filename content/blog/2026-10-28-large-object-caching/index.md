@@ -1,6 +1,7 @@
 +++
 title = "How Valkey 9.0 reduces the large object noisy neighbor problem"
-date = 2026-10-28
+date = 2026-11-03
+draft = true
 description = "A few 10MB requests per second wrecked the tail latency of a 100K req/s workload on Valkey 8.1. Reply copy avoidance in Valkey 9.0 cuts p99.9 from 26.2ms to 3.10ms."
 authors = ["khawaja"]
 
