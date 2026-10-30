@@ -1,7 +1,7 @@
 +++
 title = "House of Valkey: The Family Reunion"
 date = 2026-11-02
-description = "Technical recap of the ValkeyConf 2026 closing keynote by Harkrishn Patro and Viktor Söderqvist. Covers features in development including durability, Cluster V2, data tiering, and active-active replication."
+description = "​This night is for the builders, the maintainers, the contributors, the curious, and anyone who is all in on open source. Come meet the Valkey community in town for re:Invent."
 authors = ["crystalpham"]
 
 featured = false
