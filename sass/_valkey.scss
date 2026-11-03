@@ -525,6 +525,13 @@ p {
 
   }
 
+  // Headings in the docs content (topic and command pages) get the same
+  // margins as headings in blog posts (.blog-single). The rule above is for the
+  // sidebar and other compact headings, and has no top margin.
+  .main-inner > h2:not(:first-child) {
+    margin: 4rem 0 0.5rem;
+  }
+
   main {
     flex: 1;
     padding: 2rem;
