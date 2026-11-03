@@ -41,29 +41,9 @@ nav_path = "../build-topics/../nav.yml"
 nav_sources_path = "../build-topics/../modules-nav/"
 nav_sources = ["valkey-bloom", "valkey-json", "valkey-search", "valkey-ldap", "valkey-bundle"]
 
+# Topics with known problems, shown with a "This page is under review" note.
 review_list = [
-    "/topics/license/",
-    "/topics/admin/",
-    "/topics/distlock/",
-    "/topics/eval-intro/",
-    "/topics/faq/",
-    "/topics/functions-intro/",
-    "/topics/hashes/",
-    "/topics/internals-eventlib/",
-    "/topics/internals-vm/",
-    "/topics/internals/",
-    "/topics/latency/",
-    "/topics/lua-api/",
-    "/topics/rdd/",
-    "/topics/history/"
-]
-
-publish_hold = [
-    "/topics/license/",
-    "/topics/internals-eventlib/",
-    "/topics/internals-vm/",
-    "/topics/internals/",
-    "/topics/rdd/"
+    "/topics/distlock/"
 ]
 
 # Labels shown next to menu entries from other sources, by source name. Only
