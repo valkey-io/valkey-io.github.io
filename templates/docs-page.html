@@ -62,11 +62,7 @@
 <hr />
 {% endif %}
 {%- set content_with_fixed_links %}{{< fix_links_docs content={page_contents} />}}{% endset -%}
-{% if page.path in config.extra.publish_hold %}
-    <p><code>{{ page.path }}</code> may be available after revisions.</p>
-{% else %}
-    {{ content_with_fixed_links | markdown | safe }}
-{% endif %}
+{{ content_with_fixed_links | markdown | safe }}
 {% endblock main_content %}
 
 {% block related_content %}
