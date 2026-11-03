@@ -53,7 +53,7 @@ for (j = 0; j < numevents; j++) {
 }
 ```
 
-Priority events are drained before any client event.
+Priority events are executed before any client event.
 While Valkey works through a batch of client events, it checks every fourth event whether `priority-preemptive-poll-interval-us` (2000 µs by default) has passed, and if so, then it drains the priority set again.
 Setting `priority-preemptive-poll-interval-us` to `0` turns off the mid-batch check; however priority events are **still** drained first on every cycle.
 On builds that use `select` or `evport`, Valkey cannot nest polling sets, so it runs without prioritization and logs the following line at startup:
@@ -193,20 +193,7 @@ rejected_priority_connections:0
 
 In the above example, `rejected_priority_connections` only counts admin connections refused by the hard `maxclients` limit, so it stays 0 here.
 
-## What QoS doesn't do
-
-The QoS improvements above only change the order of work, not the amount of it, so a few situations are still unchanged.
-
-- A command or script that is already running isn't interrupted: priority events wait until a long [`EVALSHA`](https://valkey.io/commands/evalsha/) returns.
-- Normal clients aren't throttled: their events are interleaved with priority drains, not deferred.
-- Unix socket connections never match `priority-subnets`, so a local admin connecting over the socket isn't protected by the reservation.
-- A normal client refused because of the reservation gets the same error as when `maxclients` is reached.
-- Builds on `select` or `evport` get no event prioritization; the slot reservation still works.
-
-Both changes were written by [Satheesha Gowda](https://github.com/satheeshaGowda), with [Jim Brunner](https://github.com/JimB123) co-authoring the connection reservation:
-
-- [#4076](https://github.com/valkey-io/valkey/pull/4076) for socket prioritization, and
-- [#4005](https://github.com/valkey-io/valkey/pull/4005) for reserved slots.
+This work was written by [Satheesha Gowda](https://github.com/satheeshaGowda) and [Jim Brunner](https://github.com/JimB123).
 
 ## Try it on Valkey 9.2
 
