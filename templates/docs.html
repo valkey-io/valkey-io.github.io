@@ -20,10 +20,8 @@
 
 
 {{ content_with_fixed_links  | markdown | safe }}
-{% endblock main_content %}
 
-{% block related_content %}
-<h2>Alphabetical Index</h2>
+<h2>Alphabetical index</h2>
 {% for page in section.pages %}
     {% set docs_file_contents %}{{< load slug={page.slug} topic_path={config.extra.doc_topic_path} exceptions={config.extra.slug_source_exceptions} />}}{% endset %}
     {% set frontmatter %}{{< extract_frontmatter content={docs_file_contents} />}}{% endset %}
@@ -53,5 +51,14 @@
             </li>
         {% endfor %}
     </ul>
+{% endblock main_content %}
 
+{% block related_content %}
+{% set nav_json %}{{< nav_merged extra={config.extra} />}}{% endset %}
+{% set nav_data = load_data(literal=nav_json, format="json") %}
+{% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
+{% set nav_index = load_data(literal=nav_index_json, format="json") %}
+{% set nav_map_json %}{{< nav_command_map nav={nav_data} index={nav_index} />}}{% endset %}
+{% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
+{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} />}}
 {% endblock related_content %}
