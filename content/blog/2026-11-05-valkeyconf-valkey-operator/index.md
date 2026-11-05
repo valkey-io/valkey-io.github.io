@@ -94,8 +94,6 @@ But the team's immediate challenge is clear: make the cluster lifecycle predicta
 
 ## The Real Feature Is Less Manual Recovery
 
-Kubernetes could already run Valkey. Operating it correctly was the harder problem.
-
 Operating Valkey correctly on Kubernetes is the problem the operator exists to solve. A growing community is encoding that operational knowledge into a controller. Beyond the 1.0 milestone, the real test is whether it turns manual runbooks into repeatable behavior while leaving developers and operators in control.
 
 
