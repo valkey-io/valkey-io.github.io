@@ -1,7 +1,7 @@
 +++
-title = "Using Valkey Search in a Cluster Deployment"
+title = "Using valkey-search in a Cluster Deployment"
 date = 2026-10-30
-description = "A getting started guide on using the Valkey Search module in a Valkey Cluster setup"
+description = "valkey-search by default indexes only the keys on the node it runs on. This blog details how the Coordinator keeps indexes in sync and let valkey-search working in a cluster setup."
 authors = ["hieun"]
 
 [taxonomies]
@@ -10,16 +10,13 @@ blog_type = ["How-to"]
 [extra]
 +++
 
-[Valkey-search](https://github.com/valkey-io/valkey-search) brings powerful full-text and vector search capabilities to Valkey databases,
-but running it in a cluster deployment has challenges such as how to synchronize index definitions and searching for data
-when each node only holds a portion of the whole dataset.
+[valkey-search](https://github.com/valkey-io/valkey-search) brings powerful full-text and vector search capabilities to Valkey databases,but running it in a cluster deployment has challenges such as how to synchronize index definitions and searching for data when each node only holds a portion of the whole dataset.
 In this blog post, we will analyze the role of the Coordinator service to help you seamlessly integrate valkey-search into your cluster infrastructure.
 
-## How does Valkey-search work
+## How does valkey-search work
 
-Before we get into how valkey-search works in a cluster, let's go over how it operates in a single instance setup first.
-When an index is created using [`FT.CREATE`](https://valkey.io/commands/ft.create),
-it subscribes to keyspace events so that when a key is created or updated, the index receives the relevant information to update accordingly.
+Before we get into how valkey-search works in a cluster, let's go over how it operates in a standalone setup first.
+When an index is created using [`FT.CREATE`](https://valkey.io/commands/ft.create), it subscribes to keyspace events so that when a key is created or updated, the index receives the relevant information to update accordingly.
 For example, with an index created using the following command:
 
 ```plaintext
@@ -29,10 +26,10 @@ FT.CREATE index SCHEMA color TAG city TAG
 When a new hash key is created ([`HSET key hello world`](https://valkey.io/commands/hset)), valkey-search will receive the information from the keyspace event subscription.
 We can get the same info by running [`PSUBSCRIBE`](https://valkey.io/commands/psubscribe) [through `valkey-cli`](https://valkey.io/topics/notifications/)
 
-```bash
-valkey-cli config set notify-keyspace-events KA
+```shell
+valkey-cli CONFIG SET notify-keyspace-events KA
 # run HSET key hello world in another terminal
-valkey-cli --csv psubscribe '__keyspace*__:*'
+valkey-cli --csv PSUBSCRIBE '__keyspace*__:*'
 "pmessage","__keyspace*__:*","__keyspace@0__:key","hset"
 ```
 
@@ -107,10 +104,8 @@ To address this problem, valkey-search has an additional component named Coordin
 loadmodule /usr/lib/valkey/libsearch.so --use-coordinator
 ```
 
-Below is a sample Docker Compose file to create 3 valkey-server instances using the valkey-bundle image with the valkey-search module running with Coordinator enabled.
-We need to use `entrypoint` here instead of the normal `command`
-because the valkey-bundle image comes with its own entrypoint script,
-which automatically loads the preinstalled modules, and will override our custom `loadmodule` directive:
+Below is a sample Docker Compose file to create a 3-node cluster using the valkey-bundle image with the valkey-search module running with Coordinator enabled.
+We need to use `entrypoint` here instead of the normal `command` because the valkey-bundle image comes with its own entrypoint script, which automatically loads the preinstalled modules, and will override our custom `loadmodule` directive:
 
 ```yaml
 ---
@@ -191,16 +186,15 @@ docker exec vk1 valkey-cli -c FT.SEARCH index "@color:{green}" RETURN 1 color
 
 ## How the Coordinator communicates between instances
 
-If enabled, Coordinator will start a gRPC server to communicate between primaries. When an index is created or modified,
-the node receiving `FT.CREATE` will notify other primaries through the cluster bus. The other primaries will then get the new index's definition through the gRPC server.
-After the primaries created the index, they will send `FT.INTERNAL_UPDATE` through the replication stream (and AOF if persistence is enabled) so that their replicas can also create the index.
+If enabled, Coordinator will start a gRPC Remote Procedure Calls (gRPC) server to communicate between primaries.
+When an index is created or modified, the node receiving `FT.CREATE` will notify other primaries through the cluster bus. The other primaries will then get the new index's definition through the gRPC server.
+After the primaries created the index, they will send `FT.INTERNAL_UPDATE` through the replication stream (and [Append Only File (AOF)](https://valkey.io/topics/persistence/) if persistence is enabled) so that their replicas can also create the index.
 
 Since the data sent through gRPC and AOF are the same, we can read the AOF file to see what data is being sent between nodes.
-The 3 parameters of `FT.INTERNAL_UPDATE` are the index name (which also includes the database number if it is >0),
-`GlobalMetadataEntry` (the index's definition retrieved through gRPC) , and `GlobalMetadataVersionHeader` (the index's version header sent through cluster bus).
+The 3 parameters of `FT.INTERNAL_UPDATE` are the index name (which also includes the database number if it is >0), `GlobalMetadataEntry` (the index's definition retrieved through gRPC), and `GlobalMetadataVersionHeader` (the index's version header sent through cluster bus).
 Since the data is being sent in protobuf message format, it is not human-readable:
 
-```bash
+```shell
 cat appendonly.aof.1.incr.aof
 FT.INTERNAL_UPDATE
 $13
@@ -299,4 +293,4 @@ Similarly, when running `FT.SEARCH`, the Coordinator will send protobuf messages
 
 ## Conclusion
 
-Deploying valkey-search in a cluster environment allows you to scale your search workloads seamlessly without giving up the ease of a single-node configuration. With just a simple update to your `loadmodule` config, valkey-search handles index synchronization across cluster nodes automatically and efficiently aggregates query results. Try it out and share your feedback or contribute to [Valkey Search on GitHub](https://github.com/valkey-io/valkey-search).
+Deploying valkey-search in a cluster environment allows you to scale your search workloads seamlessly without giving up the ease of a single-node configuration. With just a simple update to your `loadmodule` config, valkey-search handles index synchronization across cluster nodes automatically and efficiently aggregates query results. Try it out and share your feedback or contribute to [valkey-search on GitHub](https://github.com/valkey-io/valkey-search).
