@@ -9,7 +9,7 @@ blog_type = ["Announcements"]
 
 [extra]
 featured = true
-featured_image = "/assets/media/featured/valkey-release.svg"
+featured_image = "/assets/media/featured/Valkey-Release.svg"
 +++
 
 Valkey 9.2.0 is now out!
@@ -142,8 +142,8 @@ Valkey 9.2 adds the Path Hash data type, the `INCREX`, `DELEX`, `XACKDEL`, and `
 
 Path Hash is a new radix-tree-backed data type with `PH*` commands for exact lookup, longest-prefix matching, and prefix traversal over binary-safe paths ([#4506](https://github.com/valkey-io/valkey/pull/4506)).
 Use cases include hierarchical routing, longest-prefix matching, and autocomplete indexes.
-[`PHPREFIXES`](https://valkey.io/commands/phprefixes/) returns matching prefixes longest-first, with paging and an `EXCLUDESELF` option ([#5070](https://github.com/valkey-io/valkey/pull/5070)).
-[`PHPATHSCAN`](https://valkey.io/commands/phpathscan/) iterates paths in order, [`PHPATHDEL`](https://valkey.io/commands/phpathdel/) deletes an exact path or its whole subtree, and [`PHPATHCOUNT`](https://valkey.io/commands/phpathcount/) can count only the paths under a given prefix ([#5066](https://github.com/valkey-io/valkey/pull/5066), [#5067](https://github.com/valkey-io/valkey/pull/5067) and [#5071](https://github.com/valkey-io/valkey/pull/5071)).
+`PHPREFIXES` returns matching prefixes longest-first, with paging and an `EXCLUDESELF` option ([#5070](https://github.com/valkey-io/valkey/pull/5070)).
+`PHPATHSCAN` iterates paths in order, `PHPATHDEL` deletes an exact path or its whole subtree, and `PHPATHCOUNT` can count only the paths under a given prefix ([#5066](https://github.com/valkey-io/valkey/pull/5066), [#5067](https://github.com/valkey-io/valkey/pull/5067) and [#5071](https://github.com/valkey-io/valkey/pull/5071)).
 
 For example, with two routes stored, `PHPREFIXES` with `COUNT 1` returns the most specific route for a request path:
 
@@ -160,7 +160,7 @@ OK
 
 ### INCREX
 
-The new [`INCREX`](https://valkey.io/commands/increx/) command atomically increments a key by an integer or a float while setting its expiration, with `NX` and `XX` conditions ([#3253](https://github.com/valkey-io/valkey/pull/3253)).
+The new `INCREX` command atomically increments a key by an integer or a float while setting its expiration, with `NX` and `XX` conditions ([#3253](https://github.com/valkey-io/valkey/pull/3253)).
 The `LBOUND`, `UBOUND`, `SATURATE`, `ENX`, and `PERSIST` options add bounded increments and conditional expiration control ([#4679](https://github.com/valkey-io/valkey/pull/4679)).
 
 ### DELEX
@@ -183,7 +183,7 @@ Several existing commands gain options in Valkey 9.2:
 - [`MOVE`](https://valkey.io/commands/move/) now accepts an optional `REPLACE` argument to overwrite an existing key in the destination database ([#2993](https://github.com/valkey-io/valkey/pull/2993)).
 - [`SISMEMBER`](https://valkey.io/commands/sismember/) now accepts an optional `XX` flag that returns `-1` when the key doesn't exist, distinguishing a missing key from a missing member ([#2972](https://github.com/valkey-io/valkey/pull/2972)).
 - The [`ZRANGE`](https://valkey.io/commands/zrange/) family now accepts `XX` to distinguish a non-existent key (nil) from an empty result ([#2978](https://github.com/valkey-io/valkey/pull/2978)).
-- [`CONFIG INFO`](https://valkey.io/commands/config-info/) now returns config metadata such as type, flags, valid enum values, and numeric ranges ([#3050](https://github.com/valkey-io/valkey/pull/3050)).
+- `CONFIG INFO` now returns config metadata such as type, flags, valid enum values, and numeric ranges ([#3050](https://github.com/valkey-io/valkey/pull/3050)).
 
 ## Tooling
 
