@@ -50,7 +50,6 @@ The Valkey Operator's initial design deliberately prioritizes **cluster mode**, 
 
 ## Why One PodSpec Doesn't Solve Placement
 
-
 A StatefulSet gives pods a shared template and scheduling policy. But a Valkey cluster needs more specific placement decisions. Separating pods matters only if the *right* instances are separated. A primary and its replica should not share a failure domain.
 
 Generic pod affinity rules don't automatically understand shard identity, primary/replica relationships, or the consequences of losing a particular host.
