@@ -8,6 +8,8 @@ authors = ["hieun"]
 blog_type = ["How-to"]
 
 [extra]
+featured = true
+featured_image = "/blog/valkey-search-coordinator/images/hero.png"
 +++
 
 [valkey-search](https://github.com/valkey-io/valkey-search) brings powerful full-text and vector search capabilities to Valkey databases,but running it in a cluster deployment has challenges such as how to synchronize index definitions and searching for data when each node only holds a portion of the whole dataset.
@@ -35,7 +37,7 @@ valkey-cli --csv PSUBSCRIBE '__keyspace*__:*'
 
 The module will then start reading the key to see whether it can be added to the index by
 checking whether the hash contains fields declared in the index’s schema
-(in this case, our key example will not be indexed, since the only field it has is `hello`).
+(in this case, our `key` example will not be indexed, since the only field it has is `hello`).
 
 ## Working in a cluster environment
 
