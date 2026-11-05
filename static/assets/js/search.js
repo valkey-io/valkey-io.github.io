@@ -37,7 +37,8 @@ function addBreadcrumbsToResults(instance) {
     });
 }
 
-// Pages titled exactly what was searched go first, ahead of Pagefind's ranking.
+// Pages titled exactly what was searched go first, ahead of Pagefind's ranking. Failing that, pages
+// titled its plural do.
 //
 // The Component UI has no public hook for changing results, so this wraps the search function of
 // its private Pagefind instance, which exists once the instance has loaded.
@@ -54,8 +55,13 @@ function putExactTitleMatchesFirst(instance) {
             if (!term) return search(term, options);
             const exactTitle = term.trim().toLowerCase().replace(/\s+/g, ' ');
             // With no term, a search returns every page the filter matches.
-            const exactTitleOptions = { ...options, filters: { ...options.filters, exact_title: exactTitle } };
-            const [result, exactMatches] = await Promise.all([search(term, options), search(null, exactTitleOptions)]);
+            const searchTitles = function(titles) {
+                return search(null, { ...options, filters: { ...options.filters, exact_title: titles } });
+            };
+            const [result, typedMatches] = await Promise.all([search(term, options), searchTitles(exactTitle)]);
+            const exactMatches = typedMatches.results.length
+                ? typedMatches
+                : await searchTitles({ any: [exactTitle + 's', exactTitle + 'es'] });
 
             // Pages sharing the title all go first, in Pagefind's order.
             const exactIds = new Set(exactMatches.results.map(function(match) { return match.id; }));

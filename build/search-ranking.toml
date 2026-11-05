@@ -26,6 +26,16 @@ url = "/topics/pubsub/"
 top = 1
 
 [[search]]
+query = "hash"
+url = "/topics/hashes/"
+top = 1
+
+[[search]]
+query = "bloom filter"
+url = "/topics/bloomfilters/"
+top = 1
+
+[[search]]
 query = "eviction"
 url = "/topics/lru-cache/"
 top = 3
