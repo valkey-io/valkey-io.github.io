@@ -331,7 +331,10 @@ function showInstructions() {
     document.getElementById("suse-instructions").classList.add("active");
     document.getElementById("suse-step1").textContent =
       "sudo rpm --import " + REPO_URL + "/GPG-KEY-valkey.asc";
+    // zypper refuses an alias that already exists, so drop a repository left
+    // from another release line first. The error when there is none is harmless.
     document.getElementById("suse-step2").textContent =
+      "sudo zypper removerepo valkey 2>/dev/null\n" +
       "sudo zypper addrepo --gpgcheck --refresh \\\n" +
       "  " + repoBase + "/rpm/" + os + "/\\$basearch/ \\\n" +
       "  valkey";
@@ -371,7 +374,8 @@ function addCopyButtons() {
     btn.textContent = "Copy";
     btn.onclick = (function(pre) {
       return function() {
-        navigator.clipboard.writeText(pre.textContent.replace("Copy", "").trim());
+        // Only the command: the button label changes to "Copied!" while it shows.
+        navigator.clipboard.writeText(pre.firstChild.textContent.trim());
         this.textContent = "Copied!";
         var b = this;
         setTimeout(function() { b.textContent = "Copy"; }, 2000);
