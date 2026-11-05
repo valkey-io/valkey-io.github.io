@@ -1,8 +1,8 @@
 name: Check the website's search index
 description: >
-  Checks a built site's search index for missing or unexpected pages and wrong or duplicate titles.
-  Given a build from before the change, fails only on problems the change causes. Without, fails
-  on every problem.
+  Checks a built site's search index for missing or unexpected pages and wrong or duplicate titles,
+  and that searches rank the expected pages highly enough. Given a build from before the change,
+  fails only on problems the change causes. Without, fails on every problem.
 
 inputs:
   after:
@@ -27,3 +27,14 @@ runs:
         before=-
         if [ -n "$BEFORE" ]; then before=$BEFORE; fi
         "$build/compare-problems.sh" "$before" "$AFTER" python3 "$build/check-search-index.py"
+
+    - name: Check search ranking
+      shell: bash
+      env:
+        BEFORE: ${{ inputs.before }}
+        AFTER: ${{ inputs.after }}
+      run: |
+        build=$(git -C "$GITHUB_ACTION_PATH" rev-parse --show-toplevel)/build
+        before=-
+        if [ -n "$BEFORE" ]; then before=$BEFORE; fi
+        "$build/compare-problems.sh" "$before" "$AFTER" python3 "$build/check-search-ranking.py" "$build/search-ranking.toml"

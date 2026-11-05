@@ -38,6 +38,12 @@ Open the URL Pagefind prints after `Serving "public" at`. The server doesn't reb
 
 Every page needs a unique `<title>`. CI checks this when it checks the search index, so if it reports a `duplicate title`, change the `title` in the front matter of one of the listed pages.
 
+CI also checks that the searches in `build/search-ranking.toml` show their expected page within their first results. To add a search to be verified, add a `[[search]]` entry there. To run the check locally, build the site and its index as above, then run it with [uv](https://docs.astral.sh/uv/) and Chrome, setting `CHROME` if Chrome isn't `google-chrome` on your `PATH`:
+
+```shell
+CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ./build/check-search-ranking.py build/search-ranking.toml public
+```
+
 ### Checking catalog entries
 
 The clients and integrations entries in `_data/libraries/` are checked by `build/validate-libraries.py`, against the rules in `_data/libraries/schema.json` and the SPDX license list.
