@@ -36,11 +36,11 @@
         {#- Escape the JSON-sourced token and name here. `next` was already
             escaped by the nested call, so the result is marked safe. -#}
         {%- set arguments_str = start ~ " " ~ (token | escape) ~ " "
-            ~ (name | escape) ~ " " ~ next ~ " " ~ end ~ display_separator %}
+            ~ (name | escape) ~ " " ~ next ~ " " ~ end %}
+        {#- A repeatable argument is shown once, followed by "...". -#}
+        {%- if arguments.multiple %}{% set arguments_str = arguments_str ~ " ..." %}{% endif %}
+        {%- set arguments_str = arguments_str ~ display_separator %}
         {{ arguments_str | safe }}
-        {% if arguments.multiple %}
-            [ {{ arguments_str | safe }} ... ]
-        {% endif %}
     {%- endfor -%}
 {% endcomponent arguments_parse %}
 
