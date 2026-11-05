@@ -1,0 +1,20 @@
+{
+  "name": "coredis",
+  "language": "Python",
+  "license": "MIT",
+  "description": "Fast, async, fully-typed Valkey client with support for cluster and sentinel",
+  "repository": "https://github.com/alisaifee/coredis",
+  "documentation": "https://coredis.readthedocs.io/en/latest/index.html#support-for-redis-api-compatible-databases",
+  "installCommand": "pip install coredis",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": true,
+    "latency": false,
+    "az": false,
+    "csc": true,
+    "capa": false,
+    "pool": true
+  }
+}
