@@ -106,7 +106,7 @@
     <dl>
         <dt>Complexity:</dt>
         <dd>{{ command_data_obj.complexity }}</dd>
-    <dl>
+    </dl>
     {% endif %}
     {% if command_data_obj.module_since %}
     <dl>
@@ -123,17 +123,17 @@
             <dt>Module:</dt>
             <dd><a href={{module_reply.valkey_search.repo}}>{{module_reply.valkey_search.name}}</a></dd>
         {% endif %}
-    <dl>
+    </dl>
     <dl>
         <dt>Since module version:</dt>
         <dd>{{ command_data_obj.module_since }}</dd>
-    <dl>
+    </dl>
     {% endif %}
     {% if command_data_obj.since %}
     <dl>
         <dt>Since:</dt>
         <dd>{{ command_data_obj.since }}</dd>
-    <dl>
+    </dl>
     {% endif %}
     {% if command_data_obj.acl_categories %}
     <dl>
@@ -143,9 +143,8 @@
                 @{{ category|lower }}{% if not loop.last %}, {% endif %}
             {% endfor %}
         </dd>
-    <dl>
-    {% endif %}
     </dl>
+    {% endif %}
 
 {% else %}
 <code>{{ command_data_error }}</code>
