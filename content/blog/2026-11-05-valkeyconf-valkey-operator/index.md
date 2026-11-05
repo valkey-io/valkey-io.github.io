@@ -81,7 +81,7 @@ The session showed declarative Valkey access-control lists (ACLs), including use
 
 The team also demonstrated the operator managing a live cluster, with the controller updating both Kubernetes resources and Valkey state.
 
-There is still substantial work ahead. The public repository continues to describe the `v1alpha1` API as **early development and not production-ready**. That warning matters more than any demo: controller correctness needs to hold under node failure, interrupted upgrades, and partial recovery, not just when everything goes according to plan.
+There is still substantial work ahead. The public repository continues to describe the `v1alpha1` API as **early development and not production-ready**. That warning matters more than any demo. The controller has to stay correct through node failure, interrupted upgrades, and partial recovery.
 
 ## From Hallway Idea to 200+ Merged PRs
 
