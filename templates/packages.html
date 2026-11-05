@@ -380,5 +380,14 @@ function addCopyButtons() {
     blocks[i].appendChild(btn);
   }
 }
+
+// Release pages link here as ?version=X.Y to preselect that release line.
+(function() {
+  var ver = new URLSearchParams(window.location.search).get("version");
+  if (ver && PKG_VERSION_MAP[ver]) {
+    document.getElementById("version-select").value = ver;
+    onVersionChange();
+  }
+})();
 </script>
 {% endblock main_content %}
