@@ -2398,6 +2398,11 @@ blockquote {
   }
 }
 
+// Page title at the top of the docs content panel (topic and command pages).
+.docs-page-title {
+  margin: 0 0 2rem;
+}
+
 // Homepage blog cards: text-only cards stacked vertically, matching the release
 // cards in the other column.
 .homepage-blog-section {

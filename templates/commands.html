@@ -1,6 +1,7 @@
 {% extends "left-aside.html" %}
 
 {% block main_content %}
+<h1 class="docs-page-title">Command Reference</h1>
 {% if section.pages | length == 0 %}
 <strong>No command pages found.</strong> You likely need to build the command pages. See "Building additional content" in README.md file.
 {% endif %}
@@ -149,10 +150,3 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 {% endblock related_content %}
-
-
-{% block subhead_content %}
-<div class="styled-title">
-    <h1>Documentation: Command Reference</h1>
-</div>
-{% endblock subhead_content %}

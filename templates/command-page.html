@@ -41,14 +41,6 @@
 {% endif %}
 {%- endblock -%}
 
-{% block subhead_content%}
-    {% if command_title%}
-        <div class="styled-title">
-            <h1 class="page-title">{{ command_title }} {% if deprecated %}<small> {{ deprecated }}</small>{% endif %}</h1>
-        </div>
-    {% endif %}
-{% endblock subhead_content%}
-
 {% block breadcrumbs %}
 {#
     The command's place in the documentation menu: Topics > section > topic >
@@ -89,6 +81,9 @@
 {% endblock breadcrumbs %}
 
 {% block main_content %}
+{% if command_title %}
+<h1 class="docs-page-title">{{ command_title }} {% if deprecated %}<small> {{ deprecated }}</small>{% endif %}</h1>
+{% endif %}
 {% if command_data_obj %}
     <dl>
         <dt>Usage:</dt>
