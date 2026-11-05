@@ -87,7 +87,7 @@ There is still substantial work ahead. The public repository continues to descri
 
 The community growth is part of the technical story. The speakers reported **more than 200 merged pull requests** and **over 25 contributors from multiple companies**. Those contributions cover implementation, testing, and the operational edge cases that determine reliability.
 
-The roadmap presented at ValkeyConf targeted a December 2026 feature freeze and release candidates, followed by a January 2027 1.0 milestone with a `v1beta1` API. These were **planned milestones**, not a claim that general availability had already shipped.
+As presented at ValkeyConf, the team is targeting a December 2026 feature freeze and release candidates, followed by a 1.0 milestone in January 2027 with a `v1beta1` API.
 
 ![Valkey Operator roadmap as presented at ValkeyConf 2026, with proposed 1.0 milestone](05_operator_roadmap.png)
 
