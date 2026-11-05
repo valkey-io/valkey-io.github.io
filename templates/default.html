@@ -8,6 +8,22 @@
 {%- elif page is defined and page.title %}{% set page_name = page.title %}
 {%- elif section is defined and section.title %}{% set page_name = section.title %}
 {%- else %}{% set page_name = "" %}{% endif -%}
+{#- Where the page sits in the site's navigation. #}
+{%- set path_segments = current_path | default(value="/") | split(pat="/") %}
+{%- set path_section = path_segments[1] | default(value="") %}
+{%- if command_title is defined and command_title %}{% set breadcrumb = "Documentation › Command Reference" %}{% if command_group is defined and command_group %}{% set breadcrumb = breadcrumb ~ " › " ~ command_group %}{% endif %}
+{%- elif path_section == "commands" %}{% set breadcrumb = "Documentation › Command Reference" %}
+{%- elif path_section == "topics" %}{% set breadcrumb = "Documentation › Documentation by Topic" %}
+{%- elif path_section == "clients" %}{% set breadcrumb = "Documentation › Clients" %}
+{%- elif path_section == "integrations" %}{% set breadcrumb = "Documentation › Integrations" %}
+{%- elif path_section == "docs" %}{% set breadcrumb = "Documentation" %}
+{%- elif path_section == "blog" %}{% set breadcrumb = "Blog" %}
+{%- elif path_section == "authors" %}{% set breadcrumb = "Blog › Authors" %}
+{%- elif path_section == "download" %}{% set breadcrumb = "Download" %}
+{%- elif path_section in ["community", "events"] %}{% set breadcrumb = "Community" %}
+{%- elif path_section == "participants" %}{% set breadcrumb = "Participants" %}
+{%- elif path_section == "try-valkey" %}{% set breadcrumb = "Try Valkey" %}
+{%- else %}{% set breadcrumb = "" %}{% endif -%}
 <!DOCTYPE html>
 <html lang="{{ page?.lang | default(value=config.default_language) }}">
 {% include "includes/head.html" %}
@@ -86,6 +102,7 @@
   </div>
   {#- Search results use the page's name, since a page's first heading isn't always its title. #}
   <div class="body" data-pagefind-meta="title:{% if page_name %}{{ page_name }}{% else %}{{ name_prefix }}{% endif %}">
+      {%- if breadcrumb %}<span hidden data-pagefind-filter="breadcrumb:{{ breadcrumb }}"></span>{% endif %}
       {% block content %}{% endblock %}
   </div>
   <div class="footer">

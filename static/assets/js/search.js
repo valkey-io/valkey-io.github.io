@@ -10,10 +10,67 @@ document.addEventListener('DOMContentLoaded', function() {
         // Values based on git-scm.com's Pagefind setup.
         ranking: { pageLength: 0.1, termFrequency: 0.1, termSaturation: 2, termSimilarity: 9 },
     });
+    const instance = window.PagefindComponents.getInstanceManager().getInstance('default');
+    addBreadcrumbsToResults(instance);
 
     const trigger = document.createElement('pagefind-modal-trigger');
     trigger.setAttribute('compact', '');
     slot.append(trigger);
     // The modal goes on <body>, inside the nav it would be hidden while the mobile menu is closed.
-    document.body.append(document.createElement('pagefind-modal'));
+    document.body.append(createModal());
 });
+
+// Each page's breadcrumb is a filter rather than metadata, since Pagefind searches metadata and
+// breadcrumbs shouldn't change the results. The result template only sees metadata, so this copies
+// each result's breadcrumb there when its data loads.
+function addBreadcrumbsToResults(instance) {
+    instance.on('results', function(searchResult) {
+        for (const result of searchResult.results) {
+            const loadData = result.data;
+            result.data = async function() {
+                const data = await loadData();
+                data.meta.breadcrumb = data.filters.breadcrumb?.[0];
+                return data;
+            };
+        }
+    });
+}
+
+// Pagefind's default modal contents, written out so the results can use RESULT_TEMPLATE.
+function createModal() {
+    const modal = document.createElement('pagefind-modal');
+    modal.innerHTML = `
+        <pagefind-modal-header><pagefind-input></pagefind-input></pagefind-modal-header>
+        <pagefind-modal-body>
+            <pagefind-summary></pagefind-summary>
+            <pagefind-results>${RESULT_TEMPLATE}</pagefind-results>
+        </pagefind-modal-body>
+        <pagefind-modal-footer><pagefind-keyboard-hints></pagefind-keyboard-hints></pagefind-modal-footer>`;
+    return modal;
+}
+
+// Pagefind's built-in result template (https://pagefind.app/docs/components/results/), plus customizations.
+// We add a site breadcrumb to help the user understand where the page is in the context of the site.
+const RESULT_TEMPLATE = `<script type="text/pagefind-template">
+    <li class="pf-result">
+      <div class="pf-result-card">
+        <div class="pf-result-content">
+          {{#if meta.breadcrumb}}<p class="search-result-breadcrumb">{{ meta.breadcrumb }}</p>{{/if}}
+          <p class="pf-result-title">
+            <a class="pf-result-link" href="{{ meta.url | default(url) | safeUrl }}">{{ meta.title }}</a>
+          </p>
+          {{#if excerpt}}<p class="pf-result-excerpt">{{+ excerpt +}}</p>{{/if}}
+        </div>
+      </div>
+      {{#if sub_results}}
+      <ul class="pf-heading-chips">
+        {{#each sub_results as sub}}
+        <li class="pf-heading-chip">
+          <a class="pf-heading-link" href="{{ sub.url | safeUrl }}">{{ sub.title }}</a>
+          <p class="pf-heading-excerpt">{{+ sub.excerpt +}}</p>
+        </li>
+        {{/each}}
+      </ul>
+      {{/if}}
+    </li>
+  <\/script>`;

@@ -23,6 +23,12 @@
         {% set command_title =  command_obj_name %}
     {% endif %}
     {% set command_title = command_title | upper %}
+    {#- The command's group, for its breadcrumb in search results. #}
+    {% set command_groups = load_data(path="../_data/groups.json", required=false) %}
+    {% set command_group_key = command_data_obj.group | default(value="") | replace(from="_", to="-") %}
+    {% if command_groups and command_group_key in command_groups %}
+        {% set command_group = command_groups[command_group_key].display %}
+    {% endif %}
     {% if command_data_obj.deprecated_since and (command_title == "SLAVEOF" or command_title == "CLUSTER SLAVES") %}
         {% set deprecated = "Deprecated" %}
     {% endif %}
