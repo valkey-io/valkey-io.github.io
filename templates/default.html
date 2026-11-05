@@ -101,7 +101,9 @@
     </div>
   </div>
   {#- Search results use the page's name, since a page's first heading isn't always its title. #}
-  <div class="body" data-pagefind-meta="title:{% if page_name %}{{ page_name }}{% else %}{{ name_prefix }}{% endif %}">
+  {%- if page_name %}{% set search_title = page_name %}{% else %}{% set search_title = name_prefix %}{% endif %}
+  <div class="body" data-pagefind-meta="title:{{ search_title }}">
+      <span hidden data-pagefind-filter="exact_title:{{ search_title | lower }}"></span>
       {%- if breadcrumb %}<span hidden data-pagefind-filter="breadcrumb:{{ breadcrumb }}"></span>{% endif %}
       {% block content %}{% endblock %}
   </div>

@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     const instance = window.PagefindComponents.getInstanceManager().getInstance('default');
     addBreadcrumbsToResults(instance);
+    putExactTitleMatchesFirst(instance);
 
     const trigger = document.createElement('pagefind-modal-trigger');
     trigger.setAttribute('compact', '');
@@ -34,6 +35,35 @@ function addBreadcrumbsToResults(instance) {
             };
         }
     });
+}
+
+// Pages titled exactly what was searched go first, ahead of Pagefind's ranking.
+//
+// The Component UI has no public hook for changing results, so this wraps the search function of
+// its private Pagefind instance, which exists once the instance has loaded.
+function putExactTitleMatchesFirst(instance) {
+    const load = instance.__load__.bind(instance);
+    instance.__load__ = async function() {
+        await load();
+        const pagefind = instance.__pagefind__;
+        if (!pagefind || pagefind.isExactTitleWrapped) return;
+        pagefind.isExactTitleWrapped = true;
+
+        const search = pagefind.search.bind(pagefind);
+        pagefind.search = async function(term, options) {
+            if (!term) return search(term, options);
+            const exactTitle = term.trim().toLowerCase().replace(/\s+/g, ' ');
+            // With no term, a search returns every page the filter matches.
+            const exactTitleOptions = { ...options, filters: { ...options.filters, exact_title: exactTitle } };
+            const [result, exactMatches] = await Promise.all([search(term, options), search(null, exactTitleOptions)]);
+
+            // Pages sharing the title all go first, in Pagefind's order.
+            const exactIds = new Set(exactMatches.results.map(function(match) { return match.id; }));
+            const isExactMatch = function(match) { return exactIds.has(match.id); };
+            const others = result.results.filter(function(match) { return !isExactMatch(match); });
+            return { ...result, results: result.results.filter(isExactMatch).concat(others) };
+        };
+    };
 }
 
 // Pagefind's default modal contents, written out so the results can use RESULT_TEMPLATE.
