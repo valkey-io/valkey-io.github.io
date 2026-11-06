@@ -105,6 +105,7 @@ You can join the work through:
 - **GitHub:** issues, pull requests, and discussions in the [`valkey-helm`](https://github.com/valkey-io/valkey-helm) repository.
 - **Slack:** the [#valkey-helm](https://valkey-oss-developer.slack.com/archives/C09JZ6N2AAV) channel in the Valkey OSS developer workspace, for questions and feedback.
 - **Contributing guide:** the chart has its own [`CONTRIBUTING.md`](https://github.com/valkey-io/valkey-helm/blob/main/valkey/CONTRIBUTING.md) that explains how to propose and test changes.
+- **Weekly call:** the Valkey Operator & Helm Tech Call, every Thursday at 14:00 UTC, where contributors discuss the `valkey` Helm chart and the Valkey operator. [Join the call](https://zoom-lfx.platform.linuxfoundation.org/meeting/99658320446?password=2eae4006-633e-4fed-aa93-631ab2101421).
 
 The chart is released under the [BSD 3-Clause license](https://github.com/valkey-io/valkey-helm/blob/main/LICENSE).
 
