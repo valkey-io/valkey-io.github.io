@@ -60,11 +60,8 @@
 
     <section class="homepage-card homepage-card-release">
         <div class="community-home-section-head">
-            <h2 class="community-home-kicker"><a href="{{ latest_line_page.permalink }}">Everything new in Valkey</a></h2>
+            <h2 class="community-home-kicker"><a href="{{ latest_line_page.permalink }}">Everything new in Valkey {{ latest_line }}</a></h2>
         </div>
-        <p class="release-headline">
-            <a href="{{ latest_line_page.permalink }}">Valkey {{ latest.extra.tag }}</a>
-        </p>
 
         <div class="release-highlights">{{ latest_line_page.content | safe }}</div>
         {% if latest_line_page.extra.blog_url %}

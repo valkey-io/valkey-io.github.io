@@ -23,8 +23,8 @@ $community-ink: #072150;
 
 // A card's section label: sentence case in #4a5ad8, the hero button blue,
 // which is 5.6:1 on white where /community/'s #5b6fff kicker is 4.1:1.
-// 2.4rem keeps it above the homepage's 2rem release headline. Balanced
-// wrapping avoids leaving "releases" alone on a line.
+// 2.4rem keeps it above the homepage cards' titles, the largest of which is
+// 1.8rem. Balanced wrapping avoids leaving "releases" alone on a line.
 @mixin card-label {
   color: #4a5ad8;
   font-size: 2.4rem;
@@ -89,18 +89,6 @@ $community-ink: #072150;
 
       &:hover {
         color: $community-purple-800;
-      }
-    }
-  }
-
-  .release-headline {
-    margin: 0 0 1rem;
-
-    a {
-      color: $community-ink;
-
-      &:hover {
-        text-decoration: underline;
       }
     }
   }
