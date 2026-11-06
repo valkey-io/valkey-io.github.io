@@ -1,0 +1,9 @@
+{
+  "label": "valkey.io",
+  "otherSites": [
+    "https://glide.valkey.io/pagefind/",
+    "https://valkey-admin.valkey.io/pagefind/",
+    "https://spring.valkey.io/pagefind/"
+  ],
+  "otherSitesIndexWeight": 1
+}
