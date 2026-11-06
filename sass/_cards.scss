@@ -81,6 +81,16 @@ $community-ink: #072150;
   // /community/ keeps the uppercase kicker.
   .community-home-kicker {
     @include card-label;
+
+    // The release card's label is a heading around a link; it looks like
+    // the "Valkey participants" link label.
+    a {
+      color: inherit;
+
+      &:hover {
+        color: $community-purple-800;
+      }
+    }
   }
 
   .release-headline {
