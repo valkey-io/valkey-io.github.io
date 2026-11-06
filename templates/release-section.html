@@ -16,11 +16,14 @@
     {% set patch = split_ver | nth(n= 2) %}
     {% set header =  major ~ "." ~ minor %}
 
-    {% set_global release_lines = [...release_lines, header] %}
+    {% set_global release_lines = [...release_lines, {"version": (major | int) * 1000 + (minor | int), "line": header}] %}
 {% endfor %}
 
-{% set release_lines_unique = release_lines | unique %}
-{% for line in release_lines_unique %}
+{# Newest line first by version, not date: an older line's patch can ship after
+   the newest line's. #}
+{% set release_lines_unique = release_lines | unique | sort(attribute="version") | reverse %}
+{% for keyed_line in release_lines_unique %}
+    {% set line = keyed_line.line %}
     <h2>{{ line }}.x</h2>
     <ul>
     {% for release in section.pages | sort(attribute="date") | reverse %}
