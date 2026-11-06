@@ -1,5 +1,5 @@
 {#
-  Participant logo strip helpers for the community page.
+  Participant logo strip helpers for the community page and the homepage.
 
   Logos come in very different shapes (square icons, tall lockups, long
   wordmarks). To give them similar visual weight, each logo is sized against
@@ -44,3 +44,19 @@
   {%- endfor -%}
 </div>
 {% endcomponent logo_set %}
+
+{# The whole strip: kicker, pause control, and the marquee. Each page supplies
+   its own wrapper. community.js finds the track and button by id, so a page
+   holds at most one strip. #}
+{% component logo_strip(participants) -%}
+    <div class="community-logo-band-head">
+      <a class="community-home-kicker" href="/participants/">Valkey participants</a>
+      <button class="community-logo-pause" type="button" id="communityLogoPause" aria-pressed="false" aria-label="Pause the scrolling participant logos">Pause</button>
+    </div>
+    <div class="community-logo-row" role="group" aria-label="Valkey participant organizations">
+      <div class="community-logo-track" id="communityLogoTrack">
+        {{< logo_set participants={participants} />}}
+        {{< logo_set participants={participants} duplicate={true} />}}
+      </div>
+    </div>
+{%- endcomponent logo_strip %}
