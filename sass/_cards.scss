@@ -242,13 +242,6 @@ $community-ink: #072150;
   margin: 3.4rem auto 4.8rem;
 }
 
-.blog-heading,
-.blog-eyebrow {
-  @include card-label;
-  margin: 0;
-  line-height: 1.2;
-}
-
 // A 16:9 frame for the lead image, or the banner gradient and Valkey mark
 // when there is none.
 .blog-media {
@@ -397,9 +390,6 @@ $community-ink: #072150;
 
 .blog-lead-kicker {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem 1.6rem;
   margin: 0;
 }
 
@@ -427,20 +417,12 @@ $community-ink: #072150;
   -webkit-box-orient: vertical;
 }
 
-// All posts: heading and type pills, then the list.
-.blog-all-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.2rem 2rem;
-  margin-bottom: 1.6rem;
-}
-
+// The type pills above the list.
 .blog-filter {
   display: flex;
   flex-wrap: wrap;
   gap: 0.8rem;
+  margin-bottom: 1.6rem;
 
   &[hidden] {
     display: none;

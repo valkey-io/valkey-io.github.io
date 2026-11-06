@@ -3,8 +3,8 @@
 {% block content %}
 {# No banner or visible title: the page opens on the /community/ canvas with
    a big lead card, then the type pills and every post as a row in one list
-   card. The heading stays for screen readers, and the section description is
-   still the page's meta description. The styles are in the blog section of
+   card. The "Blog" and "All posts" headings stay for screen readers, and the
+   section description is still the page's meta description. The styles are in the blog section of
    _cards.scss, the pieces in macros/blog.html. #}
 <h1 class="sr-only">{{ section.title }}</h1>
 <div class="community-home-canvas">
@@ -17,10 +17,9 @@
   <a class="blog-lead" href="{{ lead.permalink }}">
     {{< blog_media post={lead} width={1200} height={675} />}}
     <div class="blog-lead-body">
-      <p class="blog-lead-kicker">
-        <span class="blog-eyebrow">{% if featured %}Featured{% else %}Latest{% endif %}</span>
-        {% if lead_types %}{{< blog_type name={lead_types | first} />}}{% endif %}
-      </p>
+      {% if lead_types %}
+      <p class="blog-lead-kicker">{{< blog_type name={lead_types | first} />}}</p>
+      {% endif %}
       <h2 class="blog-lead-title">{{ lead.title | safe }}</h2>
       <p class="blog-lead-description">{{ lead.description | safe }}</p>
       {{< blog_byline post={lead} />}}
@@ -28,19 +27,17 @@
   </a>
 
   <section class="blog-all" aria-labelledby="blog-all-heading">
-    <div class="blog-all-head">
-      <h2 class="blog-heading" id="blog-all-heading">All posts</h2>
-      {% set taxonomy = get_taxonomy(kind="blog_type", required=false) %}
-      {% if taxonomy %}
-      {# The script below shows the pills; without it every post is listed. #}
-      <div class="blog-filter" role="group" aria-label="Filter posts by type" hidden>
-        <button type="button" data-type="All" aria-pressed="true">All</button>
-        {% for term in taxonomy.items %}
-        <button type="button" data-type="{{ term.name }}" aria-pressed="false">{{< blog_type name={term.name} />}}</button>
-        {% endfor %}
-      </div>
-      {% endif %}
+    <h2 class="sr-only" id="blog-all-heading">All posts</h2>
+    {% set taxonomy = get_taxonomy(kind="blog_type", required=false) %}
+    {% if taxonomy %}
+    {# The script below shows the pills; without it every post is listed. #}
+    <div class="blog-filter" role="group" aria-label="Filter posts by type" hidden>
+      <button type="button" data-type="All" aria-pressed="true">All</button>
+      {% for term in taxonomy.items %}
+      <button type="button" data-type="{{ term.name }}" aria-pressed="false">{{< blog_type name={term.name} />}}</button>
+      {% endfor %}
     </div>
+    {% endif %}
 
     {# The lead post is listed too, at its date. If it is also the newest post,
        the script leaves it out of the unfiltered list, where it would be the
