@@ -1,0 +1,12 @@
+{#- Zola's built-in sitemap, without /og-cards/ (see templates/og-cards.html). -#}
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    {%- for sitemap_entry in entries %}{% if not "/og-cards/" in sitemap_entry.permalink %}
+    <url>
+        <loc>{{ sitemap_entry.permalink | escape_xml | safe }}</loc>
+        {%- if sitemap_entry.updated %}
+        <lastmod>{{ sitemap_entry.updated }}</lastmod>
+        {%- endif %}
+    </url>
+    {%- endif %}{%- endfor %}
+</urlset>

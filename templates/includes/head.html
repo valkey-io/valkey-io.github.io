@@ -6,7 +6,14 @@
     <meta name="MSSmartTagsPreventParsing" content="true" />
     <meta name="Copyright" content="" />
     <meta name="keywords" content="open-source, valkey" />
-    <meta property="og:image" content="{{ config.base_url }}{% if page and page.extra and page.extra.og_image %}{{ page.extra.og_image }}{% elif page and page.extra and page.extra.featured_image %}{{ page.extra.featured_image }}{% else %}/img/valkey-logo-og.png{% endif %}" />
+    <meta property="og:image" content="{{ config.base_url }}{% if page and page.extra and page.extra.og_image %}{{ page.extra.og_image }}{% elif page and page.extra and page.extra.og_card %}{{ page.path }}og.jpg{% elif page and page.extra and page.extra.featured_image %}{{ page.extra.featured_image }}{% else %}/img/valkey-logo-og.png{% endif %}" />
+    {%- if page and page.extra and page.extra.og_card and not page.extra.og_image %}
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="2400" />
+    <meta property="og:image:height" content="1260" />
+    <meta property="og:image:alt" content="{{ page.extra.og_title | default(value=page.title) | replace(from="\n", to=" ") }}" />
+    <meta name="twitter:image" content="{{ config.base_url }}{{ page.path }}og.jpg" />
+    {%- endif %}
     {% if page and page.extra and page.extra.custom_meta%}
     {{ page.extra.custom_meta | safe }}
     {% endif %}
@@ -81,7 +88,7 @@
     {%- if blog_type %}
     <meta property="article:section" content="{{ blog_type }}" />
     {%- endif %}
-    {%- if page.extra.og_image or page.extra.featured_image %}
+    {%- if page.extra.og_image or page.extra.featured_image or page.extra.og_card %}
     <meta name="twitter:card" content="summary_large_image" />
     {%- endif %}
     {%- else %}

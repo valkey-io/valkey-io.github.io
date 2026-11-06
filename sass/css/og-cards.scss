@@ -1,0 +1,44 @@
+// The og cards page, /og-cards/: every opted-in post's og card at 1200x630, for
+// build/og-cards.mjs to capture at twice the pixel density, and for a look in `zola serve`.
+//
+// templates/macros/og-card.html sets the lines, their sizes and the layout numbers; this only
+// places the text, unwrapped. The background is 16:9 and covers the card from the bottom, so
+// the logo keeps its corner and the card loses the top 45px. Every top below is the
+// template's, less those 45px. Open Sans's baseline sits 0.938em below the top of a 1.1 line
+// box and 0.162em above its bottom.
+
+@import "/fonts/open-sans/webfont.css";
+@import '../typography';
+
+body {
+  margin: 0;
+}
+
+.og-card {
+  position: relative;
+  width: 1200px;
+  height: 630px;
+  overflow: hidden;
+  background: #1b2028 url(/assets/media/og-card/default-bg.webp) center bottom / cover no-repeat;
+  color: #fff;
+  @include sans-serif;
+  font-weight: 400;
+}
+
+// The first baseline is at 16.78% of the width in the background's frame: 201.36px, less 45.
+.og-card-text {
+  position: absolute;
+  top: calc(156.36px - 0.938 * var(--heading));
+  left: 53.28px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.og-card-heading {
+  font-size: var(--heading);
+}
+
+.og-card-subheading {
+  margin-top: calc(1.042 * var(--heading) - 0.938 * var(--subheading));
+  font-size: var(--subheading);
+}
