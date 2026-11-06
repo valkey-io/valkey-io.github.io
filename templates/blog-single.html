@@ -2,6 +2,9 @@
 
 {% block content %}
 {% block subhead_content %}{% endblock subhead_content %}
+{# The article and the sidebar are white cards on the /community/ canvas.
+   The layout is in the blog section of _cards.scss. #}
+<div class="community-home-canvas">
 <div class="blog-single">
     <main>
         <div class="main-inner">
@@ -11,5 +14,6 @@
     <aside>
         {% block related_content %}{% endblock related_content %}
     </aside>
+</div>
 </div>
 {% endblock content %}

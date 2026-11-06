@@ -1,0 +1,66 @@
+{#
+  Pieces of the /blog/ landing page (templates/blog.html).
+
+  The lead image is the post's extra.featured_image, cut to 16:9 at build
+  time so the page does not download a full-size hero (some are several MB).
+  SVGs are used as they are. A post without an image gets the banner gradient
+  with the Valkey mark.
+#}
+
+{% component blog_media(post, width, height) %}
+  {%- set src = post.extra.featured_image | default(value="") -%}
+  {%- if src and not ".svg" in src -%}
+    {#- Colocated images are linked by URL (/blog/<slug>/...) but live in the
+        page's dated content folder. -#}
+    {%- if post.path in src -%}
+      {%- set file = "content/" ~ post.colocated_path ~ (src | replace(from=post.path, to="")) -%}
+    {%- else -%}
+      {%- set file = "static" ~ src -%}
+    {%- endif -%}
+    {%- if get_image_metadata(path=file, allow_missing=true) -%}
+      {%- set image = resize_image(path=file, width=width, height=height, op="fill", format="webp", quality=80) -%}
+      {%- set src = image.url -%}
+    {%- endif -%}
+  {%- endif -%}
+  <div class="blog-media{% if not src %} blog-media-empty{% endif %}">
+    {%- if src -%}
+    <img src="{{ src }}" alt="" width="{{ width }}" height="{{ height }}" decoding="async">
+    {%- endif -%}
+  </div>
+{% endcomponent blog_media %}
+
+{# Author photos and names, and the date unless the row shows it elsewhere.
+   Photos come from the author page's extra.photo, as in author_panel.html;
+   an author without one gets their initials. The photos repeat the names, so
+   they are hidden from assistive tech. #}
+{% component blog_byline(post, date=true) %}
+<div class="blog-byline">
+  <span class="blog-avatars" aria-hidden="true">
+    {%- for author in post.authors[:3] -%}
+      {%- set author_page = get_page(path="authors/" ~ author ~ ".md") -%}
+      {%- set photo = author_page.extra.photo | default(value="") -%}
+      {%- if photo and get_image_metadata(path="static" ~ photo, allow_missing=true) -%}
+        {%- set avatar = resize_image(path="static" ~ photo, width=64, height=64, op="fill", format="webp", quality=80) -%}
+        <img src="{{ avatar.url }}" alt="" width="32" height="32" decoding="async" loading="lazy">
+      {%- else -%}
+        {%- set words = author_page.title | split(pat=" ") -%}
+        <span class="blog-avatar-initials">{{ words | first | truncate(length=1, end="") }}{% if words | length > 1 %}{{ words | last | truncate(length=1, end="") }}{% endif %}</span>
+      {%- endif -%}
+    {%- endfor -%}
+  </span>
+  <span class="blog-byline-text">
+    <span class="blog-byline-names">
+      {%- for author in post.authors -%}
+        {%- set author_page = get_page(path="authors/" ~ author ~ ".md") -%}
+        {{ author_page.title }}{% if not loop.last %}, {% endif %}
+      {%- endfor -%}
+    </span>
+    {%- if date %}
+    <time datetime="{{ post.date }}">{{ post.date | date(format="%B %-d, %Y") }}</time>
+    {%- endif %}
+  </span>
+</div>
+{% endcomponent blog_byline %}
+
+{# The type, with a dot in the type's badge colour. #}
+{% component blog_type(name) %}<span class="blog-type" data-type="{{ name }}">{{ name }}</span>{% endcomponent blog_type %}

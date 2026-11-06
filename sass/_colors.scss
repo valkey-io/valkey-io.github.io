@@ -103,6 +103,15 @@ $text-link-alternate: #0053b8; //pacific blue
 $text-link-alternate-lighter: #137cc1; //pacific blue tint 1
 $text-link-alternate-darker: #00529e;
 
+// Each blog type's colour: the badge on posts and the dot on /blog/.
+$blog-type-colors: (
+  "Technical Deep Dive": #6983ff,
+  "Community Highlight": $green-200,
+  "How-to": $purple-200,
+  "Announcements": $yellow-100,
+  "Events": $red-100
+);
+
 @mixin respond-min($width) {
   @media screen and (min-width: $width) {
     @content;
