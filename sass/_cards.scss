@@ -12,11 +12,13 @@ $community-purple-800: #35247e;
 $community-blue-500: #5b6fff;
 $community-ink: #072150;
 
-// The white card: /community/'s Connect card and every card below.
+// The white card: /community/'s Connect card and every card below. The
+// border also draws the edge in forced-colors mode, which drops the shadow.
 @mixin card {
+  border: 1px solid #d5d9e8;
   background: #fff;
   border-radius: 18px;
-  box-shadow: 0 10px 28px rgba(60, 60, 130, 0.08);
+  box-shadow: 0 12px 32px rgba(60, 60, 130, 0.16);
 }
 
 // A card's section label: sentence case in #4a5ad8, the hero button blue,
