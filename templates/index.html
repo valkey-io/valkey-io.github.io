@@ -60,11 +60,10 @@
 
     <section class="homepage-card homepage-card-release">
         <div class="community-home-section-head">
-            <h2 class="community-home-kicker">Latest release</h2>
+            <h2 class="community-home-kicker">Everything new in Valkey {{ latest_line }}</h2>
         </div>
         <p class="release-headline">
             <a href="{{ latest_line_page.permalink }}">Valkey {{ latest.extra.tag }}</a>
-            <small>Released {{ latest.date | date(format="%B %-d, %Y") }}</small>
         </p>
 
         <div class="release-highlights">{{ latest_line_page.content | safe }}</div>
