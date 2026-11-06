@@ -22,14 +22,6 @@
 {% set nav_location = load_data(literal=nav_location_json, format="json") %}
 {%- endblock head -%}
 
-{% block subhead_content %}
-{% if has_frontmatter and frontmatter_title %}
-    <div class="styled-title">
-        <h1 class="page-title">Documentation: {{ frontmatter_title }}</h1>
-    </div>
-{% endif  %}
-{% endblock subhead_content %}
-
 {% block breadcrumbs %}
 {# Breadcrumbs section #}
 <nav class="breadcrumbs" aria-label="Breadcrumb">
@@ -56,6 +48,11 @@
 {% endblock breadcrumbs %}
 
 {% block main_content %}
+{# Some topics open with their own heading; the rest get the frontmatter title. #}
+{% set trimmed_contents = page_contents | trim %}
+{% if frontmatter_title and trimmed_contents is not starting_with(pat="# ") %}
+<h1 class="docs-page-title">{{ frontmatter_title }}</h1>
+{% endif %}
 {% if page.path in config.extra.review_list %}
 <p><strong>This page is under review.</strong> The page is likely incorrect, contains invalid links, and/or needs technical review. 
     In the future it may change substantially or be removed entirely.</p>
