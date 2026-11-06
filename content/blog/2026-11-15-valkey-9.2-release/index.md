@@ -21,8 +21,19 @@ This post walks through the changes with the most impact, grouped by area, and e
 The way snapshots are written and how data moves between a primary and its replicas is changing with Valkey 9.2.
 
 **Forkless snapshots and full syncs:** Valkey 9.2 adds forkless RDB snapshots, opt-in through the `forkless-infrastructure-enabled` and `forkless-policy` configs ([#4460](https://github.com/valkey-io/valkey/pull/4460) and [#5261](https://github.com/valkey-io/valkey/pull/5261)).
-`forkless-policy` takes the values `require-fork` and `prefer-forkless`, and new [`INFO persistence`](https://valkey.io/commands/info/) fields report the save method and progress.
+Forkless operations do their work on a background thread instead of forking, avoiding the copy-on-write memory overhead a fork can incur under write-heavy load.
+`forkless-policy` takes the values `require-fork` and `prefer-forkless`.
+`forkless-infrastructure-enabled` costs 4 additional bytes per key and must be set at startup, and `prefer-forkless` falls back to fork when an operation can't run forkless.
 Full synchronization to replicas can also run forkless, serving disk-based and diskless full syncs from a background-thread snapshot ([#4797](https://github.com/valkey-io/valkey/pull/4797)).
+
+For example, start the server with:
+
+```text
+forkless-infrastructure-enabled yes
+forkless-policy prefer-forkless
+```
+
+[`BGSAVE`](https://valkey.io/commands/bgsave/) then runs forkless, and `INFO persistence` reports `rdb_last_bgsave_type:forkless`.
 
 **Streaming compression:** `rdbcompression` now accepts `lz4` and `zstd` for whole-stream compression of RDB files, and the default per-string LZF behavior is unchanged ([#3531](https://github.com/valkey-io/valkey/pull/3531) and [#3798](https://github.com/valkey-io/valkey/pull/3798)).
 Zstandard offers better compression ratios than LZ4 and is enabled at build time with `BUILD_ZSTD=yes` ([#3798](https://github.com/valkey-io/valkey/pull/3798)).
@@ -32,9 +43,6 @@ The new `repl-compression` configuration adds streaming compression for steady-s
 In the PR's benchmark of 3 million keys of about 315 bytes each, LZ4 cut replication bandwidth by 52% with less than 1% throughput overhead.
 
 The append-only file (AOF) bases support streaming-compressed RDB, so compressed full-sync RDB files can be reused directly as AOF bases ([#4754](https://github.com/valkey-io/valkey/pull/4754)).
-
-**Replication throttling:** The optional `repl-throttling-enabled` configuration slows client writes when a replica falls behind, avoiding disconnects and full syncs ([#4356](https://github.com/valkey-io/valkey/pull/4356)).
-It is built on a new token-bucket client throttling mechanism.
 
 ## Security
 
@@ -66,12 +74,11 @@ With `app:1` set to `hello`, the `reporting` user can read the key but not write
 
 **ACL DIGEST:** The [`ACL DIGEST`](https://valkey.io/commands/acl-digest/) command returns a fingerprint of the ACL rules currently in effect, which you can use to verify what [`ACL LOAD`](https://valkey.io/commands/acl-load/) applied ([#4446](https://github.com/valkey-io/valkey/pull/4446)).
 
-**Secondary TLS certificate:** Support for a secondary server certificate is added through `tls-alt-cert-file`, `tls-alt-key-file`, and `tls-alt-key-file-pass`, for example a post-quantum certificate alongside RSA, with matching `INFO` TLS fields ([#3717](https://github.com/valkey-io/valkey/pull/3717)).
+**Secondary TLS certificate:** Support for a secondary server certificate is added through `tls-alt-cert-file`, `tls-alt-key-file`, and `tls-alt-key-file-pass`, for example a post-quantum certificate alongside RSA.
 
 **Randomness from OpenSSL:** When you build Valkey with TLS, [`ACL GENPASS`](https://valkey.io/commands/acl-genpass/) and the hash function seed draw randomness from the configured OpenSSL 3 provider, which supports deployments that require a validated cryptographic module ([#4339](https://github.com/valkey-io/valkey/pull/4339)).
 
-**Credentials and fixes:** [`CLUSTER MIGRATESLOTS`](https://valkey.io/commands/cluster-migrateslots/) accepts an optional per-target `AUTH username password`, with the credentials redacted from the slow log and [`MONITOR`](https://valkey.io/commands/monitor/) ([#3538](https://github.com/valkey-io/valkey/pull/3538)).
-A [`SORT`](https://valkey.io/commands/sort/) `STORE` destination named like an option can no longer bypass ACL checks and write to an unauthorized key ([#4665](https://github.com/valkey-io/valkey/pull/4665)).
+**Credentials:** [`CLUSTER MIGRATESLOTS`](https://valkey.io/commands/cluster-migrateslots/) accepts an optional per-target `AUTH username password`, with the credentials redacted from the slow log and [`MONITOR`](https://valkey.io/commands/monitor/) ([#3538](https://github.com/valkey-io/valkey/pull/3538)).
 
 ## Availability under load
 
@@ -81,7 +88,20 @@ Valkey 9.2 prioritizes system-critical events, reserves connection slots for adm
 It works as an anti-starvation mechanism in the event loop that gives cluster bus connections priority.
 
 **Reserved connections for administrators:** Connections from the CIDR ranges listed in the new `priority-subnets` configuration are tagged as prioritized ([#4005](https://github.com/valkey-io/valkey/pull/4005)).
-`maxclients-reserved` caps normal clients at `maxclients` minus that many connection slots, and `INFO clients` reports `connected_priority_clients`.
+`maxclients-reserved` caps normal clients at `maxclients` minus that many connection slots.
+
+**Replication throttling:** The optional `repl-throttling-enabled` configuration slows client writes when a replica falls behind, avoiding disconnects and full syncs ([#4356](https://github.com/valkey-io/valkey/pull/4356)).
+You can change it at runtime with `CONFIG SET`.
+
+The feature is built on a new client throttling framework that uses a token bucket.
+Tokens refill at a rate the throttler adjusts automatically, and a throttled client's command runs only when a token is available.
+The check happens before the command executes, so the command is **deferred** rather than rejected, and the client is released at the throttle rate.
+You can have multiple throttlers activated at once, and the most restrictive one applies to a given command.
+
+The replication throttler plugs into this framework.
+Every 100 ms, it checks the replica with the largest client output buffer and starts throttling commands that generate replication traffic once that buffer reaches 25% of the configured soft limit.
+It projects the buffer's short-term trend so the rate converges on its target instead of overshooting, and raises the rate again once the buffer stabilizes.
+While it's working, the replica is exempt from the soft-limit disconnect, unless the server is over `maxmemory` or throttling has gone on too long without success.
 
 **Cluster failover:** The `cluster-replica-priority` configuration lets operators rank which replicas are preferred during automatic cluster failover ([#2204](https://github.com/valkey-io/valkey/pull/2204)).
 With the new `if-empty` value of `cluster-replica-no-failover`, a replica that has never received data from its primary refuses automatic failover, preventing silent data loss ([#4425](https://github.com/valkey-io/valkey/pull/4425)).
@@ -89,50 +109,63 @@ And a new `FAILOVER_AUTH_NACK` message speeds up recovery from split-vote electi
 
 ## Performance
 
-Sorted sets, multi-key lookups, replication, the cluster bus, and several hash and stream commands are sped up in Valkey 9.2.
+Multi-key lookups, I/O threads, replication, and several hash and stream commands are sped up in Valkey 9.2.
 
-**B+ tree sorted sets:** Large sorted sets are now backed by a B+ tree instead of a skiplist, and [`OBJECT ENCODING`](https://valkey.io/commands/object-encoding/) reports `btree` instead of `skiplist` ([#4359](https://github.com/valkey-io/valkey/pull/4359)).
-The PR reports per-member memory overhead dropping from 50.3 bytes to between 28.5 and 32.0 bytes, 36% to 43% less, for 5 million members with 20-byte elements.
-Expect delete-heavy workloads to land worse than that, as the B+ tree has no compaction yet.
-
-**Batched lookups and prefetching:** [`HMGET`](https://valkey.io/commands/hmget/), [`SMISMEMBER`](https://valkey.io/commands/smismember/), and [`ZMSCORE`](https://valkey.io/commands/zmscore/) on large hashtable-encoded keys use batched lookups that overlap memory accesses ([#4017](https://github.com/valkey-io/valkey/pull/4017)).
-In Valkey 9.2, when `io-threads` are enabled, memory prefetching extends to hash, set, and sorted set member lookups, which improves performance for 30 commands ([#3940](https://github.com/valkey-io/valkey/pull/3940)).
+**Batched lookups:** [`HMGET`](https://valkey.io/commands/hmget/), [`SMISMEMBER`](https://valkey.io/commands/smismember/), and [`ZMSCORE`](https://valkey.io/commands/zmscore/) on large hashtable-encoded keys use batched lookups that overlap memory accesses ([#4017](https://github.com/valkey-io/valkey/pull/4017)).
 
 **Faster replication:** Replicas can now parse multiple commands from the replication stream at once ([#3597](https://github.com/valkey-io/valkey/pull/3597)).
 And command propagation to replicas batches each command's RESP frame into a single replication buffer write ([#4044](https://github.com/valkey-io/valkey/pull/4044)).
 
-**Cluster bus:** The cluster bus reads, writes, and inbound TLS accepts can now run on the shared I/O thread pool, with new [`CLUSTER INFO`](https://valkey.io/commands/cluster-info/) offload statistics ([#3438](https://github.com/valkey-io/valkey/pull/3438)).
-Furthermore, when `cluster-config-save-behavior` is best-effort, the cluster configuration file is saved from a background thread, avoiding main-thread latency spikes from slow disk I/O ([#2555](https://github.com/valkey-io/valkey/pull/2555)).
+**I/O threads:** When `io-threads` are enabled, memory prefetching extends to hash, set, and sorted set member lookups, which improves performance for 30 commands ([#3940](https://github.com/valkey-io/valkey/pull/3940)).
+Cluster bus reads, writes, and inbound TLS accepts can also run on the shared I/O thread pool, while cluster state changes stay on the main thread ([#3438](https://github.com/valkey-io/valkey/pull/3438)).
 
 **Hash and stream commands:** [`HGETALL`](https://valkey.io/commands/hgetall/), [`HKEYS`](https://valkey.io/commands/hkeys/), and [`HVALS`](https://valkey.io/commands/hvals/) are faster with exact-length reply headers, fused bulk replies, and entry prefetching ([#4417](https://github.com/valkey-io/valkey/pull/4417)).
 Optimizations to exact [`XTRIM`](https://valkey.io/commands/xtrim/) `MAXLEN = 0` make it about 2.5 times faster because it clears the whole stream in one step instead of removing entries individually ([#4161](https://github.com/valkey-io/valkey/pull/4161)).
 
 ## Efficiency
 
-Valkey 9.2 also reduces memory usage for small hashes with field expiration and for shared client objects, adding memory controls for scripts and libc.
+Valkey 9.2 reduces memory usage for large sorted sets, small hashes with field expiration, and shared client objects.
+
+**B+ tree sorted sets:** Large sorted sets are now backed by a B+ tree instead of a skiplist, and [`OBJECT ENCODING`](https://valkey.io/commands/object-encoding/) reports `btree` instead of `skiplist` ([#4359](https://github.com/valkey-io/valkey/pull/4359)).
+The PR reports per-member memory overhead dropping from 50.3 bytes to between 28.5 and 32.0 bytes, 36% to 43% less, for 5 million members with 20-byte elements.
+Expect delete-heavy workloads to land worse than that, as the B+ tree has no compaction yet.
 
 **Listpack for hashes with field expiration:** Small hashes with field expiration now use the listpack encoding instead of always converting to a hashtable ([#3212](https://github.com/valkey-io/valkey/pull/3212)).
+Until now, field expiration couldn't be encoded in a listpack, so any hash with field expiration was stored as a hashtable, which uses more memory.
+Valkey 9.2 stores the expiration inside the listpack value itself, using a new tagged metadata entry, and RDB files still store these hashes in the hashtable format, so the RDB format is unchanged.
+
+For example, with the hash from the PR's tests, setting an expiration on one field keeps the listpack encoding:
+
+```text
+> HSET myhash f1 v1 f2 v2 f3 v3
+(integer) 3
+> HEXPIRE myhash 1000 FIELDS 1 f1
+1) (integer) 1
+> OBJECT ENCODING myhash
+"listpack"
+> MEMORY USAGE myhash
+(integer) 80
+```
+
+On Valkey 9.1.3 with the default configuration, the same commands convert the hash to a hashtable, and [`MEMORY USAGE`](https://valkey.io/commands/memory-usage/) reports 240 bytes.
 
 **Shared client objects:** The Pub/Sub pattern and `WATCH` key objects are shared across clients subscribing to or watching the same name ([#4072](https://github.com/valkey-io/valkey/pull/4072)).
 
-**Script cache limit:** The new `maxmemory-scripts` configuration limits the memory used by cached [`EVAL`](https://valkey.io/commands/eval/) scripts, and [`SCRIPT LOAD`](https://valkey.io/commands/script-load/) is marked `DENYOOM` so it now respects the global `maxmemory` limit ([#866](https://github.com/valkey-io/valkey/pull/866)).
+## Resource isolation
 
-**Memory purge on glibc:** [`MEMORY PURGE`](https://valkey.io/commands/memory-purge/) now also releases free pages from the glibc main arena back to the operating system ([#3640](https://github.com/valkey-io/valkey/pull/3640)).
+Valkey 9.2 adds memory limits that help keep cached scripts from consuming a disproportionate share of memory.
+
+**Script cache limit:** The new `maxmemory-scripts` configuration limits the memory used by cached [`EVAL`](https://valkey.io/commands/eval/) scripts, and [`SCRIPT LOAD`](https://valkey.io/commands/script-load/) is marked `DENYOOM` so it now respects the global `maxmemory` limit ([#866](https://github.com/valkey-io/valkey/pull/866)).
 
 ## Observability
 
-Valkey 9.2 adds server-side hot key detection and new metrics for transactions, replication, cluster links, and client memory.
+Valkey 9.2 adds server-side hot key detection and records transactions in the slow log.
 
 **Hot key detection:** Server-side hot key detection is added with the new [`HOTKEYS GET`](https://valkey.io/commands/hotkeys-get/) and [`HOTKEYS RESET`](https://valkey.io/commands/hotkeys-reset/) commands, enabled by configuring the `hotkeys-top-k` setting ([#3708](https://github.com/valkey-io/valkey/pull/3708)).
 It uses the Space-Saving algorithm to track the K hottest keys in a fixed-size summary, so there are no access-rate thresholds to tune.
 `HOTKEYS GET` reports the last completed detection window, and detection is disabled by default.
 
 **Transactions in the slow log:** [`EXEC`](https://valkey.io/commands/exec/) transactions are now recorded in the slow log and command log when their total execution time crosses the threshold ([#4267](https://github.com/valkey-io/valkey/pull/4267)).
-
-**Replication and cluster metrics:** `INFO replication` reports `last_successful_sync_duration_ms`, telling you how long the replica's last full sync took ([#4197](https://github.com/valkey-io/valkey/pull/4197)).
-`CLUSTER INFO` has the `total_cluster_links_established_inbound` and `total_cluster_links_established_outbound` counters, which help detect frequent reconnections between nodes ([#4169](https://github.com/valkey-io/valkey/pull/4169)).
-
-**Client memory accounting:** Client memory usage now includes watched key, Pub/Sub channel and pattern names, so it shows in `CLIENT INFO` `tot-mem` and counts toward `maxmemory-clients` ([#3362](https://github.com/valkey-io/valkey/pull/3362)).
 
 ## New data type and commands
 
@@ -183,7 +216,7 @@ Several existing commands gain options in Valkey 9.2:
 - [`MOVE`](https://valkey.io/commands/move/) now accepts an optional `REPLACE` argument to overwrite an existing key in the destination database ([#2993](https://github.com/valkey-io/valkey/pull/2993)).
 - [`SISMEMBER`](https://valkey.io/commands/sismember/) now accepts an optional `XX` flag that returns `-1` when the key doesn't exist, distinguishing a missing key from a missing member ([#2972](https://github.com/valkey-io/valkey/pull/2972)).
 - The [`ZRANGE`](https://valkey.io/commands/zrange/) family now accepts `XX` to distinguish a non-existent key (nil) from an empty result ([#2978](https://github.com/valkey-io/valkey/pull/2978)).
-- `CONFIG INFO` now returns config metadata such as type, flags, valid enum values, and numeric ranges ([#3050](https://github.com/valkey-io/valkey/pull/3050)).
+- `CONFIG INFO` now returns configuration metadata such as type, flags, valid enum values, and numeric ranges ([#3050](https://github.com/valkey-io/valkey/pull/3050)).
 
 ## Tooling
 
@@ -196,15 +229,13 @@ Besides the above changes, Valkey 9.2 extends `valkey-benchmark` and `valkey-cli
 
 ## Before you upgrade
 
-A few changes in Valkey 9.2 can affect existing deployments; be careful of the following:
+A few changes in Valkey 9.2 can affect existing deployments.
+As a general rule, don't enable new features until you're confident you won't need to downgrade; newer features may introduce data formats or behavior that older versions can't handle.
 
-- Active expiration of keys and hash fields now increments the dirty counter, so save points, and therefore `BGSAVE`, may trigger more often ([#3118](https://github.com/valkey-io/valkey/pull/3118)).
-- `OBJECT ENCODING` reports `btree` instead of `skiplist` for large sorted sets ([#4359](https://github.com/valkey-io/valkey/pull/4359)).
-- AOF bases written with `rdbcompression lz4` or `zstd` **require** a version of Valkey that supports streaming-compressed RDB files.
-  Before downgrading, switch to a legacy compression mode and run [`BGREWRITEAOF`](https://valkey.io/commands/bgrewriteaof/) ([#4754](https://github.com/valkey-io/valkey/pull/4754)).
-- [`ZRANGEBYSCORE`](https://valkey.io/commands/zrangebyscore/), `ZREVRANGEBYSCORE`, `ZCOUNT`, and `ZRANGESTORE` reject a bare `(` or an empty string as a score bound instead of treating it as `0` ([#4054](https://github.com/valkey-io/valkey/pull/4054)).
-- `cluster-announce-ip` must be a valid IP address or hostname, rejecting values like `ip:port` ([#4055](https://github.com/valkey-io/valkey/pull/4055)).
-- The minimum required CMake version is now **3.24** ([#4232](https://github.com/valkey-io/valkey/pull/4232)).
+Before you upgrade, check the following:
+
+- Ensure you update the scripts or monitoring which check `OBJECT ENCODING` for `skiplist`: large sorted sets now report `btree` ([#4359](https://github.com/valkey-io/valkey/pull/4359)).
+- Before downgrading, switch `rdbcompression` to a legacy mode and run [`BGREWRITEAOF`](https://valkey.io/commands/bgrewriteaof/): AOF bases written with `lz4` or `zstd` **require** a Valkey version that supports streaming-compressed RDB files ([#4754](https://github.com/valkey-io/valkey/pull/4754)).
 
 ## Thank you to our contributors
 
@@ -212,4 +243,4 @@ More than one hundred contributors made Valkey 9.2.0 possible, through code, rev
 Thank you!
 The full list of changes and contributors is in the [9.2.0 release notes](https://github.com/valkey-io/valkey/blob/9.2/00-RELEASENOTES).
 
-[Download Valkey 9.2.0](https://valkey.io/download/), and share your feedback on [GitHub](https://github.com/valkey-io/valkey) and in the [Valkey community](https://valkey.io/community/).
+[Download Valkey 9.2.0](https://valkey.io/download/9.2/), and share your feedback on [GitHub](https://github.com/valkey-io/valkey) and in the [Valkey community](https://valkey.io/community/).
