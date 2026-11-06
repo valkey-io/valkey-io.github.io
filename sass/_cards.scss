@@ -75,6 +75,16 @@ $community-ink: #072150;
     letter-spacing: normal;
     text-transform: none;
     text-wrap: balance;
+
+    // The release card's label is a heading around a link; it looks like
+    // the "Valkey participants" link label.
+    a {
+      color: inherit;
+
+      &:hover {
+        color: $community-purple-800;
+      }
+    }
   }
 
   .release-headline {
