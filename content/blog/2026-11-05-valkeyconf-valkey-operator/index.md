@@ -1,7 +1,7 @@
 
 +++
 title = "One Year From the Hallway: The State of the Valkey Operator"
-date = 2026-11-05
+date = 2026-11-06
 description = "From a hallway conversation to Kubernetes cluster management, Valkey Operator maintainers Joe Heyburn and Björn Svensson share what's been built and the road to 1.0."
 authors = ["jheyburn", "bsvensson", "crystalpham"]
 
