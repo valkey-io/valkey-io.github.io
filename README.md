@@ -123,6 +123,31 @@ build/broken-links.sh public
 build/unconverted-doc-links.sh public
 ```
 
+## Link preview cards
+
+A blog post with `og_card = true` gets a link preview card, its title over the Valkey background, as `/blog/<slug>/og.jpg`; [CONTRIBUTING-BLOG-POST.md](CONTRIBUTING-BLOG-POST.md#link-preview-cards) covers the front matter and the line rules.
+Its `og:image` and `twitter:image` point there.
+
+Zola can't draw text into an image, so it renders every card as HTML on one page, `/og-cards/` (`templates/og-cards.html`, out of the sitemap and search, and `noindex`), and the site's build screenshots them.
+`build/og-cards.mjs` serves a built site on 127.0.0.1, has headless Chrome capture each 1200x630 card at twice the pixel density as a 2400x1260, quality 90 JPEG, deletes `/og-cards/`, and fails if any card post's `og.jpg` is missing, the wrong size, or 1 MB or more.
+The platforms scale the larger image down cleanly, and JPEG keeps the particle background in full colour at about 300 KB, where a lossless PNG is 1.6 MB.
+To run it yourself, with Node 20 or later and Chrome or Chromium (set `CHROME` to pick one):
+
+```shell
+zola build
+node build/og-cards.mjs public
+```
+
+The card is `templates/macros/og-card.html` and `sass/css/og-cards.scss`, over `static/assets/media/og-card/default-bg.webp`.
+The template sets the lines by adding up Open Sans's advance widths from `_data/og-card/open-sans-400.json`, against right edges measured from that background (`og_card.edge`), so a new background needs new edges.
+`build/og-card-widths.py` regenerates the width table when the Open Sans font files change:
+
+```shell
+./build/og-card-widths.py
+```
+
+It runs with [uv](https://docs.astral.sh/uv/), or with `python3` once Pillow is installed.
+
 ## License
 
 This project is licensed under the BSD-3-Clause License.

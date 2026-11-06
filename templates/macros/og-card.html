@@ -1,0 +1,229 @@
+{#
+  The og card: a blog post's 1200x630 link preview, for posts with `extra.og_card = true`. It
+  sets the post title, or `extra.og_title`, in white Open Sans over the particle-wave
+  background. templates/og-cards.html renders every card on one page, and
+  build/og-cards.mjs captures each to the post's og.jpg. The rules are under "Link
+  preview cards" in CONTRIBUTING-BLOG-POST.md; the styles are in sass/css/og-cards.scss.
+#}
+
+{% component og_card.card(page) -%}
+  {%- set title = page.extra.og_title | default(value=page.title) -%}
+  {#- A heading and a subheading split at a ":" right before a "\n" in og_title, or else at
+      the first ": " unless the whole title fits the first line's hard limit at full size. #}
+  {%- set head = title -%}
+  {%- set sub = "" -%}
+  {%- if ":\n" in title -%}
+    {%- set parts = title | split(pat=":\n") -%}
+    {%- set head = parts | first | trim -%}
+    {%- set sub = parts[1:] | join(sep=":\n") | trim -%}
+  {%- elif ": " in title -%}
+    {%- set whole %}{{< og_card.widths text={title | replace(from="\n", to=" ")} />}}{% endset -%}
+    {%- set full %}{{< og_card.limits base={16.78} f={6.11} soft={55} hard={80} />}}{% endset -%}
+    {%- if (whole | split(pat="|") | last | float) > (full | split(pat="|") | nth(n=1) | float) -%}
+      {%- set parts = title | split(pat=": ") -%}
+      {%- set head = parts | first | trim -%}
+      {%- set sub = parts[1:] | join(sep=": ") | trim -%}
+    {%- endif -%}
+  {%- endif -%}
+  {#- Each is at least 3.23 (38.76px). The heading leaves 1.91 of its sizes
+      below its last baseline for a two-line subheading (1.204 + 1.1 * 0.642). If the
+      subheading cannot fit, the heading shrinks 10% at a time, which sits the subheading
+      higher, where the wave leaves it more room. #}
+  {%- set rules = " cannot be set in at most two lines, with the first at least as long as the second and two or more words on the second" -%}
+  {%- set own = " has more than two lines, or a line too long for the card" -%}
+  {%- set fix = ", even at its smallest size. Shorten the title, or choose the breaks yourself with \"\\n\" in extra.og_title." -%}
+  {%- set top = 6.11 -%}
+  {%- set h = "" -%}
+  {%- set s = "" -%}
+  {%- set done = false -%}
+  {%- for attempt in range(end=8) %}{% if not done %}
+    {%- set hh %}{{< og_card.fit text={head} base={16.78} fmax={top} fmin={3.23} soft={55} hard={80} extra={1.91 if sub else 0} />}}{% endset -%}
+    {%- if hh == "!" %}{{ throw(message="og card: the heading \"" ~ (head | replace(from="\n", to="\\n")) ~ "\" of " ~ page.relative_path ~ (own if "\n" in head else rules) ~ fix) }}{% endif -%}
+    {%- set_global h = hh -%}
+    {%- set fh = hh | split(pat="\n") | first | float -%}
+    {%- if not sub -%}
+      {%- set_global done = true -%}
+    {%- else -%}
+      {%- set base = 16.78 + (hh | split(pat="\n") | length - 2) * 1.1 * fh + 1.204 * fh -%}
+      {%- set ss %}{{< og_card.fit text={sub} base={base} fmax={0.642 * fh} fmin={3.23} soft={48} hard={60} extra={0} />}}{% endset -%}
+      {%- if ss != "!" %}{% set_global s = ss %}{% set_global done = true %}{% else %}{% set_global top = fh * 0.9 %}{% if top < 3.23 %}{% set_global done = true %}{% endif %}{% endif -%}
+    {%- endif -%}
+  {%- endif %}{% endfor -%}
+  {%- if sub and not s %}{{ throw(message="og card: the subheading \"" ~ (sub | replace(from="\n", to="\\n")) ~ "\" of " ~ page.relative_path ~ (own if "\n" in sub else rules) ~ fix) }}{% endif -%}
+  {%- set h = h | split(pat="\n") -%}
+  {%- set fh = h | first | float -%}
+  {%- if sub %}{% set s = s | split(pat="\n") %}{% endif %}
+  <div class="og-card" style="--heading: {{ (fh * 12) | round(precision=2) }}px{% if sub %}; --subheading: {{ ((s | first | float) * 12) | round(precision=2) }}px{% endif %}">
+    <div class="og-card-text">
+      <div class="og-card-heading">
+        {%- for line in h[1:] %}{% if not loop.first %}<br>{% endif %}{{ line }}{% endfor -%}
+      </div>
+      {%- if sub %}
+      <div class="og-card-subheading">
+        {%- for line in s[1:] %}{% if not loop.first %}<br>{% endif %}{{ line }}{% endfor -%}
+      </div>
+      {%- endif %}
+    </div>
+  </div>
+{%- endcomponent og_card.card %}
+
+{#
+  The card's text layout. The browser cannot be told "wrap, but never leave one word on the
+  last line, and never use more than two lines", so the template sets the lines and the
+  browser draws them unwrapped. Widths come from Open Sans's advance widths in
+  _data/og-card/open-sans-400.json, written by build/og-card-widths.py, and any character not in
+  it counts as 1em. Without kerning, the sum runs up to about 2% wider than the browser
+  draws, so lines come out a little short of their limits, never over them.
+
+  All lengths are in % of the card's width, 12px each, measured in the background's own 16:9
+  frame, 56.25 tall. The card shows its bottom 52.5 (630px): it crops 3.75 (45px) off the top,
+  which sass/css/og-cards.scss takes off every position. Text starts 4.44 across. The
+  heading's first baseline is at 16.78 (29.83% of the frame's height) and no baseline goes
+  below 33.75 (60%). The heading is at most 6.11; the subheading is at most 0.642 of the
+  heading, with its first baseline 1.204 heading sizes below the heading's last. Lines are
+  1.1 sizes apart.
+
+  Each line has two limits, read at its bottom edge: a soft one, where text wraps by default,
+  and a hard one it may run to when that avoids a third line or a one-word last line. Both
+  stay off the wave in the background: the soft one left of its dust, the hard one left of
+  its bright core. The tables give the right edge (% of width) allowed below each height
+  (% of height), measured from default-bg.webp.
+#}
+
+{# Each word's width in em, "|"-separated, then the whole text's width last. #}
+{% component og_card.widths(text) -%}
+  {%- set glyphs = load_data(path="_data/og-card/open-sans-400.json") -%}
+  {%- set out = "" -%}
+  {%- set total = 0 -%}
+  {%- set words = 0 -%}
+  {%- set w = 0 -%}
+  {%- for word in text | split(pat=" ") %}{% if word %}
+    {%- set_global w = 0 -%}
+    {%- for c in word | split(pat="") %}{% if c %}{% set_global w = w + glyphs[c] | default(value=1) %}{% endif %}{% endfor -%}
+    {%- set_global out = out ~ w ~ "|" -%}
+    {%- set_global total = total + w + (glyphs[" "] if words else 0) -%}
+    {%- set_global words = words + 1 -%}
+  {%- endif %}{% endfor -%}
+  {{ out }}{{ total }}
+{%- endcomponent og_card.widths %}
+
+{# The right edge, % of the card's width, the wave allows at a height, % of its height. #}
+{% component og_card.edge(y, edge) -%}
+  {%- if edge == "dust" -%}
+    {%- set table = [[32, 63], [38, 58], [45, 55], [50, 49], [54, 48], [60, 40], [101, 38]] -%}
+  {%- else -%}
+    {%- set table = [[22, 85], [26, 82], [30, 78], [34, 74], [38, 69], [42, 64], [46, 59], [50, 54], [54, 51], [58, 48], [62, 45], [101, 44]] -%}
+  {%- endif -%}
+  {%- set x = 0 -%}
+  {%- for row in table %}{% if x == 0 and y < row | first %}{% set_global x = row | last %}{% endif %}{% endfor -%}
+  {{ x }}
+{%- endcomponent og_card.edge %}
+
+{# The widths, in em at size f, of the lines with first baseline `base`, each read at the
+   line's bottom edge: "soft1|hard1|hard2". The second line only needs its hard limit. #}
+{% component og_card.limits(base, f, soft, hard) -%}
+  {%- set y1 = (base + 0.3 * f) / 56.25 * 100 -%}
+  {%- set y2 = (base + 1.4 * f) / 56.25 * 100 -%}
+  {%- set d1 %}{{< og_card.edge y={y1} edge="dust" />}}{% endset -%}
+  {%- set c1 %}{{< og_card.edge y={y1} edge="core" />}}{% endset -%}
+  {%- set c2 %}{{< og_card.edge y={y2} edge="core" />}}{% endset -%}
+  {%- set d1 = d1 | float -%}{%- set c1 = c1 | float -%}{%- set c2 = c2 | float -%}
+  {{ ((d1 if d1 < soft else soft) - 4.44) / f }}|{{ ((c1 if c1 < hard else hard) - 4.44) / f }}|{{ ((c2 if c2 < hard else hard) - 4.44) / f }}
+{%- endcomponent og_card.limits %}
+
+{# Where to break the first `count` word widths (em, from og_card.widths) under the limits
+   `lim` (from og_card.limits): "1" for one line, "2|k" for two with line 2 starting at word
+   k, "0" if neither holds. One line whenever the text fits the hard limit. Two lines only at a
+   break that keeps both within the hard limits, puts at least two words on the second line
+   and makes the first at least as long as the second; of those, the one nearest where the
+   text would wrap at the soft limit, the longer first line breaking a tie. #}
+{% component og_card.breaks(all, count, lim) -%}
+  {%- set space = load_data(path="_data/og-card/open-sans-400.json")[" "] -%}
+  {%- set s1 = lim | nth(n=0) | float -%}
+  {%- set h1 = lim | nth(n=1) | float -%}
+  {%- set h2 = lim | nth(n=2) | float -%}
+  {%- set total = all | last | float -%}
+  {%- if total <= h1 -%}
+  1
+  {%- else -%}
+    {#- soft_k: how many words fit the first line's soft limit, at least one. #}
+    {%- set run = 0 -%}
+    {%- set soft_k = 1 -%}
+    {%- for w in all[:count] %}
+      {%- set_global run = (w | float) if loop.first else run + space + (w | float) -%}
+      {%- if run <= s1 %}{% set_global soft_k = loop.index %}{% endif -%}
+    {%- endfor -%}
+    {%- set run = 0 -%}
+    {%- set best = -1 -%}
+    {%- set best_d = 0 -%}
+    {%- for w in all[:count - 1] %}
+      {%- set_global run = (w | float) if loop.first else run + space + (w | float) -%}
+      {%- set k = loop.index -%}
+      {%- set rest = total - run - space -%}
+      {%- if run <= h1 and rest <= h2 and count - k >= 2 and run >= rest -%}
+        {%- set d = k - soft_k if k > soft_k else soft_k - k -%}
+        {%- if best < 0 or d <= best_d %}{% set_global best = k %}{% set_global best_d = d %}{% endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if best < 0 %}0{% else %}2|{{ best }}{% endif -%}
+  {%- endif -%}
+{%- endcomponent og_card.breaks %}
+
+{# The largest size between fmin and fmax at which text sets in at most two lines (see
+   og_card.breaks) from a first baseline at `base`, staying above the card's 60% line with
+   `extra` sizes still to fit below it: the size and then each line, "\n"-separated, or "!" if
+   no size holds. A "\n" in the text is a break the author set, and is kept as written. #}
+{% component og_card.fit(text, base, fmax, fmin, soft, hard, extra) -%}
+  {%- set fmax = fmin if fmin > fmax else fmax -%}
+  {%- set forced = "\n" in text -%}
+  {%- set parts = text | split(pat="\n") -%}
+  {%- set flat = text | replace(from="\n", to=" ") -%}
+  {%- set all %}{{< og_card.widths text={flat} />}}{% endset -%}
+  {%- set all = all | split(pat="|") -%}
+  {%- set count = all | length - 1 -%}
+  {%- set w1 = 0 -%}{%- set w2 = 0 -%}
+  {%- if forced -%}
+    {%- set a %}{{< og_card.widths text={parts | first | trim} />}}{% endset -%}
+    {%- set b %}{{< og_card.widths text={parts | last | trim} />}}{% endset -%}
+    {%- set w1 = a | split(pat="|") | last | float -%}
+    {%- set w2 = b | split(pat="|") | last | float -%}
+  {%- endif -%}
+  {%- set lo = fmin -%}
+  {%- set hi = fmax -%}
+  {%- set found = -1 -%}
+  {%- for step in range(end=18) %}{% if found < 0 %}
+    {%- set f = fmax if step == 0 else (fmin if step == 1 else (lo + hi) / 2) -%}
+    {%- set lim %}{{< og_card.limits base={base} f={f} soft={soft} hard={hard} />}}{% endset -%}
+    {%- set lim = lim | split(pat="|") -%}
+    {%- if forced -%}
+      {%- set n = parts | length -%}
+      {%- set ok = n <= 2 and w1 <= lim | nth(n=1) | float and w2 <= lim | nth(n=2) | float -%}
+    {%- else -%}
+      {%- set r %}{{< og_card.breaks all={all} count={count} lim={lim} />}}{% endset -%}
+      {%- set n = r | split(pat="|") | first | int -%}
+      {%- set ok = n > 0 -%}
+    {%- endif -%}
+    {%- set ok = ok and base + f * ((n - 1) * 1.1 + extra) <= 33.75 -%}
+    {%- if step == 0 and ok %}{% set_global found = f %}{% endif -%}
+    {%- if step == 1 and not ok %}{% set_global found = 0 %}{% endif -%}
+    {%- if step > 1 %}{% if ok %}{% set_global lo = f %}{% else %}{% set_global hi = f %}{% endif %}{% endif -%}
+    {%- if step == 17 %}{% set_global found = lo %}{% endif -%}
+  {%- endif %}{% endfor -%}
+  {%- if found == 0 -%}
+  !
+  {%- elif forced -%}
+  {{ found }}{{ "\n" }}{{ parts | first | trim | safe }}{{ "\n" }}{{ parts | last | trim | safe }}
+  {%- else -%}
+    {%- set lim %}{{< og_card.limits base={base} f={found} soft={soft} hard={hard} />}}{% endset -%}
+    {%- set r %}{{< og_card.breaks all={all} count={count} lim={lim | split(pat="|")} />}}{% endset -%}
+    {%- set k = count if (r | split(pat="|") | first | int) == 1 else r | split(pat="|") | last | int -%}
+    {%- set one = "" -%}
+    {%- set two = "" -%}
+    {%- set i = 0 -%}
+    {%- for word in flat | split(pat=" ") %}{% if word %}
+      {%- if i < k %}{% set_global one = one ~ (" " if one else "") ~ word %}{% else %}{% set_global two = two ~ (" " if two else "") ~ word %}{% endif -%}
+      {%- set_global i = i + 1 -%}
+    {%- endif %}{% endfor -%}
+  {{ found }}{{ "\n" }}{{ one | safe }}{% if two %}{{ "\n" }}{{ two | safe }}{% endif %}
+  {%- endif -%}
+{%- endcomponent og_card.fit %}

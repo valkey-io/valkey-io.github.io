@@ -168,6 +168,12 @@ draft = true
     # "/assets/media/featured/random-06.webp"
     # "/assets/media/featured/random-07.webp"
     featured_image = "/assets/media/featured/random-01.webp"
+    # 'og_card' (optional) makes your post's link preview a card with your title on it,
+    # instead of the featured image. The post page doesn't change. See "Link preview cards" below.
+    # og_card = true
+    # 'og_title' (optional) is the card's text when it should differ from 'title'.
+    # Each "\n" starts a new line; this one keeps "mind control" together.
+    # og_title = "Using Valkey for\nmind control experiments"
 +++
 ```
 
@@ -244,3 +250,26 @@ A job runs daily at 15:00 UTC (07:00 PST / 08:00 PDT) and publishes any draft wh
 Dates are UTC, and the time of day is ignored, so use a date with no time.
 A post dated `2026-08-15` goes live that morning, Pacific time.
 Publish by hand if you need an exact time.
+
+## Link preview cards
+
+A post's link preview, the image shown when it is shared on social media or in chat, can be a card with the post title on it, in white over the Valkey particle-wave background.
+Set `og_card = true` under `[extra]` to use one.
+Nothing on the post page changes: the featured image stays, and the blog index still uses it.
+An `og_image` you set yourself still wins.
+
+The card sets the title's lines itself:
+
+- A title with a colon becomes a heading and a smaller subheading, split at its first `": "` with the colon dropped, unless the whole title fits on one line.
+- The heading and the subheading each take one line if they fit, otherwise two, with the first line at least as long as the second and at least two words on the second. Never three.
+- Lines stop short of the wave on the right, and text shrinks to fit, down to 39px, about half the largest heading.
+
+To set the lines yourself, put the card's text in `og_title` with a `\n` at each break.
+Your breaks are kept as written, and a `:` right before a `\n` is where the heading ends and the subheading starts.
+The page's own title doesn't change.
+
+If a heading or subheading can't fit, the build fails with an error naming your post and the rule it broke.
+Shorten the title, or set the breaks yourself in `og_title`.
+
+To see your card, run `zola serve` and open `http://127.0.0.1:1111/og-cards/`.
+The site's build renders each card to `/blog/<your-slug>/og.jpg`; see [Link preview cards](README.md#link-preview-cards) in the README to render them yourself.

@@ -65,3 +65,12 @@ runs:
         BUILD_DIR: ${{ inputs.path }}
         BUILD_ONLY: true
         BUILD_THEMES: false
+
+    # Each post with og_card = true gets a public/blog/<slug>/og.jpg. See build/og-cards.mjs.
+    - name: Render og cards
+      shell: bash
+      working-directory: ${{ inputs.path }}
+      run: |
+        # The build step's container leaves public/ owned by root.
+        sudo chown -R "$(id -u):$(id -g)" public
+        node build/og-cards.mjs public
