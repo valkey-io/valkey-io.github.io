@@ -17,8 +17,8 @@
 </style>
 <rect class="fd-background" width="100%" height="100%" rx="8"/>
 <defs><pattern id="fd-hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect class="fd-hatch-background" width="6" height="6"/><line class="fd-hatch-lines" x1="0" y1="0" x2="0" y2="6"/></pattern><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="fd-pointer-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
-<text class="fd-title" x="16.0" y="30.0" font-size="16" font-weight="700" text-anchor="start">One LZ4 stream: a later post is</text>
-<text class="fd-title" x="16.0" y="52.0" font-size="16" font-weight="700" text-anchor="start">mostly pointers to an earlier one</text>
+<text class="fd-title" x="16.0" y="30.0" font-size="15" font-weight="700" text-anchor="start">One LZ4 stream: a later post is</text>
+<text class="fd-title" x="16.0" y="52.0" font-size="15" font-weight="700" text-anchor="start">mostly references to an earlier one</text>
 <text class="fd-muted" x="86.0" y="86.0" font-size="13" font-weight="700" text-anchor="middle">earlier post</text>
 <text class="fd-muted" x="274.0" y="86.0" font-size="13" font-weight="700" text-anchor="middle">later post</text>
 <rect class="fd-extra-box" x="16" y="98" width="140" height="30" rx="4"/>
@@ -38,7 +38,7 @@
 <rect class="fd-extra-box" x="16" y="218" width="140" height="30" rx="4"/>
 <rect class="fd-extra-box" x="204" y="218" width="140" height="30" rx="4"/>
 <text class="fd-callout-label" x="86.0" y="238.0" font-size="13" font-weight="600" text-anchor="middle">18392</text>
-<text class="fd-callout-label" x="274.0" y="238.0" font-size="13" font-weight="600" text-anchor="middle">18407</text>
+<text class="fd-callout-label" x="274.0" y="238.0" font-size="13" font-weight="600" text-anchor="middle">27415</text>
 <rect class="fd-extra-box" x="16" y="254" width="140" height="30" rx="4"/>
 <rect class="fd-field-box" x="204" y="254" width="140" height="30" rx="4"/>
 <text class="fd-callout-label" x="86.0" y="274.0" font-size="13" font-weight="600" text-anchor="middle">,&quot;user&quot;:&quot;</text>
@@ -60,7 +60,7 @@
 <text class="fd-callout-label" x="86.0" y="400.0" font-size="13" font-weight="600" text-anchor="middle">good morning&quot;</text>
 <text class="fd-callout-label" x="274.0" y="400.0" font-size="13" font-weight="600" text-anchor="middle">new phone!&quot;</text>
 <rect class="fd-field-box" x="16" y="430" width="22" height="14" rx="4"/>
-<text class="fd-callout-label" x="46.0" y="442.0" font-size="13" font-weight="600" text-anchor="start">a reference of about 3 bytes</text>
+<text class="fd-callout-label" x="46.0" y="442.0" font-size="13" font-weight="600" text-anchor="start">sent as a ~3-byte reference</text>
 <rect class="fd-extra-box" x="16" y="454" width="22" height="14" rx="4"/>
 <text class="fd-callout-label" x="46.0" y="466.0" font-size="13" font-weight="600" text-anchor="start">sent as-is</text>
 </svg>

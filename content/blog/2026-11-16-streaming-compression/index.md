@@ -16,7 +16,7 @@ A Valkey primary sends every write it receives to each of its replicas.
 When a replica runs in another availability zone or region, cloud providers usually charge for every byte of that traffic.
 
 Valkey has compressed snapshots by default for years, with `rdbcompression yes`, but that only covers part of replication traffic.
-It compresses one value at a time, and the stream of writes is not compressed at all.
+It compresses snapshots one value at a time, and steady-state replication, the ongoing stream of writes, is not compressed at all.
 
 Valkey 9.2 adds `repl-compression`, which uses LZ4, a fast general-purpose compressor, on everything the primary sends a replica.
 `rdbcompression` can now use LZ4 for snapshots on disk too.
@@ -33,7 +33,7 @@ This is a partial sync.
 
 <picture>
 <source media="(max-width: 639px), (min-width: 768px) and (max-width: 989px)" srcset="images/replication-backlog-mobile.svg">
-<img src="images/replication-backlog.svg" alt="Replication backlog and two reconnecting replicas">
+<img src="images/replication-backlog.svg" alt="A replica that stopped inside the backlog gets a partial sync; one that stopped before it gets a full sync">
 </picture>
 
 If the replica was away long enough for its offset to fall out of the backlog, the primary has to start over.
