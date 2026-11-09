@@ -1,12 +1,8 @@
-// Community landing page (templates/community-home.html)
-// The "Ways to contribute" tiles reuse the shared .community-card styles
-// from _valkey.scss. Everything here is specific to the landing page:
-// participant logo strip, photo hero, connect bar, and photo carousel.
-
-$community-purple-900: #2d2471;
-$community-purple-800: #35247e;
-$community-blue-500: #5b6fff;
-$community-ink: #072150;
+// Community landing page (templates/community-home.html): participant logo
+// strip, photo hero, connect bar, and photo carousel. The "Ways to
+// contribute" tiles reuse the shared .community-card styles from
+// _valkey.scss. The palette and the card surface come from _cards.scss,
+// whose pages reuse the canvas, section head, kicker and logo strip below.
 
 // Shared pieces --------------------------------------------------------------
 
@@ -19,10 +15,11 @@ $community-ink: #072150;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   text-decoration: none;
+}
 
-  &:hover {
-    color: $community-purple-800;
-  }
+// Only labels that are links, such as "Valkey participants", change colour.
+a.community-home-kicker:hover {
+  color: $community-purple-800;
 }
 
 .community-home-btn {
@@ -237,7 +234,7 @@ $community-ink: #072150;
   // gutter is the single, page-wide rule so everything lines up with the
   // header/footer content column (--max-width).
   padding: 0.1px 2rem;
-  background: #f8faff;
+  background: #e8ebf5;
 }
 
 // Connect with us -----------------------------------------------------------
@@ -249,9 +246,7 @@ $community-ink: #072150;
   max-width: var(--max-width);
   margin: 3.4rem auto;
   padding: 2.7rem 3.4rem;
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 10px 28px rgba(60, 60, 130, 0.08);
+  @include card;
 
   @include respond-min(900px) {
     flex-direction: row;
