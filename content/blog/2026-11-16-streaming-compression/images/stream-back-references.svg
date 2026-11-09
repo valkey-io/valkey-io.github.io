@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 818 316" width="818" height="316">
+<style>
+  .fd-background { fill: #ffffff; fill: var(--fd-background, #ffffff); }
+  .fd-title { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-field-box { fill: #6983ff; fill: var(--fd-field-fill, #6983ff); stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; }
+  .fd-extra-box { fill: #6983ff; fill: var(--fd-field-fill, #6983ff); fill-opacity: 0.18; stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; }
+  .fd-padding-box { fill: url(#fd-hatch); stroke: #b9c2cc; stroke: var(--fd-padding-stroke, #b9c2cc); stroke-width: 1; }
+  .fd-field-label { fill: #ffffff; fill: var(--fd-field-text, #ffffff); }
+  .fd-callout-label { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-muted { fill: #666666; fill: var(--fd-muted, #666666); }
+  .fd-leader-line { stroke: #666666; stroke: var(--fd-muted, #666666); stroke-width: 1; fill: none; }
+  .fd-pointer-arrow { stroke: #002a3a; stroke: var(--fd-text, #002a3a); stroke-width: 1.5; fill: none; }
+  .fd-pointer-head { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-hatch-background { fill: #f5f7f7; fill: var(--fd-padding-fill, #f5f7f7); }
+  .fd-hatch-lines { stroke: #b9c2cc; stroke: var(--fd-padding-stroke, #b9c2cc); stroke-width: 1.5; }
+  text { font-family: 'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace; font-family: var(--fd-font, 'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace); }
+</style>
+<rect class="fd-background" width="100%" height="100%" rx="8"/>
+<defs><pattern id="fd-hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect class="fd-hatch-background" width="6" height="6"/><line class="fd-hatch-lines" x1="0" y1="0" x2="0" y2="6"/></pattern><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="fd-pointer-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<text class="fd-title" x="24.0" y="38.0" font-size="17" font-weight="700" text-anchor="start">One LZ4 stream: a later post is mostly pointers to an earlier one</text>
+<rect class="fd-extra-box" x="24.0" y="74" width="56.1" height="40" rx="4"/>
+<text class="fd-callout-label" x="52.1" y="100.0" font-size="14" font-weight="600" text-anchor="middle">post:</text>
+<rect class="fd-extra-box" x="80.2" y="74" width="22.4" height="40" rx="4"/>
+<text class="fd-callout-label" x="91.4" y="100.0" font-size="14" font-weight="600" text-anchor="middle">1</text>
+<rect class="fd-extra-box" x="116.6" y="74" width="64.6" height="40" rx="4"/>
+<text class="fd-callout-label" x="148.9" y="100.0" font-size="14" font-weight="600" text-anchor="middle">{&quot;id&quot;:</text>
+<rect class="fd-extra-box" x="181.2" y="74" width="56.1" height="40" rx="4"/>
+<text class="fd-callout-label" x="209.2" y="100.0" font-size="14" font-weight="600" text-anchor="middle">18392</text>
+<rect class="fd-extra-box" x="237.3" y="74" width="89.9" height="40" rx="4"/>
+<text class="fd-callout-label" x="282.2" y="100.0" font-size="14" font-weight="600" text-anchor="middle">,&quot;user&quot;:&quot;</text>
+<rect class="fd-extra-box" x="327.2" y="74" width="47.7" height="40" rx="4"/>
+<text class="fd-callout-label" x="351.0" y="100.0" font-size="14" font-weight="600" text-anchor="middle">maya</text>
+<rect class="fd-extra-box" x="374.9" y="74" width="199.5" height="40" rx="4"/>
+<text class="fd-callout-label" x="474.6" y="100.0" font-size="14" font-weight="600" text-anchor="middle">&quot;,&quot;lang&quot;:&quot;en&quot;,&quot;text&quot;:&quot;</text>
+<rect class="fd-extra-box" x="574.4" y="74" width="123.6" height="40" rx="4"/>
+<text class="fd-callout-label" x="636.2" y="100.0" font-size="14" font-weight="600" text-anchor="middle">good morning&quot;</text>
+<rect class="fd-field-box" x="24.0" y="200" width="56.1" height="40" rx="4"/>
+<text class="fd-field-label" x="52.1" y="226.0" font-size="14" font-weight="700" text-anchor="middle">post:</text>
+<path class="fd-pointer-arrow" d="M 52.1 198 C 52.1 160, 52.1 154, 52.1 117" marker-end="url(#head)"/>
+<text class="fd-muted" x="58.1" y="161.0" font-size="13" font-weight="600" text-anchor="start">5 bytes</text>
+<rect class="fd-extra-box" x="80.2" y="200" width="22.4" height="40" rx="4"/>
+<text class="fd-callout-label" x="91.4" y="226.0" font-size="14" font-weight="600" text-anchor="middle">2</text>
+<rect class="fd-field-box" x="116.6" y="200" width="64.6" height="40" rx="4"/>
+<text class="fd-field-label" x="148.9" y="226.0" font-size="14" font-weight="700" text-anchor="middle">{&quot;id&quot;:</text>
+<path class="fd-pointer-arrow" d="M 148.9 198 C 148.9 160, 148.9 154, 148.9 117" marker-end="url(#head)"/>
+<text class="fd-muted" x="154.9" y="161.0" font-size="13" font-weight="600" text-anchor="start">6 bytes</text>
+<rect class="fd-extra-box" x="181.2" y="200" width="56.1" height="40" rx="4"/>
+<text class="fd-callout-label" x="209.2" y="226.0" font-size="14" font-weight="600" text-anchor="middle">18407</text>
+<rect class="fd-field-box" x="237.3" y="200" width="89.9" height="40" rx="4"/>
+<text class="fd-field-label" x="282.2" y="226.0" font-size="14" font-weight="700" text-anchor="middle">,&quot;user&quot;:&quot;</text>
+<path class="fd-pointer-arrow" d="M 282.2 198 C 282.2 160, 282.2 154, 282.2 117" marker-end="url(#head)"/>
+<text class="fd-muted" x="288.2" y="161.0" font-size="13" font-weight="600" text-anchor="start">9 bytes</text>
+<rect class="fd-extra-box" x="327.2" y="200" width="39.3" height="40" rx="4"/>
+<text class="fd-callout-label" x="346.8" y="226.0" font-size="14" font-weight="600" text-anchor="middle">sam</text>
+<rect class="fd-field-box" x="366.5" y="200" width="199.5" height="40" rx="4"/>
+<text class="fd-field-label" x="466.2" y="226.0" font-size="14" font-weight="700" text-anchor="middle">&quot;,&quot;lang&quot;:&quot;en&quot;,&quot;text&quot;:&quot;</text>
+<path class="fd-pointer-arrow" d="M 466.2 198 C 466.2 160, 474.6 154, 474.6 117" marker-end="url(#head)"/>
+<text class="fd-muted" x="476.4" y="161.0" font-size="13" font-weight="600" text-anchor="start">22 bytes</text>
+<rect class="fd-extra-box" x="565.9" y="200" width="106.7" height="40" rx="4"/>
+<text class="fd-callout-label" x="619.3" y="226.0" font-size="14" font-weight="600" text-anchor="middle">new phone!&quot;</text>
+<rect class="fd-field-box" x="24" y="268" width="22" height="14" rx="3"/>
+<text class="fd-callout-label" x="54.0" y="280.0" font-size="14" font-weight="600" text-anchor="start">sent as a reference of about 3 bytes to earlier data</text>
+<rect class="fd-extra-box" x="24" y="292" width="22" height="14" rx="3"/>
+<text class="fd-callout-label" x="54.0" y="304.0" font-size="14" font-weight="600" text-anchor="start">sent as-is</text>
+</svg>

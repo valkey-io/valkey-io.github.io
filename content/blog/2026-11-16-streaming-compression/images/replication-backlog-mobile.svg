@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 286" width="360" height="286">
+<style>
+  .fd-background { fill: #ffffff; fill: var(--fd-background, #ffffff); }
+  .fd-title { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-field-box { fill: #6983ff; fill: var(--fd-field-fill, #6983ff); stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; }
+  .fd-extra-box { fill: #6983ff; fill: var(--fd-field-fill, #6983ff); fill-opacity: 0.18; stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; }
+  .fd-padding-box { fill: url(#fd-hatch); stroke: #b9c2cc; stroke: var(--fd-padding-stroke, #b9c2cc); stroke-width: 1; }
+  .fd-field-label { fill: #ffffff; fill: var(--fd-field-text, #ffffff); }
+  .fd-callout-label { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-muted { fill: #666666; fill: var(--fd-muted, #666666); }
+  .fd-leader-line { stroke: #666666; stroke: var(--fd-muted, #666666); stroke-width: 1; fill: none; }
+  .fd-pointer-arrow { stroke: #002a3a; stroke: var(--fd-text, #002a3a); stroke-width: 1.5; fill: none; }
+  .fd-pointer-head { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-hatch-background { fill: #f5f7f7; fill: var(--fd-padding-fill, #f5f7f7); }
+  .fd-hatch-lines { stroke: #b9c2cc; stroke: var(--fd-padding-stroke, #b9c2cc); stroke-width: 1.5; }
+  text { font-family: 'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace; font-family: var(--fd-font, 'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace); }
+</style>
+<rect class="fd-background" width="100%" height="100%" rx="8"/>
+<defs><pattern id="fd-hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect class="fd-hatch-background" width="6" height="6"/><line class="fd-hatch-lines" x1="0" y1="0" x2="0" y2="6"/></pattern><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="fd-pointer-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<text class="fd-title" x="16.0" y="30.0" font-size="16" font-weight="700" text-anchor="start">The backlog only remembers</text>
+<text class="fd-title" x="16.0" y="52.0" font-size="16" font-weight="700" text-anchor="start">the most recent writes</text>
+<rect class="fd-padding-box" x="16" y="116" width="154" height="40" rx="4"/>
+<rect class="fd-field-box" x="170" y="116" width="174" height="40" rx="4"/>
+<text class="fd-muted" x="93.0" y="141.0" font-size="13" font-weight="600" text-anchor="middle">discarded</text>
+<text class="fd-field-label" x="257.0" y="141.0" font-size="14" font-weight="700" text-anchor="middle">backlog</text>
+<text class="fd-callout-label" x="80.0" y="88.0" font-size="13" font-weight="600" text-anchor="middle">replica 2</text>
+<line class="fd-pointer-arrow" x1="80" y1="94" x2="80" y2="114" marker-end="url(#head)"/>
+<text class="fd-callout-label" x="236.0" y="88.0" font-size="13" font-weight="600" text-anchor="middle">replica 1</text>
+<line class="fd-pointer-arrow" x1="236" y1="94" x2="236" y2="114" marker-end="url(#head)"/>
+<text class="fd-callout-label" x="344.0" y="88.0" font-size="13" font-weight="600" text-anchor="end">primary</text>
+<line class="fd-pointer-arrow" x1="344" y1="94" x2="344" y2="114" marker-end="url(#head)"/>
+<path class="fd-leader-line" d="M 236 166 v 8 H 344 v -8"/>
+<text class="fd-callout-label" x="344.0" y="196.0" font-size="13" font-weight="600" text-anchor="end">replica 1: send</text>
+<text class="fd-callout-label" x="344.0" y="214.0" font-size="13" font-weight="600" text-anchor="end">only this gap</text>
+<text class="fd-callout-label" x="16.0" y="196.0" font-size="13" font-weight="600" text-anchor="start">replica 2: its offset</text>
+<text class="fd-callout-label" x="16.0" y="214.0" font-size="13" font-weight="600" text-anchor="start">is gone, so send</text>
+<text class="fd-callout-label" x="16.0" y="232.0" font-size="13" font-weight="600" text-anchor="start">the whole dataset</text>
+<line class="fd-leader-line" x1="16" y1="268" x2="344" y2="268" marker-end="url(#head)"/>
+<text class="fd-muted" x="344.0" y="260.0" font-size="12" font-weight="600" text-anchor="end">replication offset</text>
+</svg>

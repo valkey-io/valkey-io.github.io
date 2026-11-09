@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 402" width="360" height="402">
+<style>
+  .fd-background { fill: #ffffff; fill: var(--fd-background, #ffffff); }
+  .fd-title { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-field-box { fill: #6983ff; fill: var(--fd-field-fill, #6983ff); stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; }
+  .fd-extra-box { fill: #6983ff; fill: var(--fd-field-fill, #6983ff); fill-opacity: 0.18; stroke: #30176e; stroke: var(--fd-field-border, #30176e); stroke-width: 1; }
+  .fd-padding-box { fill: url(#fd-hatch); stroke: #b9c2cc; stroke: var(--fd-padding-stroke, #b9c2cc); stroke-width: 1; }
+  .fd-field-label { fill: #ffffff; fill: var(--fd-field-text, #ffffff); }
+  .fd-callout-label { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-muted { fill: #666666; fill: var(--fd-muted, #666666); }
+  .fd-leader-line { stroke: #666666; stroke: var(--fd-muted, #666666); stroke-width: 1; fill: none; }
+  .fd-pointer-arrow { stroke: #002a3a; stroke: var(--fd-text, #002a3a); stroke-width: 1.5; fill: none; }
+  .fd-pointer-head { fill: #002a3a; fill: var(--fd-text, #002a3a); }
+  .fd-hatch-background { fill: #f5f7f7; fill: var(--fd-padding-fill, #f5f7f7); }
+  .fd-hatch-lines { stroke: #b9c2cc; stroke: var(--fd-padding-stroke, #b9c2cc); stroke-width: 1.5; }
+  text { font-family: 'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace; font-family: var(--fd-font, 'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace); }
+</style>
+<rect class="fd-background" width="100%" height="100%" rx="8"/>
+<defs><pattern id="fd-hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect class="fd-hatch-background" width="6" height="6"/><line class="fd-hatch-lines" x1="0" y1="0" x2="0" y2="6"/></pattern><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="fd-pointer-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<text class="fd-title" x="16.0" y="32.0" font-size="16" font-weight="700" text-anchor="start">Where each setting applies</text>
+<rect x="16" y="52" width="328" height="136" rx="8" fill="none" class="fd-leader-line" stroke-dasharray="5 4"/>
+<rect x="16" y="290" width="328" height="96" rx="8" fill="none" class="fd-leader-line" stroke-dasharray="5 4"/>
+<text class="fd-muted" x="28.0" y="72.0" font-size="13" font-weight="700" text-anchor="start">zone A</text>
+<text class="fd-muted" x="28.0" y="310.0" font-size="13" font-weight="700" text-anchor="start">zone B</text>
+<rect class="fd-field-box" x="32" y="88" width="120" height="48" rx="4"/>
+<text class="fd-field-label" x="92.0" y="117.0" font-size="15" font-weight="700" text-anchor="middle">primary</text>
+<rect class="fd-extra-box" x="208" y="88" width="120" height="48" rx="4"/>
+<text class="fd-callout-label" x="268.0" y="108.0" font-size="14" font-weight="600" text-anchor="middle">snapshot</text>
+<text class="fd-callout-label" x="268.0" y="126.0" font-size="14" font-weight="600" text-anchor="middle">on disk</text>
+<line class="fd-pointer-arrow" x1="154" y1="112" x2="206" y2="112" marker-end="url(#head)"/>
+<text class="fd-callout-label" x="268.0" y="158.0" font-size="13" font-weight="600" text-anchor="middle">rdbcompression</text>
+<rect class="fd-field-box" x="32" y="322" width="120" height="48" rx="4"/>
+<text class="fd-field-label" x="92.0" y="351.0" font-size="15" font-weight="700" text-anchor="middle">replica</text>
+<line class="fd-pointer-arrow" x1="92" y1="138" x2="92" y2="320" marker-end="url(#head)"/>
+<text class="fd-callout-label" x="108.0" y="222.0" font-size="13" font-weight="600" text-anchor="start">full sync, then</text>
+<text class="fd-callout-label" x="108.0" y="240.0" font-size="13" font-weight="600" text-anchor="start">the write stream</text>
+<text class="fd-muted" x="108.0" y="264.0" font-size="13" font-weight="600" text-anchor="start">both: repl-compression</text>
+</svg>
