@@ -136,7 +136,7 @@ If replication runs over TLS, you still need this: TLS 1.3 has no compression, a
 
 Start with LZ4.
 Zstandard compresses harder: in a [separate test](https://github.com/valkey-io/valkey/pull/3798) with 1 million tweets, its snapshot was 36% smaller than LZ4's and loaded a little faster, but took twice as long to save.
-A full sync streams the same snapshot, so expect a similar size saving there.
+A full sync streams the same snapshot, so it shrinks by about the same amount.
 Zstandard needs a build compiled with `BUILD_ZSTD=yes`.
 
 Compressing snapshots on disk is a separate, optional step:
