@@ -3,7 +3,6 @@ title = "Long Story Short: Compressing Replication and Snapshots in Valkey 9.2"
 date = 2026-11-16
 description = "Valkey 9.2 can compress replication traffic and RDB snapshots with LZ4 or Zstandard. On a cache of 3 million JSON posts, LZ4 halved the write stream sent to a replica, and full syncs took 36% less time than with the default."
 authors = ["sarthakaggarwal97"]
-draft = true
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
