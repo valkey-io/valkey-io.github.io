@@ -33,7 +33,7 @@ This is a partial sync.
 
 <picture>
 <source media="(max-width: 639px), (min-width: 768px) and (max-width: 989px)" srcset="images/replication-backlog-mobile.svg">
-<img src="images/replication-backlog.svg" alt="A replica that stopped inside the backlog gets a partial sync; one that stopped before it gets a full sync">
+<img src="images/replication-backlog.svg" alt="Writes 7 to 12 are in the backlog: a replica that has up to write 9 gets a partial sync, and one that has up to write 4 gets a full sync">
 </picture>
 
 If the replica was away long enough for its offset to fall out of the backlog, the primary has to start over.
