@@ -299,7 +299,8 @@ p {
     display: flex;
   }
 
-  &:hover {
+  &:hover,
+  &:focus-within {
     > span {
       color: #04202a;
     }
@@ -319,6 +320,21 @@ p {
 
       @include respond-min(1024px) {
         text-decoration: none;
+      }
+    }
+
+    // Desktop only: below 1024px the submenu is always listed under its link.
+    @include respond-min(1024px) {
+      &::after {
+        content: '';
+        display: inline-block;
+        width: 0.45em;
+        height: 0.45em;
+        margin-left: 0.5em;
+        border-right: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+        vertical-align: 0.25em;
+        transform: rotate(45deg);
       }
     }
   }
@@ -1726,25 +1742,25 @@ html.banner-hidden .banner {
 .hero-section {
   position: relative;
   background-size: cover;
-  background-position: right center;
+  // Only the photo layer moves; the gradients fill the box either way.
+  background-position: center, center, 65% center;
   background-color: #30186e;
-  background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0.15), rgba(48, 24, 110, 0.75)), url('/img/hero-bg.webp');
+  // The radial layer dims the photo behind the headline without hiding it.
+  background-image:
+    radial-gradient(ellipse 50% 60% at center, rgba(28, 18, 58, 0.6), rgba(28, 18, 58, 0)),
+    linear-gradient(to bottom, rgba(48, 24, 110, 0.15), rgba(48, 24, 110, 0.75)),
+    url('/img/hero-bg.webp');
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 8rem 2rem;
+  padding: 3.5rem 2rem;
 
   &::after {
     content: "";
     position: absolute; inset: 0;
     background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0), rgba(48, 24, 110, 100));
     pointer-events: none;
-  }
-
-  @include respond-min(768px) {
-    padding: 10rem 2rem;
-
   }
 }
 
@@ -1760,7 +1776,6 @@ html.banner-hidden .banner {
   font-weight: 700;
   margin: 0;
   line-height: 1;
-  letter-spacing: 2px;
   color: white;
 
   @include respond-min(768px) {
@@ -1770,7 +1785,7 @@ html.banner-hidden .banner {
 
 .hero-subtitle {
     font-size: 1.8rem;
-    font-weight: 700;
+    font-weight: 400;
     max-width: 800px;
     margin: 2rem auto 4rem;
     line-height: 1.6;
@@ -1841,193 +1856,34 @@ html.banner-hidden .banner {
   }
 }
 
-// Documentation Section Styles
-.documentation-section {
-  padding: 2rem 2rem 4rem;
+// The install command under the buttons. .copy-code is the light block from the
+// release pages, so it is recoloured here to sit on the dark hero, and it wraps
+// at spaces rather than scrolling on narrow screens.
+.hero-content .copy-code {
+  display: inline-flex;
+  max-width: 100%;
+  margin: 3rem 0 0;
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(16, 8, 48, 0.5);
+  text-align: left;
 
-  // Continues the .whats-new-section gradient, finishing on the #6983ff that
-  // .homepage-participants-section starts from.
-  background: linear-gradient(rgb(81, 85, 193), #6983FF);
-  position: relative;
-  text-align: center;
-  color: white;
-
-  @include respond-min(768px) {
-    padding-bottom: 8rem;
+  code {
+    color: #fff;
+    white-space: pre-wrap;
   }
 
-  .col {
-    max-width: 890px;
-    margin: 0 auto;
-  }
+  .copy-code-button {
+    border-left-color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.85);
 
-  a {
-    color: white;
-    text-decoration: underline;
-  }
-
-  h2 {
-    width: 100%;
-    line-height: 1.2;
-    font-size: 3.75rem;
-    text-align: center;
-    font-weight: 700;
-    margin-bottom: 1.75rem;
-
-    @include respond-min(768px) {
-      font-size: 6rem;
-    }
-  }
-
-  p {
-    margin-bottom: 2rem;
-  }
-}
-
-.documentation-card-grid {
-  margin-top: 4rem;
-
-  @media (max-width: 1100px) {
-    .col {
-      flex: 1 1 50%;
-      margin-bottom: 3rem;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .col {
-      flex: 1 1 100%;
-    }
-  }
-}
-
-.documentation-card {
-  display: flex;
-  flex-direction: column;
-
-  // Spaces title from description, and keeps the button off the description
-  // even when `margin-top: auto` has no slack left to push it down.
-  gap: 1.5rem;
-  padding: 4rem;
-  border-radius: 20px;
-  color: white;
-  background: #2d2471;
-
-  @include respond-min(768px) {
-    min-height: 100%;
-  }
-
-  h3 {
-    font-weight: 700;
-    font-size: 2rem;
-    line-height: 1.2;
-    text-align: center;
-    color: white;
-    margin: 0 0 .5rem;
-  }
-
-  p {
-    text-align: left;
-    margin: 0;
-  }
-
-  ul {
-    text-align: left;
-    padding: 0 0 0 18px;
-    margin: 10px 0 20px;
-  }
-
-  a.btn {
-    color: white;
-    border-radius: 24px;
-    border: 1px solid currentcolor;
-    padding: 1rem;
-    margin-top: auto;
-    text-decoration: none;
-  }
-}
-
-// What's New Section Styles
-.whats-new-section {
-  padding-bottom: 4rem;
-
-  // Stops short of the full #6983ff so the section doesn't end glaring bright.
-  // .documentation-section picks the gradient up from here.
-  background-image: linear-gradient(rgb(48, 23, 110), rgb(81, 85, 193));
-
-  @include respond-min(768px) {
-    padding: 0 0 4rem;
-  }
-
-  h2 {
-    width: 100%;
-    line-height: 1.2;
-    font-size: 3.75rem;
-    color: white;
-    text-align: center;
-    font-weight: 700;
-    margin: 0 0 1.75rem;
-
-    @include respond-min(768px) {
-      font-size: 6rem;
-    }
-  }
-}
-
-.whats-new-inner {
-  display: flex;
-  width: 100%;
-  padding: 2rem;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.2);
-
-  @include respond-min(768px) {
-    padding: 2.5rem;
-  }
-
-  h3 {
-    color: white;
-    font-size: 2.75rem;
-    font-weight: 700;
-    width: 100%;
-    margin: 0 0 1rem;
-  }
-
-  .inner-card {
-    background: white;
-    padding: 3rem;
-    border-radius: 10px;
-    margin: 0 0 3rem;
-
-    // The panel's own padding closes out the column; a trailing card margin
-    // would stack on top of it.
-    &:last-child {
-      margin-bottom: 0;
+    &:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
     }
 
-    h4 {
-      margin: 0 0 1rem;
+    &.copied {
+      color: #8ce99a;
     }
-
-    hr {
-      margin: 2rem 0;
-    }
-  }
-}
-
-.release-headline {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 1rem;
-  margin: 0 0 1.5rem;
-  font-size: 2rem;
-  font-weight: 700;
-
-  small {
-    font-size: 1.3rem;
-    font-weight: 400;
-    color: #4a5568;
   }
 }
 
@@ -2400,378 +2256,6 @@ blockquote {
         color: #2054B2;
         text-decoration: underline;
         font-weight: 600;
-      }
-    }
-  }
-}
-
-// Homepage blog cards: text-only cards stacked vertically, matching the release
-// cards in the other column.
-.homepage-blog-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin-bottom: 3rem;
-}
-
-// The card is itself an anchor, so it takes its colour from the global
-// `a, a:visited` rule. That is the same rule the release links next to it use,
-// which is the point: the two white cards in this panel cannot drift apart.
-// Do not set a colour here or on the title.
-.homepage-blog-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 2rem 2.5rem;
-  transition: box-shadow 0.2s ease;
-  display: block;
-  text-decoration: none;
-
-  &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
-  }
-}
-
-.homepage-blog-card-title {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.8rem;
-  line-height: 1.3;
-  font-weight: 700;
-}
-
-.homepage-blog-card-meta {
-  margin: 0 0 1rem;
-  font-size: 1.3rem;
-  color: #4a5568;
-}
-
-.homepage-blog-card-description {
-  margin: 0;
-  font-size: 1.4rem;
-  line-height: 1.4;
-  color: #4a5568;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-// Sits on the heading row rather than under the cards, so the column ends on a
-// card edge instead of a stray link.
-.homepage-blog-heading {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 0 1.5rem;
-
-  h3 {
-    width: auto;
-  }
-}
-
-// `&:visited` is not redundant: the global `a:visited` is more specific than a
-// bare class, so without it the link falls back to the blue link colour.
-// Underlined rather than tinted to set it apart from the white heading: no tint
-// distinct from white keeps 4.5:1 contrast where the gradient sits on mobile.
-.homepage-blog-more {
-  &,
-  &:visited,
-  &:hover {
-    color: white;
-  }
-
-  @include sans-serif;
-  font-size: 1.4rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  text-decoration: underline;
-  white-space: nowrap;
-
-  // inline-block keeps the underline off the chevron.
-  &:after {
-    content: '›';
-    display: inline-block;
-    margin-left: 0.3em;
-    font-size: 1.2em;
-  }
-}
-
-// Responsive adjustments for homepage blog cards
-@media (max-width: 768px) {
-  .homepage-blog-card {
-    padding: 1.5rem 1.8rem;
-  }
-
-  .homepage-blog-card-title {
-    font-size: 1.6rem;
-  }
-
-  .homepage-blog-card-description {
-    font-size: 1.3rem;
-  }
-}
-
-// Homepage Participant Carousel Styles
-.homepage-participants-section {
-  background: linear-gradient(180deg, #6983FF 0%, #BCB5E7 100%);
-  padding: 8rem 0;
-  
-  .homepage-participants-container {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
-  
-  .homepage-participants-header {
-    text-align: center;
-    margin-bottom: 6rem;
-  }
-  
-  // Same scale as the "Learn more" h2 above it.
-  .homepage-participants-title {
-    color: $white;
-    font-size: 3.75rem;
-    font-weight: 700;
-    margin: 0 0 2rem 0;
-    letter-spacing: -1px;
-
-    @include respond-min(768px) {
-      font-size: 6rem;
-    }
-  }
-  
-  .homepage-participants-description {
-    color: $white;
-    font-size: 1.8rem;
-    line-height: 1.6;
-    max-width: 80rem;
-    margin: 0 auto;
-    opacity: 0.95;
-  }
-  
-  .homepage-participants-error {
-    background: $white;
-    border-radius: 2rem;
-    padding: 4rem;
-    text-align: center;
-    
-    p {
-      color: $text-light;
-      font-size: 1.6rem;
-      margin: 0;
-    }
-  }
-  
-  .homepage-participants-carousel-container {
-    background: $white;
-    border-radius: 2rem;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .homepage-participants-carousel {
-    overflow: hidden;
-    position: relative;
-    
-    .homepage-participants-track {
-      display: flex;
-      transition: transform 0.5s ease-in-out;
-      width: 100%;
-    }
-    
-    .homepage-participant-card {
-      flex: 0 0 33.33%;
-      min-width: 0;
-      min-height: 100%;
-      border-radius: 1.2rem;
-      padding: 4rem;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      
-      .homepage-participant-image-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 2rem;
-      }
-      
-      .homepage-participant-image {
-        object-fit: contain;
-        max-height: 40px;
-        margin-inline: auto;
-      }
-      
-      .homepage-participant-image-placeholder {
-        width: 6rem;
-        height: 6rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: $white;
-        font-size: 2.4rem;
-        font-weight: 700;
-        text-transform: uppercase;
-      }
-      
-      .homepage-participant-name {
-        font-size: 2rem;
-        font-weight: 700;
-        color: $text;
-        text-align: center;
-        margin: 0 0 1.2rem 0;
-        line-height: 1.3;
-      }
-      
-      .homepage-participant-offering {
-        font-size: 1.4rem;
-        line-height: 1.5;
-        color: $text-light;
-        margin: 0;
-        text-align: center;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        display: -webkit-box;
-        -webkit-line-clamp: 7;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        
-        a {
-          color: $text-link-alternate;
-          text-decoration: none;
-          transition: color 0.2s ease;
-          
-          &:hover {
-            color: $text-link-alternate-lighter;
-            text-decoration: underline;
-          }
-        }
-      }
-    }
-  }
-  
-  .homepage-participants-navigation {
-    display: flex;
-    justify-content: center;
-    margin-top: 1.25rem;
-    
-    .homepage-participants-dots {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-      
-      .homepage-participant-dot {
-        width: 0.5rem;
-        height: 0.5rem;
-        border-radius: 50%;
-        border: none;
-        background: rgba($color: #000000, $alpha: 0.25);
-        cursor: pointer;
-        transition: all 0.2s ease;
-        padding: 0;
-        
-        &:hover,
-        &:focus {
-          background: #000;
-          transform: scale(1.1);
-          outline-offset: 2px;
-        }
-        
-        &[aria-current="true"],
-        &.active {
-          background: #000;
-          transform: scale(1.2);
-        }
-      }
-    }
-  }
-}
-
-// Responsive design for homepage participant carousel
-@media (max-width: 1200px) {  
-  .homepage-participants-section {
-    .homepage-participants-carousel {
-      .homepage-participant-card {
-        flex: 0 0 50%;
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .homepage-participants-section {
-    padding: 6rem 2rem;
-    
-    .homepage-participants-container {
-      padding: 0 1.5rem;
-    }
-    
-    .homepage-participants-description {
-      font-size: 1.6rem;
-      max-width: 100%;
-    }
-    
-    .homepage-participants-carousel {
-      .homepage-participant-card {
-        flex: 0 0 100%;
-        padding: 1.8rem;
-        
-        .homepage-participant-image-container {
-          margin-bottom: 1.5rem;
-        }
-        
-        .homepage-participant-name {
-          font-size: 1.8rem;
-          margin-bottom: 1rem;
-        }
-        
-        .homepage-participant-offering {
-          font-size: 1.3rem;
-        }
-      }
-    }
-    
-    .homepage-participants-navigation {
-      margin-top: 2rem;
-      
-      .homepage-participants-dots {
-        gap: 0.75rem;
-        
-        .homepage-participant-dot {
-          width: 0.75rem;
-          height: 0.75rem;
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .homepage-participants-section {
-    .homepage-participants-carousel {
-      .homepage-participant-card {
-        padding: 1.5rem;
-      }
-    }
-    
-    .homepage-participants-title {
-      font-size: 3rem;
-    }
-    
-    .homepage-participants-description {
-      font-size: 1.5rem;
-    }
-    
-    .homepage-participants-navigation {
-      .homepage-participants-dots {
-        gap: 1rem;
-        
-        .homepage-participant-dot {
-          width: 1rem;
-          height: 1rem;
-        }
       }
     }
   }

@@ -1,0 +1,225 @@
+// Cards: white cards on a light canvas, the design /community/ introduced.
+// The homepage is built from it. The canvas (.community-home-canvas), section
+// head and label (.community-home-section-head, .community-home-kicker), and
+// the logo strip are /community/'s, in _community.scss.
+//
+// Imported before _community.scss, which takes its palette and the card
+// surface from here.
+
+$community-purple-900: #2d2471;
+$community-purple-800: #35247e;
+$community-blue-500: #5b6fff;
+$community-ink: #072150;
+
+// The white card: /community/'s Connect card and every card below. The
+// border also draws the edge in forced-colors mode, which drops the shadow.
+@mixin card {
+  border: 1px solid #d5d9e8;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 12px 32px rgba(60, 60, 130, 0.16);
+}
+
+// Homepage (templates/index.html) -------------------------------------------
+
+// Every block below the hero is a card on .community-home-canvas. Two columns
+// from 900px: the release cards stack beside the blog card, then Learn more
+// and the logo strip run full width. The 1fr row takes any height the blog
+// card has over the two release cards, and the past releases card sits at the
+// top of it, so both release cards keep their natural height.
+.homepage-grid {
+  display: grid;
+  gap: 2rem;
+  max-width: var(--max-width);
+  margin: 3.4rem auto;
+
+  @include respond-min(900px) {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr auto auto;
+    grid-template-areas:
+      "release blog"
+      "past blog"
+      "learn learn"
+      "participants participants";
+
+    .homepage-card-release { grid-area: release; }
+    .homepage-card-past { grid-area: past; align-self: start; }
+    .homepage-card-blog { grid-area: blog; }
+    .homepage-card-learn { grid-area: learn; }
+    .homepage-card-participants { grid-area: participants; }
+  }
+}
+
+// Connect's padding is too wide for a 390px screen, so cards start tighter.
+.homepage-card {
+  @include card;
+  min-width: 0;
+  padding: 2.2rem 2rem;
+
+  @include respond-min(768px) {
+    padding: 2.7rem 3.4rem;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  // Sentence-case section labels; /community/ keeps the uppercase kicker.
+  // #4a5ad8 is the hero button blue: 5.6:1 on white, where the kicker's
+  // #5b6fff is 4.1:1. 2.4rem keeps them above the cards' titles, the largest
+  // of which is 1.8rem. Balanced wrapping avoids leaving "releases" alone on
+  // a line.
+  .community-home-kicker {
+    color: #4a5ad8;
+    font-size: 2.4rem;
+    font-weight: 600;
+    letter-spacing: normal;
+    text-transform: none;
+    text-wrap: balance;
+
+    // The release card's label is a heading around a link; it looks like
+    // the "Valkey participants" link label.
+    a {
+      color: inherit;
+
+      &:hover {
+        color: $community-purple-800;
+      }
+    }
+  }
+
+  .link-readmore {
+    text-transform: none;
+    font-size: 1.4rem;
+  }
+
+  // Baseline-aligned: the label is the tallest item, so it sits at the top
+  // of the head and lines up with the labels in the other cards, and the
+  // link shares its baseline.
+  .community-home-section-head {
+    align-items: baseline;
+
+    .link-readmore {
+      margin: 0;
+    }
+  }
+}
+
+// One row per post, split by the logo strip's hairline. The title takes the
+// same ink as the latest release and Learn more titles.
+.homepage-blog-card {
+  display: block;
+  padding: 1.4rem 0;
+  border-top: 1px solid #e9ebf4;
+
+  &:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  &:hover .homepage-blog-card-title {
+    text-decoration: underline;
+  }
+}
+
+.homepage-blog-card-title {
+  margin: 0 0 0.3rem;
+  color: $community-ink;
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.homepage-blog-card-meta {
+  margin: 0 0 0.5rem;
+  color: #606985;
+  font-size: 1.3rem;
+}
+
+.homepage-blog-card-description {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: #47506b;
+  font-size: 1.4rem;
+  line-height: 1.45;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+// The kicker is the markdown heading in content/_index.md. Flex keeps the
+// inline-block kicker off the parent's line box, which would push it below
+// the kickers in the other cards.
+.homepage-learn-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  p {
+    margin: 1.2rem 0 0;
+    color: #47506b;
+    font-size: 1.6rem;
+    line-height: 1.6;
+  }
+}
+
+.homepage-learn-grid {
+  display: grid;
+  gap: 2.4rem;
+  margin-top: 2.4rem;
+
+  @include respond-min(600px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @include respond-min(1100px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.homepage-learn-item {
+  display: block;
+  padding: 1.8rem 2rem;
+  border-radius: 14px;
+  background: #f8faff;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #eef1fb;
+
+    h3 {
+      text-decoration: underline;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $community-blue-500;
+    outline-offset: 2px;
+  }
+
+  h3 {
+    margin: 0 0 0.8rem;
+    color: $community-ink;
+    font-size: 1.8rem;
+    font-weight: 700;
+
+    // Same chevron as .link-readmore. inline-block keeps the hover underline
+    // off it.
+    &::after {
+      content: '\203A';
+      display: inline-block;
+      margin-left: 0.4em;
+    }
+  }
+
+  p {
+    margin: 0;
+    color: #47506b;
+    font-size: 1.5rem;
+    line-height: 1.5;
+  }
+}

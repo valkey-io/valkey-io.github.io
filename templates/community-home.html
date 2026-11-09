@@ -9,16 +9,7 @@
 {% if participants and participants | length > 0 %}
 <section class="community-logo-band">
   <div class="community-logo-band-inner">
-    <div class="community-logo-band-head">
-      <a class="community-home-kicker" href="/participants/">Valkey participants</a>
-      <button class="community-logo-pause" type="button" id="communityLogoPause" aria-pressed="false" aria-label="Pause the scrolling participant logos">Pause</button>
-    </div>
-    <div class="community-logo-row" role="group" aria-label="Valkey participant organizations">
-      <div class="community-logo-track" id="communityLogoTrack">
-        {{< logo_set participants={participants} />}}
-        {{< logo_set participants={participants} duplicate={true} />}}
-      </div>
-    </div>
+    {{< logo_strip participants={participants} />}}
   </div>
 </section>
 {% endif %}
