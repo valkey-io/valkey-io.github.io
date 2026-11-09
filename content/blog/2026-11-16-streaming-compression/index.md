@@ -135,7 +135,9 @@ To keep the setting across restarts, add it to `valkey.conf` or run `CONFIG REWR
 If replication runs over TLS, you still need this: TLS 1.3 has no compression, and Valkey turns it off for older versions because of the [CRIME](https://en.wikipedia.org/wiki/CRIME) attack.
 
 Start with LZ4.
-Zstandard compresses further at a higher CPU cost, which these benchmarks did not measure, and it needs a build compiled with `BUILD_ZSTD=yes`.
+Zstandard compresses harder: in a [separate test](https://github.com/valkey-io/valkey/pull/3798) with 1 million tweets, its snapshot was 36% smaller than LZ4's and loaded a little faster, but took twice as long to save.
+A full sync streams the same snapshot, so expect a similar size saving there.
+Zstandard needs a build compiled with `BUILD_ZSTD=yes`.
 
 Compressing snapshots on disk is a separate, optional step:
 
