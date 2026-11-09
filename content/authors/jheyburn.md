@@ -5,4 +5,4 @@ extra:
     github: jdheyburn
 ---
 
-Joe is a technical lead across In-Memory Databases and Observability teams at Braze, during a pivotal period of high growth for the company. Managing databases such as Valkey on Kubernetes, unlocking its performance to allow it to scale with Braze, while creating tooling to aid in provisioning and diagnosis of issues.
+Joe is a technical lead for In-Memory Databases and Observability at Braze, scaling Valkey on Kubernetes and building tooling for provisioning and diagnostics. As a maintainer of the open-source Valkey Operator, he helps shape the project and feeds production experience back into the community.
