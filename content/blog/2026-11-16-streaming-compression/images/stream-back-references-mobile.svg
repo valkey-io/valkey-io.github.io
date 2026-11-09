@@ -17,7 +17,7 @@
 </style>
 <rect class="fd-background" width="100%" height="100%" rx="8"/>
 <defs><pattern id="fd-hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect class="fd-hatch-background" width="6" height="6"/><line class="fd-hatch-lines" x1="0" y1="0" x2="0" y2="6"/></pattern><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="fd-pointer-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
-<text class="fd-title" x="16.0" y="30.0" font-size="15" font-weight="700" text-anchor="start">One LZ4 stream: a later post is</text>
+<text class="fd-title" x="16.0" y="30.0" font-size="15" font-weight="700" text-anchor="start">With LZ4, a later post is</text>
 <text class="fd-title" x="16.0" y="52.0" font-size="15" font-weight="700" text-anchor="start">mostly references to an earlier one</text>
 <text class="fd-muted" x="86.0" y="86.0" font-size="13" font-weight="700" text-anchor="middle">earlier post</text>
 <text class="fd-muted" x="274.0" y="86.0" font-size="13" font-weight="700" text-anchor="middle">later post</text>
