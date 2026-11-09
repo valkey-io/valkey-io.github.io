@@ -39,5 +39,5 @@
 <rect class="fd-extra-box" x="600" y="174" width="194" height="56" rx="4"/>
 <text class="fd-callout-label" x="697.0" y="196.0" font-size="14" font-weight="700" text-anchor="middle">replica 2</text>
 <text class="fd-muted" x="697.0" y="217.0" font-size="13" font-weight="600" text-anchor="middle">decompress, apply</text>
-<text class="fd-muted" x="541.0" y="100.0" font-size="13" font-weight="600" text-anchor="middle">compressed</text>
+<text class="fd-muted" x="541.0" y="160.0" font-size="13" font-weight="600" text-anchor="middle">compressed</text>
 </svg>
