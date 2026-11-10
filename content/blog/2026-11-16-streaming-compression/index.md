@@ -104,7 +104,7 @@ OK
 
 The primary compresses only for replicas that have the setting turned on too, so replicas on older versions keep working uncompressed.
 On a running server, changing the setting reconnects replicas one at a time, after any full sync in progress finishes.
-Each one tries a partial sync before falling back to a full one.
+Each one catches up from where it left off, and needs a full sync only if it has fallen too far behind.
 
 On the primary, `INFO replication` appends three fields to the line for each compressed replica (`slave0:`, `slave1:`, and so on):
 
