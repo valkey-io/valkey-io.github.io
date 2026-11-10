@@ -15,17 +15,16 @@ featured_image = "/assets/media/featured/streaming-compression.webp"
 A Valkey primary sends every write it receives to each of its replicas.
 When a replica runs in another availability zone or region, most cloud providers charge for every byte of that traffic.
 
-Valkey has compressed snapshots by default for years, but that only covers part of replication traffic.
-It works one value at a time, and steady-state replication, the ongoing stream of writes, is not compressed at all.
+Valkey has compressed snapshots by default for years, but never the stream of writes a replica receives after its first copy of the data.
 
-Valkey 9.2 can compress everything the primary sends a replica with LZ4, a fast general-purpose compressor, and use LZ4 for snapshots on disk too.
+Valkey 9.2 can use LZ4, a fast general-purpose compressor, on everything the primary sends a replica and on snapshots on disk.
 
 ## How a replica keeps up
 
 A replica gets its data in two parts.
-When it first connects, the primary sends a full sync: a snapshot of the whole dataset in RDB format, the same format as snapshot files on disk.
+When it first connects, the primary sends a full sync: a snapshot of the whole dataset in RDB format.
 After that, the primary streams each write to the replica as it happens.
-The primary also saves those snapshots to its own disk:
+The primary also saves snapshots in the same format to its own disk:
 
 <picture>
 <source media="(max-width: 639px), (min-width: 768px) and (max-width: 989px)" srcset="images/where-compression-applies-mobile.svg">
@@ -34,7 +33,7 @@ The primary also saves those snapshots to its own disk:
 
 ## Compressing the stream instead of each value
 
-By default, Valkey runs a compressor called LZF over each string longer than 20 bytes.
+When it writes a snapshot, Valkey by default runs a compressor called LZF over each string longer than 20 bytes.
 LZF finds repeated bytes only inside the string it is compressing, so it never sees the repetition between values.
 If a social app caches its posts as JSON documents, every post has the same field names, and LZF writes `"lang":"en","text":"` out in full for each one.
 The same is true of sessions, user profiles, product records, or any values that share a structure.
@@ -61,13 +60,14 @@ Roshan Khatri [measured one](https://github.com/valkey-io/valkey/pull/4075#issue
 | Whole-stream LZ4 | 470 MB | 5.6 s |
 
 The default was the slowest of the three: compressing each value with LZF took longer than sending everything uncompressed.
-LZ4 sent 38% fewer bytes than the default in 36% less time, and half the bytes of no compression in about the same time.
+Compared with the default, LZ4 sent 38% fewer bytes and finished 36% sooner.
+Compared with no compression, it sent half the bytes in about the same time.
 The primary and replica were `r7g.4xlarge` instances in different availability zones, so every byte in the table crossed a zone boundary.
 
 ## Every write after that
 
 After the full sync, the stream of writes never stops, and before Valkey 9.2 every byte of it went out uncompressed.
-Now the primary keeps a compressor open for each replica for as long as it stays connected, so each write can point back to the writes before it.
+In Valkey 9.2, the primary keeps one compressor running per replica for the whole connection, so each write can refer back to earlier ones.
 It sends whatever is ready right away, so writes never wait for a batch to fill.
 Each replica's compressor reads from the primary's buffer of recent writes, the replication backlog, which stays uncompressed:
 
@@ -89,7 +89,7 @@ On the same dataset, the files matched the full-sync sizes above (470 MB with LZ
 | Per-value LZF (the default) | 4.9 s | 9.4 s |
 | Whole-stream LZ4 | 3.3 s | 6.2 s |
 
-The LZ4 file was the fastest to load, and it saved faster than with LZF.
+The LZ4 file was the fastest to load, and saved faster than the LZF file.
 
 ## Turning it on
 
@@ -101,7 +101,7 @@ Run this on the primary, then on each replica:
 OK
 ```
 
-Nothing is compressed on the wire until the replica opts in, and replicas on older versions stay uncompressed.
+The primary compresses only for replicas that have the setting turned on too, so replicas on older versions keep working uncompressed.
 On a running server, changing the setting reconnects replicas one at a time, after any full sync in progress finishes.
 Each one tries a partial sync before falling back to a full one.
 
@@ -115,7 +115,7 @@ On the primary, `INFO replication` appends three fields to the line for each com
 
 Divide `repl_compressed_bytes` by `repl_uncompressed_bytes` to see your ratio: 0.48, for example, means the replica received 48% of the original bytes.
 
-TLS won't do this for you.
+TLS won't compress replication for you.
 TLS 1.3 has no compression, and Valkey turns it off for older versions because of the [CRIME](https://en.wikipedia.org/wiki/CRIME) attack.
 
 LZ4 is the balanced choice, halving the bytes for little CPU, so start there.
