@@ -29,12 +29,12 @@ The primary also saves snapshots to its own disk:
 
 <picture>
 <source media="(max-width: 639px), (min-width: 768px) and (max-width: 989px)" srcset="images/where-compression-applies-mobile.svg">
-<img src="images/where-compression-applies.svg" alt="The snapshot on disk uses rdbcompression; full syncs and the write stream to the replica use repl-compression">
+<img src="images/where-compression-applies.svg" alt="Snapshots on disk use snapshot compression; full syncs and the write stream to the replica use replication compression">
 </picture>
 
 ## Compressing the stream instead of each value
 
-`rdbcompression yes` runs a compressor called LZF over each string longer than 20 bytes.
+By default, Valkey runs a compressor called LZF over each string longer than 20 bytes.
 LZF finds repeated bytes only inside the string it is compressing, so it never sees the repetition between keys.
 If a social app caches its posts as JSON documents, every post has the same field names, and LZF writes `"lang":"en","text":"` out in full for each one.
 
