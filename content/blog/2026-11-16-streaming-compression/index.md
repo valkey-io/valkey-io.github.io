@@ -18,29 +18,14 @@ When a replica runs in another availability zone or region, cloud providers usua
 Valkey has compressed snapshots by default for years, with `rdbcompression yes`, but that only covers part of replication traffic.
 It compresses snapshots one value at a time, and steady-state replication, the ongoing stream of writes, is not compressed at all.
 
-Valkey 9.2 adds `repl-compression`, which uses LZ4, a fast general-purpose compressor, on everything the primary sends a replica.
-`rdbcompression` can now use LZ4 for snapshots on disk too.
-
-Consider an example: a social app caches its posts in Valkey as JSON documents, with the primary in one availability zone and a replica in another, so the cache survives losing a zone.
-Everything below applies to any application whose values share a structure, such as sessions, user profiles, or product records.
+Valkey 9.2 can compress everything the primary sends a replica with LZ4, a fast general-purpose compressor, and can use LZ4 for snapshots on disk too.
 
 ## How a replica keeps up
 
-The primary keeps the most recent part of its write stream in a buffer called the replication backlog, sized by `repl-backlog-size` (10 MB by default).
-When a replica reconnects after a short disconnect, it sends its replication offset, the number of bytes of the stream it has already processed.
-If that offset is still in the backlog, the primary sends only what came after it.
-This is a partial sync.
-
-<picture>
-<source media="(max-width: 639px), (min-width: 768px) and (max-width: 989px)" srcset="images/replication-backlog-mobile.svg">
-<img src="images/replication-backlog.svg" alt="Writes 7 to 12 are in the backlog: a replica that has up to write 9 gets a partial sync, and one that has up to write 4 gets a full sync">
-</picture>
-
-If the replica was away long enough for its offset to fall out of the backlog, the primary has to start over.
-It streams a snapshot of the whole dataset in RDB format, the format Valkey also uses for snapshot files, followed by the writes that arrived in the meantime.
-This is a full sync, and it is also how every new replica starts.
-
-So the replica in zone B gets a full sync once, then the write stream, and the primary also saves snapshots to its own disk:
+A replica gets its data in two parts.
+When it first connects, the primary sends a full sync: a snapshot of the whole dataset in RDB format, the format Valkey also uses for snapshot files.
+After that, the primary streams each write to the replica as it happens.
+The primary also saves snapshots to its own disk:
 
 <picture>
 <source media="(max-width: 639px), (min-width: 768px) and (max-width: 989px)" srcset="images/where-compression-applies-mobile.svg">
@@ -51,9 +36,9 @@ So the replica in zone B gets a full sync once, then the write stream, and the p
 
 `rdbcompression yes` runs a compressor called LZF over each string longer than 20 bytes.
 LZF finds repeated bytes only inside the string it is compressing, so it never sees the repetition between keys.
-Every post in the cache has the same field names, and LZF writes `"lang":"en","text":"` out in full for each one.
+If a social app caches its posts as JSON documents, every post has the same field names, and LZF writes `"lang":"en","text":"` out in full for each one.
 
-Valkey 9.2 can instead run one LZ4 or Zstandard (`zstd`) compressor over the whole snapshot or write stream.
+Valkey 9.2 can instead run one LZ4 compressor over the whole snapshot or write stream.
 By the time it reaches a post, it has usually seen another one already, so it replaces the repeated parts with short references to the earlier bytes:
 
 <picture>
@@ -65,8 +50,8 @@ LZ4 can refer back up to 64 KB, which is far enough to catch field names that re
 
 ## Adding the replica
 
-When the replica in zone B first connects, it needs a full sync.
-Roshan Khatri [measured one](https://github.com/valkey-io/valkey/pull/4075#issuecomment-5347469711) with a cache like this: three million posts from a [public tweet dataset](https://huggingface.co/datasets/blockmesh/tweets), stored as JSON documents of about 315 bytes each, 1.12 GB in memory.
+When a new replica connects, it needs a full sync.
+Roshan Khatri [measured one](https://github.com/valkey-io/valkey/pull/4075#issuecomment-5347469711) with three million posts from a [public tweet dataset](https://huggingface.co/datasets/blockmesh/tweets), stored as JSON documents of about 315 bytes each, 1.12 GB in memory.
 
 | Snapshot format | Bytes sent | Sync time |
 |---|---:|---:|
@@ -76,13 +61,14 @@ Roshan Khatri [measured one](https://github.com/valkey-io/valkey/pull/4075#issue
 
 The default was the slowest of the three: compressing each value with LZF took longer than sending everything uncompressed.
 LZ4 sent 38% fewer bytes than the default in 36% less time, and half the bytes of no compression in about the same time.
-The test ran between two `r7g.4xlarge` instances on a fast local link, where the sync time goes to loading keys on the replica, not to sending bytes.
+Both `r7g.4xlarge` instances were in the same availability zone, so the network was not the bottleneck: the replica spent the sync loading keys.
 
 ## Every write after that
 
-Once the replica has the snapshot, the primary keeps a compressor open for that link for as long as it stays connected, so each write can point back to the writes before it.
+After the full sync, the stream of writes never stops, and before Valkey 9.2 every byte of it went out uncompressed.
+Now the primary keeps a compressor open for each replica for as long as it stays connected, so each write can point back to the writes before it.
 It sends whatever is ready right away, so writes never wait for a batch to fill.
-The backlog itself stays uncompressed, so partial syncs work as they always have:
+Each replica's compressor reads from the primary's buffer of recent writes, the replication backlog, which stays uncompressed:
 
 <picture>
 <source media="(max-width: 639px), (min-width: 768px) and (max-width: 989px)" srcset="images/write-stream-pipeline-mobile.svg">
@@ -90,12 +76,10 @@ The backlog itself stays uncompressed, so partial syncs work as they always have
 </picture>
 
 On the same dataset, LZ4 reduced [replication bandwidth](https://github.com/valkey-io/valkey/pull/3853) by 52%, and write throughput dropped by less than 1%.
-At that ratio, a primary that takes 20 MB of writes per second would send each replica about 0.9 TB less per day, out of about 1.7 TB.
 
 ## Snapshots on disk
 
-Snapshots let a restart reload the cache instead of starting empty.
-`rdbcompression` now accepts `lz4` and `zstd` for these files.
+Snapshots let a restart reload the data instead of starting empty.
 On the same dataset, the files matched the full-sync sizes above (470 MB with LZ4), and took this long to save and load:
 
 | `rdbcompression` | Save time | Load time |
@@ -105,12 +89,11 @@ On the same dataset, the files matched the full-sync sizes above (470 MB with LZ
 | `lz4` | 3.3 s | 6.2 s |
 
 The LZ4 file was the fastest to load, and it saved faster than with LZF.
-Older Valkey versions and third-party RDB tools can't read it, so before a downgrade, set `rdbcompression yes` and run `BGSAVE`, plus `BGREWRITEAOF` if you use append-only files.
 
 ## Turning it on
 
 `repl-compression` is `no` by default.
-For the cache above, run this on the primary, then on the replica:
+Run this on the primary, then on each replica:
 
 ```bash
 > CONFIG SET repl-compression lz4
@@ -118,24 +101,21 @@ OK
 ```
 
 Nothing is compressed on the wire until the replica opts in, and replicas on older versions stay uncompressed.
-When the setting changes, the replica reconnects and asks for a partial sync, so it avoids a full sync as long as its offset is still in the backlog.
-Full syncs are compressed whether or not you use `repl-diskless-sync`.
 
 On the primary, `INFO replication` appends three fields to the line for each compressed replica (`slave0:`, `slave1:`, and so on):
 
 | Field | Meaning |
 |---|---|
-| `repl_compression` | The codec in use, `lz4` or `zstd` |
+| `repl_compression` | The compression algorithm in use, `lz4` or `zstd` |
 | `repl_compressed_bytes` | Bytes of the write stream sent over the network |
 | `repl_uncompressed_bytes` | Bytes the write stream would have used without compression |
 
 Divide `repl_compressed_bytes` by `repl_uncompressed_bytes` to see your ratio: 0.48, for example, means the replica received 48% of the original bytes.
-To keep the setting across restarts, add it to `valkey.conf` or run `CONFIG REWRITE`.
 
 If replication runs over TLS, you still need this: TLS 1.3 has no compression, and Valkey turns it off for older versions because of the [CRIME](https://en.wikipedia.org/wiki/CRIME) attack.
 
 Start with LZ4.
-Zstandard compresses harder: in a [separate test](https://github.com/valkey-io/valkey/pull/3798) with 1 million tweets, its snapshot was 36% smaller than LZ4's and loaded a little faster, but took twice as long to save.
+Valkey 9.2 also supports Zstandard (`zstd`), which compresses harder: in a [separate test](https://github.com/valkey-io/valkey/pull/3798) with 1 million tweets, its snapshot was 36% smaller than LZ4's and loaded a little faster, but took twice as long to save.
 A full sync streams the same snapshot, so it shrinks by about the same amount.
 Zstandard needs a build compiled with `BUILD_ZSTD=yes`.
 
@@ -146,13 +126,12 @@ Compressing snapshots on disk is a separate, optional step:
 OK
 ```
 
-It changes the files Valkey writes, so check the compatibility note under [Snapshots on disk](#snapshots-on-disk) before you turn it on.
+Older Valkey versions and third-party RDB tools can't read these files, so before a downgrade, set `rdbcompression yes` and run `BGSAVE`, plus `BGREWRITEAOF` if you use append-only files.
 
 ## Caveats
 
 - Each compressed replica gets its own compressor, so the CPU cost grows with the number of replicas.
-With `io-threads` set above 1, that work can run on I/O threads instead of the main thread.
-- Compression does not make the backlog hold more history, so a replica can't stay away any longer and still get a partial sync.
+With `io-threads` set above 1, that work will run on I/O threads instead of the main thread.
 - Values that are already compressed or encrypted won't shrink much, and the primary still spends CPU trying.
 - In Valkey 9.2, compressed full syncs don't support `forkless-policy prefer-forkless`, so they fork a child process instead.
 
