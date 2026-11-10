@@ -61,8 +61,7 @@ Roshan Khatri [measured one](https://github.com/valkey-io/valkey/pull/4075#issue
 
 The default was the slowest of the three: compressing each value with LZF took longer than sending everything uncompressed.
 LZ4 sent 38% fewer bytes than the default in 36% less time, and half the bytes of no compression in about the same time.
-Both `r7g.4xlarge` instances were in the same availability zone, so the network was not the bottleneck: the replica spent the sync loading keys.
-The bytes saved don't depend on the network, so they are the same across zones.
+The primary and replica were `r7g.4xlarge` instances in different availability zones, so every byte in the table crossed a zone boundary.
 
 ## Every write after that
 
