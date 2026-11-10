@@ -16,16 +16,16 @@ A Valkey primary sends every write it receives to each of its replicas.
 When a replica runs in another availability zone or region, most cloud providers charge for every byte of that traffic.
 
 Valkey has compressed snapshots by default for years, but that only covers part of replication traffic.
-It compresses snapshots one value at a time, and steady-state replication, the ongoing stream of writes, is not compressed at all.
+It works one value at a time, and steady-state replication, the ongoing stream of writes, is not compressed at all.
 
 Valkey 9.2 can compress everything the primary sends a replica with LZ4, a fast general-purpose compressor, and can use LZ4 for snapshots on disk too.
 
 ## How a replica keeps up
 
 A replica gets its data in two parts.
-When it first connects, the primary sends a full sync: a snapshot of the whole dataset in RDB format, the format Valkey also uses for snapshot files.
+When it first connects, the primary sends a full sync: a snapshot of the whole dataset in RDB format, the same format as snapshot files on disk.
 After that, the primary streams each write to the replica as it happens.
-The primary also saves snapshots to its own disk:
+The primary also saves those snapshots to its own disk:
 
 <picture>
 <source media="(max-width: 639px), (min-width: 768px) and (max-width: 989px)" srcset="images/where-compression-applies-mobile.svg">
