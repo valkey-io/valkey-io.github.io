@@ -18,7 +18,7 @@ When a replica runs in another availability zone or region, most cloud providers
 Valkey has compressed snapshots by default for years, but that only covers part of replication traffic.
 It works one value at a time, and steady-state replication, the ongoing stream of writes, is not compressed at all.
 
-Valkey 9.2 can compress everything the primary sends a replica with LZ4, a fast general-purpose compressor, and can use LZ4 for snapshots on disk too.
+Valkey 9.2 can compress everything the primary sends a replica with LZ4, a fast general-purpose compressor, and use LZ4 for snapshots on disk too.
 
 ## How a replica keeps up
 
@@ -35,8 +35,9 @@ The primary also saves those snapshots to its own disk:
 ## Compressing the stream instead of each value
 
 By default, Valkey runs a compressor called LZF over each string longer than 20 bytes.
-LZF finds repeated bytes only inside the string it is compressing, so it never sees the repetition between keys.
+LZF finds repeated bytes only inside the string it is compressing, so it never sees the repetition between values.
 If a social app caches its posts as JSON documents, every post has the same field names, and LZF writes `"lang":"en","text":"` out in full for each one.
+The same is true of sessions, user profiles, product records, or any values that share a structure.
 
 Valkey 9.2 can instead run one LZ4 compressor over the whole snapshot or write stream.
 By the time it reaches a post, it has already seen others like it, so it replaces the repeated parts with short references to the earlier bytes:
@@ -48,7 +49,7 @@ By the time it reaches a post, it has already seen others like it, so it replace
 
 LZ4 can refer back up to 64 KB, which is far enough to catch field names that repeat in every value.
 
-## Adding the replica
+## Adding a replica
 
 When a new replica connects, it needs a full sync.
 Roshan Khatri [measured one](https://github.com/valkey-io/valkey/pull/4075#issuecomment-5347469711) with three million posts from a [public tweet dataset](https://huggingface.co/datasets/blockmesh/tweets), stored as JSON documents of about 315 bytes each, 1.12 GB in memory.
@@ -101,6 +102,8 @@ OK
 ```
 
 Nothing is compressed on the wire until the replica opts in, and replicas on older versions stay uncompressed.
+On a running server, changing the setting reconnects replicas one at a time, after any full sync in progress finishes.
+Each one tries a partial sync before falling back to a full one.
 
 On the primary, `INFO replication` appends three fields to the line for each compressed replica (`slave0:`, `slave1:`, and so on):
 
@@ -112,9 +115,10 @@ On the primary, `INFO replication` appends three fields to the line for each com
 
 Divide `repl_compressed_bytes` by `repl_uncompressed_bytes` to see your ratio: 0.48, for example, means the replica received 48% of the original bytes.
 
-If replication runs over TLS, you still need this: TLS 1.3 has no compression, and Valkey turns it off for older versions because of the [CRIME](https://en.wikipedia.org/wiki/CRIME) attack.
+TLS won't do this for you.
+TLS 1.3 has no compression, and Valkey turns it off for older versions because of the [CRIME](https://en.wikipedia.org/wiki/CRIME) attack.
 
-LZ4 is the balanced choice: it halves the bytes for little CPU, so start there.
+LZ4 is the balanced choice, halving the bytes for little CPU, so start there.
 If you want fewer bytes and your machines have CPU to spare, Valkey 9.2 also supports Zstandard (`zstd`).
 In a [separate test](https://github.com/valkey-io/valkey/pull/3798) with 1 million tweets, its snapshot was 36% smaller than LZ4's and loaded a little faster, but took twice as long to save, because compressing harder costs more CPU.
 A full sync streams the same snapshot, so it shrinks by about the same amount.
