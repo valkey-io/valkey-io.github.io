@@ -1,7 +1,7 @@
 +++
-title = "Writing your first Valkey EVAL script"
-date = 2026-10-30
-description = "Two clients can sell the last ticket twice when GET and SET run separately. Here is how an EVAL script closes the gap."
+title = "Writing your first Lua script for Valkey"
+date = 2026-11-15
+description = "Two clients can sell the last ticket twice when they read and update stock with separate commands. Here is how a Lua script turns the check and the update into a single step."
 authors =  ["dragosandriciuc"]
 [taxonomies]
 blog_type = ["How-to"]
@@ -12,139 +12,134 @@ featured_image = "/assets/media/featured/random-02.webp"
 
 Imagine two customers click "Buy" on the last concert ticket at the same moment.
 Your application reads the stock from Valkey, and both requests see `1`.
-Both requests decide the ticket is available, and both write `0`.
-You sold one ticket twice.
+Both requests decide the ticket is available, and both decrement the stock.
+You have just sold one ticket twice.
 
-The cause is a gap between two commands.
-Your application sends `GET`, waits for the answer, and then sends `SET`.
-Another client can run a command inside that gap.
+The cause of this is how Valkey serves clients.
+Your application does not have a single private connection to Valkey.
+Each request can use its own connection, and Valkey runs commands from all connections one at a time, in the order they arrive.
+Your application sends `GET`, waits for the answer, and then sends `DECR`.
+Valkey can run a command from another connection between those two.
+That is an intended behavior, but a decision based on the `GET` can be out of date by the time the `DECR` command arrives.
 
-An `EVAL` script closes the gap.
-You send a short program to Valkey, and Valkey runs all of its commands as one step.
+A Lua script solves this.
+You send a short program to Valkey, and Valkey runs the whole script, its logic and its commands, as one step.
 No other client's command runs in between.
 
-This post explains what an `EVAL` script is, how the `EVAL` command is structured, and how Valkey runs it.
-You will be able to reproduce the double sale in `valkey-cli`, fix it with your first `EVAL` script, and then learn what limits to expect in production.
+## What is a Lua script in Valkey?
 
-## What is an `EVAL` script?
+In Valkey, server-side scripting is the feature, [Lua](https://www.lua.org/) is the language, and [`EVAL`](https://valkey.io/commands/eval/) and [`EVALSHA`](https://valkey.io/commands/evalsha/) are the commands that run a Lua script.
 
-In Valkey, an `EVAL` script is a Lua script.
-You send it to the server with the [`EVAL`](https://valkey.io/commands/eval/) command.
-The script runs atomically, meaning no other client's command runs until the script finishes.
+A Lua script is a short program you send to Valkey.
+The `EVAL` command sends the script source with every call while the `EVALSHA` command runs a script the server has already cached, with `EVALSHA` being the most commonly used.
 
-In short, server-side scripting is the feature, Lua is the language you write the script in, and `EVAL` is the command that runs it.
+[`EVAL_RO`](https://valkey.io/commands/eval_ro/) is the read-only variant of `EVAL`.
+Valkey rejects any write command inside it, so you can run it safely on a replica.
 
-Here is how Valkey runs an `EVAL` script:
+Valkey runs a script atomically.
+No other client's command runs while the script runs, so other clients see the data as it was before the script or after it, never halfway through.
 
-![EVAL script execution flow](/assets/media/pictures/atomic_ticket_eval.png)
+Here is how Valkey runs a Lua script:
 
-## Double sale reproduced
+![Lua script execution flow](/assets/media/pictures/atomic_ticket_eval.svg)
 
-Let's circle back to the double sale problem.
-You can see it in action by using two terminals and [`valkey-cli`](https://valkey.io/topics/cli/).
+Since Valkey 9.1, Lua runs as a module, so engines such as [LuaJIT](https://github.com/valkey-io/valkey-luajit) or [Lua 5.5](https://github.com/valkey-io/valkey-lua5.5) can replace the built-in Lua 5.1, which this post uses.
+In the future, the same engine API could host a non-Lua language.
+
+## Reproduce the double sale
+
+The steps below simulate two requests with [`valkey-cli`](https://valkey.io/topics/cli/), run from your shell.
 
 1. Set the stock to one ticket:
 
-```bash
-valkey-cli SET tickets 1
-```
+    ```bash
+    valkey-cli SET {concert}:stock 1
+    ```
 
-2. Open two terminals and start `valkey-cli` in each.
+2. Run these commands in order.
+    Each `GET` and `DECR` pair stands for one request, and interleaving them shows what happens when two requests overlap:
 
-3. Run the commands in this order, typing each one after the `127.0.0.1:6379>` prompt.
-The order matches what two requests produce when they arrive at the same moment:
+    ```text
+    $ valkey-cli GET {concert}:stock      # request A reads
+    "1"
+    $ valkey-cli GET {concert}:stock      # request B reads
+    "1"
+    $ valkey-cli DECR {concert}:stock     # request A sells
+    (integer) 0
+    $ valkey-cli DECR {concert}:stock     # request B sells
+    (integer) -1
+    ```
 
-```text
-# Terminal A
-127.0.0.1:6379> GET tickets
-"1"
+Both requests read `1`, so both decided the ticket was available.
+The stock ends at `-1`: you sold two tickets and had one.
 
-# Terminal B
-127.0.0.1:6379> GET tickets
-"1"
+For stock alone, `DECR` by itself is enough: it decrements atomically, and a negative result tells you the ticket was already gone.
+Real purchase logic usually needs more, for example one ticket per customer.
+That in turn takes two keys, a customer ID, and a decision, which no single command covers.
 
-# Terminal A
-127.0.0.1:6379> SET tickets 0
-OK
+The examples in this post use Valkey 9.1 with the default configuration and valkey-py 6.2.
 
-# Terminal B
-127.0.0.1:6379> SET tickets 0
-OK
-```
-
-Both terminals read `1`, so both decided the ticket was available.
-Both wrote `0`, so the stock looks correct, but you sold two tickets and had only one.
-Each Valkey command succeeded, but the problem is that your application split one decision across two commands.
-The manual sequence reproduces the interleaving that can occur between two application requests.
-
-The two terminals above run one command after the other.
-The above results show the outcome of the race, not the race itself.
-
-The examples in this post use Valkey 9.1.2 with the default configuration and valkey-py version 6.2.0.
-
-## Fix the double sale with an `EVAL` script
+## Fix the double sale with a Lua script
 
 Now run the check and the update as one script.
-The example assumes a valid stock value.
 
-1. Set the stock to one ticket again:
+1. Save this script as `buy_ticket.lua`.
+It refuses the sale if the stock is gone or the customer already has a ticket, and otherwise records the buyer and lowers the stock:
 
-```bash
-valkey-cli SET tickets 1
-```
-
-2. Read the script.
-It reads the stock, and only if a ticket is left, it lowers the stock by one:
-
-```lua
-local stock = tonumber(server.call('GET', KEYS[1]))
-if stock and stock > 0 then
-    server.call('SET', KEYS[1], stock - 1)
+    ```lua
+    local stock = tonumber(server.call('GET', KEYS[1]))
+    if not stock or stock <= 0 then
+        return 0
+    end
+    if server.call('SADD', KEYS[2], ARGV[1]) == 0 then
+        return -1
+    end
+    server.call('DECR', KEYS[1])
     return 1
-end
-return 0
-```
+    ```
 
-3. Run the script in Terminal A as an `EVAL` command.
-`valkey-cli` reads each line as a separate command, so the script must be on one line:
+2. Reset the stock to two tickets and clear the buyer list:
 
-```text
-127.0.0.1:6379> EVAL "local stock = tonumber(server.call('GET', KEYS[1])); if stock and stock > 0 then server.call('SET', KEYS[1], stock - 1); return 1 end; return 0" 1 tickets
-(integer) 1
-```
+    ```bash
+    valkey-cli SET {concert}:stock 2
+    valkey-cli DEL {concert}:buyers
+    ```
 
-4. Run the same command in Terminal B:
+3. Run the script with `--eval`.
+Key names come first, then a comma surrounded by spaces, then the arguments.
+Alice clicks twice, then Bob and Carol buy:
 
-```text
-127.0.0.1:6379> EVAL "local stock = tonumber(server.call('GET', KEYS[1])); if stock and stock > 0 then server.call('SET', KEYS[1], stock - 1); return 1 end; return 0" 1 tickets
-(integer) 0
-```
+    ```text
+    $ valkey-cli --eval buy_ticket.lua {concert}:stock {concert}:buyers , alice
+    (integer) 1
+    $ valkey-cli --eval buy_ticket.lua {concert}:stock {concert}:buyers , alice
+    (integer) -1
+    $ valkey-cli --eval buy_ticket.lua {concert}:stock {concert}:buyers , bob
+    (integer) 1
+    $ valkey-cli --eval buy_ticket.lua {concert}:stock {concert}:buyers , carol
+    (integer) 0
+    ```
 
-5. Check the stock:
+`1` means sold, `0` means sold out, and `-1` means the customer already has a ticket.
+The stock ends at `0`, and the buyer list holds Alice and Bob.
 
-```text
-127.0.0.1:6379> GET tickets
-"0"
-```
+This is atomicity in practice.
+The read, the check, and both writes run as one step, so no other request can act on the stock between them.
+One call also replaces three commands and the decision between them.
 
-Terminal A sold the ticket and Terminal B was told the stock was gone.
-As you can see, the order of commands is the same as in the broken example.
-However, Valkey ran each script as **one** step, so there was no gap for the second client to use.
+## Why are KEYS and ARGV separate?
 
-The command has three parts:
+In Valkey, `KEYS` holds the names of every key the script touches and `ARGV` holds everything else: values, IDs, limits.
+This is not enforced, and in standalone mode a script that reads a key name from `ARGV` works.
+In a cluster, however, this breaks:
 
-- The quoted text is the Lua script.
-- `1` is `numkeys`, the number of arguments that follow it that are key names.
-- `tickets` is that key name. Inside the script it is `KEYS[1]`.
+- With the key name in `KEYS`, the client routes the script to the node that owns the key, and it works from any node.
+- With the same key name in `ARGV`, it works only when the script happens to land on the owning node.
+Elsewhere it fails with the following error: `ERR Attempted to access a non local key in a cluster node script`.
+- Keys in `KEYS` **must** share a hash slot, or the call fails with the error: `CROSSSLOT Keys in request don't hash to the same slot`.
+The `{concert}` part of the key names is a hash tag: Valkey hashes only that part, so both keys land in the same slot.
 
-You can describe the return values with your own convention, in this case `1` means sold and `0` means sold out.
-Any arguments after the key names go to the script as `ARGV[1]`, `ARGV[2]`, and so on.
-
-Tip: For longer scripts, save the script from step 2 as `ticket.lua` and run it from the shell instead:
-
-```bash
-valkey-cli --eval ticket.lua tickets
-```
+Declare every key in `KEYS`, even in standalone mode, so the script keeps working when you move to a cluster.
 
 ## Call the script from your application
 
@@ -156,51 +151,61 @@ import valkey
 
 BUY_TICKET = """
 local stock = tonumber(server.call('GET', KEYS[1]))
-if stock and stock > 0 then
-  server.call('SET', KEYS[1], stock - 1)
-  return 1
-end
+if not stock or stock <= 0 then
 return 0
+end
+if server.call('SADD', KEYS[2], ARGV[1]) == 0 then
+return -1
+end
+server.call('DECR', KEYS[1])
+return 1
 """
-client = valkey.Valkey(host="localhost", port=6379, decode_responses=True)
-client.set("tickets", 1)
 
-for customer in ["Alice", "Bob"]:
-    sold = client.eval(BUY_TICKET, 1, "tickets")
-    print(customer, "bought a ticket" if sold == 1 else "found the event sold out")
+client = valkey.Valkey(host="localhost", port=6379)
+buy_ticket = client.register_script(BUY_TICKET)
+
+client.set("{concert}:stock", 2)
+client.delete("{concert}:buyers")
+
+messages = {1: "bought a ticket", 0: "found the event sold out", -1: "already has a ticket"}
+for customer in ["alice", "alice", "bob", "carol"]:
+    result = buy_ticket(keys=["{concert}:stock", "{concert}:buyers"], args=[customer])
+    print(customer, messages[result])
 ```
-
-The output then reads:
 
 ```text
-Alice bought a ticket
-Bob found the event sold out
+alice bought a ticket
+alice already has a ticket
+bob bought a ticket
+carol found the event sold out
 ```
 
-As you can see, `client.eval` takes the same parts as the `EVAL` command: the script, `numkeys`, and the key names.
+`register_script` loads the script once and then calls it with `EVALSHA`, falling back to loading it again if the server returns `NOSCRIPT`.
 
 ## What are the advantages?
 
-Using `EVAL` allows you to:
+Lua scripts allow you to:
 
 - Run scripts server side: they read and write data in fewer round trips, with less latency and less network traffic.
+- Put data-dependent logic next to the data: Lua can validate inputs, branch on values read from Valkey, and return a result without sending intermediate values back to the application.
 - Use atomic execution: no other client's commands run until the whole script finishes running.
-A long-running script can then delay unrelated requests, not just requests for the tickets key.
+A long-running script can then delay unrelated requests, not just requests for the stock key.
 - Combine existing commands to implement application-specific operations that Valkey doesn't provide as a single command.
-- Reuse scripts: Valkey caches the scripts it runs by their Secure Hash Algorithm 1 (SHA1) digest, so you can load a script once with [`SCRIPT LOAD`](https://valkey.io/commands/script-load/) and run it later with [`EVALSHA`](https://valkey.io/commands/evalsha/) (invokes a script by its digest if that script is present in the server's cache) instead of resending the source.
 
-There are, however, some constraints when using `EVAL`:
+There are, however, some constraints when using Lua:
 
 - After a script runs longer than `busy-reply-threshold` (5000 ms by default), Valkey replies to other clients with a `BUSY` error, and the script keeps running.
 - There is no rollback.
 If a command fails halfway through a script, the earlier writes stay.
-- Starting with Valkey 8.0, Valkey keeps at most a fixed number of scripts loaded with `EVAL` or `EVAL_RO` and evicts the least recently used (LRU) ones.
-On Valkey 9.1.2 the limit was 500 scripts.
-Scripts loaded with `SCRIPT LOAD` are not evicted this way.
+- Starting with Valkey 8.0, Valkey keeps at most 500 scripts loaded with `EVAL` or `EVAL_RO` and evicts the least recently used (LRU) ones.
+This limit protects memory from applications that embed values in the script source, which creates a new cached script on every call.
+The 500-script limit is [fixed in the source](https://github.com/valkey-io/valkey/blob/9.1.2/src/eval.c#L350) for Valkey 9.1 and cannot be configured.
+- Starting with Valkey 9.2, the [`maxmemory-scripts`](https://github.com/valkey-io/valkey/blob/9.2.0-rc2/valkey.conf#L2792) option caps the memory of scripts loaded with `EVAL` or `EVAL_RO`, as an absolute size or a percentage of `maxmemory`, independent of the 500-script limit.
+Scripts loaded with `SCRIPT LOAD` are not evicted by either limit, so pass values in `ARGV` and load scripts once.
 
-## Try `EVAL` scripts yourself
+## Try Lua scripts yourself
 
 Run the double sale example on your own Valkey instance and compare your output with the output above.
-Then change the script to read the quantity from `ARGV[1]`, so one script handles orders of any size.
+Then change the script to read the quantity from `ARGV[2]`, so one script handles orders of any size.
 
 If something in this post is unclear, [open an issue](https://github.com/valkey-io/valkey-io.github.io/issues).
