@@ -13,9 +13,9 @@ featured_image = "/assets/media/featured/streaming-compression.webp"
 +++
 
 A Valkey primary sends every write it receives to each of its replicas.
-When a replica runs in another availability zone or region, cloud providers usually charge for every byte of that traffic.
+When a replica runs in another availability zone or region, most cloud providers charge for every byte of that traffic.
 
-Valkey has compressed snapshots by default for years, with `rdbcompression yes`, but that only covers part of replication traffic.
+Valkey has compressed snapshots by default for years, but that only covers part of replication traffic.
 It compresses snapshots one value at a time, and steady-state replication, the ongoing stream of writes, is not compressed at all.
 
 Valkey 9.2 can compress everything the primary sends a replica with LZ4, a fast general-purpose compressor, and can use LZ4 for snapshots on disk too.
@@ -39,7 +39,7 @@ LZF finds repeated bytes only inside the string it is compressing, so it never s
 If a social app caches its posts as JSON documents, every post has the same field names, and LZF writes `"lang":"en","text":"` out in full for each one.
 
 Valkey 9.2 can instead run one LZ4 compressor over the whole snapshot or write stream.
-By the time it reaches a post, it has usually seen another one already, so it replaces the repeated parts with short references to the earlier bytes:
+By the time it reaches a post, it has already seen others like it, so it replaces the repeated parts with short references to the earlier bytes:
 
 <picture>
 <source media="(max-width: 639px), (min-width: 768px) and (max-width: 989px)" srcset="images/stream-back-references-mobile.svg">
@@ -62,6 +62,7 @@ Roshan Khatri [measured one](https://github.com/valkey-io/valkey/pull/4075#issue
 The default was the slowest of the three: compressing each value with LZF took longer than sending everything uncompressed.
 LZ4 sent 38% fewer bytes than the default in 36% less time, and half the bytes of no compression in about the same time.
 Both `r7g.4xlarge` instances were in the same availability zone, so the network was not the bottleneck: the replica spent the sync loading keys.
+The bytes saved don't depend on the network, so they are the same across zones.
 
 ## Every write after that
 
@@ -79,14 +80,14 @@ On the same dataset, LZ4 reduced [replication bandwidth](https://github.com/valk
 
 ## Snapshots on disk
 
-Snapshots let a restart reload the data instead of starting empty.
+Snapshots let a restart reload the data instead of starting empty, but compressing each value with LZF makes them slow to save.
 On the same dataset, the files matched the full-sync sizes above (470 MB with LZ4), and took this long to save and load:
 
-| `rdbcompression` | Save time | Load time |
+| Snapshot format | Save time | Load time |
 |---|---:|---:|
-| `no` | 2.3 s | 7.3 s |
-| `yes` (LZF, the default) | 4.9 s | 9.4 s |
-| `lz4` | 3.3 s | 6.2 s |
+| Uncompressed | 2.3 s | 7.3 s |
+| Per-value LZF (the default) | 4.9 s | 9.4 s |
+| Whole-stream LZ4 | 3.3 s | 6.2 s |
 
 The LZ4 file was the fastest to load, and it saved faster than with LZF.
 
