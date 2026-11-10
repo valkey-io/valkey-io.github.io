@@ -114,8 +114,9 @@ Divide `repl_compressed_bytes` by `repl_uncompressed_bytes` to see your ratio: 0
 
 If replication runs over TLS, you still need this: TLS 1.3 has no compression, and Valkey turns it off for older versions because of the [CRIME](https://en.wikipedia.org/wiki/CRIME) attack.
 
-Start with LZ4.
-Valkey 9.2 also supports Zstandard (`zstd`), which compresses harder: in a [separate test](https://github.com/valkey-io/valkey/pull/3798) with 1 million tweets, its snapshot was 36% smaller than LZ4's and loaded a little faster, but took twice as long to save.
+LZ4 is the balanced choice: it halves the bytes for little CPU, so start there.
+If you want fewer bytes and your machines have CPU to spare, Valkey 9.2 also supports Zstandard (`zstd`).
+In a [separate test](https://github.com/valkey-io/valkey/pull/3798) with 1 million tweets, its snapshot was 36% smaller than LZ4's and loaded a little faster, but took twice as long to save, because compressing harder costs more CPU.
 A full sync streams the same snapshot, so it shrinks by about the same amount.
 Zstandard needs a build compiled with `BUILD_ZSTD=yes`.
 
