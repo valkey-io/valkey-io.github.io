@@ -12,12 +12,12 @@ featured = false
 featured_image = "/assets/media/featured/streaming-compression.webp"
 +++
 
-A Valkey primary sends every write it receives to each of its replicas.
-When a replica runs in another availability zone or region, most cloud providers charge for every byte of that traffic.
+If your Valkey replicas run in a different availability zone from the primary, most cloud providers bill you for every byte sent between them.
+That's every write your application makes, copied once per replica.
 
-Valkey has compressed snapshots by default for years, but never the stream of writes a replica receives after its first copy of the data.
+Valkey has compressed snapshots by default for years, but the stream of writes to replicas has always gone out uncompressed.
 
-Valkey 9.2 can use LZ4, a fast general-purpose compressor, on everything the primary sends a replica and on snapshots on disk.
+In Valkey 9.2, you can turn on LZ4, a fast general-purpose compressor, for everything the primary sends to a replica, and for snapshots on disk too.
 
 ## How a replica keeps up
 
@@ -59,17 +59,18 @@ Roshan Khatri [measured one](https://github.com/valkey-io/valkey/pull/4075#issue
 | Per-value LZF (the default) | 756 MB | 8.7 s |
 | Whole-stream LZ4 | 470 MB | 5.6 s |
 
-The default was the slowest of the three: compressing each value with LZF took longer than sending everything uncompressed.
-Compared with the default, LZ4 sent 38% fewer bytes and finished 36% sooner.
-Compared with no compression, it sent half the bytes in about the same time.
+The default was the slowest of the three.
+Compressing each value with LZF took longer than not compressing at all.
+LZ4 sent 38% fewer bytes than the default and finished 36% sooner.
+It also sent half as many bytes as no compression, in about the same time.
 The primary and replica were `r7g.4xlarge` instances in different availability zones, so every byte in the table crossed a zone boundary.
 
 ## Every write after that
 
-After the full sync, the stream of writes never stops, and before Valkey 9.2 every byte of it went out uncompressed.
-In Valkey 9.2, the primary keeps one compressor running per replica for the whole connection, so each write can refer back to earlier ones.
-It sends whatever is ready right away, so writes never wait for a batch to fill.
-Each replica's compressor reads from the primary's buffer of recent writes, the replication backlog, which stays uncompressed:
+After the full sync, writes keep flowing for as long as the replica is connected, and until Valkey 9.2 none of them were compressed.
+Valkey 9.2 gives each replica its own compressor on the primary, so each write can refer back to earlier ones.
+Compressed bytes go out as soon as they're ready, without waiting for a batch to fill.
+The compressors read from the primary's buffer of recent writes (the replication backlog), and that buffer stays uncompressed:
 
 <picture>
 <source media="(max-width: 639px), (min-width: 768px) and (max-width: 989px)" srcset="images/write-stream-pipeline-mobile.svg">
@@ -118,9 +119,11 @@ Divide `repl_compressed_bytes` by `repl_uncompressed_bytes` to see your ratio: 0
 TLS won't compress replication for you.
 TLS 1.3 has no compression, and Valkey turns it off for older versions because of the [CRIME](https://en.wikipedia.org/wiki/CRIME) attack.
 
-LZ4 is the balanced choice, halving the bytes for little CPU, so start there.
+I'd start with LZ4.
+It's the balanced option: half the bytes for very little CPU.
 If you want fewer bytes and your machines have CPU to spare, Valkey 9.2 also supports Zstandard (`zstd`).
-In a [separate test](https://github.com/valkey-io/valkey/pull/3798) with 1 million tweets, its snapshot was 36% smaller than LZ4's and loaded a little faster, but took twice as long to save, because compressing harder costs more CPU.
+In a [separate test](https://github.com/valkey-io/valkey/pull/3798) with 1 million tweets, its snapshot was 36% smaller than LZ4's and loaded a little faster.
+It also took twice as long to save, because compressing harder costs more CPU.
 A full sync streams the same snapshot, so it shrinks by about the same amount.
 Zstandard needs a build compiled with `BUILD_ZSTD=yes`.
 
@@ -143,7 +146,7 @@ With `io-threads` set above 1, that work will run on I/O threads instead of the 
 ## Try it
 
 Turn on `repl-compression lz4` for one primary and one cross-zone replica, and after a day of real traffic, check your ratio and replication lag.
-If your ratio is far from 0.48 in either direction, I would like to hear what your data looks like on [Slack](https://valkey.io/slack) or the [community page](https://valkey.io/community/).
+If your ratio is far from 0.48 in either direction, I'd like to hear what your data looks like on [Slack](https://valkey.io/slack) or the [community page](https://valkey.io/community/).
 
 ## Acknowledgements
 
