@@ -249,3 +249,13 @@
   image:
     path: /img/libredb-studio.svg
     alt: LibreDB Studio Logo
+
+- name: xCloud
+  link: https://xcloud.host/valkey-hosting/
+  image:
+    path: /img/xcloud.svg
+    alt: xCloud Logo
+  company: >
+    [xCloud](https://xcloud.host/) is a server control panel for deploying and managing websites and open-source apps on your own server or an xCloud Cloud VPS.
+  offering: >
+    [One-click Valkey hosting on xCloud](https://xcloud.host/valkey-hosting/) deploys Valkey as a container with a generated password, AOF persistence and a ready connection string, and takes care of provisioning, patching, monitoring and restores.
