@@ -5,4 +5,4 @@ extra:
     github: EvgeniyPatlan
 ---
 
-Evgeniy Patlan is Manager, Build & Release Engineering Team at Percona. He is an experienced build and release engineer, software engineer with a demonstrated history of working in the information technology and services industry. Skilled in Perl, JavaScript, Python, Session Initiation Protocol (SIP), SOAP, and Linux System Administration. Strong engineering professional with a specialist focused on computer systems, programming, system administration, network technologies.
+Evgeniy Patlan is an expert in build and release processes from Percona. He is an experienced build and release engineer, software engineer with a demonstrated history of working in the information technology and services industry. Skilled in Perl, JavaScript, Python, Session Initiation Protocol (SIP), SOAP, and Linux System Administration. Strong engineering professional with a specialist focused on computer systems, programming, system administration, network technologies.
