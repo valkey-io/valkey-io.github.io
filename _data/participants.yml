@@ -258,4 +258,4 @@
   company: >
     [xCloud](https://xcloud.host/) is a server control panel for deploying and managing websites and open-source apps on your own server or an xCloud Cloud VPS.
   offering: >
-    [One-click Valkey hosting on xCloud](https://xcloud.host/valkey-hosting/) deploys Valkey as a container with a generated password, AOF persistence and a ready connection string, and takes care of provisioning, patching, monitoring and restores.
+    [One-click Valkey hosting on xCloud](https://xcloud.host/valkey-hosting/) deploys Valkey as a container with a generated password, AOF persistence and a ready connection string, and takes care of provisioning, monitoring, restores and server OS security updates, with Valkey upgrades applied when you choose.
