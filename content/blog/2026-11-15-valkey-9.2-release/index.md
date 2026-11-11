@@ -12,8 +12,7 @@ featured = true
 featured_image = "/assets/media/featured/valkey-release-9-2.svg"
 +++
 
-Valkey 9.2 is now out!
-This release gets more out of the hardware you already run.
+Valkey 9.2 is now out, and it does more with the same hardware you already run.
 Large sorted sets use 36% to 43% less memory overhead per member, replication traffic can be compressed, and background saves and full syncs can run without forking the server.
 When load spikes, Valkey 9.2 keeps cluster heartbeats and replication moving, holds connections for administrators, and slows writes before a lagging replica needs a full resync.
 It also adds roles to access control, Path Hash, a new data type, a set of conditional commands and more.
@@ -124,7 +123,7 @@ Valkey 9.2 adds a set of new and conditional commands:
 - The [`EXEC`](https://valkey.io/commands/exec/) command now accepts `IFEQ`, `IFNE`, `NX`, and `XX` conditions, enabling optimistic locking for multi-key transactions without needing the [`WATCH`](https://valkey.io/commands/watch/) command ([#4019](https://github.com/valkey-io/valkey/pull/4019)).
 - The new [`DELEX`](https://valkey.io/commands/delex/) command conditionally deletes a string key when its value matches (`IFEQ`) or differs from (`IFNE`) a given value ([#4607](https://github.com/valkey-io/valkey/pull/4607)), and [`SET`](https://valkey.io/commands/set/) now accepts `IFNE` ([#3105](https://github.com/valkey-io/valkey/pull/3105)).
 - The new `INCREX` command atomically increments a key while setting its expiration, with bounded increments and conditional expiration control ([#3253](https://github.com/valkey-io/valkey/pull/3253) and [#4679](https://github.com/valkey-io/valkey/pull/4679)).
-- The new [`XACKDEL`](https://valkey.io/commands/xackdel/) and [`XDELEX`](https://valkey.io/commands/xdelex/) stream commands acknowledge and delete messages once consumer groups no longer need them ([#4629](https://github.com/valkey-io/valkey/pull/4629)).
+- [`XACKDEL`](https://valkey.io/commands/xackdel/) acknowledges and deletes stream messages in one call, and [`XDELEX`](https://valkey.io/commands/xdelex/) deletes them; in `ACKED` mode, both delete a message only once every consumer group has acknowledged it ([#4629](https://github.com/valkey-io/valkey/pull/4629)).
 
 ## Hot key detection
 
