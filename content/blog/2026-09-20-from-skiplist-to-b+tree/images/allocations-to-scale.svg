@@ -80,7 +80,7 @@
 <path d="M 745.2 148.0 Q 750.2 144.0 755.3 148.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
 <path d="M 755.3 148.0 Q 760.3 144.0 765.4 148.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
 <path d="M 765.4 148.0 Q 770.4 144.0 775.4 148.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
-<text x="74.0" y="151" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="10.8" font-weight="400" text-anchor="end" fill="#666666">lane 1</text>
+<text x="74.0" y="151" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="10.8" font-weight="400" text-anchor="end" fill="#666666">level 1</text>
 <path d="M 92.5 135.0 Q 128.7 128.0 164.9 135.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
 <path d="M 164.9 135.0 Q 176.4 128.0 187.9 135.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
 <path d="M 187.9 135.0 Q 204.5 128.0 221.0 135.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
@@ -96,14 +96,14 @@
 <path d="M 604.1 135.0 Q 655.9 128.0 707.8 135.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
 <path d="M 707.8 135.0 Q 714.2 128.0 720.7 135.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
 <path d="M 720.7 135.0 Q 727.2 128.0 733.7 135.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
-<text x="74.0" y="138" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="10.8" font-weight="400" text-anchor="end" fill="#666666">lane 2</text>
+<text x="74.0" y="138" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="10.8" font-weight="400" text-anchor="end" fill="#666666">level 2</text>
 <path d="M 92.5 122.0 Q 212.2 115.0 331.9 122.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
 <path d="M 331.9 122.0 Q 339.8 115.0 347.8 122.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
 <path d="M 347.8 122.0 Q 397.4 115.0 447.1 122.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
 <path d="M 447.1 122.0 Q 497.5 115.0 547.9 122.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
-<text x="74.0" y="125" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="10.8" font-weight="400" text-anchor="end" fill="#666666">lane 3</text>
+<text x="74.0" y="125" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="10.8" font-weight="400" text-anchor="end" fill="#666666">level 3</text>
 <path d="M 92.5 109.0 Q 320.2 102.0 547.9 109.0" fill="none" stroke="#30176e" stroke-width="0.8" opacity="0.6"/>
-<text x="74.0" y="112" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="10.8" font-weight="400" text-anchor="end" fill="#666666">lane 4</text>
+<text x="74.0" y="112" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="10.8" font-weight="400" text-anchor="end" fill="#666666">level 4</text>
 <g transform="translate(108.00 148.00)"><rect class="fd-role-data" fill="#6983ff" stroke="none" stroke-width="1" x="0.0" y="0.0" width="1.4" height="62" rx="0"/>
 <rect class="fd-role-pointer" fill="#e07b39" stroke="none" stroke-width="1" x="1.4" y="0.0" width="1.4" height="62" rx="0"/>
 <rect class="fd-role-pointer" fill="#e07b39" stroke="none" stroke-width="1" x="2.9" y="0.0" width="1.4" height="62" rx="0"/>

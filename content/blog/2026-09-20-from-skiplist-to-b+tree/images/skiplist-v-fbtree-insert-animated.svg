@@ -8,7 +8,7 @@
 <text x="34.0" y="90.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="9" font-weight="400" text-anchor="end" fill="#666666">5</text>
 <text x="34.0" y="77.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="9" font-weight="400" text-anchor="end" fill="#666666">6</text>
 <text x="34.0" y="64.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="9" font-weight="400" text-anchor="end" fill="#666666">7</text>
-<text x="34.0" y="51.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="9" font-weight="400" text-anchor="end" fill="#666666">lane</text>
+<text x="34.0" y="51.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="9" font-weight="400" text-anchor="end" fill="#666666">level</text>
 <text x="46.0" y="186.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="9" font-weight="400" text-anchor="middle" fill="#666666">head</text>
 <line x1="54.0" y1="177.0" x2="70.0" y2="177.0" stroke="#30176e" stroke-width="0.8" opacity="0.35" stroke-dasharray="2 3"/>
 <text x="62.0" y="156.0" font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace" font-size="9" fill="#666666" text-anchor="middle" transform="rotate(-90 62.0 156.0)" dy="2.6">(1,180)</text>

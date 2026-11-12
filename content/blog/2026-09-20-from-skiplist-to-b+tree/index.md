@@ -1,6 +1,6 @@
 +++
 title = "From Skiplists to B+ Trees: Making Valkey Sorted Sets More Memory Efficient"
-date = 2026-11-11
+date = 2026-11-12
 description = "How Valkey 9.2 replaces the skiplist used by large sorted sets with a cache-friendly B+ tree, reducing memory overhead while improving several ordered-set operations." 
 authors =  ["rainvalentine","dragosandriciuc"]
 [taxonomies]
@@ -15,13 +15,12 @@ fbtree combines the high fanout and contiguous storage of a conventional B+ tree
 In a 5-million-member test, it reduced per-member memory overhead by 36–43%, saving up to 109 MB.
 
 Let's take a look at why this change happened and how it works.
-The benchmarks below show the measured memory savings and command-performance changes in Valkey 9.2.
 
 ## Why replace the skiplist?
 
 Large sorted sets that exceed the [listpack threshold](https://valkey.io/blog/secret-life-of-data/) are backed by a skiplist paired with a hashtable (smaller sorted sets use a compact listpack representation that stores elements sequentially in contiguous memory).
 The hashtable gives O(1) lookups by member, while the skiplist gives O(log n) ordered lookups by rank or score.
-That pairing has worked well for years, but the skiplist carries a hidden cost that is often overlooked.
+That pairing is architecturally simple, but the skiplist carries a significant memory cost.
 It stores exactly one element per node, scattered across memory as separate allocations connected by pointers.
 
 ### Memory overhead
@@ -33,7 +32,7 @@ Add the 8B score, and the total reaches roughly 37B per node before accounting f
 
 ![Skiplist structure showing one heap allocation per sorted-set member](images/skiplist-structure.svg)
 
-![Layout of a level-1 skiplist node with a 20-byte member: 56 B in one allocation](images/zskiplistNode-struct-layout.svg)
+![Layout of a skiplist node with two levels and a 20-byte member](images/zskiplistNode-struct-layout.svg)
 
 ### Cache misses and dependent fetches
 
@@ -62,15 +61,11 @@ Leaf and inner nodes are sized to fit jemalloc allocation classes without wastin
 
 ![Layout of an fbtree inner node with 61-way fanout](images/fbtree-inner-node.svg)
 
-A 512-byte leaf can hold up to 61 values, grouping up to 61 value pointers under one leaf allocation instead of giving every member its own node.
+A 512-byte leaf holds up to 61 value pointers, so 61 members share one node instead of each getting its own.
 Instead of storing the score and member separately, fbtree stores them together as a single packed value: the normalized 8-byte score followed by the member bytes.
 This keeps the data needed for comparisons together and removes another level of pointer indirection.
 
 ![Memory layout comparison between a skiplist and fbtree for 61 consecutive sorted set members](images/allocations-to-scale.svg)
-
-**Note:** This figure accounts only for the skiplist and fbtree data structures; it excludes the hashtable and all other server memory.
-The benchmark numbers later in this post are heap-profiled per-member overhead at 5 million members, including the hashtable and all other server memory.
-See [Benchmarks](#benchmarks) for the measured reduction from PR 4359. [^3]
 
 ### Fewer memory fetches
 
@@ -136,8 +131,6 @@ Each test was repeated five times; the reported confidence intervals were ≤2% 
 
 The same underlying design changes also improve throughput for several sorted set operations:
 
-**Note:** `ZSCORE` and `ZRANDMEMBER` barely move because they use the companion hashtable rather than the ordered index.
-
 | Command | Workload | Throughput improvement |
 |---|---|---:|
 | `ZADD` | Score update (all hits) | +105% |
@@ -150,8 +143,9 @@ The same underlying design changes also improve throughput for several sorted se
 | `ZRANGEBYSCORE` | 100-element score scan | +1% |
 | `ZPOPMIN` | Pop min + append new member | ~0% |
 
-The pattern makes sense once you look at what each command actually does: `ZADD` and `ZREM` reposition elements in the tree, so they benefit most directly from fbtree's shallower structure and fewer pointer updates.
+`ZADD` and `ZREM` reposition elements in the tree, so they gain the most from fbtree's shallower structure and fewer pointer updates.
 Range operations see smaller gains because once the index traversal becomes cheap, producing and returning the requested elements becomes a larger part of the total cost.
+`ZSCORE` and `ZRANDMEMBER` barely move because they use the hashtable, not the ordered index.
 
 ## Test Valkey 9.2 before GA
 
@@ -167,4 +161,3 @@ Your testing and feedback can help surface issues before the final release, so [
 
 [^1]: [What Every Programmer Should Know About Memory](https://cgvr.cs.uni-bremen.de/teaching/mpar_literatur/What%20Every%20Programmer%20Should%20Know%20About%20Memory%20-%20Ulrich%20Drepper,%202007.pdf)
 [^2]: [Bridging Cache-Friendliness and Concurrency: A Locality-Optimized In-Memory B-Skiplist](https://arxiv.org/abs/2507.21492)
-[^3]: [PR #4359](https://github.com/valkey-io/valkey/pull/4359)
