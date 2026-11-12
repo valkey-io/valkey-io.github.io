@@ -22,16 +22,17 @@ The `valkey-operator` and `valkey-resources` charts in the same repository are n
 
 ## Deployment configurations in the Valkey Helm chart 1.0.0
 
-Every deployment the Valkey Helm chart creates runs Valkey in standalone mode: one primary holds the whole dataset.
-Standalone mode is the opposite of Valkey cluster mode, which shards the dataset across multiple primaries.
-The chart does not support cluster mode.
+The Valkey Helm chart 1.0.0 offers three deployment modes:
 
 - **Standalone (default):** one Valkey pod with no replicas, behind one read-write Service.
 - **Replicated:** one primary and, by default, two replicas, plus a read-only Service that load-balances reads across all pods.
-- **Sentinel (High Availability):** the replicated setup plus three Sentinel pods, which promote a replica when the primary fails.
+- **Sentinel (High Availability):** Replicated mode plus three Sentinel pods, which promote a replica when the primary fails.
+
+In all three modes, one primary holds the whole dataset.
+The chart does not support Valkey cluster mode, which shards the dataset across multiple primaries.
 
 The primary with replicas and Sentinel configurations require Kubernetes persistent storage: a PersistentVolumeClaim (PVC) for each Valkey pod (`persistence.enabled`).
-The chart README calls these configurations Standalone, Replicated, and Sentinel (High Availability), and the [Quick Start section](https://github.com/valkey-io/valkey-helm/tree/main/valkey#quick-start) shows the install command for each.
+The [Quick Start section](https://github.com/valkey-io/valkey-helm/tree/main/valkey#quick-start) of the chart README shows the install command for each mode.
 
 ## Automatic failover with Sentinel in the Valkey Helm chart 1.0.0
 
