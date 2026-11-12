@@ -17,7 +17,7 @@ The chart deploys Valkey on Kubernetes.
 Since the first commit in July 2025, the chart has been published as a series of 0.x releases, ending with 0.12.1.
 The maintainers consider this the first stable release of the chart for production use.
 
-The Valkey chart allows you to define your configuration, topology, and resources for a standalone Valkey deployment.
+The Valkey Helm chart allows you to define your configuration, topology, and resources for a Valkey deployment without cluster mode.
 The `valkey-operator` and `valkey-resources` charts in the same repository are not part of this release.
 
 ## Deployment configurations in the Valkey Helm chart 1.0.0
@@ -56,7 +56,7 @@ The chart also includes these production features, all disabled by default:
 
 - **Authentication:** ACL users with passwords from a Kubernetes Secret (`auth.enabled`).
 - **TLS:** encrypted connections with certificates from a Kubernetes Secret (`tls.enabled`).
-- **Persistent storage:** a PersistentVolumeClaim for the Valkey data directory (`persistence.enabled`), optional in Standalone mode and required for the replicated configurations.
+- **Persistent storage:** a PersistentVolumeClaim for the Valkey data directory (`persistence.enabled`), optional in Standalone mode and required in Replicated and Sentinel modes.
 - **Prometheus metrics:** a [`redis_exporter`](https://github.com/oliver006/redis_exporter) sidecar (`metrics.enabled`), with optional ServiceMonitor, PodMonitor, and PrometheusRule resources.
 - **NetworkPolicy:** a policy for the Valkey pods (`networkPolicy.enabled`); it does not cover the Sentinel or HAProxy pods.
 - **PodDisruptionBudgets:** for the Valkey pods in Replicated and Sentinel modes (`podDisruptionBudget.enabled`), with separate budgets for the Sentinel and HAProxy pods.
@@ -99,7 +99,7 @@ The Valkey Helm chart 1.0.0 has breaking changes compared with 0.x:
 - **Renamed values:** for example, `valkeyConfig` is now `extraConfig`, and a single `persistence` block replaces `dataStorage` and `replica.persistence`.
 - **Valkey server 9.0 or later:** the chart 1.0.0 deploys Valkey 9.1.3 by default, so most users don't need to change anything.
   If you pinned an older Valkey server with `image.tag`, change it to a 9.x version.
-  The chart requires Valkey 9.0 or later because its Sentinel configuration uses the coordinated failover option of `SENTINEL FAILOVER`, which was added in Valkey 9.0 ([valkey-io/valkey#1292](https://github.com/valkey-io/valkey/pull/1292), [Valkey Sentinel docs](https://valkey.io/topics/sentinel/)).
+  The chart requires Valkey 9.0 or later because its Sentinel mode uses the coordinated failover option of `SENTINEL FAILOVER`, which was added in Valkey 9.0 ([valkey-io/valkey#1292](https://github.com/valkey-io/valkey/pull/1292), [Valkey Sentinel docs](https://valkey.io/topics/sentinel/)).
 - **Short downtime in Standalone mode:** Standalone mode now defaults to the `Recreate` deployment strategy, so its upgrades briefly stop Valkey.
 
 Review [UPGRADE.md](https://github.com/valkey-io/valkey-helm/blob/main/valkey/UPGRADE.md) for more.
@@ -135,7 +135,7 @@ Thank you as well to everyone who opened an issue, reviewed a pull request, or t
 
 ## What's next
 
-For the Valkey chart, the next steps are:
+For the Valkey Helm chart, the next steps are:
 
 - Rework authentication for consistency and simplify how users, passwords and ACLs are configured across Valkey and Sentinel.
 - Include support for mTLS.
