@@ -22,7 +22,7 @@ The `valkey-operator` and `valkey-resources` charts in the same repository are n
 
 ## Deployment configurations in the `valkey` Helm chart 1.0.0
 
-Every deployment the `valkey` Helm chart creates runs Valkey in standalone mode: one primary holds the whole dataset.
+Every deployment the `valkey` Helm chart runs Valkey in standalone mode: one primary holds the whole dataset.
 Standalone mode is the opposite of Valkey cluster mode, which shards the dataset across multiple primaries.
 The chart does not support cluster mode.
 
@@ -56,7 +56,7 @@ The chart also includes these production features, all disabled by default:
 - **Authentication:** ACL users with passwords from a Kubernetes Secret (`auth.enabled`).
 - **TLS:** encrypted connections with certificates from a Kubernetes Secret (`tls.enabled`).
 - **Persistent storage:** a PersistentVolumeClaim for the Valkey data directory (`persistence.enabled`), optional for a single primary and required for the replicated configurations.
-- **Prometheus metrics:** a `redis_exporter` sidecar (`metrics.enabled`), with optional ServiceMonitor, PodMonitor, and PrometheusRule resources.
+- **Prometheus metrics:** a [`redis_exporter`](https://github.com/oliver006/redis_exporter) sidecar (`metrics.enabled`), with optional ServiceMonitor, PodMonitor, and PrometheusRule resources.
 - **NetworkPolicy:** a policy for the Valkey pods (`networkPolicy.enabled`); it does not cover the Sentinel or HAProxy pods.
 - **PodDisruptionBudgets:** for the Valkey pods in the replicated configurations (`podDisruptionBudget.enabled`), with separate budgets for the Sentinel and HAProxy pods.
 
@@ -126,7 +126,7 @@ These contributions shaped 1.0.0 directly:
 - Ishan Jain wrote the contributing guide ([#186](https://github.com/valkey-io/valkey-helm/pull/186)) and kept Valkey versions current.
 - [somaz](https://github.com/somaz94) made the health probes configurable ([#217](https://github.com/valkey-io/valkey-helm/pull/217)).
 - [Pierre Gindraud](https://github.com/Turgon37) improved the metrics exporter and logging. They fixed the exporter’s TLS setup ([#262](https://github.com/valkey-io/valkey-helm/pull/262)) and corrected log level ([#267](https://github.com/valkey-io/valkey-helm/pull/262)).
-- [Rushabh Shah](https://github.com/Iamrushabhshahh) reviewed 1.0.0-RC1, leading to the hardened authentication ahead of 1.0 [277](https://github.com/valkey-io/valkey-helm/pull/277) and [valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm/pull/285).
+- [Rushabh Shah](https://github.com/Iamrushabhshahh) reviewed 1.0.0-RC1, leading to the hardened authentication ahead of 1.0 ([#277](https://github.com/valkey-io/valkey-helm/pull/277) and [#285](https://github.com/valkey-io/valkey-helm/pull/285)).
 - [Joe Heyburn](https://github.com/jdheyburn), [Kyle J. Davis](https://github.com/stockholmux) and [Ishan Jain](https://github.com/Bloodraven21) organized and led the weekly Helm chart call and set the direction for each of the project’s charts. They also reviewed the 1.0 changes and gave feedback along the way.
 
 Thank you as well to everyone who opened an issue, reviewed a pull request, or told us how the chart behaved in your environment.
