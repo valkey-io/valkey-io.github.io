@@ -31,13 +31,13 @@ The Valkey Helm chart 1.0.0 offers three deployment modes:
 In all three modes, one primary holds the whole dataset.
 The chart does not support Valkey cluster mode, which shards the dataset across multiple primaries.
 
-The primary with replicas and Sentinel configurations require Kubernetes persistent storage: a PersistentVolumeClaim (PVC) for each Valkey pod (`persistence.enabled`).
+The Replicated and Sentinel modes require Kubernetes persistent storage: a PersistentVolumeClaim (PVC) for each Valkey pod (`persistence.enabled`).
 The [Quick Start section](https://github.com/valkey-io/valkey-helm/tree/main/valkey#quick-start) of the chart README shows the install command for each mode.
 
 ## Automatic failover with Sentinel in the Valkey Helm chart 1.0.0
 
 [Sentinel](https://valkey.io/topics/sentinel/) support is the biggest addition in 1.0.0.
-In replication mode alone, pod-0 is always the primary.
+In Replicated mode without Sentinel, pod-0 is always the primary.
 If it fails, no replica takes over, and writes wait until pod-0 comes back.
 Enable Sentinel, and the chart adds a Sentinel StatefulSet that watches your Valkey pods and promotes a replica when the primary stops responding.
 
@@ -56,14 +56,14 @@ The chart also includes these production features, all disabled by default:
 
 - **Authentication:** ACL users with passwords from a Kubernetes Secret (`auth.enabled`).
 - **TLS:** encrypted connections with certificates from a Kubernetes Secret (`tls.enabled`).
-- **Persistent storage:** a PersistentVolumeClaim for the Valkey data directory (`persistence.enabled`), optional for a single primary and required for the replicated configurations.
+- **Persistent storage:** a PersistentVolumeClaim for the Valkey data directory (`persistence.enabled`), optional in Standalone mode and required for the replicated configurations.
 - **Prometheus metrics:** a [`redis_exporter`](https://github.com/oliver006/redis_exporter) sidecar (`metrics.enabled`), with optional ServiceMonitor, PodMonitor, and PrometheusRule resources.
 - **NetworkPolicy:** a policy for the Valkey pods (`networkPolicy.enabled`); it does not cover the Sentinel or HAProxy pods.
-- **PodDisruptionBudgets:** for the Valkey pods in the replicated configurations (`podDisruptionBudget.enabled`), with separate budgets for the Sentinel and HAProxy pods.
+- **PodDisruptionBudgets:** for the Valkey pods in Replicated and Sentinel modes (`podDisruptionBudget.enabled`), with separate budgets for the Sentinel and HAProxy pods.
 
 ## Get started
 
-These commands install the chart in the single-primary configuration, without authentication:
+These commands install the chart in Standalone mode, without authentication:
 
 ```bash
 helm repo add valkey https://valkey.io/valkey-helm/
@@ -83,7 +83,7 @@ The chart is also published as an OCI artifact:
 helm install valkey oci://ghcr.io/valkey-io/valkey-helm/valkey --version 1.0.0
 ```
 
-For the Sentinel configuration with authentication, start from the example values file [`examples/ha-sentinel.yaml`](https://github.com/valkey-io/valkey-helm/blob/main/valkey/examples/ha-sentinel.yaml).
+For Sentinel mode with authentication, start from the example values file [`examples/ha-sentinel.yaml`](https://github.com/valkey-io/valkey-helm/blob/main/valkey/examples/ha-sentinel.yaml).
 Replace its placeholder passwords with your own passwords or Kubernetes Secrets, then install:
 
 ```bash
@@ -100,7 +100,7 @@ The Valkey Helm chart 1.0.0 has breaking changes compared with 0.x:
 - **Valkey server 9.0 or later:** the chart 1.0.0 deploys Valkey 9.1.3 by default, so most users don't need to change anything.
   If you pinned an older Valkey server with `image.tag`, change it to a 9.x version.
   The chart requires Valkey 9.0 or later because its Sentinel configuration uses the coordinated failover option of `SENTINEL FAILOVER`, which was added in Valkey 9.0 ([valkey-io/valkey#1292](https://github.com/valkey-io/valkey/pull/1292), [Valkey Sentinel docs](https://valkey.io/topics/sentinel/)).
-- **Short downtime for a single primary:** the single-primary configuration now defaults to the `Recreate` deployment strategy, so its upgrades briefly stop Valkey.
+- **Short downtime in Standalone mode:** Standalone mode now defaults to the `Recreate` deployment strategy, so its upgrades briefly stop Valkey.
 
 Review [UPGRADE.md](https://github.com/valkey-io/valkey-helm/blob/main/valkey/UPGRADE.md) for more.
 
