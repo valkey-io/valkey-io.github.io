@@ -20,7 +20,7 @@ The maintainers consider this the first stable release of the chart for producti
 The Valkey Helm chart allows you to define your configuration, topology, and resources for a Valkey deployment without cluster mode.
 The `valkey-operator` and `valkey-resources` charts in the same repository are not part of this release.
 
-## Deployment configurations in the Valkey Helm chart 1.0.0
+## Deployment modes in the Valkey Helm chart 1.0.0
 
 The Valkey Helm chart 1.0.0 offers three deployment modes:
 
@@ -129,7 +129,7 @@ These contributions shaped 1.0.0 directly:
 - [somaz](https://github.com/somaz94) made the health probes configurable ([#217](https://github.com/valkey-io/valkey-helm/pull/217)).
 - [Pierre Gindraud](https://github.com/Turgon37) improved the metrics exporter and logging. They fixed the exporter’s TLS setup ([#262](https://github.com/valkey-io/valkey-helm/pull/262)) and corrected log level ([#267](https://github.com/valkey-io/valkey-helm/pull/267)).
 - [Rushabh Shah](https://github.com/Iamrushabhshahh) reviewed 1.0.0-RC1, leading to the hardened authentication ahead of 1.0 ([#277](https://github.com/valkey-io/valkey-helm/pull/277) and [#285](https://github.com/valkey-io/valkey-helm/pull/285)).
-- [Joe Heyburn](https://github.com/jdheyburn), [Kyle J. Davis](https://github.com/stockholmux) and [Ishan Jain](https://github.com/Bloodraven21) organized and led the weekly Helm chart call and set the direction for each of the project’s charts. They also reviewed the 1.0 changes and gave feedback along the way.
+- [Joe Heyburn](https://github.com/jdheyburn), [Kyle J. Davis](https://github.com/stockholmux), and [Ishan Jain](https://github.com/Bloodraven21); organized and led the weekly Helm chart call and set the direction for each of the project’s charts. They also reviewed the 1.0 changes and gave feedback along the way.
 
 Thank you as well to everyone who opened an issue, reviewed a pull request, or told us how the chart behaved in your environment.
 
