@@ -1,7 +1,7 @@
 +++
 title = "Generally Available: Valkey Helm Chart 1.0.0"
-date = 2026-11-06
-description = "The valkey Helm chart 1.0.0 is generally available, with Sentinel failover, TLS, ACL authentication, and Prometheus metrics for Valkey on Kubernetes. Here is what 1.0.0 includes and how to upgrade from 0.x."
+date = 2026-11-12
+description = "The Valkey Helm chart 1.0.0 is generally available, with Sentinel failover, TLS, ACL authentication, and Prometheus metrics for Valkey on Kubernetes. Find out what 1.0.0 includes and how to upgrade from 0.x."
 authors = ["edithpuclla", "sgissi"]
 
 [taxonomies]
@@ -12,12 +12,12 @@ featured = true
 featured_image = "/assets/media/featured/valkey-helm-1-0-0.png"
 +++
 
-The [`valkey` Helm chart 1.0.0](https://github.com/valkey-io/valkey-helm/tree/main/valkey ) is generally available.
+The [`valkey` Helm chart 1.0.0](https://github.com/valkey-io/valkey-helm/tree/main/valkey) is now generally available.
 The chart deploys Valkey on Kubernetes.
 Since the first commit in July 2025, the chart has been published as a series of 0.x releases, ending with 0.12.1.
 The maintainers consider this the first stable release of the chart for production use.
 
-This post covers only the `valkey` chart.
+The `valkey` chart allows you to define your configuration, topology, and resources for a standalone Valkey deployment.
 The `valkey-operator` and `valkey-resources` charts in the same repository are not part of this release.
 
 ## Deployment configurations in the `valkey` Helm chart 1.0.0
@@ -31,11 +31,11 @@ The chart does not support cluster mode.
 - **High availability with Sentinel:** the replicated setup plus three Sentinel pods, which promote a replica when the primary fails.
 
 Both replicated configurations require persistent storage.
-The chart README calls these configurations Standalone, Replicated, and Sentinel (High Availability), and its [Quick Start section](https://github.com/valkey-io/valkey-helm/tree/main/valkey#quick-start) shows the install command for each.
+The chart README calls these configurations Standalone, Replicated, and Sentinel (High Availability), and the [Quick Start section](https://github.com/valkey-io/valkey-helm/tree/main/valkey#quick-start) shows the install command for each.
 
 ## Automatic failover with Sentinel in the `valkey` Helm chart 1.0.0
 
-Sentinel support is the biggest addition in 1.0.0.
+[Sentinel](https://valkey.io/topics/sentinel/) support is the biggest addition in 1.0.0.
 In replication mode alone, pod-0 is always the primary.
 If it fails, no replica takes over, and writes wait until pod-0 comes back.
 Enable Sentinel, and the chart adds a Sentinel StatefulSet that watches your Valkey pods and promotes a replica when the primary stops responding.
@@ -44,17 +44,16 @@ During a rolling update or a node drain, the primary's pod asks Sentinel for a c
 The primary pauses writes, waits for the replica to catch up, and then hands over.
 That way, no confirmed write is lost during the switch.
 
-Unexpected failures, like a crashed pod or a lost node, are a different story: they follow Valkey's normal asynchronous replication, so the most recent writes can be lost.
+Unexpected failures, like a crashed pod or a lost node, are a different story: they follow Valkey's asynchronous replication, so the most recent writes can be lost.
 The [Sentinel documentation](https://valkey.io/topics/sentinel/) explains the trade-offs.
 
-Not every client library supports Sentinel.
-If yours doesn't, the optional [HAProxy front-end](https://github.com/valkey-io/valkey-helm/tree/main/valkey#haproxy-front-end) gives you one endpoint that always points to the current primary.
+For clients that do not support Sentinel, the optional [HAProxy front-end](https://github.com/valkey-io/valkey-helm/tree/main/valkey#haproxy-front-end) gives you one endpoint that always points to the current primary.
 
 ## Production features in the `valkey` Helm chart 1.0.0
 
 The chart also includes these production features, all disabled by default:
 
-- **Authentication:** ACL users with passwords from a Kubernetes Secret (`auth.usersExistingSecret`).
+- **Authentication:** ACL users with passwords from a Kubernetes Secret (`auth.enabled`).
 - **TLS:** encrypted connections with certificates from a Kubernetes Secret (`tls.enabled`).
 - **Persistent storage:** a PersistentVolumeClaim for the Valkey data directory (`persistence.enabled`), optional for a single primary and required for the replicated configurations.
 - **Prometheus metrics:** a `redis_exporter` sidecar (`metrics.enabled`), with optional ServiceMonitor, PodMonitor, and PrometheusRule resources.
@@ -67,7 +66,13 @@ These commands install the chart in the single-primary configuration, without au
 
 ```bash
 helm repo add valkey https://valkey.io/valkey-helm/
+```
+
+```bash
 helm repo update
+```
+
+```bash
 helm install valkey valkey/valkey --version 1.0.0
 ```
 
@@ -84,6 +89,8 @@ Replace its placeholder passwords with your own passwords or Kubernetes Secrets,
 helm install valkey valkey/valkey --version 1.0.0 -f ha-sentinel.yaml
 ```
 
+When you are ready to deploy, be sure to follow the [production recommendations](https://github.com/valkey-io/valkey-helm/tree/main/valkey#before-going-to-production).
+
 ## Upgrade from the `valkey` Helm chart 0.x to 1.0.0
 
 The `valkey` Helm chart 1.0.0 has breaking changes compared with 0.x:
@@ -91,7 +98,7 @@ The `valkey` Helm chart 1.0.0 has breaking changes compared with 0.x:
 - **Renamed values:** for example, `valkeyConfig` is now `extraConfig`, and a single `persistence` block replaces `dataStorage` and `replica.persistence`.
 - **Valkey server 9.0 or later:** the chart 1.0.0 deploys Valkey 9.1.3 by default, so most users don't need to change anything.
   If you pinned an older Valkey server with `image.tag`, change it to a 9.x version.
-  The chart requires Valkey 9.0 or later because its Sentinel configuration uses the coordinated failover option of `SENTINEL FAILOVER`, which was added in Valkey 9.0 ([valkey-io/valkey#1292](https://github.com/valkey-io/valkey/pull/1292), [Valkey Sentinel docs](https://github.com/valkey-io/valkey-doc/blob/main/topics/sentinel.md)).
+  The chart requires Valkey 9.0 or later because its Sentinel configuration uses the coordinated failover option of `SENTINEL FAILOVER`, which was added in Valkey 9.0 ([valkey-io/valkey#1292](https://github.com/valkey-io/valkey/pull/1292), [Valkey Sentinel docs](https://valkey.io/topics/sentinel/)).
 - **Short downtime for a single primary:** the single-primary configuration now defaults to the `Recreate` deployment strategy, so its upgrades briefly stop Valkey.
 
 Review [UPGRADE.md](https://github.com/valkey-io/valkey-helm/blob/main/valkey/UPGRADE.md) for more.
@@ -116,10 +123,10 @@ These contributions shaped 1.0.0 directly:
 
 - Mykola Voroniuk wrote the first chart templates and has contributed the most commits since.
 - Patrick Schratz added Sentinel ([#234](https://github.com/valkey-io/valkey-helm/pull/234)) and the HAProxy front-end ([#235](https://github.com/valkey-io/valkey-helm/pull/235)).
-- Silvio Gissi led the 1.0.0 configuration cleanup ([#272](https://github.com/valkey-io/valkey-helm/pull/272)) and added Sentinel scheduling and PodDisruptionBudgets ([#270](https://github.com/valkey-io/valkey-helm/pull/270)).
 - Ishan Jain wrote the contributing guide ([#186](https://github.com/valkey-io/valkey-helm/pull/186)) and kept Valkey versions current.
 - [somaz](https://github.com/somaz94) made the health probes configurable ([#217](https://github.com/valkey-io/valkey-helm/pull/217)).
-- Pierre Gindraud fixed the exporter's TLS configuration ([#262](https://github.com/valkey-io/valkey-helm/pull/262)).
+- [Pierre Gindraud](https://github.com/Turgon37) improved the metrics exporter and logging. They fixed the exporter’s TLS setup ([#262](https://github.com/valkey-io/valkey-helm/pull/262)) and corrected log level ([#267](https://github.com/valkey-io/valkey-helm/pull/262)).
+- [Rushabh Shah](https://github.com/Iamrushabhshahh) reviewed 1.0.0-RC1, leading to the hardened authentication ahead of 1.0 [277](https://github.com/valkey-io/valkey-helm/pull/277) and [valkey-io/valkey-helm](https://github.com/valkey-io/valkey-helm/pull/285).
 
 Thank you as well to everyone who opened an issue, reviewed a pull request, or told us how the chart behaved in your environment.
 
@@ -127,8 +134,9 @@ Thank you as well to everyone who opened an issue, reviewed a pull request, or t
 
 For the `valkey` chart, the next steps are:
 
-- [TO BE ADDED]
-
+- Rework authentication for consistency and simplify how users, passwords and ACLs are configured across Valkey and Sentinel.
+- Include support for mTLS.
+- Add more storage options and review the persistence requirements.
 
 Valkey cluster mode support on Kubernetes is being developed separately, in the `valkey-operator` and `valkey-resources` charts in the same repository.
 
@@ -142,4 +150,4 @@ Four kinds of feedback help the most:
 - **Client library:** connect your client through Sentinel or the HAProxy front-end, and report how it handled a failover.
 - **Upgrade from 0.x:** upgrade a test installation from 0.x to 1.0.0, and report anything [`UPGRADE.md`](https://github.com/valkey-io/valkey-helm/blob/main/valkey/UPGRADE.md) missed.
 
-Report results and bugs as [issues in `valkey-io/valkey-helm`](https://github.com/valkey-io/valkey-helm/issues), or ask questions in the [#valkey-helm](hhttps://valkey-oss-developer.slack.com/archives/C09JZ6N2AAV) Slack channel.
+Report results and bugs as [issues in `valkey-io/valkey-helm`](https://github.com/valkey-io/valkey-helm/issues), or ask questions in the [#valkey-helm](https://valkey-oss-developer.slack.com/archives/C09JZ6N2AAV) Slack channel.
