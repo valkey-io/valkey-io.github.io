@@ -89,7 +89,7 @@ Fixed time-range buttons are gone. You can now pick a custom window, in hours or
 
 ![Cpu metrics 30 hours.png](images/d72ff898ecf9.png)
 
-**CPU, 30 days with spikes** Valkey Admin CPU usage chart for the last 30 hours
+**CPU, 30 hours with spikes** Valkey Admin CPU usage chart for the last 30 hours
 
 ![Cpu metrics 30 days.png](images/6b7734a43791.png)
 
@@ -99,7 +99,7 @@ One detail: longer windows still need enough metrics retention configured. <text
 
 ![Memory metrics 30 hours.png](images/c9879cb02f83.png)
 
-**Memory, 30-day chart** Valkey Admin memory chart for the last 30 hours
+**Memory, 30-hours chart** Valkey Admin memory chart for the last 30 hours
 
 ![Memory metrics 30 days.png](images/6ba531c50472.png)
 
@@ -145,7 +145,7 @@ A special thank-you to the people behind these releases. [@nassery318](https://g
 
 These releases also welcomed first-time contributors: 
 [@rezakaramad](https://github.com/rezakaramad) - GCP Memorystore IAM auth (https://github.com/valkey-io/valkey-admin/pull/508),
-[@bharathsr08](https://github.com/Bharath5626) - blocking connection-state commands (https://github.com/valkey-io/valkey-admin/pull/534) and [@RajGahoi](https://github.com/Bharath5626) - command timing ([https://github.com/valkey-io/valkey-admin/pull/553](https://github.com/valkey-io/valkey-admin/pull/553)). 
+[@bharathsr08](https://github.com/Bharath5626) - blocking connection-state commands (https://github.com/valkey-io/valkey-admin/pull/534) and [@RajGahoi](https://github.com/RajGahoi) - command timing ([https://github.com/valkey-io/valkey-admin/pull/553](https://github.com/valkey-io/valkey-admin/pull/553)). 
 
 Thank you to [@michaelstingl](https://github.com/michaelstingl), [@dbaker-arch](https://github.com/dbaker-arch) and [@antonin-suzor](https://github.com/antonin-suzor) for contributing to 1.2 release and to [@phoenixphoebus](https://github.com/phoenixphoebus) for opening issues and pull requests on binary-safe key display, decompression of stored values, and Key Browser pagination.
 
