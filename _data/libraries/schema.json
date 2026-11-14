@@ -126,8 +126,8 @@
     },
     "language": {
       "$comment": "The language set is fixed on purpose: adding a language is a deliberate change to this schema.",
-      "description": "The primary programming language, required for client entries and optional for integrations. It must be one of `C`, `C#`, `Go`, `Java`, `Node.js`, `PHP`, `Python`, `Ruby`, `Shell`, `Swift` or `TypeScript`.",
-      "enum": ["C", "C#", "Go", "Java", "Node.js", "PHP", "Python", "Ruby", "Shell", "Swift", "TypeScript"]
+      "description": "The primary programming language, required for client entries and optional for integrations. It must be one of `C`, `C#`, `Go`, `Java`, `Kotlin`, `Node.js`, `PHP`, `Python`, `Ruby`, `Shell`, `Swift` or `TypeScript`.",
+      "enum": ["C", "C#", "Go", "Java", "Kotlin", "Node.js", "PHP", "Python", "Ruby", "Shell", "Swift", "TypeScript"]
     },
     "installCommand": {
       "description": "The primary install command, such as `pip install valkey-glide`, on one line with no spaces at either end.",
