@@ -309,6 +309,16 @@
 {% endcomponent nav_command_reference %}
 
 {#-
+    Links to pages outside the documentation. They're rendered after the
+    section with the id "client-development", or at the end of the menu if
+    there's none.
+-#}
+{% component nav_page_links() -%}
+<li class="docs-menu-link"><a href="/clients/">Clients</a></li>
+<li class="docs-menu-link"><a href="/integrations/">Integrations</a></li>
+{%- endcomponent nav_page_links %}
+
+{#-
     The menu.
       current: slug of the current topic.
       related: key of the menu entry the current command belongs to (on
@@ -361,9 +371,15 @@
             </details>
         </li>
         {%- endif %}
+        {%- if section.id == "client-development" %}
+        {{< nav_page_links />}}
+        {%- endif %}
     {%- endfor %}
         {%- if "command-reference" not in [x.id for x in nav] %}
         {{< nav_command_reference title="Command reference" index={index} on_command_reference={on_command_reference} />}}
+        {%- endif %}
+        {%- if "client-development" not in [x.id for x in nav] %}
+        {{< nav_page_links />}}
         {%- endif %}
     </ul>
 </nav>
