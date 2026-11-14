@@ -50,6 +50,13 @@ runs:
         repository: valkey-io/valkey-search
         path: valkey-search
 
+    - name: Checkout valkey-large-object
+      if: inputs.checkout-content == 'true'
+      uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      with:
+        repository: valkey-io/valkey-large-object
+        path: valkey-large-object
+
     - name: Init commands and topics
       shell: bash
       working-directory: ${{ inputs.path }}
@@ -57,7 +64,8 @@ runs:
         ./build/init-topics.sh ../valkey-doc/topics
         ./build/init-commands.sh ../valkey-doc/commands \
           ../valkey/src/commands ../valkey-bloom/src/commands \
-          ../valkey-json/src/commands ../valkey-search/src/commands
+          ../valkey-json/src/commands ../valkey-search/src/commands \
+          ../valkey-large-object/src/commands
 
     - name: Build only
       uses: shalzz/zola-deploy-action@1be083648a1db2853ce4970e381740c0e2fd06de # v0.23.6
