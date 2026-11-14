@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 720 176"
+   width="720"
+   height="176"
+   version="1.1"
+   id="svg33"
+   sodipodi:docname="skiplist-structure.svg"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview33"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="2.375"
+     inkscape:cx="326.31579"
+     inkscape:cy="121.47368"
+     inkscape:window-width="1920"
+     inkscape:window-height="1094"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg33" />
+  <rect
+     width="100%"
+     height="100%"
+     fill="#ffffff"
+     id="rect1" />
+  <defs
+     id="defs1">
+    <marker
+       id="arrow"
+       viewBox="0 0 10 10"
+       refX="9"
+       refY="5"
+       markerWidth="6"
+       markerHeight="6"
+       orient="auto-start-reverse">
+      <path
+         d="M 0 0 L 10 5 L 0 10 z"
+         fill="#30176e"
+         id="path1" />
+    </marker>
+  </defs>
+  <g
+     font-family="'Fira Mono', Consolas, Menlo, Monaco, 'Courier New', monospace"
+     id="g33">
+    <text
+       x="24"
+       y="26"
+       font-size="13px"
+       font-weight="700"
+       fill="#002a3a"
+       id="text1">skiplist: one heap node per member, levels built from pointers inside the nodes</text>
+    <!-- level labels -->
+    <g
+       font-size="9px"
+       fill="#666666"
+       text-anchor="end"
+       id="g4">
+      <text
+         x="64"
+         y="99"
+         id="text2">level 1</text>
+      <text
+         x="64"
+         y="81"
+         id="text3">level 2</text>
+      <text
+         x="64"
+         y="63"
+         id="text4">level 3</text>
+    </g>
+    <!-- head -->
+    <rect
+       x="70"
+       y="108"
+       width="22"
+       height="30"
+       fill="none"
+       stroke="#30176e"
+       stroke-width="0.8"
+       stroke-dasharray="3 2"
+       id="rect4" />
+    <text
+       x="81"
+       y="150"
+       font-size="9"
+       fill="#666666"
+       text-anchor="middle"
+       id="text5">head</text>
+    <line
+       x1="81"
+       y1="108"
+       x2="81"
+       y2="50"
+       stroke="#30176e"
+       stroke-width="1.2"
+       stroke-dasharray="3 2"
+       id="line5" />
+    <text
+       x="81"
+       y="45"
+       font-size="8"
+       fill="#666666"
+       text-anchor="middle"
+       id="text6">…32</text>
+    <!-- node stems (height = node's level count) -->
+    <g
+       stroke="#30176e"
+       stroke-width="1.2"
+       id="g13">
+      <line
+         x1="150"
+         y1="108"
+         x2="150"
+         y2="96"
+         id="line6" />
+      <line
+         x1="216"
+         y1="108"
+         x2="216"
+         y2="78"
+         id="line7" />
+      <line
+         x1="282"
+         y1="108"
+         x2="282"
+         y2="96"
+         id="line8" />
+      <line
+         x1="348"
+         y1="108"
+         x2="348"
+         y2="60"
+         id="line9" />
+      <line
+         x1="414"
+         y1="108"
+         x2="414"
+         y2="96"
+         id="line10" />
+      <line
+         x1="480"
+         y1="108"
+         x2="480"
+         y2="96"
+         id="line11" />
+      <line
+         x1="546"
+         y1="108"
+         x2="546"
+         y2="78"
+         id="line12" />
+      <line
+         x1="612"
+         y1="108"
+         x2="612"
+         y2="96"
+         id="line13" />
+    </g>
+    <!-- forward pointers per level -->
+    <g
+       stroke="#30176e"
+       stroke-width="1"
+       fill="none"
+       marker-end="url(#arrow)"
+       id="g25">
+      <!-- level 1 -->
+      <line
+         x1="81"
+         y1="96"
+         x2="150"
+         y2="96"
+         id="line14" />
+      <line
+         x1="150"
+         y1="96"
+         x2="216"
+         y2="96"
+         id="line15" />
+      <line
+         x1="216"
+         y1="96"
+         x2="282"
+         y2="96"
+         id="line16" />
+      <line
+         x1="282"
+         y1="96"
+         x2="348"
+         y2="96"
+         id="line17" />
+      <line
+         x1="348"
+         y1="96"
+         x2="414"
+         y2="96"
+         id="line18" />
+      <line
+         x1="414"
+         y1="96"
+         x2="480"
+         y2="96"
+         id="line19" />
+      <line
+         x1="480"
+         y1="96"
+         x2="546"
+         y2="96"
+         id="line20" />
+      <line
+         x1="546"
+         y1="96"
+         x2="612"
+         y2="96"
+         id="line21" />
+      <!-- level 2 -->
+      <line
+         x1="81"
+         y1="78"
+         x2="216"
+         y2="78"
+         id="line22" />
+      <line
+         x1="216"
+         y1="78"
+         x2="348"
+         y2="78"
+         id="line23" />
+      <line
+         x1="348"
+         y1="78"
+         x2="546"
+         y2="78"
+         id="line24" />
+      <!-- level 3 -->
+      <line
+         x1="81"
+         y1="60"
+         x2="348"
+         y2="60"
+         id="line25" />
+    </g>
+    <!-- nodes: one plain box per member -->
+    <g
+       fill="#ffffff"
+       stroke="#30176e"
+       stroke-width="1"
+       id="g32">
+      <rect
+         x="128"
+         y="108"
+         width="44"
+         height="30"
+         id="rect25" />
+      <rect
+         x="194"
+         y="108"
+         width="44"
+         height="30"
+         id="rect26" />
+      <rect
+         x="260"
+         y="108"
+         width="44"
+         height="30"
+         id="rect27" />
+      <rect
+         x="326"
+         y="108"
+         width="44"
+         height="30"
+         id="rect28" />
+      <rect
+         x="392"
+         y="108"
+         width="44"
+         height="30"
+         id="rect29" />
+      <rect
+         x="458"
+         y="108"
+         width="44"
+         height="30"
+         id="rect30" />
+      <rect
+         x="524"
+         y="108"
+         width="44"
+         height="30"
+         id="rect31" />
+      <rect
+         x="590"
+         y="108"
+         width="44"
+         height="30"
+         id="rect32" />
+    </g>
+    <text
+       x="642"
+       y="127"
+       font-size="9"
+       fill="#666666"
+       id="text32">tail</text>
+    <!-- backward pointer -->
+    <path
+       d="M 480 142 Q 447 152 414 142"
+       fill="none"
+       stroke="#30176e"
+       stroke-width="1"
+       marker-end="url(#arrow)"
+       id="path32" />
+    <text
+       x="447"
+       y="164"
+       font-size="8"
+       fill="#666666"
+       text-anchor="middle"
+       id="text33">backward</text>
+  </g>
+</svg>
