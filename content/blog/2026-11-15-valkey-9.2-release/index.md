@@ -1,7 +1,8 @@
 +++
 title = "Valkey 9.2 offers forkless snapshots, compressed replication, ACL roles, and more"
 description = "Valkey 9.2 can save snapshots without forking, compress replication traffic with LZ4 or Zstandard, and group ACL rules into reusable roles. It also adds Path Hash, a new data type for prefix lookups, and a set of conditional commands."
-date = 2026-11-15
+date = 2026-11-16
+draft = true
 authors = ["kyledvs", "dragosandriciuc"]
 
 [taxonomies]
@@ -17,7 +18,7 @@ Large sorted sets use 36% to 43% less memory overhead per member, replication tr
 When load spikes, Valkey 9.2 keeps cluster heartbeats and replication moving, holds connections for administrators, and slows writes before a lagging replica needs a full resync.
 It also adds roles to access control, Path Hash, a new data type, a set of conditional commands and more.
 
-Let's take a look at the changes.
+Read on to find out more about these changes.
 
 ## Forkless snapshots and full syncs
 
@@ -118,66 +119,25 @@ OK
 
 ## New and conditional commands
 
-Valkey 9.2 adds a set of new and conditional commands:
+Valkey 9.2 lets more commands check a condition and act in the same step.
+[`EXEC`](https://valkey.io/commands/exec/) now accepts `IFEQ`, `IFNE`, `NX`, and `XX` conditions, enabling optimistic locking for multi-key transactions without needing the [`WATCH`](https://valkey.io/commands/watch/) command ([#4019](https://github.com/valkey-io/valkey/pull/4019)).
+The new [`DELEX`](https://valkey.io/commands/delex/) command deletes a string key only when its value matches (`IFEQ`) or differs from (`IFNE`) a given value ([#4607](https://github.com/valkey-io/valkey/pull/4607)), and [`SET`](https://valkey.io/commands/set/) now accepts `IFNE` too ([#3105](https://github.com/valkey-io/valkey/pull/3105)).
 
-- The [`EXEC`](https://valkey.io/commands/exec/) command now accepts `IFEQ`, `IFNE`, `NX`, and `XX` conditions, enabling optimistic locking for multi-key transactions without needing the [`WATCH`](https://valkey.io/commands/watch/) command ([#4019](https://github.com/valkey-io/valkey/pull/4019)).
-- The new [`DELEX`](https://valkey.io/commands/delex/) command conditionally deletes a string key when its value matches (`IFEQ`) or differs from (`IFNE`) a given value ([#4607](https://github.com/valkey-io/valkey/pull/4607)), and [`SET`](https://valkey.io/commands/set/) now accepts `IFNE` ([#3105](https://github.com/valkey-io/valkey/pull/3105)).
-- The new `INCREX` command atomically increments a key while setting its expiration, with bounded increments and conditional expiration control ([#3253](https://github.com/valkey-io/valkey/pull/3253) and [#4679](https://github.com/valkey-io/valkey/pull/4679)).
-- [`XACKDEL`](https://valkey.io/commands/xackdel/) acknowledges and deletes stream messages in one call, and [`XDELEX`](https://valkey.io/commands/xdelex/) deletes them; in `ACKED` mode, both delete a message only once every consumer group has acknowledged it ([#4629](https://github.com/valkey-io/valkey/pull/4629)).
+The new `INCREX` command increments a key and sets its expiration in one atomic step, with bounded increments and conditional expiration control ([#3253](https://github.com/valkey-io/valkey/pull/3253) and [#4679](https://github.com/valkey-io/valkey/pull/4679)).
+For streams, [`XACKDEL`](https://valkey.io/commands/xackdel/) acknowledges and deletes messages in one call, and [`XDELEX`](https://valkey.io/commands/xdelex/) deletes them; in `ACKED` mode, both delete a message only once every consumer group has acknowledged it ([#4629](https://github.com/valkey-io/valkey/pull/4629)).
 
 ## Hot key detection
 
 Server-side hot key detection is added with the new [`HOTKEYS GET`](https://valkey.io/commands/hotkeys-get/) and [`HOTKEYS RESET`](https://valkey.io/commands/hotkeys-reset/) commands, enabled by configuring the `hotkeys-top-k` setting ([#3708](https://github.com/valkey-io/valkey/pull/3708)).
 It uses the Space-Saving algorithm to track the K hottest keys in a fixed-size summary, so there are no access-rate thresholds to tune.
 
-## Also in this release
+## Upgrading to Valkey 9.2
 
-Valkey 9.2 also includes the following changes:
-
-**Security:**
-
-- [`ACL DIGEST`](https://valkey.io/commands/acl-digest/) returns a fingerprint of the ACL rules currently in effect, which you can use to verify what [`ACL LOAD`](https://valkey.io/commands/acl-load/) applied ([#4446](https://github.com/valkey-io/valkey/pull/4446)).
-- Support for a secondary server certificate is added through `tls-alt-cert-file`, `tls-alt-key-file`, and `tls-alt-key-file-pass`, for example a post-quantum certificate alongside RSA ([#3717](https://github.com/valkey-io/valkey/pull/3717)).
-- When you build Valkey with TLS, [`ACL GENPASS`](https://valkey.io/commands/acl-genpass/) and the hash function seed draw randomness from the configured OpenSSL 3 provider ([#4339](https://github.com/valkey-io/valkey/pull/4339)).
-- [`CLUSTER MIGRATESLOTS`](https://valkey.io/commands/cluster-migrateslots/) accepts an optional per-target `AUTH username password`, with the credentials redacted from the slow log and [`MONITOR`](https://valkey.io/commands/monitor/) ([#3538](https://github.com/valkey-io/valkey/pull/3538)).
-
-**Performance:**
-
-- [`HMGET`](https://valkey.io/commands/hmget/), [`SMISMEMBER`](https://valkey.io/commands/smismember/), and [`ZMSCORE`](https://valkey.io/commands/zmscore/) on large hashtable-encoded keys use batched lookups that overlap memory accesses ([#4017](https://github.com/valkey-io/valkey/pull/4017)).
-- Replicas can now parse multiple commands from the replication stream at once ([#3597](https://github.com/valkey-io/valkey/pull/3597)), and command propagation batches each command's RESP frame into a single replication buffer write ([#4044](https://github.com/valkey-io/valkey/pull/4044)).
-- When `io-threads` are enabled, memory prefetching extends to hash, set, and sorted set member lookups ([#3940](https://github.com/valkey-io/valkey/pull/3940)), and cluster bus reads, writes, and inbound TLS accepts can run on the shared I/O thread pool ([#3438](https://github.com/valkey-io/valkey/pull/3438)).
-- [`HGETALL`](https://valkey.io/commands/hgetall/), [`HKEYS`](https://valkey.io/commands/hkeys/), and [`HVALS`](https://valkey.io/commands/hvals/) are faster with exact-length reply headers, fused bulk replies, and entry prefetching ([#4417](https://github.com/valkey-io/valkey/pull/4417)).
-- Exact [`XTRIM`](https://valkey.io/commands/xtrim/) `MAXLEN = 0` is about 2.5 times faster because it clears the whole stream in one step ([#4161](https://github.com/valkey-io/valkey/pull/4161)).
-
-**Operations:**
-
-- The `cluster-replica-priority` configuration lets operators rank which replicas are preferred during automatic cluster failover ([#2204](https://github.com/valkey-io/valkey/pull/2204)).
-- With the new `if-empty` value of `cluster-replica-no-failover`, a replica that has never received data from its primary refuses automatic failover ([#4425](https://github.com/valkey-io/valkey/pull/4425)).
-- A new `FAILOVER_AUTH_NACK` message speeds up recovery from split-vote elections ([#3833](https://github.com/valkey-io/valkey/pull/3833)).
-- The new `maxmemory-scripts` configuration limits the memory used by cached [`EVAL`](https://valkey.io/commands/eval/) scripts, and [`SCRIPT LOAD`](https://valkey.io/commands/script-load/) now respects the global `maxmemory` limit ([#866](https://github.com/valkey-io/valkey/pull/866)).
-- [`EXEC`](https://valkey.io/commands/exec/) transactions are now recorded in the slow log and command log when their total execution time crosses the threshold ([#4267](https://github.com/valkey-io/valkey/pull/4267)).
-- Compressed full-sync RDB files can be reused directly as append-only file (AOF) bases ([#4754](https://github.com/valkey-io/valkey/pull/4754)).
-
-**Commands:**
-
-- [`MOVE`](https://valkey.io/commands/move/) now accepts an optional `REPLACE` argument to overwrite an existing key in the destination database ([#2993](https://github.com/valkey-io/valkey/pull/2993)).
-- [`SISMEMBER`](https://valkey.io/commands/sismember/) now accepts an optional `XX` flag that returns `-1` when the key doesn't exist ([#2972](https://github.com/valkey-io/valkey/pull/2972)), and the [`ZRANGE`](https://valkey.io/commands/zrange/) family accepts `XX` to distinguish a non-existent key from an empty result ([#2978](https://github.com/valkey-io/valkey/pull/2978)).
-- `CONFIG INFO` now returns configuration metadata such as type, flags, valid enum values, and numeric ranges ([#3050](https://github.com/valkey-io/valkey/pull/3050)).
-
-**Tooling:**
-
-- `valkey-benchmark` can now load CSV and TSV datasets ([#2823](https://github.com/valkey-io/valkey/pull/2823)), accepts keyspace sizes above `INT_MAX` ([#4252](https://github.com/valkey-io/valkey/pull/4252)), and scales further in multi-threaded mode ([#4332](https://github.com/valkey-io/valkey/pull/4332)).
-- `valkey-cli` reads the `VALKEYCLI_HOST`, `VALKEYCLI_PORT`, and `VALKEYCLI_USER` environment variables ([#3402](https://github.com/valkey-io/valkey/pull/3402) and [#4126](https://github.com/valkey-io/valkey/pull/4126)).
-
-## Before you upgrade
-
-A few changes in Valkey 9.2 can affect existing deployments.
+Valkey 9.2 is a minor release with no breaking changes, so upgrading is generally safe.
+A few changes can affect existing deployments, especially if you later need to downgrade.
 As a general rule, don't enable new features until you're confident you won't need to downgrade; newer features may introduce data formats or behavior that older versions can't handle.
 
-Before you upgrade, check the following:
-
-- Ensure you update the scripts or monitoring which check `OBJECT ENCODING` for `skiplist`: large sorted sets now report `btree` ([#4359](https://github.com/valkey-io/valkey/pull/4359)).
-- Before downgrading, switch `rdbcompression` to a legacy mode and run [`BGREWRITEAOF`](https://valkey.io/commands/bgrewriteaof/): AOF bases written with `lz4` or `zstd` **require** a Valkey version that supports streaming-compressed RDB files ([#4754](https://github.com/valkey-io/valkey/pull/4754)).
+Before downgrading, switch `rdbcompression` to a legacy mode and run [`BGREWRITEAOF`](https://valkey.io/commands/bgrewriteaof/): AOF bases written with `lz4` or `zstd` **require** a Valkey version that supports streaming-compressed RDB files ([#4754](https://github.com/valkey-io/valkey/pull/4754)).
 
 ## Thank you to our contributors
 
@@ -188,7 +148,7 @@ The full list of changes and contributors is in the [9.2 release notes](https://
 ## What's next
 
 [Download Valkey 9.2](https://valkey.io/download/9.2/) and try the feature that matters most to you.
-Then tell us about it:
+Then share your experience:
 
 - Share which feature you're trying first, and what you found, in [GitHub Discussions](https://github.com/valkey-io/valkey/discussions) or the [Valkey community](https://valkey.io/community/).
 - Feel free to write a blog post about it for valkey.io, the [CONTRIBUTING-BLOG-POST.md](https://github.com/valkey-io/valkey-io.github.io/blob/main/CONTRIBUTING-BLOG-POST.md) explains how you can do that.
