@@ -1,14 +1,15 @@
 name: Check the website's links
 description: >
-  Checks a built site (<path>/public) for links to missing pages or #anchors. If base-path is
-  provided, only surfaces issues that don't appear in both.
+  Checks a built site for links to missing pages or #anchors, and for doc links that weren't
+  converted to site URLs. Given a build from before the change, fails only on problems the change
+  causes. Without, fails on every problem.
 
 inputs:
-  path:
-    description: The website to check the build for, relative to the workspace (e.g. website).
+  after:
+    description: The built site to check, relative to the workspace (e.g. website/public).
     required: true
-  base-path:
-    description: A checkout of the base commit to compare with. If it has no public directory, every broken link is listed.
+  before:
+    description: A built site from before the change to compare with, relative to the workspace. Leave empty if there is none.
     default: ''
 
 runs:
@@ -26,21 +27,20 @@ runs:
         tar -xzf "$RUNNER_TEMP/lychee.tar.gz" -C "$RUNNER_TEMP" --strip-components=1 lychee-x86_64-unknown-linux-gnu/lychee
         echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
 
+    # Uses the scripts from the same commit as this action, so a change to a check is used on both
+    # builds. Runs both even if the first fails.
     - name: Check links
       shell: bash
       env:
-        CHECKOUT: ${{ inputs.path }}
-        BASE_CHECKOUT: ${{ inputs.base-path }}
+        BEFORE: ${{ inputs.before }}
+        AFTER: ${{ inputs.after }}
       run: |
+        build=$(git -C "$GITHUB_ACTION_PATH" rev-parse --show-toplevel)/build
+        before=-
+        if [ -n "$BEFORE" ]; then before=$BEFORE; fi
         status=0
-        for check in broken-links unconverted-doc-links; do
-          echo "build/$check.sh:"
-          before=-
-          if [ -n "$BASE_CHECKOUT" ]; then
-            before=$RUNNER_TEMP/$check-before.txt
-            if [ -d "$BASE_CHECKOUT/public" ]; then "$CHECKOUT/build/$check.sh" "$BASE_CHECKOUT/public" > "$before"; fi
-          fi
-          "$CHECKOUT/build/$check.sh" "$CHECKOUT/public" > "$RUNNER_TEMP/$check.txt"
-          "$CHECKOUT/build/compare-link-failures.sh" "$before" "$RUNNER_TEMP/$check.txt" || status=1
+        for check in broken-links.sh unconverted-doc-links.sh; do
+          echo "$check:"
+          "$build/compare-problems.sh" "$before" "$AFTER" "$build/$check" || status=1
         done
         exit "$status"
