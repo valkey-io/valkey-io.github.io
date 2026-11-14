@@ -36,11 +36,19 @@
         {#- Escape the JSON-sourced token and name here. `next` was already
             escaped by the nested call, so the result is marked safe. -#}
         {%- set arguments_str = start ~ " " ~ (token | escape) ~ " "
-            ~ (name | escape) ~ " " ~ next ~ " " ~ end ~ display_separator %}
+            ~ (name | escape) ~ " " ~ next ~ " " ~ end %}
+        {#- A repeatable argument is shown once, followed by "...". A required group
+            of several arguments has no brackets to show what "..." repeats, so it
+            keeps the "key value [ key value ... ]" form. -#}
+        {%- if arguments.multiple %}
+            {%- if start == "" and arguments.type == "block" and arguments.arguments and arguments.arguments | length > 1 %}
+                {%- set arguments_str = arguments_str ~ " [ " ~ arguments_str ~ " ... ]" %}
+            {%- else %}
+                {%- set arguments_str = arguments_str ~ " ..." %}
+            {%- endif %}
+        {%- endif %}
+        {%- set arguments_str = arguments_str ~ display_separator %}
         {{ arguments_str | safe }}
-        {% if arguments.multiple %}
-            [ {{ arguments_str | safe }} ... ]
-        {% endif %}
     {%- endfor -%}
 {% endcomponent arguments_parse %}
 
