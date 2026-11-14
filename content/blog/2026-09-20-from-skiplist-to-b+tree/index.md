@@ -1,6 +1,7 @@
 +++
 title = "From Skiplists to B+ Trees: Making Valkey Sorted Sets More Memory Efficient"
-date = 2026-11-13
+date = 2026-11-16
+draft = true
 description = "How Valkey 9.2 replaces the skiplist used by large sorted sets with a cache-friendly B+ tree, reducing memory overhead while improving several ordered-set operations." 
 authors =  ["rainvalentine","dragosandriciuc"]
 [taxonomies]
