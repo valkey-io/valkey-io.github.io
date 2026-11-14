@@ -1,0 +1,44 @@
+# Builds the site before and after the PR and checks its search index. Fails if the PR causes a
+# problem. Problems already there before the PR, such as ones from other repos, are listed but don't
+# fail the check. Includes scheduled posts (drafts) so they are checked before being merged.
+
+name: Search check
+
+on:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: search-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  search-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          path: website
+
+      - name: Build this PR
+        uses: ./website/.github/actions/build-site
+        with:
+          path: website
+          drafts: true
+
+      - name: Build the base
+        id: base
+        uses: ./website/.github/actions/build-base
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          drafts: true
+
+      - name: Check search index
+        uses: ./website/.github/actions/check-search-index
+        with:
+          before: ${{ steps.base.outputs.site }}
+          after: website/public
