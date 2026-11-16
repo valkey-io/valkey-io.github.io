@@ -32,6 +32,11 @@ jobs:
         with:
           path: website
 
+      - name: Build copies of the search index for the other Valkey sites
+        if: github.event_name != 'pull_request'
+        working-directory: website
+        run: ./build/index-copies.sh build
+
       - name: Upload artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
@@ -81,9 +86,16 @@ jobs:
           name: github-pages
 
       - name: Unpack the built site
+        id: unpack
         run: mkdir public && tar -xf artifact.tar -C public
 
       - name: Check links
         uses: ./.github/actions/check-links
         with:
-          path: .
+          after: public
+
+      - name: Check search index
+        if: ${{ !cancelled() && steps.unpack.outcome == 'success' }}
+        uses: ./.github/actions/check-search-index
+        with:
+          after: public

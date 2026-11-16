@@ -29,33 +29,16 @@
     <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
 
-    <title>
-    {%- if command_title is defined and command_title -%}
-    Valkey Command &middot; {{ command_title }}
-    {%- elif frontmatter_title is defined and frontmatter_title -%}
-    Valkey Documentation &middot; {{ frontmatter_title }}
-    {%- elif page is defined and page.title -%}
-    Valkey &middot; {{ page.title }}
-    {%- elif section is defined and section.title -%}
-    Valkey &middot; {{ section.title }}
-    {%- else -%}
-    Valkey
-    {%- endif -%}
-    </title>
-    <meta name="title" property="og:title" content="{%- if command_title is defined and command_title -%}
-    Valkey Command: {{ command_title }}
-    {%- elif frontmatter_title is defined and frontmatter_title -%}
-    Valkey Documentation: {{ frontmatter_title }}
-    {%- elif page is defined and page.title -%}
-    Valkey: {{ page.title }}
-    {%- elif section is defined and section.title -%}
-    Valkey: {{ section.title }}
-    {%- else -%}
-    Valkey
-    {%- endif -%}">
+    <title>{{ name_prefix }}{% if page_name %} &middot; {{ page_name }}{% endif %}</title>
+    <meta name="title" property="og:title" content="{{ name_prefix }}{% if page_name %}: {{ page_name }}{% endif %}">
 
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="alternate" type="application/atom+xml" title="Atom feed" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" />
+
+    <!-- Site search -->
+    <link rel="stylesheet" href="/pagefind/pagefind-component-ui.css">
+    <script src="/pagefind/pagefind-component-ui.js" defer></script>
+    <script src="/assets/js/search.js" defer></script>
 
     <!-- Nav JS -->
     <script src="/assets/js/nav.js"></script>
