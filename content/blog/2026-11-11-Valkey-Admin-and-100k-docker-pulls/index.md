@@ -24,7 +24,7 @@ Docker pulls aren't the same as unique users. But they tell us something encoura
 
 But this isn't just a post about a number. It's about why we started, what's new in versions 1.2 and 1.3, and, most of all, where we hope to go together. Next, we're exploring a Model Context Protocol (MCP) server to empower Valkey users to troubleshoot with AI agents, and OpenTelemetry metrics export so they can keep using the monitoring tools they already have.
 
-![valkey-admin-100k-banner.png](images/51a4089a24ad.png)
+![valkey-admin-100k-banner.png](images/41a4089a24ad.png)
 
 ## It started with a familiar problem
 
