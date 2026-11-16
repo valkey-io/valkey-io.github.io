@@ -1,7 +1,7 @@
 +++
 title = "Valkey 9.2 offers forkless snapshots, compressed replication, ACL roles, and more"
 description = "Valkey 9.2 can save snapshots without forking, compress replication traffic with LZ4 or Zstandard, and group ACL rules into reusable roles. It also adds Path Hash, a new data type for prefix lookups, and a set of conditional commands."
-date = 2026-11-16
+date = 2026-11-17
 draft = true
 authors = ["kyledvs", "dragosandriciuc"]
 
