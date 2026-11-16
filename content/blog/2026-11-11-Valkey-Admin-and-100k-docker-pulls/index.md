@@ -159,7 +159,7 @@ And thank you to everyone who has pulled the image, tried it out, shared it with
 
 So here's our invitation: try 1.3 and open an issue for anything you'd like to see. Let's make Valkey operations easier, more visible, and more approachable for everyone.
 
-Here's to the next chapter. 🎉
+Here's to the next chapter.
 
 **Get involved**
 
