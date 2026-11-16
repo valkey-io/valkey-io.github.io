@@ -157,7 +157,7 @@ And thank you to everyone who has pulled the image, tried it out, shared it with
 
 100K pulls is a milestone worth celebrating. But the next one we care about isn't a number, it's more people using, improving, and shaping Valkey Admin together.
 
-So here's our invitation: tell us what's missing, and come build with us. <textStyle t="gray-6">Try 1.3 and open an issue for anything you'd like to see.</textStyle> Let's make Valkey operations easier, more visible, and more approachable for everyone.
+So here's our invitation: try 1.3 and open an issue for anything you'd like to see. Let's make Valkey operations easier, more visible, and more approachable for everyone.
 
 Here's to the next chapter. 🎉
 
