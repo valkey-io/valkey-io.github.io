@@ -14,7 +14,7 @@ blog_type = ["Announcements"]
 
 There's something special about watching an open source project grow.
 
-It starts with an idea, a problem worth solving, and a few people willing to build something better. Then comes the first release, the first issue, the first pull request from someone outside the original team. <textStyle t="gray-6">In 1.3, the project welcomed a few more first-time contributors.</textStyle> And eventually, you look at Docker Hub and see a number you weren't expecting quite so soon.
+It starts with an idea, a problem worth solving, and a few people willing to build something better. Then comes the first release, the first issue, the first pull request from someone outside the original team. In 1.3, the project welcomed a few more first-time contributors. And eventually, you look at Docker Hub and see a number you weren't expecting so soon.
 
 **100K+ pulls.**
 
