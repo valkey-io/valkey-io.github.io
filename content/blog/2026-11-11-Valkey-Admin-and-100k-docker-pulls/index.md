@@ -20,7 +20,7 @@ It starts with an idea, a problem worth solving, and a few people willing to bui
 
 That's the milestone Valkey Admin just reached, and we couldn't be more excited!
 
-Docker pulls aren't the same as unique users, of course. But they tell us something encouraging: people are discovering Valkey Admin, trying it, and bringing it into their workflows. For our team and the contributors helping build this project, that's a great reason to celebrate.
+Docker pulls aren't the same as unique users. But they tell us something encouraging: people are discovering Valkey Admin, trying it, and bringing it into their workflows. For our team and the contributors helping build this project, that's a great reason to celebrate.
 
 But this isn't just a post about a number. It's about why we started, what's new in versions 1.2 and 1.3, and, most of all, where we hope to go together. <textStyle t="gray-6">Next, we're exploring an MCP server to empower Valkey users to troubleshoot with AI agents, and OpenTelemetry metrics export so they can keep using the monitoring tools they already have.</textStyle>
 
