@@ -151,7 +151,7 @@ A special thank-you to the people behind these releases. [@nassery318](https://g
 
 These releases also welcomed first-time contributors: [@rezakaramad](https://github.com/rezakaramad) ([GCP Memorystore IAM auth](https://github.com/valkey-io/valkey-admin/pull/508)), [@bharathsr08](https://github.com/bharathsr08) ([blocking connection-state commands](https://github.com/valkey-io/valkey-admin/pull/534)) and [@RajGahoi](https://github.com/RajGahoi) ([command timing](https://github.com/valkey-io/valkey-admin/pull/553)).
 
-Thank you to [@michaelstingl](https://github.com/michaelstingl), [@dbaker-arch](https://github.com/dbaker-arch) and [@antonin-suzor](https://github.com/antonin-suzor) for contributing to 1.2 release and to [@phoenixphoebus](https://github.com/phoenixphoebus) for opening issues and pull requests on binary-safe key display, decompression of stored values, and Key Browser pagination.
+Thank you to [@michaelstingl](https://github.com/michaelstingl), [@dbaker-arch](https://github.com/dbaker-arch) and [@antonin-suzor](https://github.com/antonin-suzor) for their first contributions in 1.1, and to [@phoenixphoebus](https://github.com/phoenixphoebus) for opening issues and pull requests on binary-safe key display, decompression of stored values, and Key Browser pagination.
 
 And thank you to everyone who has pulled the image, tried it out, shared it with a colleague, or opened an issue!
 
