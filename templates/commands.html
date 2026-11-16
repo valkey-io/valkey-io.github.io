@@ -27,7 +27,8 @@
         config.extra.command_json_path ~ page.slug ~ ".json",
         config.extra.command_bloom_json_path ~ page.slug ~ ".json",
         config.extra.command_json_json_path ~ page.slug ~ ".json",
-        config.extra.command_search_json_path ~ page.slug ~ ".json"
+        config.extra.command_search_json_path ~ page.slug ~ ".json",
+        config.extra.command_large_object_json_path ~ page.slug ~ ".json"
     ] %}
         {% set command_data = load_data(path= json_path, required= false) %}
         {% if command_data %}
