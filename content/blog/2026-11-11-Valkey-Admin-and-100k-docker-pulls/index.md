@@ -149,9 +149,7 @@ Behind these releases are a lot of engineering decisions, code reviews, debuggin
 
 A special thank-you to the people behind these releases. [@nassery318](https://github.com/nassery3180) built the utilization view, the Hot Slots tab and the 30-day CPU and memory history. [@ArgusLi](https://github.com/ArgusLi) built per-user isolation for shared deployments. [@ravjotbrar](https://github.com/ravjotbrar) led along list of security hardening, along with the Big Keys scan and smarter Key Browser search. [@tkesgar](https://github.com/tkesgar) made Valkey Admin work behind a reverse proxy subpath. 
 
-These releases also welcomed first-time contributors: 
-[@rezakaramad](https://github.com/rezakaramad) - GCP Memorystore IAM auth (https://github.com/valkey-io/valkey-admin/pull/508),
-[@bharathsr08](https://github.com/Bharath5626) - blocking connection-state commands (https://github.com/valkey-io/valkey-admin/pull/534) and [@RajGahoi](https://github.com/RajGahoi) - command timing ([https://github.com/valkey-io/valkey-admin/pull/553](https://github.com/valkey-io/valkey-admin/pull/553)). 
+These releases also welcomed first-time contributors: [@rezakaramad](https://github.com/rezakaramad) ([GCP Memorystore IAM auth](https://github.com/valkey-io/valkey-admin/pull/508)), [@bharathsr08](https://github.com/bharathsr08) ([blocking connection-state commands](https://github.com/valkey-io/valkey-admin/pull/534)) and [@RajGahoi](https://github.com/RajGahoi) ([command timing](https://github.com/valkey-io/valkey-admin/pull/553)).
 
 Thank you to [@michaelstingl](https://github.com/michaelstingl), [@dbaker-arch](https://github.com/dbaker-arch) and [@antonin-suzor](https://github.com/antonin-suzor) for contributing to 1.2 release and to [@phoenixphoebus](https://github.com/phoenixphoebus) for opening issues and pull requests on binary-safe key display, decompression of stored values, and Key Browser pagination.
 
