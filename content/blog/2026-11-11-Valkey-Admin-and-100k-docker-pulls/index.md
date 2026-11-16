@@ -1,6 +1,12 @@
-# <textStyle t="gray-6">Valkey Admin 1.2 and 1.3: 100K Docker pulls and what's new</textStyle>
++++
+title = "Valkey Admin 1.2 and 1.3: 100K Docker pulls and what's new"
+date = 2026-11-11
+description = "100,000+ Docker pulls. Two new releases, 1.2 and 1.3. And a community that's just getting started."
+authors = ["marbor", "bblan0803"]
 
-Announcements · November 2026 · *Maryna Boryshkevych, Rong Zhang*
+[taxonomies]
+blog_type = ["Announcements"]
++++
 
 *100,000+ Docker pulls. Two new releases, 1.2 and 1.3. And a community that's just getting started.*
 
