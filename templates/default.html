@@ -49,6 +49,13 @@
   {% if page is defined and page.extra?.body_class %} class="{{ page.extra.body_class }}"{% endif %}
   {% if section is defined and section.extra?.body_class %} class="{{ section.extra.body_class }}"{% endif %}
   >
+  {#- PR previews (see .github/workflows/preview.yml) are built with base_url https://pr-<N>--valkey-preview.netlify.app. #}
+  {%- if "--valkey-preview.netlify.app" in config.base_url %}
+  {%- set preview_pr = config.base_url | split(pat="--") | first | split(pat="pr-") | last %}
+  <div style="background: #ffeb3b; color: #000; padding: 10px; text-align: center; font: bold 16px sans-serif; border-bottom: 3px solid #000;">
+    This is a preview of <a style="color: #000; text-decoration: underline;" href="https://github.com/valkey-io/valkey-io.github.io/pull/{{ preview_pr }}">PR #{{ preview_pr }}</a>, not valkey.io.
+  </div>
+  {%- endif %}
   {%- if config.extra.banner -%}
   <div class="banner">
     <div class="width-limiter">

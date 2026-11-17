@@ -1,0 +1,79 @@
+name: Deploy PR preview
+
+# "Deploy website" builds pull requests without secrets, including ones from forks. This runs from
+# main with the Netlify token and deploys that build. The artifact is written by PR code, so it is
+# only uploaded, never executed, and its PR number is checked against the commit that was built.
+on:
+  workflow_run:
+    workflows: ["Deploy website"]
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  deploy:
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      pull-requests: write
+      statuses: write
+    env:
+      HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      # Forks and repos without Netlify set up skip the preview instead of failing.
+      - name: Check for a Netlify token
+        id: token
+        run: echo "set=${{ secrets.NETLIFY_AUTH_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+
+      - name: Download the built site
+        if: steps.token.outputs.set == 'true'
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: preview
+          path: preview
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+
+      - name: Check the PR number
+        if: steps.token.outputs.set == 'true'
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pr=$(cat preview/pr-number)
+          [[ "$pr" =~ ^[0-9]+$ ]]
+          # Fails if the PR was pushed to after this build. The newer build deploys instead.
+          [[ "$(gh api "repos/$GITHUB_REPOSITORY/pulls/$pr" -q .head.sha)" == "$HEAD_SHA" ]]
+          echo "number=$pr" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy to Netlify
+        if: steps.token.outputs.set == 'true'
+        id: deploy
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          PR: ${{ steps.pr.outputs.number }}
+        # Run from an empty directory so the CLI finds no netlify.toml or functions in the artifact.
+        run: |
+          mkdir "$RUNNER_TEMP/netlify" && cd "$RUNNER_TEMP/netlify"
+          npx --yes netlify-cli@27.20.0 deploy --no-build --dir "$GITHUB_WORKSPACE/preview/public" \
+            --alias "pr-$PR" --message "PR #$PR at $HEAD_SHA" --json > deploy.json
+          echo "url=$(jq -r .deploy_url deploy.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Link the preview from the PR
+        if: steps.token.outputs.set == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+          URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          gh api --silent "repos/$GITHUB_REPOSITORY/statuses/$HEAD_SHA" -f state=success \
+            -f context=preview -f description="Netlify preview" -f target_url="$URL"
+          # The alias URL is the same for every push, so one comment per PR is enough.
+          marker='<!-- netlify-preview -->'
+          if ! gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+              -q '.[] | select(.user.login == "github-actions[bot]") | .body' | grep -qF "$marker"; then
+            gh api --silent "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -f body="$marker
+          Preview: $URL"
+          fi
