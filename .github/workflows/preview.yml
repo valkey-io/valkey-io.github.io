@@ -11,35 +11,9 @@ on:
 permissions: {}
 
 jobs:
-  # The deploy queue holds one pending run per PR, and a newer arrival replaces it. Drop builds a
-  # later push superseded here, so a late old build can't replace the latest commit's pending run.
-  current:
+  deploy:
     if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
-    outputs:
-      current: ${{ steps.head.outputs.current }}
-    steps:
-      - name: Check the build is of the PR's latest commit
-        id: head
-        env:
-          GH_TOKEN: ${{ github.token }}
-          HEAD: ${{ github.event.workflow_run.head_repository.owner.login }}:${{ github.event.workflow_run.head_branch }}
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
-        run: |
-          sha=$(gh api -X GET "repos/$GITHUB_REPOSITORY/pulls" -f head="$HEAD" -f state=open -q '.[0].head.sha')
-          echo "current=$([[ "$sha" == "$HEAD_SHA" ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
-
-  deploy:
-    needs: current
-    if: needs.current.outputs.current == 'true'
-    runs-on: ubuntu-latest
-    # One run per PR at a time, so a second run sees the first one's comment. Keyed on the event,
-    # since the PR number comes from the artifact.
-    concurrency:
-      group: preview-${{ github.event.workflow_run.head_repository.full_name }}-${{ github.event.workflow_run.head_branch }}
-      cancel-in-progress: false
     permissions:
       actions: read
       pull-requests: write
