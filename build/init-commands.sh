@@ -39,6 +39,11 @@ if [ ! -d "$5" ]; then
     exit 1
 fi
 
+if [ ! -d "$6" ]; then
+    echo "The Large Object module command JSON directory must exist and be a valid path"
+    exit 1
+fi
+
 # Uppercase aliases (/commands/GET/) collide with the lowercase pages
 # (/commands/get/) on case-insensitive filesystems (macOS default). Since
 # Zola 0.23, `zola build` may then write the alias redirect over the real
@@ -62,6 +67,7 @@ ln -sfn $2 ./build-command-json
 ln -sfn $3 ./build-bloom-command-json
 ln -sfn $4 ./build-json-command-json
 ln -sfn $5 ./build-search-command-json
+ln -sfn $6 ./build-large-object-command-json
 
 # The documentation menu needs each command's full name, container and group.
 # They're written to the stub files below (using jq), so that the templates
@@ -93,6 +99,9 @@ do
         elif [ -f "$5/$command.json" ]; then
             metadata_path="/commands/$command.json in the 'valkey-search' repo"
             json_file="$5/$command.json"
+        elif [ -f "$6/$command.json" ]; then
+            metadata_path="/commands/$command.json in the 'valkey-large-object' repo"
+            json_file="$6/$command.json"
         fi
         # TOML lines with the command's name, container and group, for the menu.
         menu_data=""
