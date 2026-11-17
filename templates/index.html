@@ -27,10 +27,12 @@
    uses. The styles are in _cards.scss. #}
 <div class="community-home-canvas">
 <div class="homepage-grid">
-    {# The newest stable release on each major.minor line, newest line first. #}
+    {# The newest stable release on each major.minor line, newest line first.
+       A plain set inside a for loop is dropped when the loop ends, so the
+       loops add to these lists with set_global. #}
     {% set release_section = get_section(path="download/releases/_index.md") %}
-    {% set_global keyed_lines = [] %}
-    {% set_global seen_lines = [] %}
+    {% set keyed_lines = [] %}
+    {% set seen_lines = [] %}
     {% for candidate in release_section.pages | sort(attribute="date") | reverse %}
         {% if candidate.extra.tag is not matching(pat=".*-.*") %}
             {% set candidate_parts = candidate.extra.tag | split(pat=".") %}
@@ -44,7 +46,7 @@
 
     {# Dates pick each line's newest patch but cannot order the lines: every
        supported line usually ships a patch on the same day. #}
-    {% set_global release_lines = [] %}
+    {% set release_lines = [] %}
     {% for keyed in keyed_lines | sort(attribute="version") | reverse %}
         {% set_global release_lines = [...release_lines, keyed.release] %}
     {% endfor %}

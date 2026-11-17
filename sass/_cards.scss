@@ -3,18 +3,13 @@
 // head and label (.community-home-section-head, .community-home-kicker), and
 // the logo strip are /community/'s, in _community.scss.
 //
-// Imported before _community.scss, which takes its palette and the card
-// surface from here.
-
-$community-purple-900: #2d2471;
-$community-purple-800: #35247e;
-$community-blue-500: #5b6fff;
-$community-ink: #072150;
+// Imported before _community.scss, which takes the card surface from here.
+// Both take their colours from the card palette in _colors.scss.
 
 // The white card: /community/'s Connect card and every card below. The
 // border also draws the edge in forced-colors mode, which drops the shadow.
 @mixin card {
-  border: 1px solid #d5d9e8;
+  border: 1px solid $community-card-border;
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 12px 32px rgba(60, 60, 130, 0.16);
@@ -70,7 +65,7 @@ $community-ink: #072150;
   // of which is 1.8rem. Balanced wrapping avoids leaving "releases" alone on
   // a line.
   .community-home-kicker {
-    color: #4a5ad8;
+    color: $community-label-blue;
     font-size: 2.4rem;
     font-weight: 600;
     letter-spacing: normal;
@@ -110,7 +105,7 @@ $community-ink: #072150;
 .homepage-blog-card {
   display: block;
   padding: 1.4rem 0;
-  border-top: 1px solid #e9ebf4;
+  border-top: 1px solid $community-hairline;
 
   &:first-child {
     padding-top: 0;
@@ -136,7 +131,7 @@ $community-ink: #072150;
 
 .homepage-blog-card-meta {
   margin: 0 0 0.5rem;
-  color: #606985;
+  color: $community-text-muted;
   font-size: 1.3rem;
 }
 
@@ -144,14 +139,15 @@ $community-ink: #072150;
   display: -webkit-box;
   margin: 0;
   overflow: hidden;
-  color: #47506b;
+  color: $community-text;
   font-size: 1.4rem;
   line-height: 1.45;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
-// The kicker is the markdown heading in content/_index.md. Flex keeps the
+// The kicker is the markdown heading in content/_index.md. It takes the
+// label style by position, so the content needs no class. Flex keeps the
 // inline-block kicker off the parent's line box, which would push it below
 // the kickers in the other cards.
 .homepage-learn-intro {
@@ -159,9 +155,13 @@ $community-ink: #072150;
   flex-direction: column;
   align-items: flex-start;
 
+  > h2 {
+    @extend .community-home-kicker;
+  }
+
   p {
     margin: 1.2rem 0 0;
-    color: #47506b;
+    color: $community-text;
     font-size: 1.6rem;
     line-height: 1.6;
   }
@@ -185,11 +185,11 @@ $community-ink: #072150;
   display: block;
   padding: 1.8rem 2rem;
   border-radius: 14px;
-  background: #f8faff;
+  background: $community-tint;
   transition: background 0.15s;
 
   &:hover {
-    background: #eef1fb;
+    background: $community-tint-hover;
 
     h3 {
       text-decoration: underline;
@@ -218,7 +218,7 @@ $community-ink: #072150;
 
   p {
     margin: 0;
-    color: #47506b;
+    color: $community-text;
     font-size: 1.5rem;
     line-height: 1.5;
   }
