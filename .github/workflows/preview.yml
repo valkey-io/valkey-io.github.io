@@ -14,6 +14,11 @@ jobs:
   deploy:
     if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    # One run per PR at a time, so a second run sees the first one's comment. Keyed on the event,
+    # since the PR number comes from the artifact. A queued run replaces an older queued one.
+    concurrency:
+      group: preview-${{ github.event.workflow_run.head_repository.full_name }}-${{ github.event.workflow_run.head_branch }}
+      cancel-in-progress: false
     permissions:
       actions: read
       pull-requests: write
