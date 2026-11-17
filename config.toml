@@ -47,6 +47,19 @@ review_list = [
     "/topics/distlock/"
 ]
 
+# Links to pages outside the documentation, shown in the docs menu like
+# section titles. Each goes after the nav.yml section with the id in `after`,
+# or at the end of the menu if there's no such section.
+[[extra.docs_menu_links]]
+title = "Clients"
+url = "/clients/"
+after = "client-development"
+
+[[extra.docs_menu_links]]
+title = "Integrations"
+url = "/integrations/"
+after = "client-development"
+
 # Labels shown next to menu entries from other sources, by source name. Only
 # modules get one; valkey-bundle isn't a module.
 [extra.nav_badges]
