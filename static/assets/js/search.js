@@ -75,13 +75,17 @@ function putExactTitleMatchesFirst(instance) {
 // Pagefind's default modal contents, written out so the results can use RESULT_TEMPLATE.
 function createModal() {
     const modal = document.createElement('pagefind-modal');
-    modal.innerHTML = `
+    // Parse the contents in an inert <template> so the Pagefind elements stay un-upgraded until the
+    // modal has moved them into its dialog; otherwise each one initializes twice.
+    const template = document.createElement('template');
+    template.innerHTML = `
         <pagefind-modal-header><pagefind-input></pagefind-input></pagefind-modal-header>
         <pagefind-modal-body>
             <pagefind-summary></pagefind-summary>
             <pagefind-results>${RESULT_TEMPLATE}</pagefind-results>
         </pagefind-modal-body>
         <pagefind-modal-footer><pagefind-keyboard-hints></pagefind-keyboard-hints></pagefind-modal-footer>`;
+    modal.append(template.content);
     return modal;
 }
 
