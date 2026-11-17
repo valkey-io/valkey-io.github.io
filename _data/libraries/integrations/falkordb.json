@@ -1,7 +1,7 @@
 {
   "name": "FalkorDB",
   "license": "AGPL-3.0-only",
-  "description": "Graph database that provides Cypher queries and graph operations through a Redis-compatible command interface.",
+  "description": "Graph database that provides Cypher queries and graph operations through a Valkey-compatible command interface.",
   "repository": "https://github.com/FalkorDB/FalkorDB",
   "documentation": "https://docs.falkordb.com",
   "tags": [
