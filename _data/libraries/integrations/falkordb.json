@@ -3,7 +3,7 @@
   "license": "AGPL-3.0-only",
   "description": "Graph database that provides Cypher queries and graph operations through a Redis-compatible command interface.",
   "repository": "https://github.com/FalkorDB/FalkorDB",
-  "documentation": "https://docs.falkordb.com/commands/graph.query",
+  "documentation": "https://github.com/FalkorDB/FalkorDB/blob/27951021bbdc3e141169f3dde222dc11728f8ff6/docs/valkey-migration.md#migrate-to-valkey",
   "tags": [
     "RAG & retrieval"
   ]
