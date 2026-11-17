@@ -1705,37 +1705,6 @@ html.banner-hidden .banner {
   }
 }
 
-// The install command under the buttons. .copy-code is the light block from the
-// release pages, so it is recoloured here to sit on the dark hero, and it wraps
-// at spaces rather than scrolling on narrow screens.
-.hero-content .copy-code {
-  display: inline-flex;
-  max-width: 100%;
-  margin: 3rem 0 0;
-  border-color: rgba(255, 255, 255, 0.35);
-  background: rgba(16, 8, 48, 0.5);
-  text-align: left;
-
-  code {
-    color: #fff;
-    white-space: pre-wrap;
-  }
-
-  .copy-code-button {
-    border-left-color: rgba(255, 255, 255, 0.35);
-    color: rgba(255, 255, 255, 0.85);
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: #fff;
-    }
-
-    &.copied {
-      color: #8ce99a;
-    }
-  }
-}
-
 .release-highlights {
   ul {
     margin: 0 0 1rem;
