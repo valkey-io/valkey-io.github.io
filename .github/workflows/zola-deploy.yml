@@ -32,7 +32,7 @@ jobs:
         with:
           path: website
           # preview.yml deploys pull requests to this Netlify alias.
-          base-url: ${{ github.event_name == 'pull_request' && format('https://pr-{0}--valkey-io-preview.netlify.app', github.event.pull_request.number) || '' }}
+          base-url: ${{ github.event_name == 'pull_request' && format('https://pr-{0}--valkey-preview.netlify.app', github.event.pull_request.number) || '' }}
 
       - name: Record the PR number
         if: github.event_name == 'pull_request'
