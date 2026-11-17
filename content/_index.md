@@ -19,7 +19,7 @@ button_text = "Get started"
 button_url = "/topics/quickstart"
 secondary_button_text = "Install Valkey"
 secondary_button_url = "/topics/installation"
-command = "docker run -d -p 6379:6379 valkey/valkey"
+command = "docker run -d -p 127.0.0.1:6379:6379 valkey/valkey"
 
 [[extra.documentation_cards]]
 title = "Usage guide"
