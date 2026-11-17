@@ -1,9 +1,7 @@
-{% extends "right-aside.html" %}
+{% extends "download-layout.html" %}
 
-{% block subhead_content%}
-<h1 class="page-title">Download Valkey</h1>
-{% endblock subhead_content%}
 {% block main_content %}
+<h1 class="docs-page-title">Download Valkey</h1>
 
 {# The newest stable release on each major.minor line, newest line first. #}
 {% set release_section = get_section(path="download/releases/_index.md") %}

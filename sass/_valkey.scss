@@ -728,6 +728,11 @@ p {
     }
   }
 
+  // The release lines under Download: laid out like commands, but not code.
+  .docs-menu-releases li a {
+    @include sans-serif;
+  }
+
   // A badge on a section title, for a section that comes from a module. The
   // section titles are uppercase; the badge isn't. The margin keeps it away
   // from the arrow.
