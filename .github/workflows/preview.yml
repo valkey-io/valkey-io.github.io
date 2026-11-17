@@ -16,10 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      pull-requests: read
+      pull-requests: write
       statuses: write
     env:
-      GH_TOKEN: ${{ github.token }}
       HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
     steps:
       # Forks and repos without Netlify set up skip the preview instead of failing.
@@ -39,6 +38,8 @@ jobs:
       - name: Check the PR number
         if: steps.token.outputs.set == 'true'
         id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           pr=$(cat preview/pr-number)
           [[ "$pr" =~ ^[0-9]+$ ]]
@@ -63,7 +64,16 @@ jobs:
       - name: Link the preview from the PR
         if: steps.token.outputs.set == 'true'
         env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
           URL: ${{ steps.deploy.outputs.url }}
         run: |
           gh api --silent "repos/$GITHUB_REPOSITORY/statuses/$HEAD_SHA" -f state=success \
             -f context=preview -f description="Netlify preview" -f target_url="$URL"
+          # The alias URL is the same for every push, so one comment per PR is enough.
+          marker='<!-- netlify-preview -->'
+          if ! gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
+              -q '.[] | select(.user.login == "github-actions[bot]") | .body' | grep -qF "$marker"; then
+            gh api --silent "repos/$GITHUB_REPOSITORY/issues/$PR/comments" -f body="$marker
+          Preview: $URL"
+          fi
