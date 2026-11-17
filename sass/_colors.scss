@@ -117,9 +117,12 @@ $community-tint: #f8faff;
 $community-tint-hover: #eef1fb;
 $community-canvas: #e8ebf5;
 
+// The site's periwinkle accent; _valkey.scss still spells it out as hex.
+$valkey-periwinkle: #6983ff;
+
 // Each blog type's colour: the badge on posts and the dot on /blog/.
 $blog-type-colors: (
-  "Technical Deep Dive": #6983ff,
+  "Technical Deep Dive": $valkey-periwinkle,
   "Community Highlight": $green-200,
   "How-to": $purple-200,
   "Announcements": $yellow-100,

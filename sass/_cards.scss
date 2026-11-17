@@ -270,7 +270,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  color: #47506b;
+  color: $community-text;
   font-size: 1.3rem;
   font-weight: 600;
   line-height: 1.2;
@@ -294,7 +294,7 @@
   align-items: center;
   gap: 1rem;
   min-width: 0;
-  color: #606985;
+  color: $community-text-muted;
   font-size: 1.3rem;
   line-height: 1.35;
 
@@ -317,7 +317,7 @@
     height: 2.8rem;
     border: 2px solid #fff;
     border-radius: 50%;
-    background: #e9ebf4;
+    background: $community-hairline;
   }
 
   img {
@@ -408,7 +408,7 @@
   display: -webkit-box;
   margin: 0 0 2.2rem;
   overflow: hidden;
-  color: #47506b;
+  color: $community-text;
   font-size: 1.7rem;
   line-height: 1.55;
   -webkit-line-clamp: 4;
@@ -433,7 +433,7 @@
     border: 1px solid #d5daea;
     border-radius: 999px;
     background: #fff;
-    color: #47506b;
+    color: $community-text;
     font: inherit;
     font-size: 1.3rem;
     font-weight: 700;
@@ -479,7 +479,7 @@
 
   // Every shown row but the first; the filter hides rows, the lead among them.
   li:not([hidden]) ~ li:not([hidden]) {
-    border-top: 1px solid #e9ebf4;
+    border-top: 1px solid $community-hairline;
   }
 }
 
@@ -532,7 +532,7 @@
   display: -webkit-box;
   margin: 0.4rem 0 0;
   overflow: hidden;
-  color: #47506b;
+  color: $community-text;
   font-size: 1.4rem;
   line-height: 1.5;
   -webkit-line-clamp: 2;
@@ -545,7 +545,7 @@
 
 .blog-row-date {
   grid-area: date;
-  color: #606985;
+  color: $community-text-muted;
   font-size: 1.3rem;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -557,21 +557,8 @@
 
 .blog-no-results {
   margin: 0;
-  color: #606985;
+  color: $community-text-muted;
   font-size: 1.5rem;
-}
-
-// The live count under the list, and the point that loads the next batch
-// as it nears the viewport.
-.blog-status {
-  margin: 2.4rem 0 0;
-  color: #606985;
-  font-size: 1.3rem;
-  text-align: center;
-}
-
-.blog-sentinel {
-  height: 1px;
 }
 
 // Blog posts (templates/blog-single.html) ------------------------------------
