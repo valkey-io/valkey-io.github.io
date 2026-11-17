@@ -31,6 +31,22 @@ jobs:
         uses: ./website/.github/actions/build-site
         with:
           path: website
+          # preview.yml deploys pull requests to this Netlify alias.
+          base-url: ${{ github.event_name == 'pull_request' && format('https://pr-{0}--valkey-io-preview.netlify.app', github.event.pull_request.number) || '' }}
+
+      - name: Record the PR number
+        if: github.event_name == 'pull_request'
+        run: echo "${{ github.event.pull_request.number }}" > website/pr-number
+
+      - name: Upload preview artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: preview
+          path: |
+            website/public
+            website/pr-number
+          retention-days: 1
 
       - name: Upload artifact
         if: github.event_name != 'pull_request'

@@ -31,6 +31,7 @@ command_json_path = "../build-command-json/"
 command_bloom_json_path = "../build-bloom-command-json/"
 command_json_json_path = "../build-json-command-json/"
 command_search_json_path = "../build-search-command-json/"
+command_large_object_json_path = "../build-large-object-command-json/"
 doc_topic_path = "../build-topics/"
 
 # Documentation menu. The core menu is nav.yml in the valkey docs, next to
@@ -39,7 +40,7 @@ doc_topic_path = "../build-topics/"
 # menu only has the command reference.
 nav_path = "../build-topics/../nav.yml"
 nav_sources_path = "../build-topics/../modules-nav/"
-nav_sources = ["valkey-bloom", "valkey-json", "valkey-search", "valkey-ldap", "valkey-bundle"]
+nav_sources = ["valkey-bloom", "valkey-json", "valkey-search", "valkey-ldap", "valkey-bundle", "valkey-large-object"]
 
 # Topics with known problems, shown with a "This page is under review" note.
 review_list = [
@@ -53,3 +54,4 @@ review_list = [
 "valkey-json" = "module"
 "valkey-search" = "module"
 "valkey-ldap" = "module"
+"valkey-large-object" = "module"
