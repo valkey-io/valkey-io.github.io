@@ -11,6 +11,9 @@ inputs:
   checkout-content:
     description: Check out the content repositories. Set to false if an earlier build in the job already did.
     default: 'true'
+  base-url:
+    description: Overrides base_url in config.toml, for builds served somewhere other than valkey.io.
+    default: ''
 
 runs:
   using: composite
@@ -73,3 +76,4 @@ runs:
         BUILD_DIR: ${{ inputs.path }}
         BUILD_ONLY: true
         BUILD_THEMES: false
+        BUILD_FLAGS: ${{ inputs.base-url && format('--base-url {0}', inputs.base-url) || '' }}
