@@ -662,6 +662,11 @@ p {
     }
   }
 
+  // A link inside a section that leaves the docs.
+  .docs-menu-external::after {
+    content: " \2197";
+  }
+
   .docs-menu-current {
     background-color: #d1d9ff;
     border-left-color: #2054B2;

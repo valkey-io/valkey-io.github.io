@@ -310,8 +310,9 @@
 
 {#-
     Links to pages outside the documentation, from extra.docs_menu_links in
-    config.toml. Each is rendered after the section whose id is its `after`,
-    or at the end of the menu if the merged menu has no such section.
+    config.toml. A link with `after` is rendered after the section with that
+    id, one with `in` inside it, and either at the end of the menu if the
+    merged menu has no such section.
 -#}
 {% component nav_page_links(links) -%}
 {%- for link in links -%}
@@ -357,6 +358,9 @@
                     {%- set commands = command_map[entry.topic] if entry.topic in command_map else [] %}
                     {{< nav_menu_item slug={entry.topic} title={entry.title} source={"" if section_badge and entry.source == section.source else entry.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} />}}
                     {%- endfor %}
+                    {%- for link in [l for l in page_links if l?.in == section.id] %}
+                    <li><a href="{{ link.url }}" class="docs-menu-external">{{ link.title }}</a></li>
+                    {%- endfor %}
                     {%- set other_key = "section:" ~ section.id %}
                     {%- if other_key in command_map %}
                     <li>
@@ -375,7 +379,7 @@
             </details>
         </li>
         {%- endif %}
-        {%- set links_here = [l for l in page_links if l.after == section.id] %}
+        {%- set links_here = [l for l in page_links if l?.after == section.id] %}
         {%- if links_here %}
         {{< nav_page_links links={links_here} />}}
         {%- endif %}
@@ -383,7 +387,7 @@
         {%- if "command-reference" not in [x.id for x in nav] %}
         {{< nav_command_reference title="Command reference" index={index} on_command_reference={on_command_reference} />}}
         {%- endif %}
-        {%- set links_left = [l for l in page_links if l.after not in section_ids] %}
+        {%- set links_left = [l for l in page_links if (l?.after and l.after not in section_ids) or (l?.in and l.in not in section_ids)] %}
         {%- if links_left %}
         {{< nav_page_links links={links_left} />}}
         {%- endif %}
