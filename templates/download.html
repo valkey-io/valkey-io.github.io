@@ -8,7 +8,9 @@
 {# The newest stable release on each major.minor line, newest line first. #}
 {% set release_section = get_section(path="download/releases/_index.md") %}
 {# Same selection as the homepage in index.html. Tera can't share it: values
-   set in an include or component never reach the caller. #}
+   set in an include or component never reach the caller. set_global, not set:
+   a set inside a for loop is gone when the loop ends. Within a line the newest
+   date is the newest patch, since a line's patches ship in order. #}
 {% set_global keyed_lines = [] %}
 {% set_global seen_lines = [] %}
 {% for candidate in release_section.pages | sort(attribute="date") | reverse %}
