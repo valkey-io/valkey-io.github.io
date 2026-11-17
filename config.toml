@@ -60,6 +60,11 @@ title = "Integrations"
 url = "/integrations/"
 after = "client-development"
 
+[[extra.docs_menu_links]]
+title = "Valkey Admin"
+url = "https://valkey-admin.valkey.io/"
+after = "client-development"
+
 # Labels shown next to menu entries from other sources, by source name. Only
 # modules get one; valkey-bundle isn't a module.
 [extra.nav_badges]
