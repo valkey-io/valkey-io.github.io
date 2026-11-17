@@ -1,8 +1,9 @@
 // Community landing page (templates/community-home.html): participant logo
 // strip, photo hero, connect bar, and photo carousel. The "Ways to
 // contribute" tiles reuse the shared .community-card styles from
-// _valkey.scss. The palette and the card surface come from _cards.scss,
-// whose pages reuse the canvas, section head, kicker and logo strip below.
+// _valkey.scss. The palette is in _colors.scss and the card surface in
+// _cards.scss, whose pages reuse the canvas, section head, kicker and logo
+// strip below.
 
 // Shared pieces --------------------------------------------------------------
 
@@ -227,14 +228,15 @@ a.community-home-kicker:hover {
   }
 }
 
-// Connect with us and photo carousel sit on a faint blue canvas so the white
-// Connect card and its shadow read against the page.
+// Connect with us and photo carousel sit on a light blue canvas so the white
+// Connect card and its shadow read against the page. The other card pages
+// use the same canvas, so a change here changes them too.
 .community-home-canvas {
   // 0.1px top/bottom keeps child margins inside the tinted area; the side
   // gutter is the single, page-wide rule so everything lines up with the
   // header/footer content column (--max-width).
   padding: 0.1px 2rem;
-  background: #e8ebf5;
+  background: $community-canvas;
 }
 
 // Connect with us -----------------------------------------------------------

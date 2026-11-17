@@ -103,6 +103,20 @@ $text-link-alternate: #0053b8; //pacific blue
 $text-link-alternate-lighter: #137cc1; //pacific blue tint 1
 $text-link-alternate-darker: #00529e;
 
+// Card pages: /community/ and the homepage (_cards.scss, _community.scss).
+$community-purple-900: #2d2471;
+$community-purple-800: #35247e;
+$community-blue-500: #5b6fff;
+$community-ink: #072150;
+$community-label-blue: #4a5ad8; // the hero button blue, 5.6:1 on white
+$community-text: #47506b;
+$community-text-muted: #606985;
+$community-card-border: #d5d9e8;
+$community-hairline: #e9ebf4;
+$community-tint: #f8faff;
+$community-tint-hover: #eef1fb;
+$community-canvas: #e8ebf5;
+
 // Each blog type's colour: the badge on posts and the dot on /blog/.
 $blog-type-colors: (
   "Technical Deep Dive": #6983ff,
