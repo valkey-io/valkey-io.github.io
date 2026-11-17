@@ -129,11 +129,12 @@
         {% endif %}
     </section>
 
-    {# Same order as the Participants page #}
+    {# Same order as the Participants page. The strip is below the fold here,
+       unlike /community/, so its logos load lazily. #}
     {% set participants = load_data(path="_data/participants.yml") | sort(attribute="name") %}
     {% if participants and participants | length > 0 %}
     <section class="homepage-card homepage-card-participants" aria-label="Valkey participants">
-        {{< logo_strip participants={participants} />}}
+        {{< logo_strip participants={participants} loading="lazy" />}}
     </section>
     {% endif %}
 </div>
