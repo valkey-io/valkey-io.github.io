@@ -143,7 +143,7 @@
     {%- if page.extra?.command_name -%}
         {%- set_global index = [...index, {"name": page.extra.command_name, "container": page.extra.command_container, "group": page.extra.command_group, "slug": page.slug}] -%}
     {%- else -%}
-        {%- for json_path in [extra.command_json_path, extra.command_bloom_json_path, extra.command_json_json_path, extra.command_search_json_path] -%}
+        {%- for json_path in [extra.command_json_path, extra.command_bloom_json_path, extra.command_json_json_path, extra.command_search_json_path, extra.command_large_object_json_path] -%}
             {%- set data = load_data(path=json_path ~ page.slug ~ ".json", required=false) -%}
             {%- if data -%}
                 {%- set key = data | keys | first -%}
