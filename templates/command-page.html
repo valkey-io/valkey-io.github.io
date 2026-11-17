@@ -9,7 +9,8 @@
     load_data(path= config.extra.command_json_path ~ page.slug ~ ".json", required= false),
     load_data(path= config.extra.command_bloom_json_path ~ page.slug ~ ".json", required= false),
     load_data(path= config.extra.command_json_json_path ~ page.slug ~ ".json", required= false),
-    load_data(path= config.extra.command_search_json_path ~ page.slug ~ ".json", required= false)
+    load_data(path= config.extra.command_search_json_path ~ page.slug ~ ".json", required= false),
+    load_data(path= config.extra.command_large_object_json_path ~ page.slug ~ ".json", required= false)
 ] %}
 
 {% set command_data = [s for s in command_sources if s] | first %}
@@ -40,14 +41,6 @@
     {% set nav_location = load_data(literal=nav_location_json, format="json") %}
 {% endif %}
 {%- endblock -%}
-
-{% block subhead_content%}
-    {% if command_title%}
-        <div class="styled-title">
-            <h1 class="page-title">{{ command_title }} {% if deprecated %}<small> {{ deprecated }}</small>{% endif %}</h1>
-        </div>
-    {% endif %}
-{% endblock subhead_content%}
 
 {% block breadcrumbs %}
 {#
@@ -89,7 +82,21 @@
 {% endblock breadcrumbs %}
 
 {% block main_content %}
+{% if command_title %}
+<h1 class="docs-page-title">{{ command_title }} {% if deprecated %}<small> {{ deprecated }}</small>{% endif %}</h1>
+{% endif %}
 {% if command_data_obj %}
+    {% set notice_modules = load_data(path="../_data/modules.json", required=false) -%}
+    {% if notice_modules %}
+        {% for notice_key, notice_module in notice_modules %}
+            {% if notice_module.version_notice and notice_module.command_prefix and page.slug is starting_with(pat=notice_module.command_prefix) %}
+                {% set notice_url = get_url(path="/topics/" ~ notice_module.topic, trailing_slash=true) %}
+    <blockquote>
+        <p><strong>Note:</strong> {% for part in notice_module.version_notice | split(pat=notice_module.name) %}{% if not loop.first %}<a href="{{ notice_url }}">{{ notice_module.name }}</a>{% endif %}{{ part }}{% endfor %}</p>
+    </blockquote>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
     <dl>
         <dt>Usage:</dt>
         <dd>
@@ -122,6 +129,10 @@
             {% set module_reply = load_data(path="../_data/modules.json", required=false) -%}
             <dt>Module:</dt>
             <dd><a href={{module_reply.valkey_search.repo}}>{{module_reply.valkey_search.name}}</a></dd>
+        {% elif "blob." in page.slug %}
+            {% set module_reply = load_data(path="../_data/modules.json", required=false) -%}
+            <dt>Module:</dt>
+            <dd><a href={{module_reply.valkey_large_object.repo}}>{{module_reply.valkey_large_object.name}}</a></dd>
         {% endif %}
     </dl>
     <dl>
