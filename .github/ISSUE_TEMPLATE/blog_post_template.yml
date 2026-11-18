@@ -1,0 +1,96 @@
+name: 🏢 New Blog post
+description: Propose a blog post for valkey.io
+title: "[BLOG POST] <Put your tentative blog post title here>"
+labels: ["blog-post", "untriaged"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose your post here before you write it, so maintainers can check fit, overlap, and timing.
+        [CONTRIBUTING-BLOG-POST.md](https://github.com/valkey-io/valkey-io.github.io/blob/main/CONTRIBUTING-BLOG-POST.md) covers length, style, and the review process.
+
+  - type: textarea
+    id: topic
+    attributes:
+      label: Proposed topic
+      description: One or two sentences on what the post is about.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: blog-type
+    attributes:
+      label: Blog type
+      description: |
+        Pick the one that fits best. It becomes `blog_type` in the post's frontmatter.
+
+        - **Technical Deep Dive**: How a Valkey feature or internal works and why it works that way. Not a list of features or a usage guide. Benchmarks are ideal!
+        - **Announcements**: a release for an official Valkey project. Lead with the few changes that matter most and link the release notes for the rest.
+        - **How-to**: how to do one task with Valkey, step by step. Can include third party tools if you represent that tool.
+        - **Community Highlight**: how a team or contributor uses or builds on Valkey.
+        - **Events**: an upcoming event, or a recap of one.
+
+        Technical Deep Dive and Announcements posts are also reviewed by the technical blog reviewers.
+      options:
+        - Technical Deep Dive
+        - Announcements
+        - How-to
+        - Community Highlight
+        - Events
+    validations:
+      required: true
+
+  - type: textarea
+    id: audience
+    attributes:
+      label: Audience
+      description: |
+        Who is the post for, and what do they already know?
+        Pick one audience. A post that needs two is usually two posts.
+      placeholder: Operators running Valkey clusters who already use TLS.
+    validations:
+      required: true
+
+  - type: textarea
+    id: takeaways
+    attributes:
+      label: Key takeaways
+      description: |
+        One to three things a reader should know or do after reading, and what you want them to do next.
+        If the post covers ground that documentation or release notes already cover, say what it adds.
+    validations:
+      required: true
+
+  - type: textarea
+    id: content
+    attributes:
+      label: Content
+      description: |
+        An outline of the post.
+        Start with the problem and hook that you will use to grab the reader.
+        Highlight the key points you would like the reader to know and support your takeaway.
+        Aim for 500-1,200 words. If the outline won't fit, narrow the topic.
+    validations:
+      required: true
+
+  - type: input
+    id: author
+    attributes:
+      label: Author
+      description: GitHub alias of the person writing the post and addressing review feedback.
+    validations:
+      required: true
+
+  - type: input
+    id: date
+    attributes:
+      label: Ideal publishing date
+      description: At least 5 business days from today. Publish dates are best effort because of other pending posts, review time, and project events.
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and related posts
+      description: |
+        Anything the date depends on, such as a release or an event.
+        Link any existing or in-progress posts on the same topic.
