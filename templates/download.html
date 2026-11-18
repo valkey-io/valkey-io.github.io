@@ -3,20 +3,17 @@
 {% block main_content %}
 <h1 class="docs-page-title">Download Valkey</h1>
 
-{# The newest stable release on each major.minor line, newest line first. #}
+{# The newest stable release on each major.minor line, newest line first. Same
+   selection as the homepage in index.html. Pages are newest first, so within a
+   line the first is the newest patch, since a line's patches ship in order.
+   Dates can't order the lines: every supported line usually ships a patch the
+   same day, so lines are ordered by version. #}
 {% set release_section = get_section(path="download/releases/_index.md") %}
-{% set_global release_lines = [] %}
-{% set_global seen_lines = [] %}
-{% for candidate in release_section.pages | sort(attribute="date") | reverse %}
-    {% if candidate.extra.tag is not matching(pat=".*-.*") %}
-        {% set candidate_parts = candidate.extra.tag | split(pat=".") %}
-        {% set candidate_line = candidate_parts[:2] | join(sep=".") %}
-        {% if candidate_line not in seen_lines %}
-            {% set_global seen_lines = [...seen_lines, candidate_line] %}
-            {% set_global release_lines = [...release_lines, candidate] %}
-        {% endif %}
-    {% endif %}
-{% endfor %}
+{% set by_date = release_section.pages | sort(attribute="date") | reverse %}
+{% set keyed = [{"version": (p.extra.tag | split(pat=".") | first | int) * 1000 + (p.extra.tag | split(pat=".") | nth(n=1) | int), "stable": "-" not in p.extra.tag, "release": p} for p in by_date] %}
+{% set stable = [k for k in keyed if k.stable] %}
+{% set stable_versions = [k.version for k in stable] | unique %}
+{% set release_lines = [[k.release for k in stable if k.version == v] | first for v in stable_versions | sort | reverse] %}
 
 {% set latest = release_lines | first %}
 
@@ -54,16 +51,7 @@
 {# Pre-releases on a line that has no stable release yet. Older release
    candidates are superseded by their own line's stable release, so listing
    them here would only add noise. #}
-{% set_global upcoming = [] %}
-{% for candidate in release_section.pages | sort(attribute="date") | reverse %}
-    {% if candidate.extra.tag is matching(pat=".*-.*") %}
-        {% set candidate_parts = candidate.extra.tag | split(pat=".") %}
-        {% set candidate_line = candidate_parts[:2] | join(sep=".") %}
-        {% if candidate_line not in seen_lines %}
-            {% set_global upcoming = [...upcoming, candidate] %}
-        {% endif %}
-    {% endif %}
-{% endfor %}
+{% set upcoming = [k.release for k in keyed if not k.stable and k.version not in stable_versions] %}
 
 {% if upcoming | length > 0 %}
 <h2>Other releases</h2>
