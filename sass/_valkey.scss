@@ -597,8 +597,8 @@ p {
   }
 }
 
-// Narrow screens: a toggle that opens the menu. Wide screens: the menu sticks
-// to the top of the window, at most a window tall, and scrolls on its own.
+// Narrow screens: a toggle that opens the menu. Wide screens: the menu is
+// always open.
 .docs-sidebar {
   > summary {
     display: flex;
@@ -641,13 +641,6 @@ p {
   }
 
   @include respond-min(1024px) {
-    position: sticky;
-    top: 0;
-    max-height: 100vh;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
-    scrollbar-color: #c5cdea transparent;
     padding: 2rem;
 
     > summary {
