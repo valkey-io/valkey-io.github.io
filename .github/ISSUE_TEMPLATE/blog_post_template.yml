@@ -27,7 +27,7 @@ body:
       description: |
         Pick the one that fits best. It becomes `blog_type` in the post's frontmatter.
 
-        - **Technical Deep Dive**: How a Valkey feature or internal works and why it works that way. Not a list of features or a usage guide. Benchmarks are ideal!
+        - **Technical Deep Dive**: How a Valkey feature or internal works and why it works that way, so the reader learns something new about the technology. Not a list of features, a usage guide, or the story of how it was built. Benchmarks are ideal!
         - **Announcements**: a release for an official Valkey project. Lead with the few changes that matter most and link the release notes for the rest.
         - **How-to**: how to do one task with Valkey, step by step. Can include third party tools if you represent that tool.
         - **Community Highlight**: how a team or contributor uses or builds on Valkey.
