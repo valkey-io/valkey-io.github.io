@@ -2,7 +2,6 @@
 title = "Large KV objects on Valkey: 400 Gbps and 108 TB from a single node"
 date = 2026-11-17 01:01:01
 description = "KV cache values are tens to hundreds of megabytes, and stock Valkey is built for a few hundred bytes. The Valkey Large Object module stores them outside the heap, moves them over RDMA, and tiers them to NVMe: one node moved about 400 Gbps with its 108 TB disk full."
-authors = ["karthiksubbarao", "cnuthalapati"]
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
