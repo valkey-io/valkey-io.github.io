@@ -93,7 +93,7 @@ Fixed time-range buttons are gone. You can now pick a custom window, in hours or
 
 ![Valkey Admin CPU usage chart for the last 30 days](images/6b7734a43791.png)
 
-One detail: longer windows still need enough metrics retention configured. <textStyle t="gray-6">Each node keeps about a day of history by default, and ([Keeping more history](https://valkey-admin.valkey.io/configuration/metrics/#keeping-more-history)<textStyle t="gray-6">) shows how to keep up to 30 days.</textStyle> We also added command execution timing to Send Command, so you can see how long each command took.
+One detail: longer windows still need enough metrics retention configured. Each node keeps about a day of history by default, and [Keeping more history](https://valkey-admin.valkey.io/configuration/metrics/#keeping-more-history) shows how to keep up to 30 days. We also added command execution timing to Send Command, so you can see how long each command took.
 
 ![Memory metrics 30 hours.png](images/c9879cb02f83.png)
 
