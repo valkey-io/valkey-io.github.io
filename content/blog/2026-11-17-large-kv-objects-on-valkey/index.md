@@ -82,14 +82,13 @@ The server ran with `maxmemory 640gb`, `allkeys-lru` and 8 I/O threads, and two 
 The module ran on a separate test bed with the same layout (one server, two clients) and RDMA instead of TCP, so the two columns compare whole setups, not one variable.
 We haven't explained the 6.3% `GET` misses at 1 MiB or the 10% drift at 256 and 500 MiB.
 
-### How LMCache stores KV cache in Valkey
+### How LMCache stores KV cache in stock Valkey
 
-LMCache's Valkey adapter stores each chunk as one key, named from the model, the GPU rank, and a hash of the chunk's tokens.
+LMCache's Valkey adapter stores each chunk as one key, whose name is built from the model, the GPU rank, and a hash of the chunk's tokens.
 Its documentation puts the chunk at roughly 10 MB for a 70B model at tensor-parallel 8, which matches the table above.
-The adapter uses the Valkey GLIDE client in a copy-reduced mode, so a multi-megabyte value isn't copied again in the client.
+It uses the Valkey GLIDE client in a copy-reduced mode so that a multi-megabyte value isn't copied again in the client.
 
-The remaining work is on the Valkey side.
-A value this size goes through the socket and the main thread, and each `GET` or `SET` competes with every other client for the main thread.
+That leaves the server side as the limit: values go through the socket and the main thread, and each `GET` or `SET` competes with every other client for the main thread.
 
 ## 2. What the Large Object Module changes
 
