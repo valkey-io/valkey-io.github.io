@@ -77,7 +77,7 @@ Distributed systems are good at hiding uneven workloads. You can have plenty of 
 
 1.3 adds a **Slots** tab to the **Hot Keys heatmap**. It groups your top hot keys by hash slot, and each slot is a tile, colored by how many of those keys it has. See something interesting? Click it. You can inspect the keys in that slot, with size, TTL, and owning node, and open any key straight in the Key Browser.
 
-The path becomes natural: spot the hot slot → inspect its keys → understand the workload. (Hot slots needs Valkey 8.0+, cluster mode, `cluster-slot-stats-enabled yes`, and an LFU eviction policy. <textStyle t="gray-6">Without these, Valkey Admin prompts you to start MONITOR-based detection, which has a performance impact on the server ([Activity docs](https://valkey-admin.valkey.io/features/activity/))</textStyle>
+The path becomes natural: spot the hot slot → inspect its keys → understand the workload. Hot Slots detection needs Valkey 8.0+, cluster mode, `cluster-slot-stats-enabled yes`, and a least frequently used (LFU) eviction policy. Without these, Valkey Admin prompts you to start `MONITOR`-based detection, which has a performance impact on the server ([Activity docs](https://valkey-admin.valkey.io/features/activity/)).
 
 ### More history, fewer guesses
 
