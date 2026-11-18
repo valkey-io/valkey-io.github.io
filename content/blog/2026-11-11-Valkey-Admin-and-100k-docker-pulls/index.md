@@ -129,7 +129,7 @@ Once you're in, start with the cluster topology, browse a few keys, and explore 
 
 Reaching 100K Docker pulls is exciting. What motivates us more is building a tool that reflects the people who use Valkey every day.
 
-Every deployment is different. Some of you are debugging locally; others are running large clusters, using managed Valkey services, or working through complex Kubernetes setups. Those experiences surface problems and ideas no single team can anticipate, which is exactly why we want to build Valkey Admin *with* the community, not just in the open.
+Every deployment is different. Some of you are debugging locally, and others are running large clusters, using managed Valkey services, or working through complex Kubernetes setups. Those experiences surface problems and ideas no single team can anticipate, which is exactly why we want to build Valkey Admin *with* the community, not just in the open.
 
 So tell us about the real workflows you want to simplify. What's still too hard when you troubleshoot a cluster? Which metrics are hardest to read? Where could the interface be clearer?
 
