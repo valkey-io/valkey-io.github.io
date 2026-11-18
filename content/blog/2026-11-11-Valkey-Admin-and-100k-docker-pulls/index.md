@@ -55,13 +55,9 @@ The Cluster Topology view now shows not just structure, but load.
 
 A small change with a clear goal: spend less time hunting for the problem, and more time solving it.
 
-![Cluster topology normal.png](images/393156b52c13.png)
+![Valkey Admin Cluster Topology view with three primaries and their replicas, every primary at Low utilization](images/393156b52c13.png)
 
-**Topology with healthy nodes** Valkey Admin Cluster Topology view listing each primary node with its replica.
-
-![Cluster toplogy flagged nodes.png](images/24fdb3a30366.png)
-
-**Topology with a flagged nodes** Valkey Admin Cluster Topology view listing each primary node with its replica.
+![Valkey Admin Cluster Topology view with two primaries flagged High, one for CPU and one for memory](images/24fdb3a30366.png)
 
 ▶ **Watch the 1.2 demo:** [See your whole cluster's utilization at a glance](https://www.youtube.com/shorts/-812isos-0k) (under a minute).
 
