@@ -1,23 +1,16 @@
 {% extends "left-aside.html" %}
 
 {#- The download pages: /download/, the release list, the release line pages
-    and each release. They use the documentation layout, with Download current
-    in the menu. -#}
+    and each release. They have their own menu, as the blog has its own
+    sidebar. -#}
 
 {% block related_content %}
 {#- The release line of a line page (extra.version) or a release page (extra.tag). -#}
-{% set download_line = "" %}
+{% set line = "" %}
 {% if page is defined and page.extra?.version %}
-    {% set download_line = page.extra.version %}
+    {% set line = page.extra.version %}
 {% elif page is defined and page.extra?.tag %}
-    {% set download_line = (page.extra.tag | split(pat="."))[:2] | join(sep=".") %}
+    {% set line = (page.extra.tag | split(pat="."))[:2] | join(sep=".") %}
 {% endif %}
-{#- The same menu setup as docs.html and commands.html. #}
-{% set nav_json %}{{< nav_merged extra={config.extra} />}}{% endset %}
-{% set nav_data = load_data(literal=nav_json, format="json") %}
-{% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
-{% set nav_index = load_data(literal=nav_index_json, format="json") %}
-{% set nav_map_json %}{{< nav_command_map nav={nav_data} index={nav_index} />}}{% endset %}
-{% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
-{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} download_path={current_path} download_line={download_line} />}}
+{{< download_menu path={current_path} line={line} />}}
 {% endblock related_content %}

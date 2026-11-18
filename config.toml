@@ -47,11 +47,6 @@ review_list = [
     "/topics/distlock/"
 ]
 
-# The docs menu's Download entry, with the release lines, goes at the end of
-# this nav.yml section, which the download pages open. It goes at the start of
-# the menu if there's no such section.
-docs_menu_download_section = "getting-started"
-
 # Labels shown next to menu entries from other sources, by source name. Only
 # modules get one; valkey-bundle isn't a module.
 [extra.nav_badges]

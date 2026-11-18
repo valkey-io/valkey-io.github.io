@@ -309,53 +309,6 @@
 {% endcomponent nav_command_reference %}
 
 {#-
-    The Download entry, with a toggle that lists each release line, newest
-    first, then all releases. The lines are the pages in
-    content/download/versions/, so a new line shows up once it has a page.
-    It's rendered after the topics of the section whose id is
-    extra.docs_menu_download_section in config.toml, or at the start of the
-    menu if there's none.
-      path: the current path on the download pages, "" elsewhere. There,
-            Download is current and its toggle is open.
-      line: the release line of the current page, e.g. "9.1", or "".
-    Like a current topic with commands, Download isn't a link on /download/
-    itself: the whole row is the toggle.
--#}
-{% component nav_download(path="", line="") %}
-{%- set versions = get_section(path="download/versions/_index.md") -%}
-{%- set_global keyed_lines = [] -%}
-{%- for line_page in versions.pages -%}
-    {%- set parts = line_page.extra.version | split(pat=".") -%}
-    {%- set_global keyed_lines = [...keyed_lines, {"version": (parts[0] | int) * 1000 + (parts[1] | int), "page": line_page}] -%}
-{%- endfor -%}
-{%- set releases %}
-        <ul class="docs-menu-commands docs-menu-releases" aria-label="Valkey versions">
-            {%- for keyed in keyed_lines | sort(attribute="version") | reverse %}
-            <li><a href="{{ keyed.page.path }}"
-                {%- if keyed.page.extra.version == line %} class="docs-menu-current" aria-current="{{ "page" if path == keyed.page.path else "true" }}"{% endif %}>Valkey {{ keyed.page.extra.version }}</a></li>
-            {%- endfor %}
-            <li><a href="/download/releases/"{% if path == "/download/releases/" %} class="docs-menu-current" aria-current="page"{% endif %}>All releases</a></li>
-        </ul>
-{%- endset %}
-{%- if path == "/download/" %}
-<li>
-    <details class="docs-menu-current-topic" open>
-        <summary class="docs-menu-current" aria-current="page"><span>Download</span></summary>
-        {{- releases | safe }}
-    </details>
-</li>
-{%- else %}
-<li class="docs-menu-has-commands">
-    <a href="/download/"{% if path %} class="docs-menu-current" aria-current="true"{% endif %}>Download</a>
-    <details class="docs-menu-commands-toggle"{% if path %} open{% endif %}>
-        <summary><span class="sr-only">Valkey versions</span></summary>
-        {{- releases | safe }}
-    </details>
-</li>
-{%- endif %}
-{% endcomponent nav_download %}
-
-{#-
     The menu.
       current: slug of the current topic.
       related: key of the menu entry the current command belongs to (on
@@ -369,23 +322,16 @@
       index:   from nav_command_index; used to list the command categories
                (groups) that have documented commands.
       on_command_reference: true on the command reference page.
-      download_path, download_line: see nav_download. download_path also
-               opens the section nav_download is rendered in.
 -#}
-{% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false, download_path="", download_line="") %}
+{% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false) %}
 <nav class="docs-menu" aria-label="Documentation">
-    {%- set section_ids = [x.id for x in nav] %}
-    {%- set download_section = extra.docs_menu_download_section | default(value="") %}
     <ul class="docs-menu-sections">
-        {%- if download_section not in section_ids %}
-        {{< nav_download path={download_path} line={download_line} />}}
-        {%- endif %}
     {%- for section in nav %}
         {%- if section.id == "command-reference" %}
         {{< nav_command_reference title={section.title} index={index} on_command_reference={on_command_reference} />}}
         {%- else %}
         <li>
-            <details{% if section.id == open or (download_path and section.id == download_section) %} open{% endif %}>
+            <details{% if section.id == open %} open{% endif %}>
                 {%- set section_badge = extra.nav_badges[section.source] | default(value="") %}
                 <summary>{{ section.title }}{% if section_badge %} <span class="docs-menu-badge">{{ section_badge }}</span>{% endif %}</summary>
                 <ul>
@@ -397,9 +343,6 @@
                     {%- set commands = command_map[entry.topic] if entry.topic in command_map else [] %}
                     {{< nav_menu_item slug={entry.topic} title={entry.title} source={"" if section_badge and entry.source == section.source else entry.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} />}}
                     {%- endfor %}
-                    {%- if section.id == download_section %}
-                    {{< nav_download path={download_path} line={download_line} />}}
-                    {%- endif %}
                     {%- set other_key = "section:" ~ section.id %}
                     {%- if other_key in command_map %}
                     <li>
