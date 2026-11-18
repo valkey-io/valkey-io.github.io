@@ -58,28 +58,26 @@ So a cache hit means moving many objects of 10 to 130 MiB each, quickly.
 Valkey is built for small values, typically a few hundred bytes.
 Out of the box a string value is capped at 512 MB (`proto-max-bulk-len`; a `SET` of 512 MiB plus one byte returns `invalid bulk length`), a command's own work, such as storing a value, runs on the main thread while other clients wait, and every byte goes through the TCP stack and the server's network buffers.
 
-We measured stock Valkey (commit `c86f6ee51`) over TCP, with every value in DRAM, on the same workload as the module test in section 3.5: GETs over a 64 GiB hot set plus SETs of new keys from a billion-key space, so memory fills and every `SET` then evicts.
+We measured stock Valkey (commit `c86f6ee51`) over TCP, with every value in DRAM: GETs over a 64 GiB hot set plus SETs of new keys from a billion-key space, so memory fills and every `SET` then evicts.
 A separate connection sent one `PING` every 10 ms to show how long an unrelated small command waits.
 The figures are the last 10 minutes of about 15 at the memory limit.
 The server ran with `maxmemory 640gb`, `allkeys-lru` and 8 I/O threads, and two clients ran cachecannon with 16 threads and a 10-second request timeout.
 
-| Object size | GET only (Gbps) | SET only, at memory limit (Gbps) | GET and SET together, at memory limit (Gbps) | GET p50 / p99 | SET p50 / p99 | PING p99 / max | Module, same mixed test at disk limit (Gbps) |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 207.8 | 199-211 | 310.7 | 2.6 / 6.0 ms | 6.7 / 21 ms | 218 / 670 ms | 348-386 |
-| 8 MiB | 207.9 | 119 | 218.2 | 42 / 60 ms | 122 / 213 ms | 36 / 268 ms | 402.1-403.3 |
-| 32 MiB | 207.9 | 116 | 210.4 | 186 / 232 ms | 426 ms / 1.03 s | 50 / 287 ms | 369.0-371.8 |
-| 64 MiB | 208.0 | 111 | 184.8 | 237 / 290 ms | 395 ms / 0.94 s | 55 / 283 ms | 372.1-373.2 |
-| 256 MiB | 128 | 72-76 | 150.8 | 329 / 420 ms | 608 ms / 1.28 s | 50 / 104 ms | 367.5-368.2 |
-| 500 MiB | 141 | 71-75 | 142.6 | 698 / 902 ms | 1.1-1.3 / 2.2-2.4 s | 71 / 149 ms | 367.0-367.8 |
+| Object size | GET only (Gbps) | SET only, at memory limit (Gbps) | GET and SET together, at memory limit (Gbps) | GET p50 / p99 | SET p50 / p99 | PING p99 / max |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 MiB | 207.8 | 199-211 | 310.7 | 2.6 / 6.0 ms | 6.7 / 21 ms | 218 / 670 ms |
+| 8 MiB | 207.9 | 119 | 218.2 | 42 / 60 ms | 122 / 213 ms | 36 / 268 ms |
+| 32 MiB | 207.9 | 116 | 210.4 | 186 / 232 ms | 426 ms / 1.03 s | 50 / 287 ms |
+| 64 MiB | 208.0 | 111 | 184.8 | 237 / 290 ms | 395 ms / 0.94 s | 55 / 283 ms |
+| 256 MiB | 128 | 72-76 | 150.8 | 329 / 420 ms | 608 ms / 1.28 s | 50 / 104 ms |
+| 500 MiB | 141 | 71-75 | 142.6 | 698 / 902 ms | 1.1-1.3 / 2.2-2.4 s | 71 / 149 ms |
 
-- **Reads and writes together:** stock Valkey moved 39-57% of the module's throughput from 8 MiB up (218 against 402 Gbps at 8 MiB, 143 against 367 Gbps at 500 MiB), and 311 against 348-386 Gbps at 1 MiB.
-  Reads alone hit the hosts' TCP ceiling of about 208 Gbps up to 64 MiB.
+- **Reads and writes:** reads alone hit the hosts' TCP ceiling of about 208 Gbps up to 64 MiB.
   Writes alone held 111-119 Gbps at the limit from 8 to 64 MiB and 72-76 Gbps at 256 and 500 MiB.
 - **Other clients wait:** a `PING` took 36-218 ms at p99 and up to 670 ms, against 0.05 ms when idle, because the main thread ran at 99.8-99.9% CPU copying values.
-  With the module, `PING` took 0.39-2.3 ms at p99 and never more than about 4.3 ms.
-- **Capacity:** stock Valkey held 640 GiB in DRAM before evicting; the module node held 108 TB on NVMe.
+- **Capacity:** stock Valkey held 640 GiB in DRAM before evicting.
 
-The module ran on a separate test bed with the same layout (one server, two clients) and RDMA instead of TCP, so the two columns compare whole setups, not one variable.
+Section 3.5 measures the module on the same workload.
 We haven't explained the 6.3% `GET` misses at 1 MiB or the 10% drift at 256 and 500 MiB.
 
 ### How LMCache stores KV cache in stock Valkey
@@ -331,6 +329,21 @@ Each size ran GETs over a 64 GiB hot set and SETs of new keys at the same time, 
   From 8 MiB up there's no dip.
 - At 32 MiB, 122 SETs hit the client's 1-second timeout in a single second.
   We haven't found the cause.
+
+**Against stock Valkey.** Section 1 measured stock Valkey on the same workload, with `GET` and `SET` together and memory full.
+
+| Object size | Stock Valkey, GET + SET (Gbps) | Module, GET + SET at the disk limit (Gbps) | Stock Valkey, PING p99 / max | Module, PING p99 / max |
+| --- | --- | --- | --- | --- |
+| 1 MiB | 310.7 | 348-386 | 218 / 670 ms | 2.3 / ~4.3 ms |
+| 8 MiB | 218.2 | 402.1-403.3 | 36 / 268 ms | 0.42 / 2.83 ms |
+| 32 MiB | 210.4 | 369.0-371.8 | 50 / 287 ms | 0.42 / 2.51 ms |
+| 64 MiB | 184.8 | 372.1-373.2 | 55 / 283 ms | 0.40 / 1.85 ms |
+| 256 MiB | 150.8 | 367.5-368.2 | 50 / 104 ms | 0.39 / 0.79 ms |
+| 500 MiB | 142.6 | 367.0-367.8 | 71 / 149 ms | 0.40 / 0.62 ms |
+
+Stock Valkey moved 39-57% of the module's throughput from 8 MiB up, and a `PING` waited 36-218 ms at p99 against at most 2.3 ms with the module.
+The module node held 108 TB on NVMe, against 640 GiB of DRAM for stock Valkey.
+The module ran on a separate test bed with the same layout (one server, two clients) and RDMA instead of TCP, so the table compares whole setups, not one variable.
 
 ### 3.6 Run it yourself
 
