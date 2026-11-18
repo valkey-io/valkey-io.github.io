@@ -54,12 +54,12 @@ review_list = [
 [[extra.docs_menu_links]]
 title = "Clients"
 url = "/clients/"
-after = "client-development"
+in = "client-development"
 
 [[extra.docs_menu_links]]
 title = "Integrations"
 url = "/integrations/"
-after = "client-development"
+in = "client-development"
 
 [[extra.docs_menu_links]]
 title = "Valkey Admin"
