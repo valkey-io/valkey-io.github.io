@@ -54,3 +54,68 @@ top = 3
 query = "lua scripting"
 url = "/topics/eval-intro/"
 top = 3
+
+[[search]]
+query = "maxmemory-policy"
+url = "/topics/lru-cache/"
+top = 1
+
+[[search]]
+query = "protected-mode"
+url = "/topics/security/"
+top = 1
+
+[[search]]
+query = "sorted-set"
+url = "/topics/sorted-sets/"
+top = 1
+
+[[search]]
+query = "cluster-enabled"
+url = "/topics/cluster-tutorial/"
+top = 1
+
+[[search]]
+query = "valkey-bundle"
+url = "/topics/valkey-bundle/"
+top = 3
+
+[[search]]
+query = "get"
+url = "/commands/get/"
+top = 1
+
+[[search]]
+query = "client kill"
+url = "/commands/client-kill/"
+top = 1
+
+[[search]]
+query = "CONFIG SET"
+url = "/commands/config-set/"
+top = 1
+
+[[search]]
+query = "FT.SEARCH"
+url = "/commands/ft.search/"
+top = 1
+
+[[search]]
+query = "JSON.SET"
+url = "/commands/json.set/"
+top = 1
+
+[[search]]
+query = "AOF"
+url = "/topics/persistence/"
+top = 1
+
+[[search]]
+query = "notify-keyspace-events"
+url = "/topics/notifications/"
+top = 1
+
+[[search]]
+query = "migrate from redis"
+url = "/topics/migration/"
+top = 1

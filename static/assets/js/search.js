@@ -51,8 +51,10 @@ function putExactTitleMatchesFirst(instance) {
         pagefind.isExactTitleWrapped = true;
 
         const search = pagefind.search.bind(pagefind);
-        pagefind.search = async function(term, options) {
-            if (!term) return search(term, options);
+        pagefind.search = async function(typedTerm, options) {
+            // Replace hyphens with spaces for hyphenated queries.
+            const term = typedTerm?.replace(/-/g, ' ');
+            if (!term) return search(typedTerm, options);
             const exactTitle = term.trim().toLowerCase().replace(/\s+/g, ' ');
             // With no term, a search returns every page the filter matches.
             const searchTitles = function(titles) {
