@@ -599,6 +599,14 @@ p {
     border-bottom: 1px solid #d5d9ec;
   }
 
+  // Larger than the section titles, and lined up with them.
+  .docs-menu-title {
+    margin: 0 0 1rem;
+    padding: 0 0.4rem;
+    font-size: 2.4rem;
+    text-transform: none;
+  }
+
   summary {
     display: flex;
     justify-content: space-between;

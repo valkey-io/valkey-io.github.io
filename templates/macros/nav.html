@@ -342,6 +342,7 @@
 -#}
 {% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false) %}
 <nav class="docs-menu" aria-label="Documentation">
+    <h2 class="docs-menu-title">Documentation</h2>
     {%- set page_links = extra.docs_menu_links | default(value=[]) %}
     {%- set section_ids = [x.id for x in nav] %}
     <ul class="docs-menu-sections">
