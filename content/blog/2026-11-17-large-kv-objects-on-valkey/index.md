@@ -388,20 +388,3 @@ Then start the LMCache server with `--no-l1-use-lazy`, so its whole memory arena
 ```
 
 To try it without EFA, run the module in `Dram` mode with `--largeobj.fabric-provider Emulated --largeobj.fabric-interfaces lo`, and add `"rdma_provider": "tcp"` to the adapter config.
-
-### Known limits
-
-- **A restart loses the data.** The module doesn't write objects to RDB or AOF, and it doesn't replicate them.
-  Treat the tier as a cache: after a restart or a failover, LMCache recomputes.
-- **Each object lives on one node.** LMCache can spread keys across a Valkey Cluster, but there's no copy of an object on a second node.
-- **A missing value is a cache miss.** If a key was evicted or never written, LMCache recomputes that chunk.
-- **RDMA registration limit.** Each LMCache worker registers its whole memory arena with EFA, so the number of workers times the arena size must fit the card's limit on registered memory, 384 GiB on c8gn instances.
-- **Versions:** LMCache `dev` (no release yet), `valkey-glide-sync` 2.6.0 or later, libfabric 2.4 or later.
-
-### Where to help
-
-- Replication of large objects to replicas
-- Persistence across restarts
-- Object IDs that stay unique across cluster nodes (today each node numbers its objects on its own, and two nodes can produce the same ID)
-- Higher write throughput for very large values when they are being read from DRAM
-- More client integrations beyond LMCache
