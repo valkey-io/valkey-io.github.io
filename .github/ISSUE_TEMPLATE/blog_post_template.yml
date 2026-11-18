@@ -7,6 +7,9 @@ body:
     attributes:
       value: |
         Propose your post here before you write it, so maintainers can check fit, overlap, and timing.
+
+        **Do not start writing until a maintainer assigns a blog reviewer to this issue.**
+
         [CONTRIBUTING-BLOG-POST.md](https://github.com/valkey-io/valkey-io.github.io/blob/main/CONTRIBUTING-BLOG-POST.md) covers length, style, and the review process.
 
   - type: textarea
