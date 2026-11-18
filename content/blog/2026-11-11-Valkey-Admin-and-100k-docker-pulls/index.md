@@ -36,7 +36,7 @@ The tools work. The hard part is connecting all the pieces quickly.
 
 We wanted to make that simpler: see your cluster, understand its behavior, inspect your data, and investigate performance from one place. That idea became Valkey Admin, an open source, visual companion to the tools you already trust, not a replacement for them.
 
-Our [first stable releases](https://valkey.io/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/) brought the essentials together: real-time dashboards, a key browser, command execution, cluster topology, and troubleshooting tools. <textStyle t="gray-6">1.1 added</textStyle> [<textStyle t="gray-6">big key detection</textStyle>](https://valkey.io/blog/finding-big-keys-in-a-running-valkey-cluster/)<textStyle t="gray-6">.</textStyle> But as anyone who builds developer tools knows, the first release is really the start of the conversation. Here's where that conversation went next.
+Our [first stable releases](https://valkey.io/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/) brought the essentials together: real-time dashboards, a key browser, command execution, cluster topology, and troubleshooting tools. 1.1 added [big key detection](https://valkey.io/blog/finding-big-keys-in-a-running-valkey-cluster/). But as anyone who builds developer tools knows, the first release is really the start of the conversation. Here's where that conversation went next.
 
 ## Version 1.2: from seeing your cluster to understanding it
 
