@@ -75,7 +75,7 @@ If 1.2 helped answer "which node looks busy?", version 1.3, released in October 
 
 Distributed systems are good at hiding uneven workloads. You can have plenty of capacity overall while a few hash slots carry most of the activity.
 
-<textStyle t="gray-6">1.3 adds a **Slots** tab to the **Hot Keys heatmap**. It groups your top hot keys by hash slot, and each slot is a tile, colored by how many of those keys it has.</textStyle>. See something interesting? Click it. You can inspect the keys in that slot, with size, TTL, and owning node, and open any key straight in the Key Browser.
+1.3 adds a **Slots** tab to the **Hot Keys heatmap**. It groups your top hot keys by hash slot, and each slot is a tile, colored by how many of those keys it has. See something interesting? Click it. You can inspect the keys in that slot, with size, TTL, and owning node, and open any key straight in the Key Browser.
 
 The path becomes natural: spot the hot slot → inspect its keys → understand the workload. (Hot slots needs Valkey 8.0+, cluster mode, `cluster-slot-stats-enabled yes`, and an LFU eviction policy. <textStyle t="gray-6">Without these, Valkey Admin prompts you to start MONITOR-based detection, which has a performance impact on the server ([Activity docs](https://valkey-admin.valkey.io/features/activity/))</textStyle>
 
