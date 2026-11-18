@@ -60,9 +60,10 @@ Out of the box a string value is capped at 512 MB (`proto-max-bulk-len`; a `SET`
 
 We measured stock Valkey (commit `c86f6ee51`) over TCP, with every value in DRAM, on the same workload as the module test in section 3.5: GETs over a 64 GiB hot set plus SETs of new keys from a billion-key space, so memory fills and every `SET` then evicts.
 A separate connection sent one `PING` every 10 ms to show how long an unrelated small command waits.
-The figures are the last 10 minutes of about 15 at the memory limit; the setup is in the first appendix.
+The figures are the last 10 minutes of about 15 at the memory limit.
+The server ran with `maxmemory 640gb`, `allkeys-lru` and 8 I/O threads, and two clients ran cachecannon with 16 threads and a 10-second request timeout.
 
-| Object size | `GET` only (Gbps) | `SET` only, at memory limit (Gbps) | `GET` and `SET` together, at memory limit (Gbps) | `GET` p50 / p99 | `SET` p50 / p99 | `PING` p99 / max | Module, same mixed test at disk limit (Gbps) |
+| Object size | GET only (Gbps) | SET only, at memory limit (Gbps) | GET and SET together, at memory limit (Gbps) | GET p50 / p99 | SET p50 / p99 | PING p99 / max | Module, same mixed test at disk limit (Gbps) |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 MiB | 207.8 | 199-211 | 310.7 | 2.6 / 6.0 ms | 6.7 / 21 ms | 218 / 670 ms | 348-386 |
 | 8 MiB | 207.9 | 119 | 218.2 | 42 / 60 ms | 122 / 213 ms | 36 / 268 ms | 402.1-403.3 |
@@ -79,7 +80,7 @@ The figures are the last 10 minutes of about 15 at the memory limit; the setup i
 - **Capacity:** stock Valkey held 640 GiB in DRAM before evicting; the module node held 108 TB on NVMe.
 
 The module ran on a separate test bed with the same layout (one server, two clients) and RDMA instead of TCP, so the two columns compare whole setups, not one variable.
-The appendices explain why 1 MiB writes speed up once memory fills; we haven't explained the 6.3% `GET` misses at 1 MiB or the 10% drift at 256 and 500 MiB.
+We haven't explained the 6.3% `GET` misses at 1 MiB or the 10% drift at 256 and 500 MiB.
 
 ### How LMCache copes today
 
@@ -311,11 +312,11 @@ Bandwidth is the server's own byte counters.
 **Reads and writes together, with the disk full.** A cache that fills up has to keep accepting writes.
 Each size ran GETs over a 64 GiB hot set and SETs of new keys at the same time, first filling the disk to its 108 TB limit and then running 2 hours at the limit, where every `SET` evicts the oldest objects to make room.
 
-| Size | `GET` / `SET` connections per client | Fill (Gbps) | At the disk limit (Gbps) | `GET` + `SET` at the limit (Gbps) | Evictions | Rejected SETs | Client errors | `GET` p50 / p99 | `SET` p50 / p99 | `PING` p50 / p99 / max |
+| Size | GET / SET connections per client | Fill (Gbps) | At the disk limit (Gbps) | GET + SET at the limit (Gbps) | Evictions | Rejected SETs | Client errors | GET p50 / p99 | SET p50 / p99 | PING p50 / p99 / max |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 MiB | 48 / 64 | 397.6 | 348-386 | 209 + 178 | 131.2M | 0 | 0 | 3.9 / 6.5 ms | 5.7-5.8 / 10.8-11.0 ms | 0.24 / 2.3 / ~4.3 ms |
 | 8 MiB | 48 / 64 | 403.5 | 402.1-403.3 | 211 + 193 | 21.2M | 0 | 0 | 30.4 / 37.2 ms | 44.6 / 51.9 ms | 0.29 / 0.42 / 2.83 ms |
-| 32 MiB | 48 / 64 | 372.4 | 369.0-371.8 | 177 + 193 | 5.38M | 0 | 122 `SET` timeouts, all in one second | 144 / 168 ms | 178-179 / 192 ms | 0.37 / 0.42 / 2.51 ms |
+| 32 MiB | 48 / 64 | 372.4 | 369.0-371.8 | 177 + 193 | 5.38M | 0 | 122 SET timeouts, all in one second | 144 / 168 ms | 178-179 / 192 ms | 0.37 / 0.42 / 2.51 ms |
 | 64 MiB | 24 / 32 | 371.3 | 372.1-373.2 | 180 + 193 | 2.70M | 0 | 0 | 144 / 158 ms | 178-179 / 186 ms | 0.35 / 0.40 / 1.85 ms |
 | 256 MiB | 8 / 8 | 368.0 | 367.5-368.2 | 195 + 180 | 613k | 0 | 0 | 185 / 199 ms | 190 / 203 ms | 0.34 / 0.39 / 0.79 ms |
 | 500 MiB | 8 / 8 | 367.7 | 367.0-367.8 | 190 + 182 | 319k | 0 | 0 | 367 / 388 ms | 365 / 384 ms | 0.34 / 0.40 / 0.62 ms |
@@ -392,120 +393,3 @@ To try it without EFA, run the module in `Dram` mode with `--largeobj.fabric-pro
 - Object IDs that stay unique across cluster nodes (today each node numbers its objects on its own, and two nodes can produce the same ID)
 - Higher write throughput for very large values when they are being read from DRAM
 - More client integrations beyond LMCache
-
----
-
-## Appendix: stock Valkey on the same workload, full results
-
-These are the per-phase results behind the stock Valkey table in section 1.
-
-**Setup**
-
-- Machines: one server and two clients on a separate test bed from the module runs (osstest2).
-  The hosts' TCP ceiling, measured with iperf3, is about 208-212 Gbps (see the TCP-limit appendix).
-- Server: Valkey commit `c86f6ee51`, no module loaded, started under `numactl --cpunodebind=0 --membind=0` with `maxmemory 640gb` (687,194,767,360 bytes), `maxmemory-policy allkeys-lru`, `io-threads 8` and `latency-monitor-threshold 100`.
-- Clients: cachecannon commit `1f55756` on both clients, 16 threads, pipeline depth 1, 5-second warm-up, 10-second request timeout.
-- Keys: GETs read a 64 GiB hot set (65,536 / object size in MiB keys).
-  SETs write new keys of 17 bytes drawn uniformly from 1,000,000,000 keys, so they never overwrite.
-- Connections per client: `GET` 48 and `SET` 64 at 1, 8 and 32 MiB; `GET` 24 and `SET` 32 at 64 MiB; `GET` 8 and `SET` 8 at 256 and 500 MiB.
-- Order per size, largest size first: prefill the hot set and run 60 s of GETs to warm it; `GET` only for 90 s; flush; `SET` only for 60 s from empty; prefill and warm again; `GET` and `SET` together for 20 minutes, which fills memory in 1-3 minutes and then runs at the limit.
-- Server throughput comes from `INFO` sampled every 10 s on the server.
-  Request rates and latencies come from the two clients.
-- `PING` probe: a separate connection from client 1 sends one `PING` every 10 ms during each phase and records each round trip.
-  With no load a `PING` takes 0.04-0.05 ms.
-  In a 90-second A/B at 1 MiB, `GET` throughput was 207.8 Gbps with and without the probe, so the probe adds no measurable load.
-- Errors: 0 client errors and 0 timeouts in every phase.
-
-**`GET` only** (90 s, every `GET` a hit)
-
-| Size | Server (Gbps) | Requests/s, both clients | `GET` p50 | `GET` p99 | `GET` max | `PING` p50 / p99 / max |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 207.8 | 24.8K | 2.6-3.9 ms | 8.9-9.9 ms | 11-46 ms | 0.18 / 0.52 / 1.4 ms |
-| 8 MiB | 207.9 | 3.1K | 21 ms | 94-141 ms | 268-279 ms | 0.18 / 0.93 / 31.9 ms |
-| 32 MiB | 207.9 | 774 | 78-103 ms | 470-489 ms | 0.81-1.12 s | 2.79 / 5.57 / 39.9 ms |
-| 64 MiB | 208.0 | 386 | 103 ms | 325-344 ms | 526-763 ms | 0.19 / 1.97 / 3.3 ms |
-| 256 MiB | 128 | 58 | 228-229 ms | 562-587 ms | 705-721 ms | 0.07 / 3.71 / 6.3 ms |
-| 500 MiB | 141 | 32 | 440-459 ms | 625-700 ms | 797-805 ms | 0.23 / 1.17 / 14.8 ms |
-
-Where a cell shows a range, the two clients differed.
-At 256 and 500 MiB, 16 connections in total aren't enough to fill the link at these latencies.
-
-**`SET` only** (60 s from empty, new keys)
-
-| Size | Server before the limit (Gbps) | Server at the limit (Gbps) | Evictions/s at the limit | Requests/s, both clients | `SET` p50 | `SET` p99 | `SET` max | `PING` p50 / p99 / max |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 124 | 199-211 | 21.7K-25.1K | 19.8K | 3.2 ms | 36 ms | 1.67-3.34 s | 1.73 / 218 / 447 ms |
-| 8 MiB | 128 | 119-120 | 1.7K-1.8K | 1.8K | 66 ms | 154-157 ms | 482-575 ms | 6.53 / 12.1 / 224 ms |
-| 32 MiB | 130 | 116-118 | 431-439 | 458 | 255-257 ms | 709-717 ms | 1.28-1.48 s | 10.6 / 27.8 / 265 ms |
-| 64 MiB | 126-132 | 111-118 | 134-207 | 224 | 271-273 ms | 537-545 ms | 1.23-1.28 s | 8.88 / 31.8 / 225 ms |
-| 256 MiB | 124-127 | 72-76 | 32-34 | 45 | 233-348 ms | 830-877 ms | 0.99-1.17 s | 0.38 / 23.6 / 41.8 ms |
-| 500 MiB | 130 | 71-75 | 17-18 | 25 | 501-510 ms | 1.14-1.46 s | 1.42-1.82 s | 2.14 / 32.2 / 99.1 ms |
-
-Memory filled after 40-50 s at every size, so each run spent its last 10-20 s at the limit.
-
-**`GET` and `SET` together** (20 minutes; figures for the last 10 minutes, at the memory limit)
-
-| Size | Server while filling (Gbps) | Server at the limit: `GET` + `SET` = total (Gbps) | Evictions/s | `GET` p50 / p99 | `SET` p50 / p99 / max | `PING` p50 / p99 / max | Over 10 ms |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | about 214 | 167.9 + 142.7 = 310.7 | 17,006 | 2.6 / 6.0 ms | 6.7 / 21 ms / 2.84 s | 2.11 / 218 / 670 ms | 2.2% |
-| 8 MiB | 218-231 | 151.8 + 66.4 = 218.2 | 989 | 42 / 60 ms | 122 / 211-214 / 545 ms | 29.5 / 35.8 / 268 ms | 100% |
-| 32 MiB | 205-218 | 136.9 + 73.5 = 210.4 | 274 | 185-187 / 231-233 ms | 422-430 ms / 1.01-1.05 s / 3.47 s | 35.1 / 49.7 / 287 ms | 100% |
-| 64 MiB | 180-195 | 107.7 + 77.1 = 184.8 | 144 | 237-238 / 287-292 ms | 392-398 / 889-994 ms / 3.77 s | 29.1 / 55.5 / 283 ms | 100% |
-| 256 MiB | about 166 | 100.1 + 50.6 = 150.8 | 23 | 325-333 / 409-432 ms | 608 ms / 1.28 s / 1.69 s | 6.59 / 50.4 / 104 ms | 44% |
-| 500 MiB | about 159 | 92.3 + 50.2 = 142.6 | 12 | 696-700 / 898-906 ms | 1.09-1.27 / 2.20-2.37 / 7.45 s | 5.38 / 71.4 / 149 ms | 25% |
-
-- `GET` hit rate was 100% at 8, 256 and 500 MiB, 99.8% at 32 MiB, 97.8% at 64 MiB and 93.7% at 1 MiB.
-  A miss means LRU evicted a hot-set key, and it returns a short reply.
-- The Valkey main thread was at 99.8-99.9% CPU at the limit (measured at 8, 32 and 64 MiB).
-  The I/O threads also read about 99.9%, but they spin while waiting, so that figure doesn't show how busy they are.
-- At the end of the mixed runs `used_memory` sat at the 687 GB limit.
-  Resident memory was 545-554 GB (fragmentation ratio 0.80-0.81) from 1 to 256 MiB and 663 GB (ratio 0.98) at 500 MiB.
-
-## Appendix: why stock Valkey writes 1 MiB values faster once memory is full
-
-In the stock Valkey runs of the previous appendix, 1 MiB SETs speed up once memory reaches the limit and eviction starts: `SET` alone goes from about 124 Gbps to 199-211 Gbps, and the mixed run from about 214 to 311 Gbps.
-Values of 8 MiB and larger don't speed up.
-We traced this to how the memory allocator (jemalloc, bundled with Valkey) handles freed memory, and confirmed it with four `SET`-only tests.
-
-**What happens in Valkey.** For any value of 32 KiB or more, the I/O thread reads the value straight into a buffer sized for it, and that buffer becomes the stored value without a copy.
-So the cost of a `SET` is the memory the value lands in.
-If that memory has never been used, the kernel must map and zero every 4 KiB page the first time it is written (a page fault).
-A 1 MiB value is 256 pages.
-
-**What jemalloc does with freed memory.** When eviction frees a value, jemalloc keeps the pages of a 1 MiB value for reuse (10 seconds by default), and the next `SET` reuses them with no page faults.
-Allocations of 8 MiB or more (`oversize_threshold`, default 8 MiB) go to a separate "huge" arena that gives freed memory back to the operating system immediately, so the next `SET` faults in fresh pages again.
-
-**The tests.** Each test ran `SET` only for 120 seconds from an empty server, with the same server and client settings as the stock Valkey appendix.
-Only the jemalloc setting changed.
-The settings were passed to the server in the `JE_MALLOC_CONF` environment variable.
-
-| Test | Object size | jemalloc setting | `SET` before the limit | `SET` at the limit | Page faults per second, I/O threads: before the limit, then at the limit |
-| --- | --- | --- | --- | --- | --- |
-| A | 1 MiB | default | 117 Gbps | 210.7 Gbps | 3.6M, then 30-40K |
-| B | 1 MiB | `dirty_decay_ms:0,muzzy_decay_ms:0` (freed memory returned at once) | 117 Gbps | 92-106 Gbps | not captured |
-| C | 8 MiB | default | 121 Gbps | 110-116 Gbps | 3.7M, then 3.5M |
-| D | 8 MiB | `oversize_threshold:0` (no huge arena) | 124 Gbps | 210.8 Gbps | 3.8M, then 60-140K |
-
-- Turning reuse off at 1 MiB (B) removes the speedup.
-  Turning reuse on at 8 MiB (D) creates it.
-  About 14,000 SETs per second at 256 pages each matches the 3.6M faults per second before the limit.
-- 210 Gbps is the TCP ceiling of these hosts (next section), so `SET` reaches the network limit once page faulting stops.
-- In every test the Valkey main thread ran at 99.9-100% CPU, and the page faults happened in the I/O threads.
-- Not measured: the larger drop at 256 and 500 MiB.
-  It probably comes from the huge arena returning memory to the operating system on the main thread, but we haven't tested that.
-  We also haven't tested `oversize_threshold:0` on `GET` or mixed runs, or its effect on memory fragmentation.
-
-## Appendix: the TCP limit of the test hosts
-
-The server (i8ge.48xlarge) is rated at 300 Gbps and each client (c8gn.16xlarge) at 200 Gbps.
-We measured the TCP ceiling directly with iperf3: 16 server processes, 8 per client, 4 streams each, 1 MiB writes, 20 seconds.
-
-| Direction | Client 1 | Client 2 | Total |
-| --- | --- | --- | --- |
-| Clients send to server | 104.1 Gbps | 107.5 Gbps | 211.6 Gbps |
-| Server sends to clients | 104.3 Gbps | 104.1 Gbps | 208.4 Gbps |
-
-The server's ENA counters (`bw_in_allowance_exceeded`, `bw_out_allowance_exceeded`, `pps_allowance_exceeded`) stayed at 0, so AWS wasn't throttling the instance.
-The cause of the 208-212 Gbps ceiling, below the 300 Gbps rating, is not identified.
-Stock Valkey `GET` reached 207.8-208.0 Gbps at 1 to 64 MiB, which is this same ceiling.
-The module's 367-403 Gbps combined results use RDMA over EFA on a separate test bed and are not bound by this TCP limit.
