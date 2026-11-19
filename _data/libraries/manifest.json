@@ -12,6 +12,7 @@
     "clients/phpredis.json",
     "clients/predis.json",
     "clients/valkey-swift.json",
+    "clients/sage.json",
     "clients/valkey-glide-csharp.json",
     "clients/valkey-glide-php.json",
     "clients/valkey-glide-ruby.json"
