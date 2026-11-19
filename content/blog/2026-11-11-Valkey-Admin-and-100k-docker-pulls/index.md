@@ -1,40 +1,16 @@
 +++
-title = "Valkey Admin 1.2 and 1.3: 100K Docker pulls and what's new"
+title = "What's new in Valkey Admin 1.2 and 1.3: utilization, hot slots and 30 days of history"
 date = 2026-11-11
-description = "100,000+ Docker pulls. Two new releases, 1.2 and 1.3. And a community that's just getting started."
+description = "Valkey Admin 1.2 adds utilization to the cluster topology. 1.3 adds a Hot Slots view, up to 30 days of CPU and memory history, and stronger isolation for shared deployments."
 authors = ["marbor", "bblan0803"]
 
 [taxonomies]
 blog_type = ["Announcements"]
 +++
 
-*100,000+ Docker pulls. Two new releases, 1.2 and 1.3. And a community that's just getting started.*
+When a Valkey cluster slows down, the first question is usually "which node or slot needs my attention?" The second is "has it looked like this before?" Valkey Admin 1.2 and 1.3 are built around those two questions. 1.2 adds utilization to the cluster topology, so the busy node stands out. 1.3 adds a Hot Slots view and up to 30 days of CPU and memory history, along with stronger isolation for shared deployments.
 
----
-
-There's something special about watching an open source project grow.
-
-It starts with an idea, a problem worth solving, and a few people willing to build something better. Then comes the first release, the first issue, the first pull request from someone outside the original team. In 1.3, the project welcomed a few more first-time contributors. And eventually, you look at Docker Hub and see a number you weren't expecting so soon.
-
-**100K+ pulls.**
-
-That's the milestone Valkey Admin just reached, and we couldn't be more excited!
-
-Docker pulls aren't the same as unique users. But they tell us something encouraging: people are discovering Valkey Admin, trying it, and bringing it into their workflows. For our team and the contributors helping build this project, that's a great reason to celebrate.
-
-But this isn't just a post about a number. It's about why we started, what's new in versions 1.2 and 1.3, and, most of all, where we hope to go together. Next, we're exploring a Model Context Protocol (MCP) server to empower Valkey users to troubleshoot with AI agents, and OpenTelemetry metrics export so they can keep using the monitoring tools they already have.
-
-![Valkey Admin community milestone banner for 100K+ Docker pulls](images/41a4089a24ad.png)
-
-## It started with a familiar problem
-
-If you've operated a distributed Valkey cluster, you know the routine.
-
-Your application slows down. Cache latency climbs. One node seems busier than the others. So you open a terminal. Then another. Maybe a monitoring dashboard. Then `valkey-cli`, a few `INFO` commands, some key inspection, and a little mental gymnastics to piece together what's happening across the cluster.
-
-The tools work. The hard part is connecting all the pieces quickly.
-
-We wanted to make that simpler: see your cluster, understand its behavior, inspect your data, and investigate performance from one place. That idea became Valkey Admin, an open source, visual companion to the tools you already trust, not a replacement for them.
+We built Valkey Admin to make that kind of investigation simpler: see your cluster, understand its behavior, inspect your data, and investigate performance from one place. It's an open source, visual companion to the tools you already trust.
 
 Our [first stable releases](https://valkey.io/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/) brought the essentials together: real-time dashboards, a key browser, command execution, cluster topology, and troubleshooting tools. 1.1 added [big key detection](https://valkey.io/blog/finding-big-keys-in-a-running-valkey-cluster/). But as anyone who builds developer tools knows, the first release is really the start of the conversation. Here's where that conversation went next.
 
@@ -59,7 +35,9 @@ A small change with a clear goal: spend less time hunting for the problem, and m
 
 ![Valkey Admin Cluster Topology view with two primaries flagged High, one for CPU and one for memory](images/24fdb3a30366.png)
 
-▶ **Watch the 1.2 demo:** [See your whole cluster's utilization at a glance](https://www.youtube.com/shorts/-812isos-0k) (under a minute).
+**Watch the 1.2 demo:** see your whole cluster's utilization at a glance (under a minute).
+
+{{< youtube id="-812isos-0k" />}}
 
 ### A better everyday experience
 
@@ -77,6 +55,8 @@ Distributed systems are good at hiding uneven workloads. You can have plenty of 
 
 1.3 adds a **Slots** tab to the **Hot Keys heatmap**. It groups your top hot keys by hash slot, and each slot is a tile, colored by how many of those keys it has. See something interesting? Click it. You can inspect the keys in that slot, with size, TTL, and owning node, and open any key straight in the Key Browser.
 
+![Valkey Admin Hot Keys heatmap, Slots tab, with hash slots shown as tiles colored by how many hot keys each slot holds](images/hot-slots-tab.png)
+
 The path becomes natural: spot the hot slot → inspect its keys → understand the workload. Hot Slots detection needs Valkey 8.0+, cluster mode, `cluster-slot-stats-enabled yes`, and a least frequently used (LFU) eviction policy. Without these, Valkey Admin prompts you to start `MONITOR`-based detection, which has a performance impact on the server ([Activity docs](https://valkey-admin.valkey.io/features/activity/)).
 
 ### More history, fewer guesses
@@ -86,8 +66,6 @@ Fixed time-range buttons are gone. You can now pick a custom window, in hours or
 - Was this memory growth gradual, or sudden?
 - Does CPU utilization follow a recurring pattern?
 - Was this behavior there before the last deployment?
-
-
 
 ![Valkey Admin CPU usage chart for the last 30 hours](images/d72ff898ecf9.png)
 
@@ -99,7 +77,9 @@ One detail: longer windows still need enough metrics retention configured. Each 
 
 ![Valkey Admin memory chart for the last 30 days](images/6ba531c50472.png)
 
-▶ **Watch the 1.3 demo:** [Look back 30 days at CPU and memory](https://www.youtube.com/shorts/6tbHtWjC5A0) (under a minute).
+**Watch the 1.3 demo:** look back 30 days at CPU and memory (under a minute).
+
+{{< youtube id="6tbHtWjC5A0" />}}
 
 ### Stronger foundations
 
@@ -109,9 +89,9 @@ Some of the most important work in 1.3 doesn't show up in a screenshot.
 
 There are upgrade considerations worth thirty seconds before you roll out. 1.3 keeps history separately for each Valkey identity and deployment, so dashboards start a fresh history after the upgrade. If you changed collector settings, apply them again. Deployments reached through a DNS hostname may need an explicit WebSocket origins allowlist. And in Kubernetes mode, collector-backed features are temporarily unavailable in 1.3, because the current sidecar credential model can't provide the required per-user isolation. We encourage existing users to skim the [What's New page](https://valkey-admin.valkey.io/releases/) first. For us, improving the foundations matters as much as adding visible features.
 
-## Want to give Valkey Admin a spin?
+## Try it
 
-This is a great time to try it. Run it as a desktop app, or deploy the web version with Docker. For a quick local trial on 1.3:
+Run Valkey Admin as a desktop app, or deploy the web version with Docker. For a quick local trial on 1.3:
 
 ```bash
 docker run --rm --name valkey-admin -p 127.0.0.1:8080:8080 valkey/valkey-admin:1.3.0
@@ -119,31 +99,25 @@ docker run --rm --name valkey-admin -p 127.0.0.1:8080:8080 valkey/valkey-admin:1
 
 Then open `http://localhost:8080` and connect to your instance or cluster. The local-only port binding is intentional: web mode doesn't ship its own authentication, so any deployment others can reach should sit behind proper access controls.
 
-Once you're in, start with the cluster topology, browse a few keys, and explore the activity views. If something feels confusing or missing, we genuinely want to know. Docs, setup guides, and detailed release notes live at [valkey-admin.valkey.io](https://valkey-admin.valkey.io).
+Once you're in, start with the cluster topology, check the Hot Slots tab, and widen the time range on the CPU and memory charts. Docs, setup guides, and detailed release notes live at [valkey-admin.valkey.io](https://valkey-admin.valkey.io).
 
-## The best part of open source? Let's build it together.
+## What's next
 
-Reaching 100K Docker pulls is exciting. What motivates us more is building a tool that reflects the people who use Valkey every day.
+We're working on OpenTelemetry metrics export, so you can send Valkey Admin metrics to the monitoring tools you already use. We're also exploring a Model Context Protocol (MCP) server, so you can troubleshoot Valkey with AI agents using the same views Valkey Admin gives you today.
 
-Every deployment is different. Some of you are debugging locally, and others are running large clusters, using managed Valkey services, or working through complex Kubernetes setups. Those experiences surface problems and ideas no single team can anticipate, which is exactly why we want to build Valkey Admin *with* the community, not just in the open.
+## Thank you, and an invitation
 
-So tell us about the real workflows you want to simplify. What's still too hard when you troubleshoot a cluster? Which metrics are hardest to read? Where could the interface be clearer?
-
-Collaborating doesn't have to mean shipping a major feature. A reproducible bug report, a better workflow idea, a docs fix, testing against a different environment, or reviewing a design all make the project stronger. And if you're excited to write code, let's build it together, for larger changes, open a GitHub issue and a design discussion so we can shape the approach side by side.
-
-## A thank-you, and an invitation
-
-Behind these releases are a lot of engineering decisions, code reviews, debugging sessions, and small improvements that never make a headline.
-
-A special thank-you to the people behind these releases. [@nassery318](https://github.com/nassery318) built the utilization view, the Hot Slots tab and the 30-day CPU and memory history. [@ArgusLi](https://github.com/ArgusLi) built per-user isolation for shared deployments. [@ravjotbrar](https://github.com/ravjotbrar) led a long list of security hardening, along with the Big Keys scan and smarter Key Browser search. [@tkesgar](https://github.com/tkesgar) made Valkey Admin work behind a reverse proxy subpath. 
+A special thank-you to the people behind these releases. [@nassery318](https://github.com/nassery318) built the utilization view, the Hot Slots tab and the 30-day CPU and memory history. [@ArgusLi](https://github.com/ArgusLi) built per-user isolation for shared deployments. [@ravjotbrar](https://github.com/ravjotbrar) led a long list of security hardening, along with the Big Keys scan and smarter Key Browser search. [@tkesgar](https://github.com/tkesgar) made Valkey Admin work behind a reverse proxy subpath.
 
 These releases also welcomed first-time contributors: [@rezakaramad](https://github.com/rezakaramad) ([GCP Memorystore IAM auth](https://github.com/valkey-io/valkey-admin/pull/508)), [@bharathsr08](https://github.com/bharathsr08) ([blocking connection-state commands](https://github.com/valkey-io/valkey-admin/pull/534)) and [@RajGahoi](https://github.com/RajGahoi) ([command timing](https://github.com/valkey-io/valkey-admin/pull/553)).
 
 Thank you to [@michaelstingl](https://github.com/michaelstingl), [@dbaker-arch](https://github.com/dbaker-arch) and [@antonin-suzor](https://github.com/antonin-suzor) for their first contributions in 1.1, and to [@phoenixphoebus](https://github.com/phoenixphoebus) for opening issues and pull requests on binary-safe key display, decompression of stored values, and Key Browser pagination.
 
-And thank you to everyone who has pulled the image, tried it out, shared it with a colleague, or opened an issue!
+And thank you to everyone who has pulled the image, tried it out, shared it with a colleague, or opened an issue. Together you've helped Valkey Admin pass 100,000 Docker pulls.
 
-100K pulls is a milestone worth celebrating. But the next one we care about isn't a number, it's more people using, improving, and shaping Valkey Admin together.
+![Valkey Admin community milestone banner for 100K+ Docker pulls](images/41a4089a24ad.png)
+
+Every deployment is different. Some of you are debugging locally, and others are running large clusters, using managed Valkey services, or working through complex Kubernetes setups. Those experiences surface problems and ideas no single team can anticipate, which is exactly why we want to build Valkey Admin *with* the community, not just in the open.
 
 So here's our invitation: try 1.3 and open an issue for anything you'd like to see. Let's make Valkey operations easier, more visible, and more approachable for everyone.
 
@@ -156,5 +130,3 @@ Here's to the next chapter.
 - See what's new: [What's New page](https://valkey-admin.valkey.io/releases/)
 - Share an idea or issue: [GitHub Issues](https://github.com/valkey-io/valkey-admin/issues)
 - Build with us: [contribution guide](https://valkey-admin.valkey.io/development/contributing/)
-
-*100K pulls and counting. The next chapter is ours to build together!*
