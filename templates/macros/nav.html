@@ -285,9 +285,10 @@
     The command reference section of the menu: a link to all commands and one
     to each command category. Only categories with documented commands are
     listed. It's rendered where nav.yml has a section with the id
-    "command-reference", or at the end of the menu if there's none.
+    "command-reference", or at the end of the menu if there's none. `links`
+    are the docs_menu_links with `in = "command-reference"`, listed last.
 -#}
-{% component nav_command_reference(title, index, on_command_reference) %}
+{% component nav_command_reference(title, index, on_command_reference, links=[]) %}
 {%- set groups = load_data(path="../_data/groups.json", required=false) %}
 {%- set used_groups = [c.group for c in index] %}
 <li>
@@ -303,10 +304,26 @@
             {%- endif %}
             {%- endfor %}
             {%- endif %}
+            {%- for link in links %}
+            <li><a href="{{ link.url }}" class="docs-menu-external">{{ link.title }}</a></li>
+            {%- endfor %}
         </ul>
     </details>
 </li>
 {% endcomponent nav_command_reference %}
+
+{#-
+    Links to pages outside the documentation, from extra.docs_menu_links in
+    config.toml. A link with `after` is rendered after the section with that
+    id, one with `in` inside it, and either at the end of the menu if the
+    merged menu has no such section.
+-#}
+{% component nav_page_links(links) -%}
+{%- for link in links -%}
+<li class="docs-menu-link"><a href="{{ link.url }}">{{ link.title }}</a></li>{% if not loop.last %}
+{% endif %}
+{%- endfor %}
+{%- endcomponent nav_page_links %}
 
 {#-
     The menu.
@@ -325,10 +342,14 @@
 -#}
 {% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false) %}
 <nav class="docs-menu" aria-label="Documentation">
+    <h2 class="docs-menu-title">Documentation</h2>
+    {%- set page_links = extra.docs_menu_links | default(value=[]) %}
+    {%- set section_ids = [x.id for x in nav] %}
     <ul class="docs-menu-sections">
     {%- for section in nav %}
+        {%- set links_in = [l for l in page_links if l?.in == section.id] %}
         {%- if section.id == "command-reference" %}
-        {{< nav_command_reference title={section.title} index={index} on_command_reference={on_command_reference} />}}
+        {{< nav_command_reference title={section.title} index={index} on_command_reference={on_command_reference} links={links_in} />}}
         {%- else %}
         <li>
             <details{% if section.id == open %} open{% endif %}>
@@ -342,6 +363,9 @@
                     {%- for entry in section.topics %}
                     {%- set commands = command_map[entry.topic] if entry.topic in command_map else [] %}
                     {{< nav_menu_item slug={entry.topic} title={entry.title} source={"" if section_badge and entry.source == section.source else entry.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} />}}
+                    {%- endfor %}
+                    {%- for link in links_in %}
+                    <li><a href="{{ link.url }}" class="docs-menu-external">{{ link.title }}</a></li>
                     {%- endfor %}
                     {%- set other_key = "section:" ~ section.id %}
                     {%- if other_key in command_map %}
@@ -361,9 +385,18 @@
             </details>
         </li>
         {%- endif %}
+        {%- set links_here = [l for l in page_links if l?.after == section.id] %}
+        {%- if links_here %}
+        {{< nav_page_links links={links_here} />}}
+        {%- endif %}
     {%- endfor %}
         {%- if "command-reference" not in [x.id for x in nav] %}
-        {{< nav_command_reference title="Command reference" index={index} on_command_reference={on_command_reference} />}}
+        {%- set links_in = [l for l in page_links if l?.in == "command-reference"] %}
+        {{< nav_command_reference title="Command reference" index={index} on_command_reference={on_command_reference} links={links_in} />}}
+        {%- endif %}
+        {%- set links_left = [l for l in page_links if (l?.after and l.after not in section_ids) or (l?.in and l.in not in section_ids and l.in != "command-reference")] %}
+        {%- if links_left %}
+        {{< nav_page_links links={links_left} />}}
         {%- endif %}
     </ul>
 </nav>
