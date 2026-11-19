@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="930" viewBox="0 0 1500 930" role="img" aria-labelledby="t d">
+<title id="t">Valkey agent memory architecture</title>
+<desc id="d">A user interacts with an agent orchestrator, language model and tools. Pre-turn retrieval and post-turn write-back pass through the memory control plane and the Valkey memory plane.</desc>
+<defs>
+    <marker id="a-ink" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#506175" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-teal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#127F7C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-purple" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#7355AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-pink" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#B95074" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    </defs>
+<rect x="0" y="0" width="1500" height="930" rx="0" fill="#F8FAFC"/>
+<rect x="44" y="35" width="162" height="35" rx="18" fill="#E9F7F5"/>
+<text x="125.0" y="59" font-family="Inter, Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#127F7C" text-anchor="middle" letter-spacing="0">ARCHITECTURE</text>
+<text x="44" y="119" font-family="Inter, Arial, Helvetica, sans-serif" font-size="39" font-weight="750" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Read before reasoning. Write after acting.</text>
+<text x="44" y="153" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Policy chooses the memory; Valkey holds the state, evidence, and retrieval structures.</text>
+<rect x="45" y="202" width="190" height="127" rx="17" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="45" y="202" width="190" height="8" rx="8" fill="#3273B2"/>
+<text x="140.0" y="257" font-family="Inter, Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#1D2C3D" text-anchor="middle" letter-spacing="0">USER</text>
+<text x="140.0" y="292" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="middle" letter-spacing="0">Message / event</text>
+<rect x="311" y="202" width="298" height="127" rx="17" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="311" y="202" width="298" height="8" rx="8" fill="#7355AF"/>
+<text x="460.0" y="257" font-family="Inter, Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#1D2C3D" text-anchor="middle" letter-spacing="0">AGENT ORCHESTRATOR</text>
+<text x="460.0" y="292" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="middle" letter-spacing="0">Plan · tools · policy</text>
+<rect x="761" y="202" width="205" height="127" rx="17" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="761" y="202" width="205" height="8" rx="8" fill="#B95074"/>
+<text x="863.5" y="257" font-family="Inter, Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#1D2C3D" text-anchor="middle" letter-spacing="0">LLM</text>
+<text x="863.5" y="292" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="middle" letter-spacing="0">Reason on context</text>
+<rect x="1055" y="202" width="280" height="127" rx="17" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="1055" y="202" width="280" height="8" rx="8" fill="#127F7C"/>
+<text x="1195.0" y="257" font-family="Inter, Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#1D2C3D" text-anchor="middle" letter-spacing="0">TOOLS / APIs</text>
+<text x="1195.0" y="292" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="middle" letter-spacing="0">Act · return results</text>
+<path d="M235 265 H300" fill="none" stroke="#506175" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-ink)"/>
+<path d="M609 265 H748" fill="none" stroke="#7355AF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)"/>
+<text x="680" y="249" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="650" fill="#7355AF" text-anchor="middle" letter-spacing="0">reason</text>
+<path d="M966 265 H1044" fill="none" stroke="#506175" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-ink)"/>
+<text x="1010" y="249" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="650" fill="#506175" text-anchor="middle" letter-spacing="0">act</text>
+<rect x="140" y="430" width="569" height="331" rx="19" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="786" y="430" width="572" height="331" rx="19" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="140" y="430" width="569" height="60" rx="19" fill="#F2EDFA"/>
+<rect x="786" y="430" width="572" height="60" rx="19" fill="#E9F7F5"/>
+<text x="171" y="468" font-family="Inter, Arial, Helvetica, sans-serif" font-size="25" font-weight="750" fill="#7355AF" text-anchor="start" letter-spacing="0">MEMORY CONTROL PLANE</text>
+<text x="819" y="468" font-family="Inter, Arial, Helvetica, sans-serif" font-size="25" font-weight="750" fill="#127F7C" text-anchor="start" letter-spacing="0">VALKEY MEMORY PLANE</text>
+<text x="171" y="525" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="650" fill="#506175" text-anchor="start" letter-spacing="0">Policy &amp; decisions</text>
+<circle cx="182" cy="561" r="5" fill="#7355AF"/>
+<text x="199" y="568" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Resolve identity and scope</text>
+<circle cx="182" cy="606" r="5" fill="#7355AF"/>
+<text x="199" y="613" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Retrieve · rank · fit context</text>
+<circle cx="182" cy="651" r="5" fill="#7355AF"/>
+<text x="199" y="658" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Extract · validate · deduplicate</text>
+<circle cx="182" cy="696" r="5" fill="#7355AF"/>
+<text x="199" y="703" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Version · supersede · expire</text>
+<rect x="810" y="513" width="258" height="70" rx="13" fill="#FAEBF1"/>
+<text x="824" y="541" font-family="Inter, Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#B95074" text-anchor="start" letter-spacing="0">Working state</text>
+<text x="824" y="567" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Hashes · JSON · TTL</text>
+<rect x="1080" y="513" width="252" height="70" rx="13" fill="#EBF3FD"/>
+<text x="1094" y="541" font-family="Inter, Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#3273B2" text-anchor="start" letter-spacing="0">Events / evidence</text>
+<text x="1094" y="567" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Streams</text>
+<rect x="810" y="599" width="258" height="70" rx="13" fill="#F2EDFA"/>
+<text x="824" y="627" font-family="Inter, Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#7355AF" text-anchor="start" letter-spacing="0">Semantic recall</text>
+<text x="824" y="653" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Valkey Search</text>
+<rect x="1080" y="599" width="252" height="70" rx="13" fill="#FFF4DD"/>
+<text x="1094" y="627" font-family="Inter, Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#9A6A15" text-anchor="start" letter-spacing="0">Recency / priority</text>
+<text x="1094" y="653" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="400" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Sorted Sets</text>
+<rect x="810" y="685" width="522" height="44" rx="10" fill="#F1F4F8"/>
+<text x="1071" y="714" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="600" fill="#506175" text-anchor="middle" letter-spacing="0">Lifetime: TTL / EXPIRE  ·  persistence and ACLs</text>
+<path d="M459 329 V419" fill="none" stroke="#127F7C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-teal)"/>
+<rect x="230" y="362" width="241" height="35" rx="18" fill="#E9F7F5"/>
+<text x="350.5" y="386" font-family="Inter, Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#127F7C" text-anchor="middle" letter-spacing="0">1  PRE-TURN: REQUEST</text>
+<path d="M681 430 V372 H857 V340" fill="none" stroke="#7355AF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)"/>
+<rect x="908" y="356" width="267" height="35" rx="18" fill="#F2EDFA"/>
+<text x="1041.5" y="380" font-family="Inter, Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#7355AF" text-anchor="middle" letter-spacing="0">3  INJECT SELECTED CONTEXT</text>
+<path d="M709 540 H774" fill="none" stroke="#127F7C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-teal)"/>
+<text x="737" y="529" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#127F7C" text-anchor="middle" letter-spacing="0">2 READ</text>
+<path d="M774 580 H721" fill="none" stroke="#7355AF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-purple)"/>
+<text x="749" y="605" font-family="Inter, Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#7355AF" text-anchor="middle" letter-spacing="0">RESULTS</text>
+<path d="M709 684 H774" fill="none" stroke="#B95074" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-pink)"/>
+<text x="739" y="675" font-family="Inter, Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#B95074" text-anchor="middle" letter-spacing="0">5 WRITE</text>
+<path d="M1335 278 H1424 V818 H427 V773" fill="none" stroke="#B95074" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-pink)"/>
+<rect x="830" y="797" width="402" height="35" rx="18" fill="#FAEBF1"/>
+<text x="1031.0" y="821" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#B95074" text-anchor="middle" letter-spacing="0">4  POST-TURN: TOOL OUTCOME / ACTION</text>
+<text x="45" y="880" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="600" fill="#506175" text-anchor="start" letter-spacing="0">Pre-turn: resolve → read → rank → inject.  Post-turn: extract → validate / dedupe → write / expire.</text>
+</svg>

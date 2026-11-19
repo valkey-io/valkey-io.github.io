@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="775" viewBox="0 0 1280 775" role="img" aria-labelledby="t d">
+<title id="t">Agent memory taxonomy</title>
+<desc id="d">Four memory classes with purposes, examples, and retention guidance from the ValkeyConf presentation.</desc>
+<defs>
+    <marker id="a-ink" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#506175" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-teal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#127F7C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-purple" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#7355AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-pink" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#B95074" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    </defs>
+<rect x="0" y="0" width="1280" height="775" rx="0" fill="#F8FAFC"/>
+<rect x="44" y="35" width="162" height="35" rx="18" fill="#E9F7F5"/>
+<text x="125.0" y="59" font-family="Inter, Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#127F7C" text-anchor="middle" letter-spacing="0">MEMORY TAXONOMY</text>
+<text x="44" y="119" font-family="Inter, Arial, Helvetica, sans-serif" font-size="39" font-weight="750" fill="#1D2C3D" text-anchor="start" letter-spacing="0">An agent remembers different things differently</text>
+<text x="44" y="153" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">One agent, four memory types — each with its own retention and retrieval policy.</text>
+<rect x="42" y="210" width="580" height="206" rx="18" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="42" y="210" width="580" height="10" rx="10" fill="#127F7C"/>
+<rect x="67" y="240" width="158" height="35" rx="18" fill="#E9F7F5"/>
+<text x="146.0" y="264" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#127F7C" text-anchor="middle" letter-spacing="0">WORKING</text>
+<text x="68" y="318" font-family="Inter, Arial, Helvetica, sans-serif" font-size="29" font-weight="700" fill="#1D2C3D" text-anchor="start" letter-spacing="0">What is active now?</text>
+<text x="68" y="355" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Current plan, scratch state, locks</text>
+<text x="68" y="395" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#127F7C" text-anchor="start" letter-spacing="0">RETENTION  SECONDS–HOURS</text>
+<rect x="658" y="210" width="580" height="206" rx="18" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="658" y="210" width="580" height="10" rx="10" fill="#B95074"/>
+<rect x="683" y="240" width="158" height="35" rx="18" fill="#FAEBF1"/>
+<text x="762.0" y="264" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#B95074" text-anchor="middle" letter-spacing="0">EPISODIC</text>
+<text x="684" y="318" font-family="Inter, Arial, Helvetica, sans-serif" font-size="29" font-weight="700" fill="#1D2C3D" text-anchor="start" letter-spacing="0">What happened?</text>
+<text x="684" y="355" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Tool calls, outcomes, decisions</text>
+<text x="684" y="395" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#B95074" text-anchor="start" letter-spacing="0">RETENTION  HOURS–WEEKS</text>
+<rect x="42" y="446" width="580" height="206" rx="18" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="42" y="446" width="580" height="10" rx="10" fill="#7355AF"/>
+<rect x="67" y="476" width="158" height="35" rx="18" fill="#F2EDFA"/>
+<text x="146.0" y="500" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#7355AF" text-anchor="middle" letter-spacing="0">SEMANTIC</text>
+<text x="68" y="554" font-family="Inter, Arial, Helvetica, sans-serif" font-size="29" font-weight="700" fill="#1D2C3D" text-anchor="start" letter-spacing="0">What is true?</text>
+<text x="68" y="591" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">User preferences, entities, facts</text>
+<text x="68" y="631" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#7355AF" text-anchor="start" letter-spacing="0">RETENTION  DAYS–DURABLE</text>
+<rect x="658" y="446" width="580" height="206" rx="18" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="658" y="446" width="580" height="10" rx="10" fill="#9A6A15"/>
+<rect x="683" y="476" width="158" height="35" rx="18" fill="#FFF4DD"/>
+<text x="762.0" y="500" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#9A6A15" text-anchor="middle" letter-spacing="0">PROCEDURAL</text>
+<text x="684" y="554" font-family="Inter, Arial, Helvetica, sans-serif" font-size="29" font-weight="700" fill="#1D2C3D" text-anchor="start" letter-spacing="0">How should I act?</text>
+<text x="684" y="591" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Policies, workflows, learned rules</text>
+<text x="684" y="631" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#9A6A15" text-anchor="start" letter-spacing="0">RETENTION  VERSIONED</text>
+<rect x="42" y="694" width="1196" height="53" rx="12" fill="#F2EDFA"/>
+<text x="640" y="728" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="650" fill="#7355AF" text-anchor="middle" letter-spacing="0">Forgetting is a feature: delete, expire, supersede, and scope.</text>
+</svg>
