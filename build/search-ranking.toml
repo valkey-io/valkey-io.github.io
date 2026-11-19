@@ -1,0 +1,121 @@
+# Tests that search queries return the intended page within N results.
+
+[[search]]
+query = "ACL Users"
+url = "/commands/acl-users/"
+top = 1
+
+[[search]]
+query = "SET"
+url = "/commands/set/"
+top = 1
+
+[[search]]
+query = "Sets"
+url = "/topics/sets/"
+top = 1
+
+[[search]]
+query = "XINFO"
+url = "/commands/xinfo/"
+top = 1
+
+[[search]]
+query = "pub/sub"
+url = "/topics/pubsub/"
+top = 1
+
+[[search]]
+query = "hash"
+url = "/topics/hashes/"
+top = 1
+
+[[search]]
+query = "bloom filter"
+url = "/topics/bloomfilters/"
+top = 1
+
+[[search]]
+query = "eviction"
+url = "/topics/lru-cache/"
+top = 3
+
+[[search]]
+query = "sorted set"
+url = "/topics/sorted-sets/"
+top = 3
+
+[[search]]
+query = "client side caching"
+url = "/topics/client-side-caching/"
+top = 3
+
+[[search]]
+query = "lua scripting"
+url = "/topics/eval-intro/"
+top = 3
+
+[[search]]
+query = "maxmemory-policy"
+url = "/topics/lru-cache/"
+top = 1
+
+[[search]]
+query = "protected-mode"
+url = "/topics/security/"
+top = 1
+
+[[search]]
+query = "sorted-set"
+url = "/topics/sorted-sets/"
+top = 1
+
+[[search]]
+query = "cluster-enabled"
+url = "/topics/cluster-tutorial/"
+top = 1
+
+[[search]]
+query = "valkey-bundle"
+url = "/topics/valkey-bundle/"
+top = 3
+
+[[search]]
+query = "get"
+url = "/commands/get/"
+top = 1
+
+[[search]]
+query = "client kill"
+url = "/commands/client-kill/"
+top = 1
+
+[[search]]
+query = "CONFIG SET"
+url = "/commands/config-set/"
+top = 1
+
+[[search]]
+query = "FT.SEARCH"
+url = "/commands/ft.search/"
+top = 1
+
+[[search]]
+query = "JSON.SET"
+url = "/commands/json.set/"
+top = 1
+
+[[search]]
+query = "AOF"
+url = "/topics/persistence/"
+top = 1
+
+[[search]]
+query = "notify-keyspace-events"
+url = "/topics/notifications/"
+top = 1
+
+[[search]]
+query = "migrate from redis"
+url = "/topics/migration/"
+top = 1
