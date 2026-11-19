@@ -238,17 +238,33 @@ ffmpeg -ss START -i library/clipNN.mp4 -t 8 -vf "FILTER" \
   -c:v libx264 -crf 35 -pix_fmt yuv420p queries/NAME.mp4
 ```
 
-| Excerpt | Clip | Start | Filter |
-| --- | --- | --- | --- |
-| Downscaled | clip02 | 23.4 | `scale=480:270` |
-| Game of Life, downscaled | clip04 | 18.8 | `scale=480:270` |
-| Graded | clip08 | 41.0 | `eq=brightness=0.08:contrast=1.25:saturation=1.4` |
-| 30 fps | clip10 | 5.0 | `fps=30` |
-| Lower third, flat | clip09 | 30.2 | the lower-third box below |
-| Lower third, busy | clip02 | 44.0 | the lower-third box below |
-| Cropped, slow gradient | clip08 | 20.0 | `crop=iw*0.8:ih*0.8,scale=640:360` |
-| Cropped, zooming | clip01 | 12.6 | `crop=iw*0.8:ih*0.8,scale=640:360` |
-| Mirrored | clip03 | 50.0 | `hflip` |
+```text
+NAME              CLIP    START  FILTER
+reencode          clip02  23.4   scale=480:270
+life              clip04  18.8   scale=480:270
+graded            clip08  41.0   GRADE
+fps30             clip10  5.0    fps=30
+lower_third       clip09  30.2   BOX
+lower_third_busy  clip02  44.0   BOX
+cropped_still     clip08  20.0   crop=iw*0.8:ih*0.8,scale=640:360
+cropped           clip01  12.6   crop=iw*0.8:ih*0.8,scale=640:360
+flipped           clip03  50.0   hflip
+```
 
-The lower-third box is `drawbox=x=0:y=ih*0.72:w=iw:h=ih*0.16:color=black@0.7:t=fill`.
-The excerpt that is not in the library is eight seconds of `mandelbrot=s=640x360:rate=25:start_x=-1.25066:start_y=0.02012`, encoded the same way.
+`GRADE` is this filter:
+
+```text
+eq=brightness=0.08:contrast=1.25:saturation=1.4
+```
+
+`BOX` is the lower third:
+
+```text
+drawbox=x=0:y=ih*0.72:w=iw:h=ih*0.16:color=black@0.7:t=fill
+```
+
+The excerpt that is not in the library, `unseen`, is eight seconds of this source, encoded the same way:
+
+```text
+mandelbrot=s=640x360:rate=25:start_x=-1.25066:start_y=0.02012
+```
