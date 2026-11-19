@@ -22,6 +22,17 @@ Each frame becomes a short vector, Valkey Search finds the nearest stored frame 
 Everything below ran on the `valkey/valkey-bundle:9.1.4` image, which ships Valkey 9.1.3 and valkey-search 1.2.1, with default settings.
 Valkey 9.2.0 came out while I was writing this, but the bundle image for it was still a release candidate, so the numbers here are from 9.1.3.
 The client side is Python with valkey-py 6.2.0, NumPy and FFmpeg 9.0.2.
+Every snippet below assumes these imports and a connection to the container:
+
+```python
+import subprocess
+from collections import Counter
+
+import numpy as np
+import valkey
+
+r = valkey.Valkey(host="localhost", port=6379)
+```
 
 ## A fingerprint for each frame
 
@@ -70,21 +81,25 @@ r.execute_command(
     "clip", "TAG",
     "t", "NUMERIC")
 
-frames = gray_frames(path)
-pipe = r.pipeline(transaction=False)
-vecs, tops = fingerprint(frames), fingerprint(frames, top=True)
-for i, (v, tv) in enumerate(zip(vecs, tops)):
-    pipe.hset(f"frame:{clip}:{i}", mapping={
-        "vec": v.tobytes(), "top": tv.tobytes(),
-        "clip": clip, "t": i / 5})
-pipe.execute()
+
+
+def add_clip(r, clip, path):
+    frames = gray_frames(path)
+    vecs = fingerprint(frames)
+    tops = fingerprint(frames, top=True)
+    pipe = r.pipeline(transaction=False)
+    for i, (v, tv) in enumerate(zip(vecs, tops)):
+        pipe.hset(f"frame:{clip}:{i}", mapping={
+            "vec": v.tobytes(), "top": tv.tobytes(),
+            "clip": clip, "t": i / 5})
+    pipe.execute()
 ```
 
 Hierarchical Navigable Small World (HNSW) is the approximate nearest-neighbor graph that valkey-search builds for each vector field, and the `6` counts the attribute arguments after it.
 The frames are written with plain `HSET`, and the index picks each key up as it lands, so there is no separate load step.
 
 My test library is ten generated 60-second clips sampled at 5 frames per second, 3,000 frames in all.
-The clips are Mandelbrot zooms, Game of Life runs, cellular automata, drifting gradients and a Sierpinski pattern, rendered with [FFmpeg's built-in video sources](https://ffmpeg.org/ffmpeg-filters.html#Video-Sources), so anyone can regenerate them.
+The clips are Mandelbrot zooms, Game of Life runs, cellular automata, drifting gradients and a Sierpinski pattern, rendered with [FFmpeg's built-in video sources](https://ffmpeg.org/ffmpeg-filters.html#Video-Sources); the exact recipe is at the end of the post.
 Fingerprinting and indexing all 3,000 frames took about 3 seconds on a laptop, and on a fresh container `used_memory` grew by 38 to 39 MiB.
 
 ## Querying the nearest frames
@@ -171,5 +186,69 @@ Your footage will have its own spread, so measure it before you settle on a numb
 ## Try it on your own footage
 
 The bundle image starts with one command, `docker run --rm -p 6379:6379 valkey/valkey-bundle:9.1.4`, and the functions above are the whole client.
+With the index created and the test clips from the next section on disk, this indexes the library and looks up one excerpt:
+
+```python
+for n in range(1, 11):
+    add_clip(r, f"clip{n:02}", f"library/clip{n:02}.mp4")
+
+print(locate(r, "queries/graded.mp4"))
+# ('clip08', 41.0, 1.0)
+```
+
 Index a folder of your own clips, cut a few excerpts with FFmpeg, and see which of your edits the fingerprint survives.
 The [`FT.CREATE`](https://valkey.io/commands/ft.create/) and [`FT.SEARCH`](https://valkey.io/commands/ft.search/) pages cover the options I left at their defaults, such as `FLAT` indexes for exact search and the `M` and `EF_RUNTIME` settings that trade HNSW memory and speed for recall.
+
+## Rebuilding the test footage
+
+Every clip in the library is 60 seconds of one FFmpeg source at 640x360 and 25 fps, encoded with x264 at CRF 18:
+
+```sh
+ffmpeg -f lavfi -i "SOURCE" -t 60 -c:v libx264 -crf 18 \
+  -pix_fmt yuv420p library/clipNN.mp4
+```
+
+`SOURCE` is `NAME=s=640x360:rate=25` followed by these options:
+
+```text
+clip01  mandelbrot
+clip02  mandelbrot  start_x=-0.16:start_y=1.0405:start_scale=0.4
+clip03  mandelbrot  start_x=0.2925:start_y=0.0149:inner=period
+clip04  life        seed=1:ratio=0.2:mold=10
+                    life_color=#e0c060:death_color=#203050
+clip05  life        seed=7:ratio=0.5:rule=B36/S23
+                    life_color=#ffffff
+clip06  cellauto    rule=30:random_fill_ratio=0.5:seed=3:scroll=1
+clip07  cellauto    rule=110:random_fill_ratio=0.3:seed=5
+clip08  gradients   seed=11:speed=0.02:nb_colors=4
+                    c0=0x1d3557:c1=0xe63946:c2=0xf1c453:c3=0x2a9d8f
+clip09  gradients   seed=42:speed=0.03:nb_colors=6:type=radial
+                    c0=0x264653:c1=0x2a9d8f:c2=0xe9c46a
+                    c3=0xf4a261:c4=0xe76f51:c5=0x8ecae6
+clip10  sierpinski  seed=9:jump=50:type=triangle
+```
+
+Options on a second line are joined to the first with a colon.
+The gradient colors are set by hand because FFmpeg picks unset ones at random, ignoring `seed`, so without them the two gradient clips change on every run.
+
+Each excerpt is eight seconds cut from a library clip, filtered and compressed at CRF 35:
+
+```sh
+ffmpeg -ss START -i library/clipNN.mp4 -t 8 -vf "FILTER" \
+  -c:v libx264 -crf 35 -pix_fmt yuv420p queries/NAME.mp4
+```
+
+| Excerpt | Clip | Start | Filter |
+| --- | --- | --- | --- |
+| Downscaled | clip02 | 23.4 | `scale=480:270` |
+| Game of Life, downscaled | clip04 | 18.8 | `scale=480:270` |
+| Graded | clip08 | 41.0 | `eq=brightness=0.08:contrast=1.25:saturation=1.4` |
+| 30 fps | clip10 | 5.0 | `fps=30` |
+| Lower third, flat | clip09 | 30.2 | the lower-third box below |
+| Lower third, busy | clip02 | 44.0 | the lower-third box below |
+| Cropped, slow gradient | clip08 | 20.0 | `crop=iw*0.8:ih*0.8,scale=640:360` |
+| Cropped, zooming | clip01 | 12.6 | `crop=iw*0.8:ih*0.8,scale=640:360` |
+| Mirrored | clip03 | 50.0 | `hflip` |
+
+The lower-third box is `drawbox=x=0:y=ih*0.72:w=iw:h=ih*0.16:color=black@0.7:t=fill`.
+The excerpt that is not in the library is eight seconds of `mandelbrot=s=640x360:rate=25:start_x=-1.25066:start_y=0.02012`, encoded the same way.
