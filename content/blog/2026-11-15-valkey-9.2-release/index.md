@@ -21,9 +21,9 @@ Read on to find out more about these changes.
 
 ## Forkless snapshots and full syncs
 
-Valkey 9.2 adds forkless RDB snapshots, opt-in through the `forkless-infrastructure-enabled` and `forkless-policy` configurations ([#4460](https://github.com/valkey-io/valkey/pull/4460) and [#5261](https://github.com/valkey-io/valkey/pull/5261)).
+Valkey 9.2 adds [forkless RDB snapshots](https://valkey.io/topics/forkless/), opt-in through the `forkless-infrastructure-enabled` and `forkless-policy` configurations.
 Forkless operations do their work on a background thread instead of forking, avoiding the copy-on-write memory overhead a fork can incur under write-heavy load.
-Full synchronization to replicas can also run forkless, serving disk-based and diskless full syncs from a background-thread snapshot ([#4797](https://github.com/valkey-io/valkey/pull/4797)).
+Full synchronization to replicas can also run forkless, serving disk-based and diskless full syncs from a background-thread snapshot.
 
 `forkless-infrastructure-enabled` costs 4 additional bytes per key and must be set in the server configuration file at startup, and `prefer-forkless` falls back to fork when an operation can't run forkless.
 For example, set these options in the server configuration file:
@@ -76,7 +76,7 @@ It is built on a new client throttling framework that uses a token bucket, and i
 
 ## ACL roles
 
-Roles are named, reusable sets of access control list (ACL) selectors ([#3967](https://github.com/valkey-io/valkey/pull/3967)).
+[Roles](https://valkey.io/topics/acl/#roles) are named, reusable sets of access control list (ACL) selectors.
 They let you define a permission policy once and apply it to many users, instead of repeating the same rules for each user.
 Changes to a role are visible immediately to every user that holds it, and a user can add permissions on top of a role but not restrict it.
 
@@ -119,11 +119,11 @@ OK
 ## New and conditional commands
 
 Valkey 9.2 lets more commands check a condition and act in the same step.
-[`EXEC`](https://valkey.io/commands/exec/) now accepts `IFEQ`, `IFNE`, `NX`, and `XX` conditions, enabling optimistic locking for multi-key transactions without needing the [`WATCH`](https://valkey.io/commands/watch/) command ([#4019](https://github.com/valkey-io/valkey/pull/4019)).
-The new [`DELEX`](https://valkey.io/commands/delex/) command deletes a string key only when its value matches (`IFEQ`) or differs from (`IFNE`) a given value ([#4607](https://github.com/valkey-io/valkey/pull/4607)), and [`SET`](https://valkey.io/commands/set/) now accepts `IFNE` too ([#3105](https://github.com/valkey-io/valkey/pull/3105)).
+[`EXEC`](https://valkey.io/commands/exec/) now accepts `IFEQ`, `IFNE`, `NX`, and `XX` conditions, enabling optimistic locking for multi-key transactions without needing the [`WATCH`](https://valkey.io/commands/watch/) command (see [Optimistic locking using EXEC conditions](https://valkey.io/topics/transactions/#optimistic-locking-using-exec-conditions)).
+The new [`DELEX`](https://valkey.io/commands/delex/) command deletes a string key only when its value matches (`IFEQ`) or differs from (`IFNE`) a given value, and [`SET`](https://valkey.io/commands/set/) now accepts `IFNE` too.
 
-The new `INCREX` command increments a key and sets its expiration in one atomic step, with bounded increments and conditional expiration control ([#3253](https://github.com/valkey-io/valkey/pull/3253) and [#4679](https://github.com/valkey-io/valkey/pull/4679)).
-For streams, [`XACKDEL`](https://valkey.io/commands/xackdel/) acknowledges and deletes messages in one call, and [`XDELEX`](https://valkey.io/commands/xdelex/) deletes them; in `ACKED` mode, both delete a message only once every consumer group has acknowledged it ([#4629](https://github.com/valkey-io/valkey/pull/4629)).
+The new [`INCREX`](https://valkey.io/commands/increx/) command increments a key and sets its expiration in one atomic step, with bounded increments and conditional expiration control.
+For streams, [`XACKDEL`](https://valkey.io/commands/xackdel/) acknowledges and deletes messages in one call, and [`XDELEX`](https://valkey.io/commands/xdelex/) deletes them; in `ACKED` mode, both delete a message only once no consumer group still needs it.
 
 ## Hot key detection
 
