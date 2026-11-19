@@ -2,7 +2,6 @@
 title = "Valkey 9.2 offers forkless snapshots, compressed replication, ACL roles, and more"
 description = "Valkey 9.2 can save snapshots without forking, compress replication traffic with LZ4 or Zstandard, and group ACL rules into reusable roles. It also adds Path Hash, a new data type for prefix lookups, and a set of conditional commands."
 date = 2026-11-19
-draft = true
 authors = ["kyledvs", "dragosandriciuc"]
 
 [taxonomies]
@@ -26,8 +25,8 @@ Valkey 9.2 adds forkless RDB snapshots, opt-in through the `forkless-infrastruct
 Forkless operations do their work on a background thread instead of forking, avoiding the copy-on-write memory overhead a fork can incur under write-heavy load.
 Full synchronization to replicas can also run forkless, serving disk-based and diskless full syncs from a background-thread snapshot ([#4797](https://github.com/valkey-io/valkey/pull/4797)).
 
-`forkless-infrastructure-enabled` costs 4 additional bytes per key and must be set at startup, and `prefer-forkless` falls back to fork when an operation can't run forkless.
-For example, start the server with:
+`forkless-infrastructure-enabled` costs 4 additional bytes per key and must be set in the server configuration file at startup, and `prefer-forkless` falls back to fork when an operation can't run forkless.
+For example, set these options in the server configuration file:
 
 ```text
 forkless-infrastructure-enabled yes
@@ -65,7 +64,7 @@ For example, with the hash from the PR's tests, setting an expiration on one fie
 (integer) 80
 ```
 
-On Valkey 9.1.3 with the default configuration, the same commands convert the hash to a hashtable, and [`MEMORY USAGE`](https://valkey.io/commands/memory-usage/) reports 240 bytes.
+On Valkey 9.1.4 with the default configuration, the same commands convert the hash to a hashtable, and [`MEMORY USAGE`](https://valkey.io/commands/memory-usage/) reports 240 bytes on the same machine.
 
 ## Staying responsive under load
 
