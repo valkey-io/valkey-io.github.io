@@ -55,6 +55,7 @@ body:
         - Operators running Valkey in production
         - Contributors to Valkey, its modules, or its clients
         - Technical leaders evaluating Valkey
+        - System technologists interested in low-level deep dives on modern systems
         - Other (describe below)
     validations:
       required: true
