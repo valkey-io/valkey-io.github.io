@@ -58,3 +58,8 @@ mono = "Sw"
 color = "#701516"
 fg = "#fff"
 mono = "Rb"
+
+[kotlin]
+color = "#A97BFF"
+fg = "#000"
+mono = "Kt"
