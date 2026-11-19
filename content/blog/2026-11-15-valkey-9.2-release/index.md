@@ -48,7 +48,7 @@ The PR points to cross-region replication as the main use for Zstandard, where n
 
 Large sorted sets are now backed by a B+ tree instead of a skiplist ([#4359](https://github.com/valkey-io/valkey/pull/4359)).
 The PR reports per-member memory overhead dropping from 50.3 bytes to between 28.5 and 32.0 bytes, 36% to 43% less, for 5 million members with 20-byte elements.
-Expect delete-heavy workloads to land worse than that, as the B+ tree has no compaction yet.
+The B+ tree also compacts sparse leaves when members are deleted, so a sorted set that shrinks or has frequent score updates gives memory back.
 
 Small hashes with field expiration now use the listpack encoding instead of always converting to a hashtable, which uses more memory ([#3212](https://github.com/valkey-io/valkey/pull/3212)).
 For example, with the hash from the PR's tests, setting an expiration on one field keeps the listpack encoding:
@@ -132,8 +132,11 @@ It uses the Space-Saving algorithm to track the K hottest keys in a fixed-size s
 
 ## Upgrading to Valkey 9.2
 
-Valkey 9.2 is a minor release with no breaking changes, so upgrading is generally safe.
-A few changes can affect existing deployments, especially if you later need to downgrade.
+Valkey 9.2 is a minor release, so upgrading is generally safe.
+It changes a few behaviors, so read the [release notes](https://github.com/valkey-io/valkey/blob/9.2/00-RELEASENOTES) before you upgrade.
+For example, sorted set commands such as `ZRANGEBYSCORE` and `ZCOUNT` now reject a bare `(` or an empty string as a score bound, where they used to treat it as 0.
+Active expiration also counts toward the dirty counter, so save points may trigger more often.
+Some changes also matter if you later need to downgrade.
 As a general rule, don't enable new features until you're confident you won't need to downgrade; newer features may introduce data formats or behavior that older versions can't handle.
 
 Before downgrading, switch `rdbcompression` to a legacy mode and run [`BGREWRITEAOF`](https://valkey.io/commands/bgrewriteaof/): AOF bases written with `lz4` or `zstd` **require** a Valkey version that supports streaming-compressed RDB files ([#4754](https://github.com/valkey-io/valkey/pull/4754)).
