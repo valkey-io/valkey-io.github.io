@@ -133,7 +133,7 @@ It uses the Space-Saving algorithm to track the K hottest keys in a fixed-size s
 ## Upgrading to Valkey 9.2
 
 Valkey 9.2 is a minor release, so upgrading is generally safe.
-It changes a few behaviors, so read the [release notes](https://github.com/valkey-io/valkey/blob/9.2/00-RELEASENOTES) before you upgrade.
+It does include a few small behavior changes that can affect edge cases, so read the [release notes](https://github.com/valkey-io/valkey/blob/9.2/00-RELEASENOTES) before you upgrade.
 For example, sorted set commands such as `ZRANGEBYSCORE` and `ZCOUNT` now reject a bare `(` or an empty string as a score bound, where they used to treat it as 0.
 Active expiration also counts toward the dirty counter, so save points may trigger more often.
 Some changes also matter if you later need to downgrade.
