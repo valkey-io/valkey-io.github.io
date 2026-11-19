@@ -38,6 +38,7 @@
     "integrations/litellm.json",
     "integrations/valkey-mcp-server.json",
     "integrations/valkey-message-queue-starter.json",
-    "integrations/vllm-semantic-router.json"
+    "integrations/vllm-semantic-router.json",
+    "integrations/dbine.json"
   ]
 }
