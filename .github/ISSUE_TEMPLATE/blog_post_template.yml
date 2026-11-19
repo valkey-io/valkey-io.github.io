@@ -1,0 +1,115 @@
+name: 🏢 New Blog post
+description: Propose a blog post for valkey.io
+title: "[BLOG POST] <Put your tentative blog post title here>"
+labels: ["blog-post", "untriaged"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose your post here before you write it, so maintainers can check fit, audience, overlap, and timing.
+        A wrong audience or scope takes minutes to fix in a proposal and a full rewrite to fix in a finished post.
+
+        **Do not start writing until a maintainer assigns a blog reviewer to this issue and adds the `blog-approved` label.**
+        Blog post pull requests without an approved proposal are closed with a link back to this form.
+
+        [CONTRIBUTING-BLOG-POST.md](https://github.com/valkey-io/valkey-io.github.io/blob/main/CONTRIBUTING-BLOG-POST.md) covers length, style, and the review process.
+
+  - type: textarea
+    id: topic
+    attributes:
+      label: Proposed topic
+      description: One or two sentences on what the post is about.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: blog-type
+    attributes:
+      label: Blog type
+      description: |
+        Pick the one that fits best. It becomes `blog_type` in the post's frontmatter.
+
+        - **Technical Deep Dive**: How a Valkey feature or internal works and why it works that way, so the reader learns something new about the technology. Not a list of features, a usage guide, or the story of how it was built. Benchmarks are ideal!
+        - **Announcements**: a release for an official Valkey project. Lead with the few changes that matter most and link the release notes for the rest.
+        - **How-to**: how to do one task with Valkey, step by step. Can include third party tools if you represent that tool.
+        - **Community Highlight**: how a team or contributor uses or builds on Valkey.
+        - **Events**: an upcoming event, or a recap of one.
+
+        Technical Deep Dive and Announcements posts are also reviewed by the technical blog reviewers.
+      options:
+        - Technical Deep Dive
+        - Announcements
+        - How-to
+        - Community Highlight
+        - Events
+    validations:
+      required: true
+
+  - type: dropdown
+    id: audience
+    attributes:
+      label: Audience
+      description: Who is the post for? Pick one. A post that needs two audiences is usually two posts.
+      options:
+        - Application developers building on Valkey
+        - Operators running Valkey in production
+        - Contributors to Valkey, its modules, or its clients
+        - Technical leaders evaluating Valkey
+        - System technologists interested in low-level deep dives on modern systems
+        - Other (describe below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: audience-knowledge
+    attributes:
+      label: What does the reader already know?
+      description: |
+        What the post assumes before the first paragraph, so you know what to explain and what to skip.
+        If you picked Other, also say who the reader is.
+      placeholder: Runs Valkey clusters with TLS, but has never rotated certificates without downtime.
+    validations:
+      required: true
+
+  - type: textarea
+    id: takeaways
+    attributes:
+      label: Key takeaways
+      description: |
+        Ideally one takeaway, and no more than three: what a reader should know or do after reading, and what you want them to do next.
+        If the post covers ground that documentation or release notes already cover, say what it adds.
+    validations:
+      required: true
+
+  - type: textarea
+    id: content
+    attributes:
+      label: Content abstract
+      description: |
+        A short paragraph on what the post covers.
+        Start with the problem or hook that will grab the reader, then the key points that support your takeaway.
+        The finished post should be 500-1,200 words. If the abstract can't fit in that, narrow the topic.
+    validations:
+      required: true
+
+  - type: input
+    id: author
+    attributes:
+      label: Authors
+      description: GitHub aliases of the author and any co-authors. List first whoever will address review feedback.
+    validations:
+      required: true
+
+  - type: input
+    id: date
+    attributes:
+      label: Ideal publishing date
+      description: At least 5 business days from today. Publish dates are best effort because of other pending posts, review time, and project events.
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and related posts
+      description: |
+        Anything the date depends on, such as a release or an event.
+        Link any existing or in-progress posts on the same topic.
