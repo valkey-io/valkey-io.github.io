@@ -10,8 +10,23 @@
                 {% block main_content %}{% endblock main_content %}
             </div>
         </main>
-        <aside>
-            {% block related_content %}{% endblock related_content %}
+        <aside class="docs-aside">
+            <details class="docs-sidebar" open>
+                <summary>Documentation menu</summary>
+                {% block related_content %}{% endblock related_content %}
+            </details>
+            <script>
+            // Wide screens always show the menu. Narrow screens start with the
+            // menu closed.
+            (function () {
+                var sidebar = document.querySelector('.docs-sidebar');
+                var wide = window.matchMedia('(min-width: 1024px)');
+                sidebar.open = wide.matches;
+                wide.addEventListener('change', function () {
+                    if (wide.matches) sidebar.open = true;
+                });
+            })();
+            </script>
         </aside>
     </div>
 </div>
