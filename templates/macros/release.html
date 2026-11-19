@@ -62,4 +62,19 @@
     {% endfor %}
 {% endfor  %}
 {% endif %}
+
+{# Packages are published for stable releases only, one repository per
+   release line, listed on the packages page. #}
+{% if release.tag is not matching(pat=".*-.*") %}
+{% set packages_page = get_page(path="download/packages/index.md") %}
+{% set release_parts = release.tag | split(pat=".") %}
+{% set release_line = release_parts[:2] | join(sep=".") %}
+{% for package_version in packages_page.extra.versions %}
+{% if package_version.name == release_line %}
+<h4>Linux Packages</h4>
+<p>RPM and DEB packages for Valkey {{ release_line }} are available from the Valkey package repository:
+<a href="{{ get_url(path="@/download/packages/index.md") }}?version={{ release_line }}">installation instructions</a>.</p>
+{% endif %}
+{% endfor %}
+{% endif %}
 {% endcomponent release_info %}
