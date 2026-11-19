@@ -6,9 +6,11 @@ body:
   - type: markdown
     attributes:
       value: |
-        Propose your post here before you write it, so maintainers can check fit, overlap, and timing.
+        Propose your post here before you write it, so maintainers can check fit, audience, overlap, and timing.
+        A wrong audience or scope takes minutes to fix in a proposal and a full rewrite to fix in a finished post.
 
         **Do not start writing until a maintainer assigns a blog reviewer to this issue and adds the `blog-approved` label.**
+        Blog post pull requests without an approved proposal are closed with a link back to this form.
 
         [CONTRIBUTING-BLOG-POST.md](https://github.com/valkey-io/valkey-io.github.io/blob/main/CONTRIBUTING-BLOG-POST.md) covers length, style, and the review process.
 
@@ -43,14 +45,28 @@ body:
     validations:
       required: true
 
-  - type: textarea
+  - type: dropdown
     id: audience
     attributes:
       label: Audience
+      description: Who is the post for? Pick one. A post that needs two audiences is usually two posts.
+      options:
+        - Application developers building on Valkey
+        - Operators running Valkey in production
+        - Contributors to Valkey, its modules, or its clients
+        - Technical leaders evaluating Valkey
+        - Other (describe below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: audience-knowledge
+    attributes:
+      label: What does the reader already know?
       description: |
-        Who is the post for, and what do they already know?
-        Pick one audience. A post that needs two is usually two posts.
-      placeholder: Operators running Valkey clusters who already use TLS.
+        What the post assumes before the first paragraph, so you know what to explain and what to skip.
+        If you picked Other, also say who the reader is.
+      placeholder: Runs Valkey clusters with TLS, but has never rotated certificates without downtime.
     validations:
       required: true
 
@@ -67,20 +83,19 @@ body:
   - type: textarea
     id: content
     attributes:
-      label: Content
+      label: Content abstract
       description: |
-        An outline of the post.
-        Start with the problem and hook that you will use to grab the reader.
-        Highlight the key points you would like the reader to know and support your takeaway.
-        Aim for 500-1,200 words. If the outline won't fit, narrow the topic.
+        A short paragraph on what the post covers.
+        Start with the problem or hook that will grab the reader, then the key points that support your takeaway.
+        The finished post should be 500-1,200 words. If the abstract can't fit in that, narrow the topic.
     validations:
       required: true
 
   - type: input
     id: author
     attributes:
-      label: Author
-      description: GitHub alias of the person writing the post and addressing review feedback.
+      label: Authors
+      description: GitHub aliases of the author and any co-authors. List first whoever will address review feedback.
     validations:
       required: true
 
