@@ -38,7 +38,7 @@ A cache hit moves many objects of tens to over a hundred megabytes, quickly.
 The Valkey Large Object module is built for that.
 It is not specific to KV cache: it stores any large binary value, and this is the use that drove its design.
 
-## Why stock Valkey struggles with values this size
+## What changes when values reach hundreds of megabytes
 
 Valkey is built for small values, typically a few hundred bytes.
 Out of the box a string value is capped at 512 MB (`proto-max-bulk-len`; a `SET` of 512 MiB plus one byte returns `invalid bulk length`), a command's own work, such as storing a value, runs on the main thread while other clients wait, and every byte goes through the TCP stack and the server's network buffers.
