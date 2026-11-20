@@ -16,7 +16,7 @@ Our [first stable releases](https://valkey.io/blog/introducing-valkey-admin-1-0-
 
 ## Version 1.2: from seeing your cluster to understanding it
 
-A topology diagram tells you which nodes are primaries, which are replicas, and how the cluster is organized. But when something breaks, the question usually isn't "where are my nodes?" It's "**which one needs my attention?**"
+A topology diagram tells you which nodes are primaries, which are replicas, and how the cluster is organized. 1.2 adds the missing piece: how much load each node is carrying.
 
 That's the heart of Valkey Admin 1.2, released in September 2026.
 
@@ -103,7 +103,7 @@ Once you're in, start with the cluster topology, check the Hot Slots tab, and wi
 
 ## What's next
 
-We're working on OpenTelemetry metrics export, so you can send Valkey Admin metrics to the monitoring tools you already use. We're also exploring a Model Context Protocol (MCP) server, so you can troubleshoot Valkey with AI agents using the same views Valkey Admin gives you today.
+We're working on OpenTelemetry metrics export, so you can send the metrics Valkey Admin collects to the monitoring tools you already use. We're also exploring a Model Context Protocol (MCP) server, so you can troubleshoot Valkey with AI agents using the same views Valkey Admin gives you today.
 
 ## Thank you, and an invitation
 
