@@ -162,7 +162,7 @@ With forkless sync, memory stayed close to the size of the dataset for the whole
 ### Latency and Sync Time
 
 The comparison isn't one-sided.
-While the dataset was being sent, median write latency was roughly twice as high with forkless sync, and the forkless sync took longer to complete.
+While the dataset was being sent, p99 write latency was about 50% higher with forkless sync, and the forkless sync took longer to complete.
 The fork-based sync, on the other hand, started with a pause while `fork()` ran, which forkless sync avoided.
 
 ![Graph of p99 latency during a full sync, showing the fork pause at the start of the fork-based sync](fork-freeze-p99.png)
