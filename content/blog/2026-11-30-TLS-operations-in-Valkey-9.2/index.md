@@ -191,6 +191,9 @@ To do this, you must:
     tls-alt-key-file server.key
     ```
 
+    Restart Valkey to load these settings before continuing.
+    Editing `valkey.conf` alone does not change the certificates used by an already-running server; automatic reload only watches paths that are already configured.
+
 Where:
 
 - `server.crt` and `server.key` are the renewed RSA certificate and its key from the first section.
