@@ -8,10 +8,11 @@
 {%- elif page is defined and page.title %}{% set page_name = page.title %}
 {%- elif section is defined and section.title %}{% set page_name = section.title %}
 {%- else %}{% set page_name = "" %}{% endif -%}
-{#- Where the page sits in the site's navigation. #}
+{#- Where the page sits in the site's navigation. Topic and command pages set search_breadcrumb from
+    the documentation menu in their head block, the same as their own breadcrumbs. #}
 {%- set path_segments = current_path | default(value="/") | split(pat="/") %}
 {%- set path_section = path_segments[1] | default(value="") %}
-{%- if command_title is defined and command_title %}{% set breadcrumb = "Documentation › Command Reference" %}{% if command_group is defined and command_group %}{% set breadcrumb = breadcrumb ~ " › " ~ command_group %}{% endif %}
+{%- if search_breadcrumb is defined and search_breadcrumb %}{% set breadcrumb = search_breadcrumb %}
 {%- elif path_section == "commands" %}{% set breadcrumb = "Documentation › Command Reference" %}
 {%- elif path_section == "topics" %}{% set breadcrumb = "Documentation › Documentation by Topic" %}
 {%- elif path_section == "clients" %}{% set breadcrumb = "Documentation › Clients" %}

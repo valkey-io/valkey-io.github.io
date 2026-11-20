@@ -20,6 +20,12 @@
 {% set nav_data = load_data(literal=nav_json, format="json") %}
 {% set nav_location_json %}{{< nav_topic_location nav={nav_data} slug={page.slug} />}}{% endset %}
 {% set nav_location = load_data(literal=nav_location_json, format="json") %}
+
+{#- The breadcrumbs below without the page itself, for search results. #}
+{% set search_breadcrumb = "Topics" %}
+{% if nav_location.section and nav_location.landing != page.slug %}
+    {% set search_breadcrumb = search_breadcrumb ~ " › " ~ nav_location.title %}
+{% endif %}
 {%- endblock head -%}
 
 {% block breadcrumbs %}
