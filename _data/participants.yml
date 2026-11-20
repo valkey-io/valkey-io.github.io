@@ -256,8 +256,8 @@
     path: /img/falkordb.svg
     alt: FalkorDB logo
   company: >
-    FalkorDB powers the connected intelligence behind enterprise applications with an ultra-low-latency graph database that connects complex data and delivers accurate, real-time context. Supporting knowledge graphs, GraphRAG, Company Brain, agent memory, and advanced analytics. FalkorDB combines multi-tenancy and strong data isolation with robust security, high availability, and flexible deployment options to help organizations build and scale business-critical applications. For more information, visit [falkordb.com](http://falkordb.com/).
+    FalkorDB develops a low-latency graph database for enterprise applications, including knowledge graphs, GraphRAG, agent memory, and real-time analytics. It supports multi-tenancy, data isolation, and high availability.
   offering: >
-    FalkorDB is an open source graph database module for Valkey. It adds property graph storage and OpenCypher queries to Valkey, so teams can model and query connected data in the same in-memory engine they already run. FalkorDB uses sparse adjacency matrices and linear algebra to traverse relationships with low latency, making it a fit for knowledge graphs, GraphRAG, agent memory, and real-time analytics. Load the module into any Valkey deployment to get started.
+    FalkorDB is an open source graph database module that adds property graph storage and OpenCypher queries to Valkey. It uses sparse adjacency matrices and linear algebra for fast graph traversal. You can load the module into Valkey deployments that support module loading.
 
-    [FalkorDB on Valkey](https://github.com/FalkorDB/FalkorDB/blob/main/docs/valkey-migration.md)
+    [FalkorDB Valkey migration guide](https://github.com/FalkorDB/FalkorDB/blob/main/docs/valkey-migration.md)
