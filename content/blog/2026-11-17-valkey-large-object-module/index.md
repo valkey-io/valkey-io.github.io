@@ -45,20 +45,22 @@ Out of the box a string value is capped at 512 MB (`proto-max-bulk-len`; a `SET`
 
 We measured stock Valkey (commit `c86f6ee51`) over TCP, with every value in DRAM: `GET`s over a 64 GiB hot set plus `SET`s of new keys from a billion-key space, so memory fills and every `SET` then evicts.
 A separate connection sent one `PING` every 10 ms to show how long an unrelated small command waits.
-The figures are the last 10 minutes of about 15 at the memory limit.
-The server ran with `maxmemory 640gb`, `allkeys-lru` and 8 I/O threads on an i8ge.48xlarge, and two c8gn.16xlarge clients ran cachecannon with 16 threads and a 10-second request timeout.
+The server ran with `maxmemory 640gb`, `allkeys-lru` and 8 I/O threads on an i8ge.48xlarge.
+Two c8gn.16xlarge clients ran cachecannon with a 10-second request timeout and the same `GET` and `SET` connections per client as the module runs below: 16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB and 4 at 256 and 500 MiB.
+`GET`s alone ran for 90 seconds and `SET`s alone for 60 seconds.
+`GET`s and `SET`s together ran for 5 minutes, long enough to reach the memory limit and start evicting at every size.
 
-| Object size | GET only (Gbps) | SET only, at memory limit (Gbps) | GET and SET together, at memory limit (Gbps) | GET p50 / p99 | SET p50 / p99 | PING p99 / max |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 207.8 | 199-211 | 310.7 | 2.6 / 6.0 ms | 6.7 / 21 ms | 218 / 670 ms |
-| 8 MiB | 207.9 | 119 | 218.2 | 42 / 60 ms | 122 / 213 ms | 36 / 268 ms |
-| 32 MiB | 207.9 | 116 | 210.4 | 186 / 232 ms | 426 ms / 1.03 s | 50 / 287 ms |
-| 64 MiB | 208.0 | 111 | 184.8 | 237 / 290 ms | 395 ms / 0.94 s | 55 / 283 ms |
-| 256 MiB | 128 | 72-76 | 150.8 | 329 / 420 ms | 608 ms / 1.28 s | 50 / 104 ms |
-| 500 MiB | 141 | 71-75 | 142.6 | 698 / 902 ms | 1.1-1.3 / 2.2-2.4 s | 71 / 149 ms |
+| Object size | GET only (Gbps) | SET only (Gbps) | GET and SET together (Gbps) | GET p50 / p99 (together) | SET p50 / p99 (together) | PING p99 / max (together) | Evictions (together) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 MiB | 208.1 | 159.4 | 290.8 (149.5 + 141.3) | 1.1 / 2.6 ms | 1.5 / 4.6 ms | 2.1 / 240 ms | 4.63M |
+| 8 MiB | 207.9 | 119.0 | 225.6 (157.2 + 68.4) | 13 / 20 ms | 30-32 / 49-50 ms | 9.6 / 226 ms | 253K |
+| 32 MiB | 201.3 | 112.2 | 217.6 (148.7 + 68.9) | 41-43 / 73 ms | 77-78 / 230-238 ms | 15 / 46 ms | 64K |
+| 64 MiB | 134.0 | 104.9 | 181.0 (116.0 + 65.0) | 71-74 / 106-114 ms | 115 / 323-325 ms | 17 / 234 ms | 30K |
+| 256 MiB | 71.9 | 72.7 | 107.6 (53.0 + 54.6) | 325-333 / 440-453 ms | 331 / 392-394 ms | 26 / 221 ms | 6.0K |
+| 500 MiB | 74.7 | 76.1 | 104.8 (49.5 + 55.2) | 625-654 ms / 1.3-1.4 s | 633-638 ms / 0.7-1.2 s | 34 / 93 ms | 2.9K |
 
-- **Reads and writes:** reads alone hit the hosts' TCP ceiling of about 208 Gbps up to 64 MiB. Writes alone held 111-119 Gbps at the limit from 8 to 64 MiB and 72-76 Gbps at 256 and 500 MiB.
-- **Other clients wait:** a `PING` took 36-218 ms at p99 and up to 670 ms, against 0.05 ms when idle, because the main thread ran at 99.8-99.9% CPU copying values.
+- **Reads and writes:** `GET`s alone reached about 208 Gbps, the hosts' TCP ceiling, at 1 and 8 MiB, and 201 Gbps at 32 MiB. With fewer connections at 64 MiB and above, each connection waits longer for each value, so they reached 134, 72 and 75 Gbps. `SET`s alone reached 105-119 Gbps from 8 to 64 MiB and 73-76 Gbps at 256 and 500 MiB.
+- **Other clients:** a `PING` from another connection took 2.1-34 ms at p99 and up to 240 ms, against 0.05 ms when idle.
 - **Capacity:** stock Valkey held 640 GiB in DRAM before evicting.
 
 ## What the module is
@@ -114,18 +116,19 @@ We have not measured the module over TCP.
 One i8ge.48xlarge server ran the module with a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS. Two c8gn.16xlarge clients drove it with cachecannon over EFA. Each client machine used the number of `GET` and `SET` connections shown in the table (4 each at 256 and 500 MiB, up to 16 each at 1 and 8 MiB), so the total is twice that.
 Each size ran `GET`s over a 64 GiB hot set and `SET`s of new keys at the same time.
 The run first filled the disk to its limit and then ran for 2 hours at the limit, where every `SET` evicts the oldest objects to make room.
-The stock Valkey numbers are the ones from the table above, from a separate test bed with the same instance types, over TCP.
+The stock Valkey numbers are the ones from the table above, with the same instance types and the same connections per client, over TCP.
+Stock Valkey's `GET`s and `SET`s together ran for 5 minutes, and the module's for 2 hours at the disk limit.
 
-Stock Valkey against the module, GET + SET together:
+Stock Valkey against the module, GET + SET together, with the same connections per client:
 
 | Object size | Stock Valkey total (Gbps) | Module total (Gbps) | Module / stock | GET p99, stock / module | SET p99, stock / module | PING p99, stock / module |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 310.7 | 372.2 | 1.2x | 6.0 ms / 2.10 ms | 21 ms / 2.75 ms | 218 ms / 0.23 ms |
-| 8 MiB | 218.2 | 399.3 | 1.8x | 60 ms / 15.2 ms | 213 ms / 16.2 ms | 36 ms / 0.23 ms |
-| 32 MiB | 210.4 | 388.7 | 1.8x | 232 ms / 37.5 ms | 1.03 s / 41.2 ms | 50 ms / 0.36 ms |
-| 64 MiB | 184.8 | 377.9 | 2.0x | 290 ms / 54.5 ms | 0.94 s / 56.1 ms | 55 ms / 0.35 ms |
-| 256 MiB | 150.8 | 372.3 | 2.5x | 420 ms / 101 ms | 1.28 s / 105 ms | 50 ms / 0.33 ms |
-| 500 MiB | 142.6 | 371.9 | 2.6x | 902 ms / 193 ms | 2.2-2.4 s / 195 ms | 71 ms / 0.32 ms |
+| 1 MiB | 290.8 | 372.2 | 1.3x | 2.6 ms / 2.10 ms | 4.6 ms / 2.75 ms | 2.1 ms / 0.23 ms |
+| 8 MiB | 225.6 | 399.3 | 1.8x | 20 ms / 15.2 ms | 49-50 ms / 16.2 ms | 9.6 ms / 0.23 ms |
+| 32 MiB | 217.6 | 388.7 | 1.8x | 73 ms / 37.5 ms | 230-238 ms / 41.2 ms | 15 ms / 0.36 ms |
+| 64 MiB | 181.0 | 377.9 | 2.1x | 106-114 ms / 54.5 ms | 323-325 ms / 56.1 ms | 17 ms / 0.35 ms |
+| 256 MiB | 107.6 | 372.3 | 3.5x | 440-453 ms / 101 ms | 392-394 ms / 105 ms | 26 ms / 0.33 ms |
+| 500 MiB | 104.8 | 371.9 | 3.5x | 1.3-1.4 s / 193 ms | 0.7-1.2 s / 195 ms | 34 ms / 0.32 ms |
 
 The module in detail.
 Each of the two client machines used the number of `GET` and `SET` connections shown:
@@ -141,9 +144,9 @@ Each of the two client machines used the number of `GET` and `SET` connections s
 
 The stock Valkey p50 and p99 for every size are in the first table above.
 
-- With reads and writes together, the module moved 1.8x to 2.6x the throughput of stock Valkey from 8 MiB up (stock Valkey moved 38-55% of the module's), and 1.2x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size.
+- With reads and writes together, the module moved 1.8x to 3.5x the throughput of stock Valkey from 8 MiB up, and 1.3x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size. Stock Valkey's total fell as values grew, from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
 - The module evicted between 319 thousand (500 MiB) and 131 million (1 MiB) objects at the limit [validate], and rejected no `SET` at any size.
-- A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 36-218 ms with stock Valkey.
+- A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 2.1-34 ms with stock Valkey.
 - The module node held 108 TB on NVMe, against 640 GiB of DRAM for stock Valkey.
 - Run alone for 3 minutes, `GET`s reached 215-216 Gbps from NVMe and 204-216 Gbps from DRAM, so the disk tier doesn't cost read bandwidth. `SET`s reached 193 Gbps.
 - At 1 MiB the total was 372.2 Gbps, 7% below 8 MiB (399.3). From 8 MiB up the total stays within 8% of the best size.
