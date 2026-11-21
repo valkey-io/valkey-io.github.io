@@ -113,7 +113,7 @@ Transport   libfabric: RDMA reads and writes against client memory
 All numbers here are for the RDMA path over AWS Elastic Fabric Adapter (EFA), in `Tiered` mode.
 We have not measured the module over TCP.
 
-One i8ge.48xlarge server ran the module with a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS. Two c8gn.16xlarge clients drove it with cachecannon over EFA. Each client machine used the number of `GET` and `SET` connections shown in the table (4 each at 256 and 500 MiB, up to 16 each at 1 and 8 MiB), so the total is twice that.
+One i8ge.48xlarge server ran the module with a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS. Two c8gn.16xlarge clients drove it with cachecannon over EFA. Each client machine used the same `GET` and `SET` connections as the stock Valkey run above (16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB and 4 at 256 and 500 MiB), so the total is twice that.
 Each size ran `GET`s over a 64 GiB hot set and `SET`s of new keys at the same time.
 The run first filled the disk to its limit and then ran for 2 hours at the limit, where every `SET` evicts the oldest objects to make room.
 The stock Valkey numbers are the ones from the table above, with the same instance types and the same connections per client, over TCP.
@@ -129,20 +129,6 @@ Stock Valkey against the module, GET + SET together, with the same connections p
 | 64 MiB | 181.0 | 377.9 | 2.1x | 106-114 ms / 54.5 ms | 323-325 ms / 56.1 ms | 17 ms / 0.35 ms |
 | 256 MiB | 107.6 | 372.3 | 3.5x | 440-453 ms / 101 ms | 392-394 ms / 105 ms | 26 ms / 0.33 ms |
 | 500 MiB | 104.8 | 371.9 | 3.5x | 1.3-1.4 s / 193 ms | 0.7-1.2 s / 195 ms | 34 ms / 0.32 ms |
-
-The module in detail.
-Each of the two client machines used the number of `GET` and `SET` connections shown:
-
-| Object size | Connections per client, GET / SET | GET Gbps (egress) | SET Gbps (ingress) | Total (Gbps) | GET p50 / p99 | SET p50 / p99 | PING p99 |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 16 / 16 | ~203 | ~169 | 372.2 | 1.27 / 2.10 ms | 1.53 / 2.75 ms | 0.23 ms |
-| 8 MiB | 16 / 16 | ~208 | ~191 | 399.3 | 10.6 / 15.2 ms | 10.8 / 16.2 ms | 0.23 ms |
-| 32 MiB | 12 / 12 | ~201 | ~188 | 388.7 | 31.5 / 37.5 ms | 34.3 / 41.2 ms | 0.36 ms |
-| 64 MiB | 8 / 8 | ~193 | ~185 | 377.9 | 43.8 / 54.5 ms | 45.6 / 56.1 ms | 0.35 ms |
-| 256 MiB | 4 / 4 | ~191 | ~182 | 372.3 | 88.6 / 101 ms | 95.4 / 105 ms | 0.33 ms |
-| 500 MiB | 4 / 4 | ~188 | ~184 | 371.9 | 178 / 193 ms | 185 / 195 ms | 0.32 ms |
-
-The stock Valkey p50 and p99 for every size are in the first table above.
 
 - With reads and writes together, the module moved 1.8x to 3.5x the throughput of stock Valkey from 8 MiB up, and 1.3x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size. Stock Valkey's total fell as values grew, from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
 - The module evicted between 319 thousand (500 MiB) and 131 million (1 MiB) objects at the limit [validate], and rejected no `SET` at any size.
