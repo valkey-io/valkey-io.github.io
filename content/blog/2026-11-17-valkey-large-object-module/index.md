@@ -25,18 +25,17 @@ Valkey can be that shared store, and a Valkey cluster scales its capacity indepe
 [KV caching on Valkey](https://valkey.io/blog/kv-caching-on-valkey/) shows what that does for a fleet of GPU servers.
 
 What the shared store has to hold is large.
-LMCache splits a prompt into chunks of 256 tokens and stores each chunk as one object.
-The size depends on the model:
+LMCache splits a prompt into chunks, 256 tokens by default, and stores each chunk as one object.
+The size depends on the model and the chunk size:
 
-| Model | Cache per token | One 256-token chunk |
-| --- | --- | --- |
-| Kimi K2.7-Code (FP8) | 34.3 KiB | 8.6 MiB |
-| Qwen3-235B-A22B (FP8) | 94 KiB | 23.5 MiB |
-| Mistral-Medium-3.5-128B (FP8) | 176 KiB | 44 MiB |
+| Model | Cache per token | 256-token chunk | 2,048-token chunk |
+| --- | --- | --- | --- |
+| Kimi K2.7-Code (FP8) | 34.3 KiB | 8.6 MiB | 69 MiB |
+| Qwen3-235B-A22B (FP8) | 94 KiB | 23.5 MiB | 188 MiB |
+| Mistral-Medium-3.5-128B (FP8) | 176 KiB | 44 MiB | 352 MiB |
 
-LMCache can also store larger chunks.
-At 2,048 tokens per chunk each object is 8 times bigger, up to about 350 MiB for these models.
-A cache hit moves many such objects, quickly.
+Larger chunks mean fewer, bigger objects per prompt.
+A cache hit moves many of these objects, quickly.
 The Valkey Large Object module is built for that.
 It is not specific to KV cache: it stores any large binary value, and this is the use that drove its design.
 
