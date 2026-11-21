@@ -30,11 +30,13 @@ The size depends on the model:
 
 | Model | Cache per token | One 256-token chunk |
 | --- | --- | --- |
-| Llama 3.1 8B | 128 KiB | 32 MiB |
-| Llama 3.1 70B | 320 KiB | 80 MiB |
-| Llama 3.1 405B | 504 KiB | 126 MiB |
+| Kimi K2.7-Code (FP8) | 34.3 KiB | 8.6 MiB |
+| Qwen3-235B-A22B (FP8) | 94 KiB | 23.5 MiB |
+| Mistral-Medium-3.5-128B (FP8) | 176 KiB | 44 MiB |
 
-A cache hit moves many objects of tens to over a hundred megabytes, quickly.
+LMCache can also store larger chunks.
+At 2,048 tokens per chunk each object is 8 times bigger, up to about 350 MiB for these models.
+A cache hit moves many such objects, quickly.
 The Valkey Large Object module is built for that.
 It is not specific to KV cache: it stores any large binary value, and this is the use that drove its design.
 
