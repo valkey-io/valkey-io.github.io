@@ -60,3 +60,12 @@
     | safe
 }}
 {% endcomponent fix_links_docs %}
+
+{# Adds a "#" link to each h2 and h3 with an id, so a section can be linked to.
+   Zola's insert_anchor_links doesn't apply to the markdown filter. #}
+{% component heading_links(content) %}
+{{ content
+    | regex_replace(pattern='<h(?P<level>[23]) id="(?P<id>[^"]+)">(?P<text>.*?)</h[23]>', rep='<h${level} id="${id}">${text}<a class="heading-link" href="#${id}" aria-label="Link to this section">#</a></h${level}>')
+    | safe
+}}
+{% endcomponent heading_links %}
