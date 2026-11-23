@@ -74,8 +74,7 @@ We'll look at what this means for clients below.
 
 ## What This Means for Clients
 
-Most commands are unaffected by a forkless operation.
-Reads don't wait, and most writes don't either, since a write only waits when it touches a key that the background thread needs to write out at that moment.
+Read commands are never blocked, and most writes aren't either, since a write only waits when it touches a key that the background thread needs to write out at that moment.
 
 How long a write waits depends on the size of the key.
 String values of up to 512 bytes generally don't cause a wait at all, because Valkey copies them instead.
