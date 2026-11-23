@@ -388,7 +388,16 @@
 
 .blog-lead-kicker {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.6rem;
   margin: 0;
+}
+
+.blog-eyebrow {
+  @include card-label;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .blog-lead-title {

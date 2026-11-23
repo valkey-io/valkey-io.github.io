@@ -17,9 +17,10 @@
   <a class="blog-lead" href="{{ lead.permalink }}">
     {{< blog_media post={lead} width={1200} height={675} />}}
     <div class="blog-lead-body">
-      {% if lead_types %}
-      <p class="blog-lead-kicker">{{< blog_type name={lead_types | first} />}}</p>
-      {% endif %}
+      <p class="blog-lead-kicker">
+        <span class="blog-eyebrow">{% if featured %}Featured{% else %}Latest{% endif %}</span>
+        {% if lead_types %}{{< blog_type name={lead_types | first} />}}{% endif %}
+      </p>
       <h2 class="blog-lead-title">{{ lead.title | safe }}</h2>
       <p class="blog-lead-description">{{ lead.description | safe }}</p>
       {{< blog_byline post={lead} />}}
