@@ -28,7 +28,7 @@ Let's dive into how it works and what it means for you.
 
 ## Background: Save and Full Sync with fork()
 
-Since its earliest days, Valkey has used `fork()` for background saves (`BGSAVE` and the `save` rules) and for full syncs to replicas.
+Since its earliest days, Valkey has used `fork()` for background saves and for full syncs to replicas.
 A fork-based operation works as follows:
 
 1. Valkey calls `fork()`, creating a child process that shares the parent's memory.
