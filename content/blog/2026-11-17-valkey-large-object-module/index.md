@@ -45,17 +45,19 @@ It is not specific to KV cache: it stores any large binary value, and this is th
 ## What changes when values reach hundreds of megabytes
 
 Valkey is built for small values, typically a few hundred bytes.
-Out of the box a string value is capped at 512 MiB (`proto-max-bulk-len`; a `SET` of 512 MiB plus one byte returns `invalid bulk length`), a command's own work, such as 
-storing a value, runs on the main thread while other clients wait, and every byte goes through the TCP stack and the server's network buffers.
+Out of the box a string value is capped at 512 MiB (`proto-max-bulk-len`), a command's own work, such as storing a value, runs on the main thread while other clients wait, and every byte goes through the TCP stack and the server's network buffers.
 
-We measured stock Valkey (commit `c86f6ee51`) over TCP, with every value in DRAM: `GET`s over a 64 GiB hot set plus `SET`s of new keys from a billion-key space, so 
-memory fills and every `SET` then evicts.
-A separate connection sent one `PING` every 10 ms to show how long an unrelated small command waits.
-The server ran with `maxmemory 640gb`, `allkeys-lru` and 8 I/O threads on an i8ge.48xlarge.
-Two c8gn.16xlarge clients ran cachecannon with a 10-second request timeout and the same `GET` and `SET` connections per client as the module runs below: 16 each at 1 and 
-8 MiB, 12 at 32 MiB, 8 at 64 MiB and 4 at 256 and 500 MiB.
-`GET`s alone ran for 90 seconds and `SET`s alone for 60 seconds.
-`GET`s and `SET`s together ran for 5 minutes, long enough to reach the memory limit and start evicting at every size.
+We measured stock Valkey 9.2 over TCP [validate: these numbers are from a pre-release build, rerun on 9.2.0 pending], with every value held in DRAM, on one i8ge.48xlarge (`maxmemory 640gb`, `allkeys-lru`, 8 I/O threads).
+
+Two c8gn.16xlarge clients drove it with [cachecannon](https://github.com/cachecannon/cachecannon) and a 10-second request timeout.
+They used the same number of `GET` and `SET` connections per client as the module runs below: 16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB, and 4 at 256 and 500 MiB.
+
+The workload:
+
+- `GET`s read a 64 GiB hot set that was filled beforehand, so every `GET` finds its key.
+- `SET`s always write new keys, picked from a billion-key space, so none overwrites an existing value. Once memory is full, every `SET` evicts an older key.
+- We ran `GET`s alone, `SET`s alone, and then both together for 5 minutes, long enough for memory to fill.
+- A separate connection sent a `PING` every 10 ms to show how long an unrelated small command waits.
 
 | Object size | GET only (Gbps) | SET only (Gbps) | GET and SET together (Gbps) | GET p50 / p99 (together) | SET p50 / p99 (together) | PING p99 / max (together) | Evictions (together) |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -66,8 +68,7 @@ Two c8gn.16xlarge clients ran cachecannon with a 10-second request timeout and t
 | 256 MiB | 71.9 | 72.7 | 107.6 (53.0 + 54.6) | 325-333 / 440-453 ms | 331 / 392-394 ms | 26 / 221 ms | 6.0K |
 | 500 MiB | 74.7 | 76.1 | 104.8 (49.5 + 55.2) | 625-654 ms / 1.3-1.4 s | 633-638 ms / 0.7-1.2 s | 34 / 93 ms | 2.9K |
 
-- **Reads and writes:** `GET`s alone reached about 208 Gbps, the hosts' TCP ceiling, at 1 and 8 MiB, and 201 Gbps at 32 MiB. With fewer connections at 64 MiB and above, 
-each connection waits longer for each value, so they reached 134, 72 and 75 Gbps. `SET`s alone reached 105-119 Gbps from 8 to 64 MiB and 73-76 Gbps at 256 and 500 MiB.
+- **Reads and writes:** `GET`s alone reached 201-208 Gbps, the hosts' TCP ceiling, up to 32 MiB. With fewer connections from 64 MiB up, each connection waits longer for each value, so they reached 134, 72 and 75 Gbps. `SET`s alone reached 105-119 Gbps from 8 to 64 MiB and 73-76 Gbps at 256 and 500 MiB.
 - **Other clients:** a `PING` from another connection took 2.1-34 ms at p99 and up to 240 ms, against 0.05 ms when idle.
 - **Capacity:** stock Valkey held 640 GiB in DRAM before evicting.
 
