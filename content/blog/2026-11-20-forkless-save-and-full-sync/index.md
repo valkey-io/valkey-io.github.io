@@ -77,7 +77,7 @@ We'll look at what this means for clients below.
 Read commands are never blocked, and most writes aren't either, since a write only waits when it touches a key that the background thread needs to write out at that moment.
 
 How long a write waits depends on the size of the key.
-String values of up to 512 bytes generally don't cause a wait at all, because Valkey copies them instead.
+String values of up to 512 bytes don't cause a wait at all, because Valkey copies them instead.
 Larger keys, such as large strings or collections like hashes, lists, sets, or sorted sets with many elements, take longer to write out, so a write to one of them can wait longer.
 Workloads with very large keys that receive frequent writes see the most impact, and splitting such keys into smaller ones reduces both the chance of a wait and its length.
 
