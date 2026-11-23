@@ -37,7 +37,6 @@ A fork-based operation works as follows:
    During a full sync, it also buffers the writes it receives, to send them to the replica once the snapshot is delivered.
 4. When the child finishes, it exits.
 
-This design has real strengths.
 The child sees memory exactly as it was at the moment of the fork, so it can produce a consistent snapshot without coordinating with the clients the parent is serving.
 The work of serializing the dataset also happens in the child, away from the process that answers clients.
 
