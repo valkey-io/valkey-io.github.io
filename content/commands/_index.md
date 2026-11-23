@@ -7,5 +7,5 @@ aliases= [
 ]
 
 [extra]
-breadcrumb = "Documentation › Command Reference"
+breadcrumb = "Commands"
 +++
