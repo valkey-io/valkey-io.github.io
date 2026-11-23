@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 590" width="960" height="590" font-family="Helvetica, Arial, sans-serif">
+<rect x="0" y="0" width="960" height="590" rx="10" fill="#ffffff" stroke="#d0d7de"/>
+<rect x="20" y="200" width="170" height="170" rx="10" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.5"/>
+<text x="105" y="226" text-anchor="middle" font-size="16" font-weight="700" fill="#111827">Client</text>
+<rect x="36" y="290" width="138" height="62" rx="8" fill="#e3f1e3" stroke="#4d8f4d" stroke-width="1.5"/>
+<text x="105" y="318" text-anchor="middle" font-size="13" font-weight="700" fill="#111827">Registered</text>
+<text x="105" y="336" text-anchor="middle" font-size="13" font-weight="700" fill="#111827">memory</text>
+<rect x="250" y="20" width="690" height="550" rx="12" fill="#f4f7fb" stroke="#5b7aa6" stroke-width="1.5"/>
+<text x="595" y="46" text-anchor="middle" font-size="16" font-weight="700" fill="#111827">Valkey server with the large object module</text>
+<rect x="280" y="62" width="160" height="70" rx="8" fill="#dbe8f7" stroke="#3b6aa3" stroke-width="1.5"/>
+<text x="360" y="92" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">Valkey main thread</text>
+<text x="360" y="112" text-anchor="middle" font-size="11.5" fill="#1f2937">blocks only this client</text>
+<rect x="490" y="62" width="430" height="100" rx="8" fill="#dbe8f7" stroke="#3b6aa3" stroke-width="1.5"/>
+<text x="705" y="84" text-anchor="middle" font-size="15" font-weight="700" fill="#111827">Streaming task</text>
+<rect x="520" y="96" width="80" height="26" rx="5" fill="#ffffff" stroke="#3b6aa3" stroke-width="1.5"/>
+<text x="560" y="114" text-anchor="middle" font-size="12" fill="#1f2937">chunk</text>
+<rect x="615" y="96" width="80" height="26" rx="5" fill="#ffffff" stroke="#3b6aa3" stroke-width="1.5"/>
+<text x="655" y="114" text-anchor="middle" font-size="12" fill="#1f2937">chunk</text>
+<rect x="710" y="96" width="80" height="26" rx="5" fill="#ffffff" stroke="#3b6aa3" stroke-width="1.5"/>
+<text x="750" y="114" text-anchor="middle" font-size="12" fill="#1f2937">chunk</text>
+<rect x="805" y="96" width="80" height="26" rx="5" fill="#ffffff" stroke="#3b6aa3" stroke-width="1.5"/>
+<text x="845" y="114" text-anchor="middle" font-size="12" fill="#1f2937">chunk</text>
+<text x="705" y="146" text-anchor="middle" font-size="11" fill="#374151">a window of chunks in parallel, for SET and GET</text>
+<rect x="490" y="200" width="430" height="92" rx="8" fill="#e3f1e3" stroke="#4d8f4d" stroke-width="1.5"/>
+<text x="510" y="224" text-anchor="start" font-size="14" font-weight="700" fill="#111827">DRAM cache segments</text>
+<rect x="690" y="209" width="92" height="20" rx="10" fill="#c9e7c9" stroke="#4d8f4d"/><text x="736.0" y="223" text-anchor="middle" font-size="10.5" font-weight="700" fill="#111827">EFA registered</text>
+<rect x="788" y="209" width="122" height="20" rx="10" fill="#c9e7c9" stroke="#4d8f4d"/><text x="849.0" y="223" text-anchor="middle" font-size="10.5" font-weight="700" fill="#111827">io_uring registered</text>
+<rect x="510" y="238" width="180" height="26" rx="4" fill="#ffffff" stroke="#4d8f4d" stroke-width="1.5"/>
+<rect x="514.0" y="242" width="30.1" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="547.1" y="242" width="10.2" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="560.3" y="242" width="49.9" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="613.2" y="242" width="16.8" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="633.1" y="242" width="36.7" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="672.8" y="242" width="10.2" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="710" y="238" width="180" height="26" rx="4" fill="#ffffff" stroke="#4d8f4d" stroke-width="1.5"/>
+<rect x="714.0" y="242" width="16.1" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="733.1" y="242" width="41.6" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="777.7" y="242" width="9.7" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="790.4" y="242" width="28.9" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="822.3" y="242" width="22.5" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="847.8" y="242" width="35.2" height="18" rx="2" fill="#a9d4a9"/>
+<text x="510" y="282" text-anchor="start" font-size="10.5" fill="#4b5563">each segment has its own talc allocator</text>
+<rect x="490" y="320" width="430" height="92" rx="8" fill="#e3f1e3" stroke="#4d8f4d" stroke-width="1.5"/>
+<text x="510" y="344" text-anchor="start" font-size="14" font-weight="700" fill="#111827">Disk staging segments</text>
+<rect x="690" y="329" width="92" height="20" rx="10" fill="#c9e7c9" stroke="#4d8f4d"/><text x="736.0" y="343" text-anchor="middle" font-size="10.5" font-weight="700" fill="#111827">EFA registered</text>
+<rect x="788" y="329" width="122" height="20" rx="10" fill="#c9e7c9" stroke="#4d8f4d"/><text x="849.0" y="343" text-anchor="middle" font-size="10.5" font-weight="700" fill="#111827">io_uring registered</text>
+<rect x="510" y="358" width="180" height="26" rx="4" fill="#ffffff" stroke="#4d8f4d" stroke-width="1.5"/>
+<rect x="514.0" y="362" width="30.1" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="547.1" y="362" width="10.2" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="560.3" y="362" width="49.9" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="613.2" y="362" width="16.8" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="633.1" y="362" width="36.7" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="672.8" y="362" width="10.2" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="710" y="358" width="180" height="26" rx="4" fill="#ffffff" stroke="#4d8f4d" stroke-width="1.5"/>
+<rect x="714.0" y="362" width="16.1" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="733.1" y="362" width="41.6" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="777.7" y="362" width="9.7" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="790.4" y="362" width="28.9" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="822.3" y="362" width="22.5" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="847.8" y="362" width="35.2" height="18" rx="2" fill="#a9d4a9"/>
+<rect x="605" y="445" width="200" height="40" rx="8" fill="#fff3d6" stroke="#c4902a" stroke-width="1.5"/>
+<text x="705" y="471" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">io_uring engine</text>
+<rect x="605" y="510" width="200" height="50" rx="8" fill="#fff3d6" stroke="#c4902a" stroke-width="1.5"/>
+<text x="705" y="532" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">Object files on XFS</text>
+<text x="705" y="549" text-anchor="middle" font-size="11.5" fill="#1f2937">block storage</text>
+<polyline points="190,215 235,215 235,97 280,97" fill="none" stroke="#333333" stroke-width="2"/>
+<polygon points="280,97 268,91.5 268,102.5" fill="#333333"/>
+<text x="194" y="208" text-anchor="start" font-size="10.5" fill="#374151">command</text>
+<polyline points="280,118 265,118 265,255 190,255" fill="none" stroke="#333333" stroke-width="2" stroke-dasharray="6 4"/>
+<polygon points="190,255 202,249.5 202,260.5" fill="#333333"/>
+<text x="272" y="250" text-anchor="start" font-size="10.5" fill="#374151">reply</text>
+<polyline points="440,97 490,97" fill="none" stroke="#333333" stroke-width="2"/>
+<polygon points="490,97 478,91.5 478,102.5" fill="#333333"/>
+<polyline points="705,162 705,200" fill="none" stroke="#333333" stroke-width="2"/>
+<polygon points="705,162 699.5,174 710.5,174" fill="#333333"/>
+<polygon points="705,200 699.5,188 710.5,188" fill="#333333"/>
+<polyline points="920,110 935,110 935,366 920,366" fill="none" stroke="#333333" stroke-width="2"/>
+<polygon points="920,110 932,104.5 932,115.5" fill="#333333"/>
+<polygon points="920,366 932,360.5 932,371.5" fill="#333333"/>
+<polyline points="705,412 705,445" fill="none" stroke="#333333" stroke-width="2"/>
+<polygon points="705,412 699.5,424 710.5,424" fill="#333333"/>
+<polygon points="705,445 699.5,433 710.5,433" fill="#333333"/>
+<polyline points="705,485 705,510" fill="none" stroke="#333333" stroke-width="2"/>
+<polygon points="705,485 699.5,497 710.5,497" fill="#333333"/>
+<polygon points="705,510 699.5,498 710.5,498" fill="#333333"/>
+<polyline points="176,308 380,308 380,246 490,246" fill="none" stroke="#d9480f" stroke-width="4"/>
+<polygon points="176,308 190,301.5 190,314.5" fill="#d9480f"/>
+<polygon points="490,246 476,239.5 476,252.5" fill="#d9480f"/>
+<polyline points="176,334 380,334 380,366 490,366" fill="none" stroke="#d9480f" stroke-width="4"/>
+<polygon points="176,334 190,327.5 190,340.5" fill="#d9480f"/>
+<polygon points="490,366 476,359.5 476,372.5" fill="#d9480f"/>
+<text x="200" y="298" text-anchor="start" font-size="12" font-weight="700" fill="#d9480f">RDMA: GET hit</text>
+<text x="200" y="356" text-anchor="start" font-size="12" font-weight="700" fill="#d9480f">RDMA: SET, GET miss</text>
+</svg>
