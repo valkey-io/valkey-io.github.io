@@ -45,7 +45,7 @@ It is not specific to KV cache: it stores any large binary value, and this is th
 ## What changes when values reach hundreds of megabytes
 
 Valkey is built for small values, typically a few hundred bytes.
-Out of the box a string value is capped at 512 MB (`proto-max-bulk-len`; a `SET` of 512 MiB plus one byte returns `invalid bulk length`), a command's own work, such as 
+Out of the box a string value is capped at 512 MiB (`proto-max-bulk-len`; a `SET` of 512 MiB plus one byte returns `invalid bulk length`), a command's own work, such as 
 storing a value, runs on the main thread while other clients wait, and every byte goes through the TCP stack and the server's network buffers.
 
 We measured stock Valkey (commit `c86f6ee51`) over TCP, with every value in DRAM: `GET`s over a 64 GiB hot set plus `SET`s of new keys from a billion-key space, so 
@@ -100,7 +100,7 @@ handles all eight combinations of `Dram` or `Tiered`, `GET` or `SET`, TCP or RDM
 buffers at a time (`largeobj.max-buffers-per-op`), and hands each chunk to its target as soon as the source has produced it. A 256 MiB value never needs a 256 MiB 
 buffer, and network and disk transfers overlap.
 
-**Memory.** Object bytes live in segments: large blocks of memory (1 GB each by default, `largeobj.segment-size`) that the module reserves once and carves up itself.
+**Memory.** Object bytes live in segments: large blocks of memory (1 GiB each by default, `largeobj.segment-size`) that the module reserves once and carves up itself.
 Objects range from tens of kilobytes to hundreds of megabytes, so each segment has its own allocator that hands out exact-sized, 4 KiB-aligned slots.
 There are no fixed size classes to waste memory on.
 Registering memory with the network card costs 300 to 500 microseconds per call, which would ruin throughput on the data path.
@@ -130,7 +130,7 @@ write server memory. The TCP commands, `BLOB.TCP_SET` and `BLOB.TCP_GET`, carry 
 | --- | --- |
 | Operating modes | `Dram` (default): all objects in DRAM. `Tiered`: every object is a file on block storage, DRAM as a read cache. |
 | Transports | TCP (`BLOB.TCP_SET`, `BLOB.TCP_GET`): any Valkey client. RDMA (`BLOB.RDMA_*`): a client that implements the libfabric flow, and EFA hardware for the default `EfaDirect` provider. `Emulated` runs libfabric over TCP sockets for developing RDMA clients; it is not faster than the TCP commands. |
-| Object size | Up to `largeobj.max-object-size` (512 MB by default). In `Dram` mode an object must fit in one segment. |
+| Object size | Up to `largeobj.max-object-size` (512 MiB by default). In `Dram` mode an object must fit in one segment. |
 | Eviction | Least recently used, controlled by the core `maxmemory-policy`. |
 | Requirements | Valkey 8.0 or later. Linux on x86_64 or aarch64. libfabric 2.0 or later to build, also for TCP only. `Tiered` mode: Linux 5.1 or later and XFS. |
 
@@ -162,7 +162,7 @@ Stock Valkey against the module, GET + SET together, with the same connections p
 Gbps at every size. Stock Valkey's total fell as values grew, from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
 - The module evicted between 319 thousand (500 MiB) and 131 million (1 MiB) objects at the limit [validate], and rejected no `SET` at any size.
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 2.1-34 ms with stock Valkey.
-- The module node held 108 TB on NVMe, against 640 GiB of DRAM for stock Valkey.
+- The module node held 108 TB (about 98 TiB) on NVMe, against 640 GiB of DRAM for stock Valkey.
 - Run alone for 3 minutes, `GET`s reached 215-216 Gbps from NVMe and 204-216 Gbps from DRAM, so the disk tier doesn't cost read bandwidth. `SET`s reached 193 Gbps.
 - At 1 MiB the total was 372.2 Gbps, 7% below 8 MiB (399.3). From 8 MiB up the total stays within 8% of the best size.
 - The module ran over RDMA on a separate test bed and stock Valkey ran over TCP, so the table compares whole setups, not one variable.
@@ -181,25 +181,18 @@ This is the command we used for the benchmark on an i8ge.48xlarge, with its 16 N
 Size the disk and staging settings for your own hardware.
 
 ```bash
-ulimit -n 1048576
-export LD_LIBRARY_PATH=/opt/amazon/efa/lib64
-
-numactl --cpunodebind=0 --membind=0 valkey-server \
+valkey-server \
   --port 6379 --save '' --appendonly no \
   --maxmemory-policy allkeys-lru \
   --loadmodule ./target/release/libvalkey_large_object.so \
-    operating-mode Tiered \
-    disk-dir /mnt/bigobj-data/lo \
-    segment-size 1073741824 \
-    disk-staging-size 17179869184 \
-    disk-maxmemory 108000000000000 \
-    fabric-provider EfaDirect \
-    fabric-max-in-flight 256 \
-    worker-threads 8 \
-    fabric-crc-pool-threads 2
+  --largeobj.operating-mode Tiered \
+  --largeobj.disk-dir /mnt/bigobj-data/lo \
+  --largeobj.segment-size 1073741824 \
+  --largeobj.disk-staging-size 17179869184 \
+  --largeobj.disk-maxmemory 108000000000000 \
+  --largeobj.fabric-provider EfaDirect
 ```
 
-The server is pinned to NUMA node 0, which is where the EFA device and the network interface are.
 `maxmemory` is not set, so the DRAM cache grows in 1 GiB segments as needed.
 
 | Setting | Default | Meaning |
@@ -207,8 +200,8 @@ The server is pinned to NUMA node 0, which is where the EFA device and the netwo
 | `largeobj.operating-mode` | `Dram` | `Dram` or `Tiered` |
 | `largeobj.disk-dir` | none | Dedicated directory for object files, on XFS. Required in `Tiered` mode |
 | `largeobj.disk-maxmemory` | 0 (no limit) | Disk space limit. At the limit, writes evict the least recently used objects |
-| `largeobj.segment-size` | 1 GB | Size of each DRAM segment, 1 MB to 1 GB |
-| `largeobj.max-object-size` | 512 MB | Largest value accepted |
+| `largeobj.segment-size` | 1 GiB | Size of each DRAM segment, 1 MiB to 1 GiB |
+| `largeobj.max-object-size` | 512 MiB | Largest value accepted |
 | `largeobj.fabric-provider` | `EfaDirect` | `EfaDirect` (EFA hardware) or `Emulated` (libfabric over TCP, for developing RDMA clients) |
 
 The RDMA commands need a client that registers its memory with libfabric and follows the flow in the [RDMA overview](https://github.com/valkey-io/valkey-large-object/
