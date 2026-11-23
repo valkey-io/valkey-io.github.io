@@ -118,12 +118,12 @@ Work is ongoing to make forkless available in more configurations, which would a
 
 ### Monitoring Forkless Operations
 
-To see what actually ran, `INFO persistence` reports the method of the current and last save in `rdb_current_bgsave_type` and `rdb_last_bgsave_type`.
+With `fork()`, the main thing to watch during a save or full sync is copy-on-write memory growth (`current_cow_size`), which doesn't apply to a forkless operation.
+What's worth watching instead is write latency, especially on large keys, since writes can wait while a forkless operation runs, as described in [What This Means for Clients](#what-this-means-for-clients).
+`forkless_estimated_seconds_remaining` shows roughly how long a forkless operation has left.
 
-While a forkless save or full sync is running, `forkless_estimated_seconds_remaining` shows roughly how long it has left.
-As the name suggests, it's an estimate: it's based on how fast keys have been written out so far, so it's most useful for tracking progress, not as a precise deadline.
-
-Each fallback is also logged with its reason, and counted in `INFO debug`.
+To confirm that an operation ran forkless as configured, `rdb_current_bgsave_type` and `rdb_last_bgsave_type` in `INFO persistence` show the method used.
+If a fallback did happen, the server log records its reason, and [When Valkey Falls Back to fork()](#when-valkey-falls-back-to-fork) points to how to avoid it.
 
 ## Fork vs. Forkless: Head-to-Head Results
 
