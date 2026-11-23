@@ -112,25 +112,8 @@ Even with these settings, Valkey can still fall back to `fork()` in some situati
 
 ### When Valkey Falls Back to fork()
 
-`prefer-forkless` isn't a guarantee: when a forkless operation isn't possible, Valkey falls back to `fork()`.
-Every case that causes a fallback can be avoided, but doing so takes careful planning, so if you rely on forkless, for example when sizing memory, review the cases below closely.
-
-Valkey falls back to `fork()` for both saves and full syncs when:
-
-- a loaded module hasn't declared support for forkless operations (see [For module developers](/topics/forkless/#for-module-developers)),
-- the node is receiving slots through [atomic slot migration](/topics/atomic-slot-migration/).
-
-For full syncs, it also happens when:
-
-- the replica runs a Valkey version older than 9.2,
-- the replica uses `repl-diskless-load swapdb` and the primary uses diskless sync (see [loading from a file or from the socket](/topics/replication/#on-the-replica-loading-from-a-file-or-from-the-socket)),
-- the replica loads a module that doesn't support forkless operations and the primary uses diskless sync,
-- [replication compression](/topics/replication/#compressing-the-replication-stream) is enabled on both the primary and the replica,
-- a client requests an RDB file that contains only functions, for example with [`valkey-cli --functions-rdb`](/topics/functions-intro/#functions-and-ephemeral-valkey-instances).
-
-The [forkless documentation](/topics/forkless/) describes each case in detail.
-
-Forkless also covers only background saves and full syncs, so operations such as AOF rewrite still use `fork()` and still need copy-on-write headroom.
+`prefer-forkless` isn't a guarantee: when a forkless operation isn't possible, for example when a loaded module doesn't support it or the replica runs a Valkey version older than 9.2, Valkey falls back to `fork()`.
+If you rely on forkless, for example when sizing memory, review the [full list of fallback cases](/topics/forkless/#when-valkey-uses-fork-instead) closely, and keep in mind that operations other than saves and full syncs, such as AOF rewrite, still use `fork()`.
 
 ### Monitoring Forkless Operations
 
