@@ -23,7 +23,7 @@
                 var wide = window.matchMedia('(min-width: 1024px)');
                 sidebar.open = wide.matches;
                 wide.addEventListener('change', function () {
-                    if (wide.matches) sidebar.open = true;
+                    sidebar.open = wide.matches;
                 });
             })();
             </script>
