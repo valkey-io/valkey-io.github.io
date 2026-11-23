@@ -1,5 +1,5 @@
 +++
-title= "Introducing Fork()-less Save and Full Sync: Avoiding Memory Overhead During Save and Sync"
+title= "Introducing Fork()-less Save and Full Sync: Save and Sync Without Reserving Memory Headroom"
 date= 2026-11-20
 description= "Valkey 9.2 can take snapshots and sync replicas without calling fork(). Learn how forkless save and full sync avoid copy-on-write memory growth, what they cost, and how to plan for them."
 authors= ["nitaicaro"]
