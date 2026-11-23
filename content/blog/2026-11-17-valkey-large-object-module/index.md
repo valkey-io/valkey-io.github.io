@@ -92,7 +92,7 @@ Transport   libfabric: RDMA reads and writes against client memory
 
 **Data type.** Each object is one Valkey key, whatever its size. The keyspace holds a small descriptor: an object ID, the length, and a CRC32C checksum. The bytes live 
 elsewhere. Nothing is split across keys and nothing needs reassembling. In `Tiered` mode objects are immutable: writing a key again creates a new object, and the old one 
-is freed when its last reader finishes.
+is freed when its last reader finishes. An object can be up to `largeobj.max-object-size` (512 MiB by default), and in `Dram` mode it must fit in one segment.
 
 **Engine.** Every `GET` and `SET`, in every mode and over every transport, blocks only the client that sent it. The module hands the transfer to its own pool of worker 
 threads (8 by default, `largeobj.worker-threads`) and replies when the transfer finishes, while the Valkey main thread keeps serving everyone else. One streaming driver 
@@ -110,7 +110,7 @@ In `Dram` mode every object lives in these segments, up to the core `maxmemory` 
 
 **Disk.** In `Tiered` mode every object is a file on block storage, such as local NVMe or EBS, and DRAM is a read cache:
 
-- The module expects an XFS file system. Files sit in `largeobj.disk-dir`, spread over 1,024 subdirectories by object ID so creates and deletes don't serialize on one directory lock.
+- The module expects an XFS file system and Linux 5.1 or later. Files sit in `largeobj.disk-dir`, spread over 1,024 subdirectories by object ID so creates and deletes don't serialize on one directory lock.
 - An io_uring engine operates on those files, with `O_DIRECT` and registered buffers. Writes and cache misses pass through DRAM staging buffers (`largeobj.disk-staging-size`) that are registered with the network card, so an object reaches the network without a copy. A dedicated thread owns each io_uring ring. Staging buffers and the DRAM cache live in separate segments, so short-lived staging buffers don't leave holes between long-lived cached objects.
 - An object is copied into the DRAM cache on its first read by default (`largeobj.promote-min-hits`). When the cache is full, the module drops a cached copy with a low least-frequently-used score (the lowest in a small random sample); the object stays on disk.
 - When the disk limit (`largeobj.disk-maxmemory`) or `maxmemory` is reached, a write evicts the least recently used large objects, as long as `maxmemory-policy` is an `allkeys-*` policy. With `noeviction` the write fails with `OOM`.
@@ -120,24 +120,18 @@ libfabric endpoint address, and the reply lists the server's addresses. After th
 registered, and the server writes the object straight into them. `BLOB.RDMA_SET` is the reverse. The object bytes never travel on the Valkey connection, which carries 
 only the command, the key, the regions and a short reply. The server registers its memory for local access only, and it starts every transfer, so a client cannot read or 
 write server memory. The TCP commands, `BLOB.TCP_SET` and `BLOB.TCP_GET`, carry the bytes on the normal connection and work with any client.
+RDMA needs a client that implements the libfabric flow and, for the default `EfaDirect` provider, EFA hardware. The `Emulated` provider runs libfabric over TCP sockets for developing RDMA clients, and it is not faster than the TCP commands.
 
 **Integrity.** The server calculates a CRC32C checksum for every stored object. `BLOB.RDMA_SET` can send one, and the server rejects the write if the bytes don't match. 
 `BLOB.RDMA_GET` returns the stored checksum along with the length, so the client can check what it received.
-
-## What it supports
-
-|  | Supported |
-| --- | --- |
-| Operating modes | `Dram` (default): all objects in DRAM. `Tiered`: every object is a file on block storage, DRAM as a read cache. |
-| Transports | TCP (`BLOB.TCP_SET`, `BLOB.TCP_GET`): any Valkey client. RDMA (`BLOB.RDMA_*`): a client that implements the libfabric flow, and EFA hardware for the default `EfaDirect` provider. `Emulated` runs libfabric over TCP sockets for developing RDMA clients; it is not faster than the TCP commands. |
-| Object size | Up to `largeobj.max-object-size` (512 MiB by default). In `Dram` mode an object must fit in one segment. |
-| Eviction | Least recently used, controlled by the core `maxmemory-policy`. |
-| Requirements | Valkey 8.0 or later. Linux on x86_64 or aarch64. libfabric 2.0 or later to build, also for TCP only. `Tiered` mode: Linux 5.1 or later and XFS. |
 
 ## How fast it runs
 
 All numbers here are for the RDMA path over AWS Elastic Fabric Adapter (EFA), in `Tiered` mode.
 We have not measured the module over TCP.
+
+The throughput here is limited by the test instances' network card bandwidth and by their storage limits, the local NVMe rating or the EBS bandwidth.
+The instance type is an example: on machines with higher bandwidth limits, perforamnce can be well beyond these numbers. [TODO: Consider adding example]
 
 One i8ge.48xlarge server ran the module with a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS. Two c8gn.16xlarge clients drove it with cachecannon 
 over EFA. Each client machine used the same `GET` and `SET` connections as the stock Valkey run above (16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB and 4 at 256 and 
@@ -193,19 +187,11 @@ valkey-server \
   --largeobj.fabric-provider EfaDirect
 ```
 
-`maxmemory` is not set, so the DRAM cache grows in 1 GiB segments as needed.
+`maxmemory` is not set here. The DRAM cache grows in 1 GiB segments as needed, up to `maxmemory` when it is set.
 
-| Setting | Default | Meaning |
-| --- | --- | --- |
-| `largeobj.operating-mode` | `Dram` | `Dram` or `Tiered` |
-| `largeobj.disk-dir` | none | Dedicated directory for object files, on XFS. Required in `Tiered` mode |
-| `largeobj.disk-maxmemory` | 0 (no limit) | Disk space limit. At the limit, writes evict the least recently used objects |
-| `largeobj.segment-size` | 1 GiB | Size of each DRAM segment, 1 MiB to 1 GiB |
-| `largeobj.max-object-size` | 512 MiB | Largest value accepted |
-| `largeobj.fabric-provider` | `EfaDirect` | `EfaDirect` (EFA hardware) or `Emulated` (libfabric over TCP, for developing RDMA clients) |
-
-The RDMA commands need a client that registers its memory with libfabric and follows the flow in the [RDMA overview](https://github.com/valkey-io/valkey-large-object/
-blob/main/docs/COMMANDS.md#rdma-overview); the repository has no RDMA client library. The module also includes TCP variants of the commands for storing and retrieval.
+The RDMA commands need a client that registers its memory with libfabric and follows the flow in the [RDMA overview](https://github.com/valkey-io/valkey-large-object/blob/main/docs/COMMANDS.md#rdma-overview).
+Valkey GLIDE's Python sync client supports them from `valkey-glide-sync` 2.6.0.
+The module also includes TCP variants of the commands for storing and retrieval.
 You can refer to the [command reference](https://github.com/valkey-io/valkey-large-object/blob/main/docs/COMMANDS.md) and [getting started guide](https://github.com/valkey-io/valkey-large-object/blob/main/docs/GETTING_STARTED.md).
 
 The module is open source and release 0.1 is available.
