@@ -12,6 +12,8 @@ body:
         **Do not start writing until a maintainer assigns a blog reviewer to this issue and adds the `blog-approved` label.**
         Blog post pull requests without an approved proposal are closed with a link back to this form.
 
+        We try to review proposals within 1 business day. If you don't get a response, feel free to ping `@valkey-io/content-creators` on this issue.
+
         [CONTRIBUTING-BLOG-POST.md](https://github.com/valkey-io/valkey-io.github.io/blob/main/CONTRIBUTING-BLOG-POST.md) covers length, style, and the review process.
 
   - type: textarea

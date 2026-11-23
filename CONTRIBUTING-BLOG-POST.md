@@ -17,6 +17,8 @@ Before you write anything, open a [blog post proposal](https://github.com/valkey
 The proposal asks for the topic, blog type, audience, key takeaways, and a short abstract.
 The maintainers check that the post fits the site, is aimed at the right reader, and doesn't overlap with existing or in-progress content, and give feedback on the issue.
 A wrong audience or scope takes minutes to fix in a proposal and a full rewrite to fix in a finished post.
+We try to review proposals within 1 business day.
+If you don't get a response, feel free to ping `@valkey-io/content-creators` on the issue.
 
 Start writing once a maintainer assigns a blog reviewer to the issue and adds the `blog-approved` label.
 Blog post pull requests without an approved proposal are closed with a link to the proposal form.
