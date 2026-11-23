@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const trigger = document.createElement('pagefind-modal-trigger');
     trigger.setAttribute('compact', '');
+    keepScrollPositionOnClose(trigger);
     slot.append(trigger);
     // The modal goes on <body>, inside the nav it would be hidden while the mobile menu is closed.
     // The <template> it's built from is never shown, so it can be anywhere.
@@ -73,6 +74,29 @@ function putExactTitleMatchesFirst(instance) {
             const others = result.results.filter(function(match) { return !isExactMatch(match); });
             return { ...result, results: result.results.filter(isExactMatch).concat(others) };
         };
+    };
+}
+
+// When the modal closes, Pagefind focuses the search button, which scrolls it into view. The header
+// isn't sticky, so closing search from further down a page jumped back to the top. This makes that
+// focus not scroll, as the browser does when it returns focus from a closed dialog.
+//
+// The Component UI has no option for this, so this wraps the button's private close handler,
+// handleModalClose in pagefind-modal-trigger.ts, and changes only the focus it does.
+function keepScrollPositionOnClose(trigger) {
+    const handleModalClose = trigger.handleModalClose;
+    if (typeof handleModalClose !== 'function') return;
+    trigger.handleModalClose = function() {
+        const button = this.buttonEl;
+        if (!button) return handleModalClose.call(this);
+        button.focus = function(options) {
+            HTMLElement.prototype.focus.call(this, { ...options, preventScroll: true });
+        };
+        try {
+            return handleModalClose.call(this);
+        } finally {
+            delete button.focus;
+        }
     };
 }
 
