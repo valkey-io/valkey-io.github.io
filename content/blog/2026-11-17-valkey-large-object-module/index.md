@@ -16,10 +16,12 @@ featured_image = "/assets/media/featured/random-03.webp"
 A large language model reads the whole prompt before it answers.
 For every token, at every layer, it computes a key vector and a value vector that later tokens use to decide what to pay attention to.
 Those saved vectors are the KV cache.
-If a later request starts with the same text, such as a shared system prompt, a long document or the earlier turns of a conversation, the inference engine can load the saved KV cache and skip the work of computing it again.
+If a later request starts with the same text, such as a shared system prompt, a long document or the earlier turns of a conversation, the inference engine can load the 
+saved KV cache and skip the work of computing it again.
 That saves GPU time and shortens the time to the first token.
 
-GPU memory is too small to keep every cache, so inference stacks keep them in tiers: GPU memory, then the host's memory, then a shared store that every GPU server can read.
+GPU memory is too small to keep every cache, so inference stacks keep them in tiers: GPU memory, then the host's memory, then a shared store that every GPU server can 
+read.
 Tools such as [LMCache](https://github.com/LMCache/LMCache) manage the tiers.
 Valkey can be that shared store, and a Valkey cluster scales its capacity independently of the GPU servers.
 [KV caching on Valkey](https://valkey.io/blog/kv-caching-on-valkey/) shows what that does for a fleet of GPU servers.
@@ -42,12 +44,15 @@ It is not specific to KV cache: it stores any large binary value, and this is th
 ## What changes when values reach hundreds of megabytes
 
 Valkey is built for small values, typically a few hundred bytes.
-Out of the box a string value is capped at 512 MB (`proto-max-bulk-len`; a `SET` of 512 MiB plus one byte returns `invalid bulk length`), a command's own work, such as storing a value, runs on the main thread while other clients wait, and every byte goes through the TCP stack and the server's network buffers.
+Out of the box a string value is capped at 512 MB (`proto-max-bulk-len`; a `SET` of 512 MiB plus one byte returns `invalid bulk length`), a command's own work, such as 
+storing a value, runs on the main thread while other clients wait, and every byte goes through the TCP stack and the server's network buffers.
 
-We measured stock Valkey (commit `c86f6ee51`) over TCP, with every value in DRAM: `GET`s over a 64 GiB hot set plus `SET`s of new keys from a billion-key space, so memory fills and every `SET` then evicts.
+We measured stock Valkey (commit `c86f6ee51`) over TCP, with every value in DRAM: `GET`s over a 64 GiB hot set plus `SET`s of new keys from a billion-key space, so 
+memory fills and every `SET` then evicts.
 A separate connection sent one `PING` every 10 ms to show how long an unrelated small command waits.
 The server ran with `maxmemory 640gb`, `allkeys-lru` and 8 I/O threads on an i8ge.48xlarge.
-Two c8gn.16xlarge clients ran cachecannon with a 10-second request timeout and the same `GET` and `SET` connections per client as the module runs below: 16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB and 4 at 256 and 500 MiB.
+Two c8gn.16xlarge clients ran cachecannon with a 10-second request timeout and the same `GET` and `SET` connections per client as the module runs below: 16 each at 1 and 
+8 MiB, 12 at 32 MiB, 8 at 64 MiB and 4 at 256 and 500 MiB.
 `GET`s alone ran for 90 seconds and `SET`s alone for 60 seconds.
 `GET`s and `SET`s together ran for 5 minutes, long enough to reach the memory limit and start evicting at every size.
 
@@ -69,8 +74,7 @@ Two c8gn.16xlarge clients ran cachecannon with a 10-second request timeout and t
 The Valkey Large Object module (`libvalkey_large_object.so`) is a Valkey module written in Rust.
 It adds a value type and a small set of commands for large binary values, and it keeps those values outside the Valkey heap.
 It needs Valkey 8.0 or later on Linux (x86_64 or aarch64).
-Release 0.1 is out.
-It is a 0.x version, so commands, replies and configuration can change before 1.0.
+Release 0.1 is available for use.
 
 It has four layers:
 
@@ -84,18 +88,34 @@ Storage     DRAM segments, disk staging buffers, io_uring, object files
 Transport   libfabric: RDMA reads and writes against client memory
 ```
 
-**Data type.** Each object is one Valkey key, whatever its size. The keyspace holds a small descriptor: an object ID, the length, and a CRC32C checksum. The bytes live elsewhere. Nothing is split across keys and nothing needs reassembling. In `Tiered` mode objects are immutable: writing a key again creates a new object, and the old one is freed when its last reader finishes.
+**Data type.** Each object is one Valkey key, whatever its size. The keyspace holds a small descriptor: an object ID, the length, and a CRC32C checksum. The bytes live 
+elsewhere. Nothing is split across keys and nothing needs reassembling. In `Tiered` mode objects are immutable: writing a key again creates a new object, and the old one 
+is freed when its last reader finishes.
 
-**Engine.** Every `GET` and `SET`, in every mode and over every transport, blocks only the client that sent it. The module hands the transfer to its own pool of worker threads (8 by default, `largeobj.worker-threads`) and replies when the transfer finishes, while the Valkey main thread keeps serving everyone else. One streaming driver handles all eight combinations of `Dram` or `Tiered`, `GET` or `SET`, TCP or RDMA. It moves an object in chunks (1 MiB by default, `largeobj.chunk-size`), up to 64 buffers at a time (`largeobj.max-buffers-per-op`), and hands each chunk to its target as soon as the source has produced it. A 256 MiB value never needs a 256 MiB buffer, and network and disk transfers overlap.
+**Engine.** Every `GET` and `SET`, in every mode and over every transport, blocks only the client that sent it. The module hands the transfer to its own pool of worker 
+threads (8 by default, `largeobj.worker-threads`) and replies when the transfer finishes, while the Valkey main thread keeps serving everyone else. One streaming driver 
+handles all eight combinations of `Dram` or `Tiered`, `GET` or `SET`, TCP or RDMA. It moves an object in chunks (1 MiB by default, `largeobj.chunk-size`), up to 64 
+buffers at a time (`largeobj.max-buffers-per-op`), and hands each chunk to its target as soon as the source has produced it. A 256 MiB value never needs a 256 MiB 
+buffer, and network and disk transfers overlap.
 
-**Storage.** Object bytes live in segments: large blocks of memory (1 GB each by default, `largeobj.segment-size`) that the module reserves once and sub-allocates. Registering memory with the network card costs 300 to 500 microseconds per call, which would ruin throughput on the data path, so the module registers each segment once, with the network card and, in `Tiered` mode, with io_uring. In `Dram` mode every object lives in DRAM segments, up to the core `maxmemory` setting. In `Tiered` mode every object is a file on local NVMe disk, and DRAM is a read cache:
+**Storage.** Object bytes live in segments: large blocks of memory (1 GB each by default, `largeobj.segment-size`) that the module reserves once and sub-allocates. 
+Registering memory with the network card costs 300 to 500 microseconds per call, which would ruin throughput on the data path, so the module registers each segment once, 
+with the network card and, in `Tiered` mode, with io_uring. In `Dram` mode every object lives in DRAM segments, up to the core `maxmemory` setting. In `Tiered` mode 
+every object is a file on local NVMe disk, and DRAM is a read cache:
 
-- Files sit in `largeobj.disk-dir`, spread over 1,024 subdirectories by object ID so creates and deletes don't serialize on one directory lock. XFS is the only supported file system.
+- Files sit in `largeobj.disk-dir`, spread over 1,024 subdirectories by object ID so creates and deletes don't serialize on one directory lock. XFS is the only supported 
+file system.
 - Reads and writes use io_uring with registered buffers and `O_DIRECT`, through DRAM staging buffers. A dedicated thread owns each io_uring ring.
-- An object is copied into the DRAM cache on its first read by default (`largeobj.promote-min-hits`). When the cache is full, the module drops a cached copy with a low least-frequently-used score (the lowest in a small random sample); the object stays on disk.
-- When the disk limit (`largeobj.disk-maxmemory`) or `maxmemory` is reached, a write evicts the least recently used large objects, as long as `maxmemory-policy` is an `allkeys-*` policy. With `noeviction` the write fails with `OOM`.
+- An object is copied into the DRAM cache on its first read by default (`largeobj.promote-min-hits`). When the cache is full, the module drops a cached copy with a low 
+least-frequently-used score (the lowest in a small random sample); the object stays on disk.
+- When the disk limit (`largeobj.disk-maxmemory`) or `maxmemory` is reached, a write evicts the least recently used large objects, as long as `maxmemory-policy` is an 
+`allkeys-*` policy. With `noeviction` the write fails with `OOM`.
 
-**Transport.** The RDMA commands use [libfabric](https://ofiwg.github.io/libfabric/). A client opens a session once per connection with `BLOB.RDMA_HELLO`, sending its libfabric endpoint address, and the reply lists the server's addresses. After that, `BLOB.RDMA_GET key rkey addr len ...` names regions of client memory the client has registered, and the server writes the object straight into them. `BLOB.RDMA_SET` is the reverse. The object bytes never travel on the Valkey connection, which carries only the command, the key, the regions and a short reply. The server registers its memory for local access only, and it starts every transfer, so a client cannot read or write server memory. The TCP commands, `BLOB.TCP_SET` and `BLOB.TCP_GET`, carry the bytes on the normal connection and work with any client.
+**Transport.** The RDMA commands use [libfabric](https://ofiwg.github.io/libfabric/). A client opens a session once per connection with `BLOB.RDMA_HELLO`, sending its 
+libfabric endpoint address, and the reply lists the server's addresses. After that, `BLOB.RDMA_GET key rkey addr len ...` names regions of client memory the client has 
+registered, and the server writes the object straight into them. `BLOB.RDMA_SET` is the reverse. The object bytes never travel on the Valkey connection, which carries 
+only the command, the key, the regions and a short reply. The server registers its memory for local access only, and it starts every transfer, so a client cannot read or 
+write server memory. The TCP commands, `BLOB.TCP_SET` and `BLOB.TCP_GET`, carry the bytes on the normal connection and work with any client.
 
 **Integrity.** The server calculates a CRC32C checksum for every stored object. `BLOB.RDMA_SET` can send one, and the server rejects the write if the bytes don't match. `BLOB.RDMA_GET` returns the stored checksum along with the length, so the client can check what it received.
 
@@ -114,7 +134,9 @@ Transport   libfabric: RDMA reads and writes against client memory
 All numbers here are for the RDMA path over AWS Elastic Fabric Adapter (EFA), in `Tiered` mode.
 We have not measured the module over TCP.
 
-One i8ge.48xlarge server ran the module with a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS. Two c8gn.16xlarge clients drove it with cachecannon over EFA. Each client machine used the same `GET` and `SET` connections as the stock Valkey run above (16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB and 4 at 256 and 500 MiB), so the total is twice that.
+One i8ge.48xlarge server ran the module with a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS. Two c8gn.16xlarge clients drove it with cachecannon 
+over EFA. Each client machine used the same `GET` and `SET` connections as the stock Valkey run above (16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB and 4 at 256 and 
+500 MiB), so the total is twice that.
 Each size ran `GET`s over a 64 GiB hot set and `SET`s of new keys at the same time.
 The run first filled the disk to its limit and then ran for 2 hours at the limit, where every `SET` evicts the oldest objects to make room.
 The stock Valkey numbers are the ones from the table above, with the same instance types and the same connections per client, over TCP.
@@ -175,16 +197,9 @@ Give it a new, empty directory on XFS that only the module uses, never a mount p
 | `largeobj.max-object-size` | 512 MB | Largest value accepted |
 | `largeobj.fabric-provider` | `EfaDirect` | `EfaDirect` (EFA hardware) or `Emulated` (libfabric over TCP, for developing RDMA clients) |
 
-Try the TCP commands with `valkey-cli`:
+The RDMA commands need a client that registers its memory with libfabric and follows the flow in the [RDMA overview](https://github.com/valkey-io/valkey-large-object/
+blob/main/docs/COMMANDS.md#rdma-overview); the repository has no RDMA client library. The module also includes TCP variants of the commands for storing and retrieval.
+You can refer to the [command reference](https://github.com/valkey-io/valkey-large-object/blob/main/docs/COMMANDS.md) and [getting started guide](https://github.com/valkey-io/valkey-large-object/blob/main/docs/GETTING_STARTED.md).
 
-```text
-BLOB.TCP_SET mykey "hello"
-BLOB.TCP_GET mykey
-BLOB.INFO mykey
-```
-
-The RDMA commands need a client that registers its memory with libfabric and follows the flow in the [RDMA overview](https://github.com/valkey-io/valkey-large-object/blob/main/docs/COMMANDS.md#rdma-overview); the repository has no RDMA client library.
-The [command reference](https://github.com/valkey-io/valkey-large-object/blob/main/docs/COMMANDS.md) and [getting started guide](https://github.com/valkey-io/valkey-large-object/blob/main/docs/GETTING_STARTED.md) cover the rest.
-
-The module is open source and release 0.1 is out.
+The module is open source and release 0.1 is available.
 File issues and pull requests at [valkey-io/valkey-large-object](https://github.com/valkey-io/valkey-large-object).
