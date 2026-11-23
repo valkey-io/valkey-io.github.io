@@ -1,7 +1,7 @@
 +++
-title = "Valkey Large Object module: 400 Gbps and 108 TB from one node"
+title = "Valkey Large Object Module: as fast as your hardware"
 date = 2026-11-17 01:01:01
-description = "The Valkey Large Object module stores values of tens to hundreds of megabytes outside the Valkey heap, moves them over RDMA, and tiers them to NVMe, so large values stop slowing down every other client."
+description = "The Valkey Large Object module keeps values of tens to hundreds of megabytes off the main thread and out of the heap, so a node's throughput follows its network and storage bandwidth, not Valkey's CPU."
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
@@ -16,7 +16,8 @@ featured_image = "/assets/media/featured/random-03.webp"
 A large language model reads the whole prompt before it answers.
 For every token, at every layer, it computes a key vector and a value vector that later tokens use to decide what to pay attention to.
 Those saved vectors are the KV cache.
-If a later request starts with the same text, such as a shared system prompt, a long document or the earlier turns of a conversation, the inference engine can load the 
+If a later request starts with the same text, such as a shared system prompt, a long document or the 
+earlier turns of a conversation, the inference engine can load the 
 saved KV cache and skip the work of computing it again.
 That saves GPU time and shortens the time to the first token.
 
@@ -65,7 +66,8 @@ Two c8gn.16xlarge clients ran cachecannon with a 10-second request timeout and t
 | 256 MiB | 71.9 | 72.7 | 107.6 (53.0 + 54.6) | 325-333 / 440-453 ms | 331 / 392-394 ms | 26 / 221 ms | 6.0K |
 | 500 MiB | 74.7 | 76.1 | 104.8 (49.5 + 55.2) | 625-654 ms / 1.3-1.4 s | 633-638 ms / 0.7-1.2 s | 34 / 93 ms | 2.9K |
 
-- **Reads and writes:** `GET`s alone reached about 208 Gbps, the hosts' TCP ceiling, at 1 and 8 MiB, and 201 Gbps at 32 MiB. With fewer connections at 64 MiB and above, each connection waits longer for each value, so they reached 134, 72 and 75 Gbps. `SET`s alone reached 105-119 Gbps from 8 to 64 MiB and 73-76 Gbps at 256 and 500 MiB.
+- **Reads and writes:** `GET`s alone reached about 208 Gbps, the hosts' TCP ceiling, at 1 and 8 MiB, and 201 Gbps at 32 MiB. With fewer connections at 64 MiB and above, 
+each connection waits longer for each value, so they reached 134, 72 and 75 Gbps. `SET`s alone reached 105-119 Gbps from 8 to 64 MiB and 73-76 Gbps at 256 and 500 MiB.
 - **Other clients:** a `PING` from another connection took 2.1-34 ms at p99 and up to 240 ms, against 0.05 ms when idle.
 - **Capacity:** stock Valkey held 640 GiB in DRAM before evicting.
 
@@ -117,7 +119,8 @@ registered, and the server writes the object straight into them. `BLOB.RDMA_SET`
 only the command, the key, the regions and a short reply. The server registers its memory for local access only, and it starts every transfer, so a client cannot read or 
 write server memory. The TCP commands, `BLOB.TCP_SET` and `BLOB.TCP_GET`, carry the bytes on the normal connection and work with any client.
 
-**Integrity.** The server calculates a CRC32C checksum for every stored object. `BLOB.RDMA_SET` can send one, and the server rejects the write if the bytes don't match. `BLOB.RDMA_GET` returns the stored checksum along with the length, so the client can check what it received.
+**Integrity.** The server calculates a CRC32C checksum for every stored object. `BLOB.RDMA_SET` can send one, and the server rejects the write if the bytes don't match. 
+`BLOB.RDMA_GET` returns the stored checksum along with the length, so the client can check what it received.
 
 ## What it supports
 
@@ -153,7 +156,8 @@ Stock Valkey against the module, GET + SET together, with the same connections p
 | 256 MiB | 107.6 | 372.3 | 3.5x | 440-453 ms / 101 ms | 392-394 ms / 105 ms | 26 ms / 0.33 ms |
 | 500 MiB | 104.8 | 371.9 | 3.5x | 1.3-1.4 s / 193 ms | 0.7-1.2 s / 195 ms | 34 ms / 0.32 ms |
 
-- With reads and writes together, the module moved 1.8x to 3.5x the throughput of stock Valkey from 8 MiB up, and 1.3x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size. Stock Valkey's total fell as values grew, from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
+- With reads and writes together, the module moved 1.8x to 3.5x the throughput of stock Valkey from 8 MiB up, and 1.3x at 1 MiB. Its total stayed between 372 and 399 
+Gbps at every size. Stock Valkey's total fell as values grew, from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
 - The module evicted between 319 thousand (500 MiB) and 131 million (1 MiB) objects at the limit [validate], and rejected no `SET` at any size.
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 2.1-34 ms with stock Valkey.
 - The module node held 108 TB on NVMe, against 640 GiB of DRAM for stock Valkey.
@@ -170,23 +174,31 @@ cargo build --release      # target/release/libvalkey_large_object.so
 ```
 
 The build needs libfabric 2.0 or later with development files, `clang` and `libclang-dev`.
-Then start Valkey in `Tiered` mode:
+Then start Valkey in `Tiered` mode.
+This is the command we used for the benchmark on an i8ge.48xlarge, with its 16 NVMe drives striped under XFS and mounted at `/mnt/bigobj-data`.
+Size the disk and staging settings for your own hardware.
 
 ```bash
-valkey-server --port 6379 \
-  --maxmemory 4gb \
+ulimit -n 1048576
+export LD_LIBRARY_PATH=/opt/amazon/efa/lib64
+
+numactl --cpunodebind=0 --membind=0 valkey-server \
+  --port 6379 --save '' --appendonly no \
   --maxmemory-policy allkeys-lru \
   --loadmodule ./target/release/libvalkey_large_object.so \
-  --largeobj.operating-mode Tiered \
-  --largeobj.disk-dir /mnt/nvme/largeobj \
-  --largeobj.disk-maxmemory 10gb \
-  --largeobj.segment-size 64mb \
-  --largeobj.max-object-size 32mb \
-  --largeobj.disk-staging-size 64mb
+    operating-mode Tiered \
+    disk-dir /mnt/bigobj-data/lo \
+    segment-size 1073741824 \
+    disk-staging-size 17179869184 \
+    disk-maxmemory 108000000000000 \
+    fabric-provider EfaDirect \
+    fabric-max-in-flight 256 \
+    worker-threads 8 \
+    fabric-crc-pool-threads 2
 ```
 
-In `Tiered` mode the module deletes `largeobj.disk-dir` and everything in it at startup and at shutdown, then creates it again.
-Give it a new, empty directory on XFS that only the module uses, never a mount point or a directory with other data.
+The server is pinned to NUMA node 0, which is where the EFA device and the network interface are.
+`maxmemory` is not set, so the DRAM cache grows in 1 GiB segments as needed.
 
 | Setting | Default | Meaning |
 | --- | --- | --- |
