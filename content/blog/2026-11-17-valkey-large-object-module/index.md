@@ -79,17 +79,9 @@ It introduces a new module data type and a set of commands optimized for large b
 The module data type holds only a small descriptor, and the bytes live in memory segments the module manages itself, or in files on disk.
 It needs Valkey 8.0 or later on Linux (x86_64 or aarch64).
 
-It has four layers:
+Here is the path of one `GET` or `SET` through the module, with the two kinds of registered segments it uses:
 
-```text
-Commands    parse the command and resolve the key to an object
-   |
-Engine      chooses the path by mode (Dram or Tiered) and transport (TCP or RDMA)
-   |
-Storage     DRAM segments, disk staging buffers, io_uring, object files
-   |
-Transport   libfabric: RDMA reads and writes against client memory
-```
+![Request path through the module. A client sends a command to the Valkey main thread, which blocks only that client and hands the transfer to a streaming task. The streaming task moves the object as a window of chunks in parallel, for both SET and GET. Chunks move between two kinds of segment pools, DRAM cache segments and disk staging segments. Each segment has its own talc allocator and is registered with both EFA and io_uring. Bytes cross the network by RDMA directly between those segments and the client's registered memory. Disk reads and writes go through the io_uring engine to object files on XFS.](request_path.svg)
 
 **Data type.** Each object is one Valkey key, whatever its size. The keyspace holds a small descriptor: an object ID, the length, and a CRC32C checksum. The bytes live 
 elsewhere. Nothing is split across keys and nothing needs reassembling. In `Tiered` mode objects are immutable: writing a key again creates a new object, and the old one 
@@ -143,6 +135,8 @@ The stock Valkey numbers are the ones from the table above, with the same instan
 Stock Valkey's `GET`s and `SET`s together ran for 5 minutes, and the module's for 2 hours at the disk limit.
 
 Stock Valkey against the module, GET + SET together, with the same connections per client:
+
+![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 291 at 1 MiB, 226 at 8 MiB, 218 at 32 MiB, 181 at 64 MiB, 108 at 256 MiB and 105 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
 | Object size | Stock Valkey total (Gbps) | Module total (Gbps) | Module / stock | GET p99, stock / module | SET p99, stock / module | PING p99, stock / module |
 | --- | --- | --- | --- | --- | --- | --- |
