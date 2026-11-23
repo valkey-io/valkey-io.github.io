@@ -166,13 +166,14 @@
 
 {% if command_description %}
 {%- set command_description_with_fixed_links %}{{< fix_links_command content={command_description} />}}{% endset -%}
+{%- set command_description_html %}{{ command_description_with_fixed_links | markdown | safe }}{% endset -%}
 
-{{ command_description_with_fixed_links | markdown | safe }}
+{{< heading_links content={command_description_html} />}}
 {% else %}
 <code>ERROR. Command description not loaded</code><br />
 {% endif %}
 {% if command_data_obj.replaced_by %}
-<h3 id="deprecation-advice">Deprecation advice</h3>
+{{< heading_links content='<h3 id="deprecation-advice">Deprecation advice</h3>' />}}
 Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{{ command_data_obj.replaced_by | markdown | safe  }}</div>
 
 {% endif %}
@@ -205,7 +206,7 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 {% endif -%}
 
 {% if command_data_obj and command_data_obj.history %}
-<h3>History</h3>
+{{< heading_links content='<h3 id="history">History</h3>' />}}
 <table>
     <thead>
         <tr>
@@ -225,6 +226,11 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 </table>
 {% endif %}
 
+{# Every command page, module commands included, is built from a description in valkey-doc (see build/init-commands.sh). #}
+<div class="edit_box">
+    See an error?
+    <a href="https://github.com/valkey-io/valkey-doc/edit/main/commands/{{ page.slug }}.md">Update this Page on GitHub!</a>
+</div>
 {% endblock main_content %}
 
 {% block related_content %}
