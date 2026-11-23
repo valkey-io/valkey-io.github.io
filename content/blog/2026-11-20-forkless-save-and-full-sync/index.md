@@ -114,6 +114,7 @@ Even with these settings, Valkey can still fall back to `fork()` in some situati
 
 `prefer-forkless` isn't a guarantee: when a forkless operation isn't possible, for example when a loaded module doesn't support it or the replica runs a Valkey version older than 9.2, Valkey falls back to `fork()`.
 If you rely on forkless, for example when sizing memory, review the [full list of fallback cases](/topics/forkless/#when-valkey-uses-fork-instead) closely, and keep in mind that operations other than saves and full syncs, such as AOF rewrite, still use `fork()`.
+Work is ongoing to make forkless available in more configurations, which would allow a setting that never falls back to `fork()`.
 
 ### Monitoring Forkless Operations
 
