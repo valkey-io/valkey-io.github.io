@@ -100,18 +100,20 @@ handles all eight combinations of `Dram` or `Tiered`, `GET` or `SET`, TCP or RDM
 buffers at a time (`largeobj.max-buffers-per-op`), and hands each chunk to its target as soon as the source has produced it. A 256 MiB value never needs a 256 MiB 
 buffer, and network and disk transfers overlap.
 
-**Storage.** Object bytes live in segments: large blocks of memory (1 GB each by default, `largeobj.segment-size`) that the module reserves once and sub-allocates. 
-Registering memory with the network card costs 300 to 500 microseconds per call, which would ruin throughput on the data path, so the module registers each segment once, 
-with the network card and, in `Tiered` mode, with io_uring. In `Dram` mode every object lives in DRAM segments, up to the core `maxmemory` setting. In `Tiered` mode 
-every object is a file on local NVMe disk, and DRAM is a read cache:
+**Memory.** Object bytes live in segments: large blocks of memory (1 GB each by default, `largeobj.segment-size`) that the module reserves once and carves up itself.
+Objects range from tens of kilobytes to hundreds of megabytes, so each segment has its own allocator that hands out exact-sized, 4 KiB-aligned slots.
+There are no fixed size classes to waste memory on.
+Registering memory with the network card costs 300 to 500 microseconds per call, which would ruin throughput on the data path.
+So the module registers each segment once, and in `Tiered` mode it registers the segment with io_uring as well.
+A buffer registered both ways serves the network card and the disk without a copy in between.
+In `Dram` mode every object lives in these segments, up to the core `maxmemory` setting.
 
-- Files sit in `largeobj.disk-dir`, spread over 1,024 subdirectories by object ID so creates and deletes don't serialize on one directory lock. XFS is the only supported 
-file system.
-- Reads and writes use io_uring with registered buffers and `O_DIRECT`, through DRAM staging buffers. A dedicated thread owns each io_uring ring.
-- An object is copied into the DRAM cache on its first read by default (`largeobj.promote-min-hits`). When the cache is full, the module drops a cached copy with a low 
-least-frequently-used score (the lowest in a small random sample); the object stays on disk.
-- When the disk limit (`largeobj.disk-maxmemory`) or `maxmemory` is reached, a write evicts the least recently used large objects, as long as `maxmemory-policy` is an 
-`allkeys-*` policy. With `noeviction` the write fails with `OOM`.
+**Disk.** In `Tiered` mode every object is a file on block storage, such as local NVMe or EBS, and DRAM is a read cache:
+
+- The module expects an XFS file system. Files sit in `largeobj.disk-dir`, spread over 1,024 subdirectories by object ID so creates and deletes don't serialize on one directory lock.
+- An io_uring engine operates on those files, with `O_DIRECT` and registered buffers. Writes and cache misses pass through DRAM staging buffers (`largeobj.disk-staging-size`) that are registered with the network card, so an object reaches the network without a copy. A dedicated thread owns each io_uring ring. Staging buffers and the DRAM cache live in separate segments, so short-lived staging buffers don't leave holes between long-lived cached objects.
+- An object is copied into the DRAM cache on its first read by default (`largeobj.promote-min-hits`). When the cache is full, the module drops a cached copy with a low least-frequently-used score (the lowest in a small random sample); the object stays on disk.
+- When the disk limit (`largeobj.disk-maxmemory`) or `maxmemory` is reached, a write evicts the least recently used large objects, as long as `maxmemory-policy` is an `allkeys-*` policy. With `noeviction` the write fails with `OOM`.
 
 **Transport.** The RDMA commands use [libfabric](https://ofiwg.github.io/libfabric/). A client opens a session once per connection with `BLOB.RDMA_HELLO`, sending its 
 libfabric endpoint address, and the reply lists the server's addresses. After that, `BLOB.RDMA_GET key rkey addr len ...` names regions of client memory the client has 
@@ -126,7 +128,7 @@ write server memory. The TCP commands, `BLOB.TCP_SET` and `BLOB.TCP_GET`, carry 
 
 |  | Supported |
 | --- | --- |
-| Operating modes | `Dram` (default): all objects in DRAM. `Tiered`: every object on NVMe, DRAM as a read cache. |
+| Operating modes | `Dram` (default): all objects in DRAM. `Tiered`: every object is a file on block storage, DRAM as a read cache. |
 | Transports | TCP (`BLOB.TCP_SET`, `BLOB.TCP_GET`): any Valkey client. RDMA (`BLOB.RDMA_*`): a client that implements the libfabric flow, and EFA hardware for the default `EfaDirect` provider. `Emulated` runs libfabric over TCP sockets for developing RDMA clients; it is not faster than the TCP commands. |
 | Object size | Up to `largeobj.max-object-size` (512 MB by default). In `Dram` mode an object must fit in one segment. |
 | Eviction | Least recently used, controlled by the core `maxmemory-policy`. |
