@@ -11,7 +11,9 @@
 {#- Where the page sits in the site, shown with its search results. Topic and command pages set
     search_breadcrumb from the documentation menu in their head block, the same as their own
     breadcrumbs. Other pages use `breadcrumb` in the [extra] front matter of the page, or else of
-    its nearest section that sets one. #}
+    its nearest section that sets one. Failing that, they use the title of their nearest section
+    other than the site's root, for sections whose _index.md is rewritten by tools that drop extra
+    keys, such as the release automation's rewrite of content/try-valkey/_index.md. #}
 {%- set breadcrumb = "" %}
 {%- if search_breadcrumb is defined and search_breadcrumb %}{% set breadcrumb = search_breadcrumb %}
 {%- else %}
@@ -24,6 +26,18 @@
                 {%- set_global breadcrumb = ancestor.extra?.breadcrumb | default(value="") %}
             {%- endif %}
         {%- endfor %}
+        {%- if not breadcrumb %}
+            {%- if page is not defined and current.relative_path != "_index.md" %}
+                {%- set breadcrumb = current.title | default(value="") %}
+            {%- else %}
+                {%- for ancestor_path in current.ancestors | reverse %}
+                    {%- if not breadcrumb and ancestor_path != "_index.md" %}
+                        {%- set ancestor = get_section(path=ancestor_path, metadata_only=true) %}
+                        {%- set_global breadcrumb = ancestor.title | default(value="") %}
+                    {%- endif %}
+                {%- endfor %}
+            {%- endif %}
+        {%- endif %}
     {%- endif %}
 {%- endif -%}
 <!DOCTYPE html>

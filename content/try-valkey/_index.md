@@ -5,7 +5,6 @@ template = "valkey-try-me.html"
 state_file = "https://download.valkey.io/try-me-valkey/9.2.0/states/state.bin.gz"
 filesystem_base_url = "https://download.valkey.io/try-me-valkey/9.2.0/fs/alpine-rootfs-flat"
 filesystem_base_fs = "https://download.valkey.io/try-me-valkey/9.2.0/fs/alpine-fs.json"
-breadcrumb = "Try Valkey"
 +++
 
 
