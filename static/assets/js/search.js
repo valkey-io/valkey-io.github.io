@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const slot = document.getElementById('site-search');
+    const modalContents = document.getElementById('search-modal-contents');
     // Without a search index, such as under zola serve, there is no search button.
-    if (!window.PagefindComponents || !slot) return;
+    if (!window.PagefindComponents || !slot || !modalContents) return;
 
     // Configure before creating the elements: the first element to connect creates the
     // instance with default settings, and configuration after that is ignored.
@@ -18,7 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
     trigger.setAttribute('compact', '');
     slot.append(trigger);
     // The modal goes on <body>, inside the nav it would be hidden while the mobile menu is closed.
-    document.body.append(createModal());
+    // The <template> it's built from is never shown, so it can be anywhere.
+    document.body.append(createModal(modalContents));
 });
 
 // Each page's breadcrumb is a filter rather than metadata, since Pagefind searches metadata and
@@ -74,45 +76,10 @@ function putExactTitleMatchesFirst(instance) {
     };
 }
 
-// Pagefind's default modal contents, written out so the results can use RESULT_TEMPLATE.
-function createModal() {
+// The modal's contents are in templates/includes/search-modal.html, in a <template> so the Pagefind
+// elements stay inactive until the modal has moved them into its dialog.
+function createModal(contents) {
     const modal = document.createElement('pagefind-modal');
-    // Parse the contents in an inert <template> so the Pagefind elements stay un-upgraded until the
-    // modal has moved them into its dialog; otherwise each one initializes twice.
-    const template = document.createElement('template');
-    template.innerHTML = `
-        <pagefind-modal-header><pagefind-input></pagefind-input></pagefind-modal-header>
-        <pagefind-modal-body>
-            <pagefind-summary></pagefind-summary>
-            <pagefind-results>${RESULT_TEMPLATE}</pagefind-results>
-        </pagefind-modal-body>
-        <pagefind-modal-footer><pagefind-keyboard-hints></pagefind-keyboard-hints></pagefind-modal-footer>`;
-    modal.append(template.content);
+    modal.append(contents.content.cloneNode(true));
     return modal;
 }
-
-// Pagefind's built-in result template (https://pagefind.app/docs/components/results/), plus customizations.
-// We add a site breadcrumb to help the user understand where the page is in the context of the site.
-const RESULT_TEMPLATE = `<script type="text/pagefind-template">
-    <li class="pf-result">
-      <div class="pf-result-card">
-        <div class="pf-result-content">
-          {{#if meta.breadcrumb}}<p class="search-result-breadcrumb">{{ meta.breadcrumb }}</p>{{/if}}
-          <p class="pf-result-title">
-            <a class="pf-result-link" href="{{ meta.url | default(url) | safeUrl }}">{{ meta.title }}</a>
-          </p>
-          {{#if excerpt}}<p class="pf-result-excerpt">{{+ excerpt +}}</p>{{/if}}
-        </div>
-      </div>
-      {{#if sub_results}}
-      <ul class="pf-heading-chips">
-        {{#each sub_results as sub}}
-        <li class="pf-heading-chip">
-          <a class="pf-heading-link" href="{{ sub.url | safeUrl }}">{{ sub.title }}</a>
-          <p class="pf-heading-excerpt">{{+ sub.excerpt +}}</p>
-        </li>
-        {{/each}}
-      </ul>
-      {{/if}}
-    </li>
-  <\/script>`;
