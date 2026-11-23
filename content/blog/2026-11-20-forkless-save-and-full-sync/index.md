@@ -131,11 +131,7 @@ For full syncs, it also happens when:
 
 The [forkless documentation](/topics/forkless/) describes each case in detail.
 
-### Operations That Still Use fork()
-
-Even with every fallback case avoided, forkless currently covers only background saves and full syncs.
-In Valkey 9.2, other operations that use `fork()` continue to do so, including AOF rewrite, the snapshot that atomic slot migration sends from the source node, and modules that fork their own child processes.
-If you use these operations, their copy-on-write memory growth still needs to be planned for.
+Forkless also covers only background saves and full syncs, so operations such as AOF rewrite still use `fork()` and still need copy-on-write headroom.
 
 ### Monitoring Forkless Operations
 
