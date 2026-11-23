@@ -50,7 +50,7 @@ FalkorDB supplies the graph storage and query engine as a module loaded into Val
 
 ## A small example: tracing service dependencies
 
-Consider an application where a storefront depends on an orders service, which in turn depends on a database. If the database goes down, the on-call engineer needs to know whether the storefront is affected and why. With dependencies stored as per-service lists, tracing the path from the storefront to the database takes two sequential lookups, one per hop. With FalkorDB, a single Cypher query returns the full dependency path. With FalkorDB loaded into a running Valkey instance, we can create that graph using `valkey-cli`:
+Consider an application where a storefront depends on an orders service, which in turn depends on a database. If the database goes down, the on-call engineer needs to identify every service that depends on it. With dependencies stored as per-service lists, finding direct and indirect dependents requires repeated lookups through the application. With FalkorDB, a single Cypher query can find all components that depend on the database, regardless of how many dependency hops separate them. With FalkorDB loaded into a running Valkey instance, we can create that graph using `valkey-cli`:
 
 ```bash
 valkey-cli GRAPH.QUERY dependencies "CREATE (app:Application {name:'Storefront'}), (svc:Service {name:'Orders'}), (db:Database {name:'OrdersDB'}), (app)-[:DEPENDS_ON]->(svc), (svc)-[:DEPENDS_ON]->(db)"
@@ -62,7 +62,7 @@ Now ask which components depend, directly or indirectly, on the database:
 valkey-cli GRAPH.QUERY dependencies "MATCH (component)-[:DEPENDS_ON*1..]->(:Database {name:'OrdersDB'}) RETURN DISTINCT component.name ORDER BY component.name"
 ```
 
-The query returns Orders and Storefront. It follows the dependency chain rather than requiring the application to know in advance how many hops separate each component from the database.
+The query returns Orders and Storefront, the direct and indirect dependents of OrdersDB. It returns component names, not the dependency path; the variable-length relationship lets the query find dependents without a fixed hop count.
 
 The same pattern applies to software dependency maps, recommendation systems, fraud investigations and knowledge graphs used by AI applications.
 
