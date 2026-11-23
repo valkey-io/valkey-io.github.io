@@ -227,6 +227,41 @@
 {{ found | json_encode | safe }}
 {% endcomponent nav_topic_location %}
 
+{#-
+    Links to the previous and next topic in menu order: each section's landing
+    page, then its topics, crossing into the next section at the end of one.
+    The command reference isn't a topic, so it's skipped. A topic that isn't in
+    the menu gets no links. Titles are the topics' own, not the shorter menu
+    titles, which only make sense under their section.
+-#}
+{% component nav_pager(nav, slug, extra) %}
+{%- set order = [] -%}
+{%- for section in nav -%}
+    {%- if section.landing -%}{%- set_global order = [...order, section.landing] -%}{%- endif -%}
+    {%- set_global order = [...order, ...[t.topic for t in section.topics]] -%}
+{%- endfor -%}
+{%- set at = [i for i in range(end=order | length) if order[i] == slug] -%}
+{%- set i = at | first if at else -1 -%}
+{%- set prev = order[i - 1] if i > 0 else "" -%}
+{%- set next = order[i + 1] if i >= 0 and i + 1 < order | length else "" -%}
+{%- if prev or next %}
+<nav class="docs-pager" aria-label="Previous and next topics">
+    {%- if prev %}
+    <a class="docs-pager-prev" href="/topics/{{ prev }}/" rel="prev">
+        <span class="docs-pager-label">Previous</span>
+        <span class="docs-pager-title">{{< nav_topic_title slug={prev} extra={extra} />}}</span>
+    </a>
+    {%- endif %}
+    {%- if next %}
+    <a class="docs-pager-next" href="/topics/{{ next }}/" rel="next">
+        <span class="docs-pager-label">Next</span>
+        <span class="docs-pager-title">{{< nav_topic_title slug={next} extra={extra} />}}</span>
+    </a>
+    {%- endif %}
+</nav>
+{%- endif %}
+{% endcomponent nav_pager %}
+
 {#- A topic's title: `title` if set, otherwise the title in the topic's front matter. -#}
 {% component nav_topic_title(slug, extra, title="") %}
 {%- if title -%}{{ title }}{%- else -%}
