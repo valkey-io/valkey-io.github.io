@@ -3,6 +3,7 @@ title = "Documentation"
 template = "block-menu.html"
 page_template = "docs-page.html"
 [extra]
+breadcrumb = "Documentation"
 body_class=  "blocks-page"
 +++
 
