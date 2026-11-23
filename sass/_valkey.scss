@@ -600,6 +600,69 @@ p {
       }
     }
   }
+
+  // The docs menu (templates/left-aside.html) goes above the page on narrow
+  // screens. On wide screens .docs-sidebar has the padding instead.
+  .docs-aside {
+    order: -1;
+
+    @include respond-min(1024px) {
+      order: 0;
+      padding: 0;
+    }
+  }
+}
+
+// Narrow screens: a toggle that opens the menu. Wide screens: the menu is
+// always open.
+.docs-sidebar {
+  > summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.6rem;
+    border-radius: 10px;
+    background-color: #fff;
+    font-weight: 700;
+    color: #000;
+    cursor: pointer;
+    list-style: none;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    // Chevron, as in the menu's sections.
+    &::after {
+      content: '';
+      width: 0.7rem;
+      height: 0.7rem;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: rotate(-45deg);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #2054B2;
+      outline-offset: 1px;
+    }
+  }
+
+  &[open] > summary {
+    margin-bottom: 1rem;
+
+    &::after {
+      transform: rotate(45deg);
+    }
+  }
+
+  @include respond-min(1024px) {
+    padding: 2rem;
+
+    > summary {
+      display: none;
+    }
+  }
 }
 
 .docs-menu {
@@ -1965,6 +2028,24 @@ html.banner-hidden .banner {
   height: 1.6rem;
 }
 
+// "#" after each docs heading (heading_links in templates/macros/docs.html).
+// Shown while the heading is hovered or the link has focus, and always on
+// touch screens, which can't hover.
+.heading-link {
+  margin-left: 0.4em;
+  opacity: 0;
+
+  h2:hover > &,
+  h3:hover > &,
+  &:focus {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    opacity: 1;
+  }
+}
+
 // Amber rather than red: a release candidate is not broken, it is just not
 // finished. #7A4A00 on #FFF6E5 is 7.4:1.
 .release-prerelease-notice {
@@ -2233,6 +2314,60 @@ blockquote {
 // Page title at the top of the docs content panel (topic and command pages).
 .docs-page-title {
   margin: 1.5rem 0 2.5rem;
+}
+
+// Previous and next topic links at the end of a topic (nav_pager in
+// templates/macros/nav.html). The links look like the docs menu's. "Next"
+// stays on the right when there's no "Previous".
+.docs-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #d5d9ec;
+
+  a {
+    display: flex;
+    flex-direction: column;
+    max-width: 50%;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    line-height: 1.35;
+
+    &:hover {
+      background-color: #d1d9ff;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #2054B2;
+      outline-offset: 1px;
+    }
+  }
+
+  .docs-pager-next {
+    margin-left: auto;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .docs-pager-label {
+    font-size: 1.3rem;
+    color: #444;
+  }
+
+  .docs-pager-title {
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.5rem;
+
+    a {
+      max-width: none;
+    }
+  }
 }
 
 // Events Calendar

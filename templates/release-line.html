@@ -1,10 +1,7 @@
-{% extends "right-aside.html" %}
-
-{% block subhead_content %}
-<h1 class="page-title">Download Valkey {{ page.extra.version }}</h1>
-{% endblock subhead_content %}
+{% extends "download-layout.html" %}
 
 {% block main_content %}
+<h1 class="docs-page-title">Download Valkey {{ page.extra.version }}</h1>
 {% set line = page.extra.version %}
 
 {# Every release on this line, newest first, stable and pre-release kept apart. #}

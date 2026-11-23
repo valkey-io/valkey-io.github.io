@@ -1,8 +1,6 @@
-{% extends "right-aside.html" %}
+{% extends "download-layout.html" %}
 
-{% block subhead_content%}
-<h1 class="page-title">Download Valkey {{page.title}}</h1>
-{% endblock subhead_content%}
 {% block main_content %}
+<h1 class="docs-page-title">Download Valkey {{page.title}}</h1>
 {{< release_info date={page.date} release={page.extra} />}}
 {% endblock main_content %}
