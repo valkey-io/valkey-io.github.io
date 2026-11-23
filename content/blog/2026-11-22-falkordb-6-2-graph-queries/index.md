@@ -5,7 +5,7 @@ description = "Model and query connected data directly in Valkey with FalkorDBâ€
 authors = ["gkorland"]
 
 [taxonomies]
-blog_type = ["Announcements"]
+blog_type = ["Community Highlight"]
 
 [extra]
 featured = false
