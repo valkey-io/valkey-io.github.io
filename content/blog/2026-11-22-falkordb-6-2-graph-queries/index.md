@@ -2,7 +2,7 @@
 title = "FalkorDB 6.2 Brings Graph Queries to Valkey"
 date = 2026-11-22
 description = "Model and query connected data directly in Valkey with FalkorDB’s low-latency graph engine."
-authors = []
+authors = ["gkorland"]
 
 [taxonomies]
 blog_type = ["Announcements"]
