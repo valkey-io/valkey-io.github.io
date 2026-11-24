@@ -147,13 +147,11 @@ Stock Valkey against the module, GET + SET together, with the same connections p
 | 256 MiB | 107.6 | 372.3 | 3.5x | 440-453 ms / 101 ms | 392-394 ms / 105 ms | 26 ms / 0.33 ms |
 | 500 MiB | 104.8 | 371.9 | 3.5x | 1.3-1.4 s / 193 ms | 0.7-1.2 s / 195 ms | 34 ms / 0.32 ms |
 
-- With reads and writes together, the module moved 1.8x to 3.5x the throughput of stock Valkey from 8 MiB up, and 1.3x at 1 MiB. Its total stayed between 372 and 399 
-Gbps at every size. Stock Valkey's total fell as values grew, from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
-- The module evicted between 319 thousand (500 MiB) and 131 million (1 MiB) objects at the limit [validate], and rejected no `SET` at any size.
+- With reads and writes together, the module moved 1.8x to 3.5x the throughput of stock Valkey from 8 MiB up, and 1.3x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 2.1-34 ms with stock Valkey.
+- The module evicted between 319 thousand (500 MiB) and 131 million (1 MiB) objects at the limit [validate], and rejected no `SET` at any size.
 - The module node held 108 TB (about 98 TiB) on NVMe, against 640 GiB of DRAM for stock Valkey.
-- Run alone for 3 minutes, `GET`s reached 215-216 Gbps from NVMe and 204-216 Gbps from DRAM, so the disk tier doesn't cost read bandwidth. `SET`s reached 193 Gbps.
-- At 1 MiB the total was 372.2 Gbps, 7% below 8 MiB (399.3). From 8 MiB up the total stays within 8% of the best size.
+- In a separate 3-minute test, `GET`s read straight from NVMe (cache off) reached 215-216 Gbps, the same ceiling that cache hits from DRAM reach. `SET`s reached 193 Gbps. [validate]
 - The module ran over RDMA on a separate test bed and stock Valkey ran over TCP, so the table compares whole setups, not one variable.
 
 ## Try it
