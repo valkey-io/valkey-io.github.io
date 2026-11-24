@@ -126,7 +126,4 @@ Here's to the next chapter.
 **Get involved**
 
 - Try Valkey Admin: [valkey-admin.valkey.io](https://valkey-admin.valkey.io)
-- Explore the code: [github.com/valkey-io/valkey-admin](https://github.com/valkey-io/valkey-admin)
-- See what's new: [What's New page](https://valkey-admin.valkey.io/releases/)
-- Share an idea or issue: [GitHub Issues](https://github.com/valkey-io/valkey-admin/issues)
 - Build with us: [contribution guide](https://valkey-admin.valkey.io/development/contributing/)
