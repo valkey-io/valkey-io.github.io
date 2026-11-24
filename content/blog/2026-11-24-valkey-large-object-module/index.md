@@ -34,7 +34,9 @@ The size depends on the model and the chunk size:
 
 Larger chunks mean fewer, bigger objects per prompt, and a cache hit has to move many of them quickly.
 The [Valkey Large Object module](https://github.com/valkey-io/valkey-large-object) is built for that.
-However, it is not limited to only KV caching: it optimally stores any large binary value.
+In [our benchmark](#how-fast-it-runs), one node sustained 372 to 399 Gbps of reads and writes at every object size, with p99 latency under 3 ms for objects of about 1 MB.
+Reads served from NVMe matched reads from memory at 215 Gbps, so tiering data to disk adds capacity without lowering read throughput.
+However, the module is not limited to only KV caching: it optimally stores any large binary value.
 
 This post is the first in a three-part series on distributed KV caching with Valkey.
 It covers what changes in in-memory key-value datastores when values reach hundreds of megabytes, and how the Valkey Large Object module improves performance for such large objects.
