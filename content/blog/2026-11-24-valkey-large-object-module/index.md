@@ -17,16 +17,10 @@ featured_image = "/assets/media/featured/random-03.webp"
 A large language model reads the whole prompt before it answers.
 For every token, at every layer, it computes a key vector and a value vector that later tokens use to decide what to pay attention to.
 Those saved vectors are the KV cache.
-If a later request starts with the same text, such as a shared system prompt, a long document or the 
-earlier turns of a conversation, the inference engine can load the 
-saved KV cache and skip the work of computing it again.
-That saves GPU time and shortens the time to the first token.
+If a later request starts with the same text, such as a shared system prompt, a long document or the earlier turns of a conversation, the inference engine can load the saved KV cache instead of computing it again, which saves GPU time and shortens the time to the first token.
 
-GPU memory is too small to keep every cache, so inference stacks keep them in tiers: GPU memory, then the host's memory, then a shared store that every GPU server can 
-read.
-Tools such as [LMCache](https://github.com/LMCache/LMCache) manage the tiers.
-Valkey can be that shared store, and a Valkey cluster scales its capacity independently of the GPU servers.
-[KV caching on Valkey](https://valkey.io/blog/kv-caching-on-valkey/) shows what that does for a fleet of GPU servers.
+GPU memory is too small to keep every cache, so inference stacks keep them in tiers: GPU memory, then the host's memory, then a shared store that every GPU server can read, managed by tools such as [LMCache](https://github.com/LMCache/LMCache).
+Valkey can be that shared store, and a Valkey cluster scales its capacity independently of the GPU servers, as [KV caching on Valkey](https://valkey.io/blog/kv-caching-on-valkey/) shows for a fleet of GPU servers.
 
 What the shared store has to hold is large.
 LMCache splits a prompt into chunks, 256 tokens by default, and stores each chunk as one object.
