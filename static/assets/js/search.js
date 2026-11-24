@@ -15,8 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
     addBreadcrumbsToResults(instance);
     putExactTitleMatchesFirst(instance);
 
+    // Not compact, so the button has a visible "Search" label, not only an icon. Pagefind's default
+    // label is its lowercase "search" keyboard hint.
     const trigger = document.createElement('pagefind-modal-trigger');
-    trigger.setAttribute('compact', '');
+    trigger.setAttribute('placeholder', 'Search');
     keepScrollPositionOnClose(trigger);
     slot.append(trigger);
     // The modal goes on <body>, inside the nav it would be hidden while the mobile menu is closed.

@@ -267,14 +267,18 @@ p {
       display: flex;
       --pf-background: #f8f9fa;
       --pf-border: #dfe1e4;
+      // The label and icon. Pagefind's #767676 is too light for text on this background.
+      --pf-text-muted: #444;
       --pf-input-height: 100%;
 
       pagefind-modal-trigger {
         flex-grow: 1;
       }
 
-      // Pagefind hides its other keyboard hints on touch devices, but not this one
-      @media (hover: none) {
+      // Pagefind hides its other keyboard hints on touch devices, but not this one. Just above the
+      // mobile menu, the nav doesn't fit with the label and the shortcut, so the label stays. The
+      // shortcut still works there.
+      @media (hover: none), (min-width: 1025px) and (max-width: 1100px) {
         .pf-trigger-shortcut {
           display: none !important;
         }
@@ -287,6 +291,11 @@ p {
         // Pagefind resets its elements with a high-specificity selector
         .pf-trigger-btn {
           justify-content: center !important;
+        }
+
+        // Centred like the GitHub button, instead of the label filling the button
+        .pf-trigger-text {
+          flex: none !important;
         }
       }
     }
