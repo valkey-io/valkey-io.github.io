@@ -106,12 +106,12 @@ In `Dram` mode it holds every object, and in `Tiered` mode it acts as a read cac
 - When the disk limit (`largeobj.disk-maxmemory`) or `maxmemory` is reached, a write evicts the least recently used large objects that `maxmemory-policy` allows, as core Valkey does.
 
 **Transport.** The RDMA commands use [libfabric](https://ofiwg.github.io/libfabric/).
-A client opens a session once per connection with `BLOB.RDMA_HELLO`, sending its libfabric endpoint address.
-After that, `BLOB.RDMA_GET key rkey addr len ...` names regions of client memory the client has registered, and the server writes the object straight into them. `BLOB.RDMA_SET` is the reverse.
-The object bytes never travel on the Valkey connection, and the server starts every transfer, so a client cannot read or write server memory.
-The TCP commands, `BLOB.TCP_SET` and `BLOB.TCP_GET`, carry the bytes on the normal connection and work with any client.
-RDMA needs a client that implements the libfabric flow and, for the default `EfaDirect` provider, EFA hardware.
-The `Emulated` provider runs libfabric over TCP sockets for developing RDMA clients, and it is not faster than the TCP commands.
+A client sends `BLOB.RDMA_HELLO` once per connection with its libfabric endpoint address, and the reply lists the server's addresses.
+Each `BLOB.RDMA_GET` or `BLOB.RDMA_SET` then lists one or more remote addresses in the client's registered memory, each with its memory key and length, in one registered region or several, and the server writes to or reads from them directly.
+The object bytes never travel on the Valkey TCP connection, which carries only the command and the transfer details.
+The server starts every transfer, so a client never gets access to server memory.
+`BLOB.TCP_SET` and `BLOB.TCP_GET` carry the bytes on the normal connection and work with any client.
+The default `EfaDirect` provider needs EFA hardware.
 
 **Integrity.** `BLOB.RDMA_SET` can send a CRC32C checksum that the server verifies, and `BLOB.RDMA_GET` returns the stored checksum and the length so the client can verify what it received.
 
