@@ -83,21 +83,20 @@ Here is the path of one `GET` or `SET` through the module, with the two kinds of
 
 ![Request path through the module. A client sends a command to the Valkey main thread, which blocks only that client and hands the transfer to a streaming task. The streaming task moves the object as a window of chunks in parallel, for both SET and GET. Chunks move between two kinds of segment pools, DRAM cache segments (four shown) and disk staging segments (two shown), which have their own segment counts. Each segment has its own talc allocator and is registered with both EFA and io_uring. Bytes cross the network by RDMA directly between those segments and the client's registered memory. Disk reads and writes go through the io_uring engine to object files on XFS.](request_path.svg)
 
-**Data type.** Each object is one Valkey key, whatever its size. The keyspace holds a small descriptor: an object ID, the length, and a CRC32C checksum. The bytes live 
-elsewhere. Nothing is split across keys and nothing needs reassembling. In `Tiered` mode objects are immutable: writing a key again creates a new object, and the old one 
-is freed when its last reader finishes. An object can be up to `largeobj.max-object-size` (512 MiB by default), and in `Dram` mode it must fit in one segment.
+**Data type.** Each object is one Valkey key, whatever its size.
+The keyspace holds a small descriptor (an object ID, the length and a CRC32C checksum) and the bytes live elsewhere, so nothing is split across keys or reassembled.
+In `Tiered` mode objects are immutable: writing a key again creates a new object, and the old one is freed when its last reader finishes.
+An object can be up to `largeobj.max-object-size` (512 MiB by default, configurable), and in `Dram` mode it must fit in one segment.
 
-**Engine.** Every `GET` and `SET`, in every mode and over every transport, blocks only the client that sent it. The module hands the transfer to its own pool of worker 
-threads (8 by default, `largeobj.worker-threads`) and replies when the transfer finishes, while the Valkey main thread keeps serving everyone else. One streaming driver 
-handles all eight combinations of `Dram` or `Tiered`, `GET` or `SET`, TCP or RDMA. It moves an object in chunks (1 MiB by default, `largeobj.chunk-size`), up to 64 
-buffers at a time (`largeobj.max-buffers-per-op`), and hands each chunk to its target as soon as the source has produced it. A 256 MiB value never needs a 256 MiB 
-buffer, and network and disk transfers overlap.
+**Engine.** Every `GET` and `SET` blocks only the client that issues the command, in every storage and transport mode.
+The module moves the data on its own worker threads (8 by default, `largeobj.worker-threads`) while the Valkey main thread keeps serving everyone else.
+Objects are streamed in chunks (1 MiB by default, `largeobj.chunk-size`), up to 64 at a time (`largeobj.max-buffers-per-op`), and each chunk goes to its target as soon as the source has produced it, so network and disk transfers overlap.
+In `Tiered` mode the chunks pass through a bounded window of reused staging buffers, so a transfer does not allocate the whole object, however large it is.
 
 **Memory.** Object bytes live in segments: large blocks of memory (1 GiB each by default, `largeobj.segment-size`) that the module reserves once and carves up itself.
-Objects range from tens of kilobytes to hundreds of megabytes, so each segment has its own allocator that hands out exact-sized, 4 KiB-aligned slots.
-There are no fixed size classes to waste memory on.
+Each segment has its own allocator that hands out exact-sized, 4 KiB-aligned slots, so objects from tens of kilobytes to hundreds of megabytes waste no memory on fixed size classes.
 Registering memory with the network card costs 300 to 500 microseconds per call, which would ruin throughput on the data path.
-So the module registers each segment once, and in `Tiered` mode it registers the segment with io_uring as well.
+So the module registers each segment once, and in `Tiered` mode with io_uring as well.
 A buffer registered both ways serves the network card and the disk without a copy in between.
 In `Dram` mode every object lives in these segments, up to the core `maxmemory` setting.
 
@@ -124,7 +123,7 @@ All numbers here are for the RDMA path over AWS Elastic Fabric Adapter (EFA), in
 We have not measured the module over TCP.
 
 The throughput here is limited by the test instances' network card bandwidth and by their storage limits, the local NVMe rating or the EBS bandwidth.
-The instance type is an example: on machines with higher bandwidth limits, perforamnce can be well beyond these numbers. [TODO: Consider adding example]
+The instance type is an example: on machines with higher bandwidth limits, performance can be well beyond these numbers. [TODO: Consider adding example]
 
 One i8ge.48xlarge server ran the module with a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS. Two c8gn.16xlarge clients drove it with cachecannon 
 over EFA. Each client machine used the same `GET` and `SET` connections as the stock Valkey run above (16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB and 4 at 256 and 
