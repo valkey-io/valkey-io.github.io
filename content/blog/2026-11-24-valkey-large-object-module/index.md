@@ -56,7 +56,7 @@ The workload:
 
 - `GET`s read a 64 GiB hot set that was filled beforehand, so every `GET` finds its key.
 - `SET`s always write new keys, picked from a billion-key space, so none overwrites an existing value. Once memory is full, every `SET` evicts an older key.
-- We ran `GET`s alone, `SET`s alone, and then both together for 5 minutes, long enough for memory to fill.
+- We ran `GET`s alone, `SET`s alone, and then both together, long enough for memory to fill.
 - A separate connection sent a `PING` every 10 ms to show how long an unrelated small command waits.
 
 | Object size | GET only (Gbps) | SET only (Gbps) | GET and SET together (Gbps) | GET p50 / p99 (together) | SET p50 / p99 (together) | PING p99 / max (together) | Evictions (together) |
@@ -135,18 +135,18 @@ Stock Valkey against the module, GET + SET together, with the same connections p
 
 ![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 291 at 1 MiB, 226 at 8 MiB, 218 at 32 MiB, 181 at 64 MiB, 108 at 256 MiB and 105 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
-| Object size | Stock Valkey total (Gbps) | Module total (Gbps) | Module / stock | GET p99, stock / module | SET p99, stock / module | PING p99, stock / module |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 290.8 | 372.2 | 1.3x | 2.6 ms / 2.10 ms | 4.6 ms / 2.75 ms | 2.1 ms / 0.23 ms |
-| 8 MiB | 225.6 | 399.3 | 1.8x | 20 ms / 15.2 ms | 49-50 ms / 16.2 ms | 9.6 ms / 0.23 ms |
-| 32 MiB | 217.6 | 388.7 | 1.8x | 73 ms / 37.5 ms | 230-238 ms / 41.2 ms | 15 ms / 0.36 ms |
-| 64 MiB | 181.0 | 377.9 | 2.1x | 106-114 ms / 54.5 ms | 323-325 ms / 56.1 ms | 17 ms / 0.35 ms |
-| 256 MiB | 107.6 | 372.3 | 3.5x | 440-453 ms / 101 ms | 392-394 ms / 105 ms | 26 ms / 0.33 ms |
-| 500 MiB | 104.8 | 371.9 | 3.5x | 1.3-1.4 s / 193 ms | 0.7-1.2 s / 195 ms | 34 ms / 0.32 ms |
+| Object size | Stock Valkey total (Gbps) | Module total (Gbps) | Module / stock | GET p99, stock / module | SET p99, stock / module | PING p99, stock / module | Evictions per second, stock / module |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 MiB | 290.8 | 372.2 | 1.3x | 2.6 ms / 2.10 ms | 4.6 ms / 2.75 ms | 2.1 ms / 0.23 ms | 15,400 / 16,700 |
+| 8 MiB | 225.6 | 399.3 | 1.8x | 20 ms / 15.2 ms | 49-50 ms / 16.2 ms | 9.6 ms / 0.23 ms | 840 / 2,670 |
+| 32 MiB | 217.6 | 388.7 | 1.8x | 73 ms / 37.5 ms | 230-238 ms / 41.2 ms | 15 ms / 0.36 ms | 210 / 680 |
+| 64 MiB | 181.0 | 377.9 | 2.1x | 106-114 ms / 54.5 ms | 323-325 ms / 56.1 ms | 17 ms / 0.35 ms | 100 / 340 |
+| 256 MiB | 107.6 | 372.3 | 3.5x | 440-453 ms / 101 ms | 392-394 ms / 105 ms | 26 ms / 0.33 ms | 20 / 82 |
+| 500 MiB | 104.8 | 371.9 | 3.5x | 1.3-1.4 s / 193 ms | 0.7-1.2 s / 195 ms | 34 ms / 0.32 ms | 10 / 43 |
 
 - With reads and writes together, the module moved 1.8x to 3.5x the throughput of stock Valkey from 8 MiB up, and 1.3x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 2.1-34 ms with stock Valkey.
-- The module evicted between 319 thousand (500 MiB) and 131 million (1 MiB) objects at the limit [validate], and rejected no `SET` at any size.
+- At the limit every `SET` evicts an older object. From 8 MiB up the module evicted 3 to 4 times faster than stock Valkey, because it accepted that many more `SET`s, and it rejected none at any size.
 - The module node held 108 TB (about 98 TiB) on NVMe, against 640 GiB of DRAM for stock Valkey.
 - In a separate 3-minute test, `GET`s read straight from NVMe (cache off) reached 215-216 Gbps, the same ceiling that cache hits from DRAM reach. `SET`s reached 193 Gbps. [validate]
 - The module ran over RDMA on a separate test bed and stock Valkey ran over TCP, so the table compares whole setups, not one variable.
