@@ -81,8 +81,8 @@ Like a String, this is a single value data type.
 
 **Engine.** Every `GET` and `SET` blocks only the client that issues the command, in every storage and transport mode.
 The module moves the data on its own worker threads (8 by default, `largeobj.worker-threads`) while the Valkey main thread keeps serving everyone else.
-Objects are streamed in chunks (1 MiB by default, `largeobj.chunk-size`), up to 64 at a time (`largeobj.max-buffers-per-op`), and each chunk goes to its target as soon as the source has produced it, so network and disk transfers overlap.
-In `Tiered` mode the chunks pass through a bounded window of reused staging buffers, so a transfer does not allocate the whole object, however large it is.
+Objects are streamed in chunks (1 MiB by default, `largeobj.chunk-size`), up to 64 at a time (`largeobj.max-buffers-per-op`), and each chunk moves on as soon as its source has produced it, so network and disk transfers overlap.
+In `Tiered` mode the chunks pass through a bounded window of reused staging buffers, so a transfer never allocates the whole object.
 
 **Memory.** Data sent or received over EFA must sit in memory registered with the EFA network card, and registering is too slow to do on every transfer.
 So the module allocates memory from Valkey in large segments (1 GiB each by default, `largeobj.segment-size`), which count toward `used_memory` and `maxmemory`, and registers each segment when it is created.
