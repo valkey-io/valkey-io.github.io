@@ -81,10 +81,10 @@ Here is the path of one `GET` or `SET` through the module:
 
 ![Request path through the module. A client sends a command to the Valkey main thread, which blocks only that client and hands the transfer to a streaming task. The streaming task moves the object as a window of chunks in parallel, for both SET and GET. Chunks move between two kinds of segment pools, DRAM cache segments (four shown) and disk staging segments (two shown), which have their own segment counts. Each segment has its own talc allocator and is registered with both EFA and io_uring. Bytes cross the network by RDMA directly between those segments and the client's EFA-registered memory. Each segment pool has its own io_uring engine to the object files on XFS: the DRAM cache engine reads objects into the cache, and the staging engine reads and writes them.](request_path.svg)
 
-**Data type.** Each object is one Valkey key, whatever its size.
-The keyspace holds a small descriptor (an object ID, the length and a CRC32C checksum) and the bytes live elsewhere, so nothing is split across keys or reassembled.
-In `Tiered` mode objects are immutable: writing a key again creates a new object, and the old one is freed when its last reader finishes.
+**Data type.** A Large Object data type holds a small descriptor, not the object's bytes: an object ID, the length and a CRC32C checksum.
+The bytes live in the module's segments or in a file, depending on the operating mode.
 An object can be up to `largeobj.max-object-size` (512 MiB by default, configurable), and in `Dram` mode it must fit in one segment.
+Like a String, this is a single value data type.
 
 **Engine.** Every `GET` and `SET` blocks only the client that issues the command, in every storage and transport mode.
 The module moves the data on its own worker threads (8 by default, `largeobj.worker-threads`) while the Valkey main thread keeps serving everyone else.
