@@ -122,14 +122,14 @@ The stock Valkey results below are taken from the [earlier section](#what-change
 
 ![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 291 at 1 MiB, 226 at 8 MiB, 218 at 32 MiB, 181 at 64 MiB, 108 at 256 MiB and 105 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
-| Object size | Total Gbps, stock / module | GET p99, stock / module | SET p99, stock / module | PING p99, stock / module | Evictions per second, stock / module |
-| --- | --- | --- | --- | --- | --- |
-| 1 MiB | 290.8 / 372.2 | 2.6 ms / 2.10 ms | 4.6 ms / 2.75 ms | 2.1 ms / 0.23 ms | 15,400 / 16,700 |
-| 8 MiB | 225.6 / 399.3 | 20 ms / 15.2 ms | 49-50 ms / 16.2 ms | 9.6 ms / 0.23 ms | 840 / 2,670 |
-| 32 MiB | 217.6 / 388.7 | 73 ms / 37.5 ms | 230-238 ms / 41.2 ms | 15 ms / 0.36 ms | 210 / 680 |
-| 64 MiB | 181.0 / 377.9 | 106-114 ms / 54.5 ms | 323-325 ms / 56.1 ms | 17 ms / 0.35 ms | 100 / 340 |
-| 256 MiB | 107.6 / 372.3 | 440-453 ms / 101 ms | 392-394 ms / 105 ms | 26 ms / 0.33 ms | 20 / 82 |
-| 500 MiB | 104.8 / 371.9 | 1.3-1.4 s / 193 ms | 0.7-1.2 s / 195 ms | 34 ms / 0.32 ms | 10 / 43 |
+| Object size | Total Gbps, stock / module | GET p50, stock / module | GET p99, stock / module | SET p50, stock / module | SET p99, stock / module | PING p99, stock / module | Evictions per second, stock / module |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 MiB | 290.8 / 372.2 | 1.1 ms / 1.27 ms | 2.6 ms / 2.10 ms | 1.5 ms / 1.53 ms | 4.6 ms / 2.75 ms | 2.1 ms / 0.23 ms | 15,400 / 16,700 |
+| 8 MiB | 225.6 / 399.3 | 13 ms / 10.6 ms | 20 ms / 15.2 ms | 30-32 ms / 10.8 ms | 49-50 ms / 16.2 ms | 9.6 ms / 0.23 ms | 840 / 2,670 |
+| 32 MiB | 217.6 / 388.7 | 41-43 ms / 31.5 ms | 73 ms / 37.5 ms | 77-78 ms / 34.3 ms | 230-238 ms / 41.2 ms | 15 ms / 0.36 ms | 210 / 680 |
+| 64 MiB | 181.0 / 377.9 | 71-74 ms / 43.8 ms | 106-114 ms / 54.5 ms | 115 ms / 45.6 ms | 323-325 ms / 56.1 ms | 17 ms / 0.35 ms | 100 / 340 |
+| 256 MiB | 107.6 / 372.3 | 325-333 ms / 88.6 ms | 440-453 ms / 101 ms | 331 ms / 95.4 ms | 392-394 ms / 105 ms | 26 ms / 0.33 ms | 20 / 82 |
+| 500 MiB | 104.8 / 371.9 | 625-654 ms / 178 ms | 1.3-1.4 s / 193 ms | 633-638 ms / 185 ms | 0.7-1.2 s / 195 ms | 34 ms / 0.32 ms | 10 / 43 |
 
 - The module moved 1.8x to 3.5x the throughput of stock Valkey from 8 MiB up, and 1.3x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 2.1-34 ms with stock Valkey.
