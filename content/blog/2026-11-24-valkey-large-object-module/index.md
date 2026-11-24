@@ -160,3 +160,4 @@ valkey-server \
 The TCP commands work with any client.
 The RDMA commands need a client that implements the libfabric flow; Valkey GLIDE's Python sync client supports them from `valkey-glide-sync` 2.6.0.
 The module is open source, and release 0.1 is available at [valkey-io/valkey-large-object](https://github.com/valkey-io/valkey-large-object).
+A huge thank you to everyone who contributed to the module's design and code.
