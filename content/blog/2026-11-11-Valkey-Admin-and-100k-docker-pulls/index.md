@@ -35,7 +35,7 @@ A small change with a clear goal: spend less time hunting for the problem, and m
 
 ![Valkey Admin Cluster Topology view with two primaries flagged High, one for CPU and one for memory](images/24fdb3a30366.png)
 
-**Watch the 1.2 demo:** see your whole cluster's utilization at a glance (under a minute).
+**Watch the Valkey Admin 1.2 demo:** see your whole cluster's utilization at a glance (under a minute).
 
 {{< youtube id="-812isos-0k" />}}
 
@@ -77,15 +77,15 @@ One detail: longer windows still need enough metrics retention configured. Each 
 
 ![Valkey Admin memory chart for the last 30 days](images/6ba531c50472.png)
 
-**Watch the 1.3 demo:** look back 30 days at CPU and memory (under a minute).
+**Watch the Valkey Admin 1.3 demo:** look back 30 days at CPU and memory (under a minute).
 
 {{< youtube id="6tbHtWjC5A0" />}}
 
 ### Stronger foundations
 
-Some of the most important work in 1.3 doesn't show up in a screenshot.
+Some of the most important work in Valkey Admin 1.3 doesn't show up in a screenshot.
 
-1.3 introduces stronger server-side isolation based on your Valkey identity and the deployment you connect to. Clients, topology state, and metrics collectors are scoped to the right owner, commands run with your own Valkey credentials, and the server validates those credentials against the endpoint you named. It also strengthens protections around WebSocket connections and authentication attempts. 1.3 also adds [Identity and Access Management (IAM) authentication for Google Cloud Memorystore for Valkey](https://github.com/valkey-io/valkey-admin/pull/508).
+Valkey Admin 1.3 introduces stronger server-side isolation based on your Valkey identity and the deployment you connect to. Clients, topology state, and metrics collectors are scoped to the right owner, commands run with your own Valkey credentials, and the server validates those credentials against the endpoint you named. It also strengthens protections around WebSocket connections and authentication attempts. 1.3 also adds [Identity and Access Management (IAM) authentication for Google Cloud Memorystore for Valkey](https://github.com/valkey-io/valkey-admin/pull/508).
 
 There are upgrade considerations worth thirty seconds before you roll out. 1.3 keeps history separately for each Valkey identity and deployment, so dashboards start a fresh history after the upgrade. If you changed collector settings, apply them again. Deployments reached through a DNS hostname may need an explicit WebSocket origins allowlist. And in Kubernetes mode, collector-backed features are temporarily unavailable in 1.3, because the current sidecar credential model can't provide the required per-user isolation. We encourage existing users to skim the [What's New page](https://valkey-admin.valkey.io/releases/) first. For us, improving the foundations matters as much as adding visible features.
 
@@ -103,7 +103,7 @@ Once you're in, start with the cluster topology, check the Hot Slots tab, and wi
 
 ## What's next
 
-We're working on OpenTelemetry metrics export, so you can send the metrics Valkey Admin collects to the monitoring tools you already use. We're also exploring a Model Context Protocol (MCP) server, so you can troubleshoot Valkey with AI agents using the same views Valkey Admin gives you today.
+We're working on OpenTelemetry metrics export, so you can send the metrics Valkey Admin collects to the monitoring tools you already use. We're also exploring a Model Context Protocol (MCP) server, so you can troubleshoot Valkey with AI agents using the same views Valkey Admin gives you today. If either of these would help your setup, we'd love your input. Tell us which monitoring tools and agent workflows matter to you in GitHub Issues, or help build them through the contribution guide.
 
 ## Thank you, and an invitation
 
@@ -119,7 +119,7 @@ And thank you to everyone who has pulled the image, tried it out, shared it with
 
 Every deployment is different. Some of you are debugging locally, and others are running large clusters, using managed Valkey services, or working through complex Kubernetes setups. Those experiences surface problems and ideas no single team can anticipate, which is exactly why we want to build Valkey Admin *with* the community, not just in the open.
 
-So here's our invitation: try 1.3 and open an issue for anything you'd like to see. Let's make Valkey operations easier, more visible, and more approachable for everyone.
+So here's our invitation: try Valkey Admin 1.3 and open an issue for anything you'd like to see. Let's make Valkey operations easier, more visible, and more approachable for everyone.
 
 Here's to the next chapter.
 
