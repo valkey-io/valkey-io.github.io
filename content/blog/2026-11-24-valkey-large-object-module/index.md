@@ -34,8 +34,7 @@ The size depends on the model and the chunk size:
 
 Larger chunks mean fewer, bigger objects per prompt, and a cache hit has to move many of them quickly.
 The [Valkey Large Object module](https://github.com/valkey-io/valkey-large-object) is built for that.
-In [our benchmark](#how-fast-it-runs), one node sustained 372 to 399 Gbps of reads and writes at every object size, with p99 latency under 3 ms for objects of about 1 MB.
-Reads served from NVMe matched reads from memory at 215 Gbps, so tiering data to disk adds capacity without lowering read throughput.
+In [our benchmark](#how-fast-it-runs), one node sustained 372 to 399 Gbps of reads and writes at every object size. This allows all the models above in the table to setup distributed KV caching workloads that retreive KV objects with median latency under 1 ms for 1 MiB objects and median latency is about 10 ms for 32 and 64 MiB objects.
 However, the module is not limited to only KV caching: it optimally stores any large binary value.
 
 This post is the first in a three-part series on distributed KV caching with Valkey.
@@ -138,6 +137,17 @@ These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with 
 - With the DRAM cache turned off, so that every `GET` reads from NVMe, `GET`s reached the same 215-216 Gbps as cache hits from DRAM, because the 16 local NVMe drives can read faster than the network can carry. The cache matters when storage is the limit, for example on network-attached block storage, where reads and writes share one bandwidth limit: every `GET` served from DRAM leaves that bandwidth to `SET`s.
 
 How we measured: the server had a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS. Two c8gn.16xlarge clients drove it with [cachecannon](https://github.com/cachecannon/cachecannon) over EFA, using the same per-client `GET` and `SET` connections as the stock run, with `GET`s over a 64 GiB hot set and `SET`s of new keys at the same time. The run filled the disk to its limit first and then ran at the limit. The stock results come from the [earlier section](#what-changes-when-values-reach-hundreds-of-megabytes). These numbers are capped by the test instances' network and storage bandwidth, so machines with higher limits can go further.
+
+At lower concurrency, with the same two clients each running 4 `GET` and 4 `SET` connections at 1 to 32 MiB, 2 and 2 at 64 and 256 MiB, and 1 and 1 at 500 MiB, the module's latency drops further:
+
+| Object size | `GET` p50 / p99 | `SET` p50 / p99 |
+| --- | --- | --- |
+| 1 MiB | 0.33 / 0.53 ms | 0.51 / 0.76 ms |
+| 8 MiB | 2.6 / 3.9 ms | 3.0 / 4.6 ms |
+| 32 MiB | 10.4 / 13.7 ms | 11.6 / 15.5 ms |
+| 64 MiB | 10.3 / 13.8 ms | 13.0 / 17.7 ms |
+| 256 MiB | 41.7 / 49 ms | 51 / 62 ms |
+| 500 MiB | 59 / 73 ms | 68 / 82 ms |
 
 ## Try it
 
