@@ -132,8 +132,6 @@ Two c8gn.16xlarge clients drove it with [cachecannon](https://github.com/cacheca
 The run first filled the disk to its limit and then ran for 2 hours at the limit, where every `SET` evicts the oldest objects to make room.
 The stock Valkey results below are taken from the [earlier section](#what-changes-when-values-reach-hundreds-of-megabytes).
 
-Stock Valkey against the module, GET + SET together, with the same connections per client:
-
 ![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 291 at 1 MiB, 226 at 8 MiB, 218 at 32 MiB, 181 at 64 MiB, 108 at 256 MiB and 105 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
 | Object size | Stock Valkey total (Gbps) | Module total (Gbps) | Module / stock | GET p99, stock / module | SET p99, stock / module | PING p99, stock / module | Evictions per second, stock / module |
