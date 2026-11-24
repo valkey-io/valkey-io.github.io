@@ -26,11 +26,11 @@ What the shared store has to hold is large.
 LMCache splits a prompt into chunks, 256 tokens by default, and stores each chunk as one object.
 The size depends on the model and the chunk size:
 
-| Model | Cache per token | 256-token chunk | 2,048-token chunk |
-| --- | --- | --- | --- |
-| Kimi K2.7-Code (FP8) | 34.3 KiB | 8.6 MiB | 69 MiB |
-| Qwen3-235B-A22B (FP8) | 94 KiB | 23.5 MiB | 188 MiB |
-| Mistral-Medium-3.5-128B (FP8) | 176 KiB | 44 MiB | 352 MiB |
+| Model | Cache per token | 256-token chunk | 2,048-token chunk | 256-token chunk, per GPU across 8 GPUs | 2,048-token chunk, per GPU across 8 GPUs |
+| --- | --- | --- | --- | --- | --- |
+| Kimi K2.7-Code (FP8) | 34.3 KiB | 8.6 MiB | 69 MiB | 8.6 MiB | 69 MiB |
+| Qwen3-235B-A22B (FP8) | 94 KiB | 23.5 MiB | 188 MiB | 5.9 MiB | 47 MiB |
+| Mistral-Medium-3.5-128B (FP8) | 176 KiB | 44 MiB | 352 MiB | 5.5 MiB | 44 MiB |
 
 Larger chunks mean fewer, bigger objects per prompt, and a cache hit has to move many of them quickly.
 The [Valkey Large Object module](https://github.com/valkey-io/valkey-large-object) is built for that.
