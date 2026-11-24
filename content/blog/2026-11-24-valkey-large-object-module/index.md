@@ -2,6 +2,7 @@
 title = "Valkey Large Object Module: as fast as your hardware"
 date = 2026-11-24 01:01:01
 description = "The Valkey Large Object module keeps values of tens to hundreds of megabytes off the main thread and out of the heap, so a node's throughput follows its network and storage bandwidth, not Valkey's CPU."
+authors = ["karthiksubbarao"]
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
@@ -47,7 +48,7 @@ It is not specific to KV cache: it stores any large binary value, and this is th
 Valkey is built for small values, typically a few hundred bytes.
 Out of the box a string value is capped at 512 MiB (`proto-max-bulk-len`), a command's own work, such as storing a value, runs on the main thread while other clients wait, and every byte goes through the TCP stack and the server's network buffers.
 
-We measured stock Valkey 9.2 over TCP [validate: these numbers are from a pre-release build, rerun on 9.2.0 pending], with every value held in DRAM, on one i8ge.48xlarge (`maxmemory 640gb`, `allkeys-lru`, 8 I/O threads).
+We measured stock Valkey 9.2 over TCP [TODO: validate these numbers on 9.2.0. we used the numbers from a commit slightly past 9.2 on unstable], with every value held in DRAM, on one i8ge.48xlarge (`maxmemory 640gb`, `allkeys-lru`, 8 I/O threads).
 
 Two c8gn.16xlarge clients drove it with [cachecannon](https://github.com/cachecannon/cachecannon) and a 10-second request timeout.
 They used the same number of `GET` and `SET` connections per client as the module runs below: 16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB, and 4 at 256 and 500 MiB.
@@ -147,7 +148,7 @@ Stock Valkey against the module, GET + SET together, with the same connections p
 - With reads and writes together, the module moved 1.8x to 3.5x the throughput of stock Valkey from 8 MiB up, and 1.3x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 2.1-34 ms with stock Valkey.
 - At the limit every `SET` evicts an older object. From 8 MiB up the module evicted 3 to 4 times faster than stock Valkey, because it accepted that many more `SET`s, and it rejected none at any size.
-- The module node held 108 TB (about 98 TiB) on NVMe, against 640 GiB of DRAM for stock Valkey.
+- The module node held 108 TB on NVMe, against 640 GiB of DRAM for stock Valkey.
 - With the DRAM cache turned off, so that every `GET` reads from NVMe, `GET`s reached the same 215-216 Gbps as cache hits from DRAM. On this instance the 16 local NVMe drives deliver more read bandwidth than the network can carry, so the cache doesn't change throughput. It matters when storage is the limit, for example on EBS, where reads and writes share one bandwidth limit: every `GET` served from DRAM leaves that bandwidth to `SET`s.
 - The module ran over RDMA on a separate test bed and stock Valkey ran over TCP, so the table compares whole setups, not one variable.
 
