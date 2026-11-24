@@ -114,8 +114,7 @@ The TCP commands, `BLOB.TCP_SET` and `BLOB.TCP_GET`, carry the bytes on the norm
 RDMA needs a client that implements the libfabric flow and, for the default `EfaDirect` provider, EFA hardware.
 The `Emulated` provider runs libfabric over TCP sockets for developing RDMA clients, and it is not faster than the TCP commands.
 
-**Integrity.** The server stores a CRC32C checksum for every object.
-`BLOB.RDMA_SET` can send one and the server rejects a mismatch, and `BLOB.RDMA_GET` returns the stored checksum and the length so the client can verify what it received.
+**Integrity.** `BLOB.RDMA_SET` can send a CRC32C checksum that the server verifies, and `BLOB.RDMA_GET` returns the stored checksum and the length so the client can verify what it received.
 
 ## How fast it runs
 
