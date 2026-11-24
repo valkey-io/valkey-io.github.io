@@ -63,7 +63,7 @@ The workload:
 | 500 MiB | 104.8 (49.5 + 55.2) | 625-654 ms / 1.3-1.4 s | 633-638 ms / 0.7-1.2 s | 34 / 93 ms | 10 |
 
 - **Network:** run alone, `GET`s reached the hosts' TCP ceiling of about 208 Gbps up to 32 MiB, so the network is not what limits stock Valkey here.
-- **Other clients:** a `PING` from another connection took 2.1-34 ms at p99 and up to 240 ms, against 0.05 ms when idle.
+- **Other clients:** a `PING` from another connection took 2.1-34 ms at p99 and up to 240 ms.
 
 ## What the module is
 
