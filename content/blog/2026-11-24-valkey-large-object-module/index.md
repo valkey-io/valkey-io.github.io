@@ -110,7 +110,7 @@ The default `EfaDirect` provider needs EFA hardware.
 
 ## How fast it runs
 
-All numbers here are for the RDMA path over AWS Elastic Fabric Adapter (EFA), in `Tiered` mode.
+All numbers here are for the RDMA path, using AWS Elastic Fabric Adapter (EFA), in `Tiered` mode.
 We have not measured the module over TCP.
 
 These performance numbers are limited by the test instances' network bandwidth and storage limits, the local NVMe rating or the bandwidth of network-attached block storage, so machines with higher limits can go well beyond them.
