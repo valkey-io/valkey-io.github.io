@@ -1,7 +1,7 @@
 +++
 title = "Valkey Large Object Module: As Fast as Your Hardware"
 date = 2026-11-24 01:01:01
-description = "The Valkey Large Object module keeps values of tens to hundreds of megabytes off the main thread and out of the heap, so a node's throughput follows its network and storage bandwidth, not Valkey's CPU."
+description = "The Valkey Large Object module keeps values of tens to hundreds of megabytes off the main thread and streams them in chunks, so a node's throughput follows its network and storage bandwidth, not Valkey's CPU."
 authors = ["karthiksubbarao"]
 
 [taxonomies]
@@ -34,7 +34,7 @@ The size depends on the model and the chunk size:
 
 Larger chunks mean fewer, bigger objects per prompt, and a cache hit has to move many of them quickly.
 The [Valkey Large Object module](https://github.com/valkey-io/valkey-large-object) is built for that.
-In [our benchmark](#how-fast-it-runs), one node sustained 372 to 399 Gbps of reads and writes at every object size. This allows all the models above in the table to setup distributed KV caching workloads that retreive KV objects with median latency under 1 ms for 1 MiB objects and median latency is about 10 ms for 32 and 64 MiB objects.
+In [our benchmark](#how-fast-it-runs), one node sustained 372 to 399 Gbps of reads and writes at every object size. This allows all the models in the table above to set up distributed KV caching workloads that retrieve KV objects with a median latency under 1 ms for 1 MiB objects and about 10 ms for 32 and 64 MiB objects.
 However, the module is not limited to only KV caching: it optimally stores any large binary value.
 
 This post is the first in a three-part series on distributed KV caching with Valkey.
@@ -47,7 +47,7 @@ The third goes deeper into model and inference architectures and how to configur
 Valkey is built for small values, typically a few hundred bytes.
 Out of the box a string value is capped at 512 MiB (`proto-max-bulk-len`), a command's own work, such as storing a value, runs on the main thread while other clients wait, and every byte goes through the TCP stack and the server's network buffers.
 
-We measured stock Valkey 9.2 over TCP [TODO: validate these numbers on 9.2.0. we used the numbers from a commit slightly past 9.2 on unstable], with every value held in DRAM, on one i8ge.48xlarge (`maxmemory 640gb`, `allkeys-lru`, 8 I/O threads).
+We measured stock Valkey 9.2.0 over TCP, with every value held in DRAM, on one i8ge.48xlarge (`maxmemory 640gb`, `allkeys-lru`, 8 I/O threads).
 
 Two c8gn.16xlarge clients drove it with [cachecannon](https://github.com/cachecannon/cachecannon) and a 10-second request timeout.
 They used the same number of `GET` and `SET` connections per client as the module runs below: 16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB, and 4 at 256 and 500 MiB.
@@ -55,21 +55,21 @@ They used the same number of `GET` and `SET` connections per client as the modul
 The workload:
 
 - `GET`s read a 64 GiB hot set that was filled beforehand, so almost every `GET` finds its key.
-- `SET`s always write new keys, picked from a billion-key space, so none overwrites an existing value. Once memory is full, every `SET` evicts an older key.
-- `GET`s and `SET`s ran together, long enough for memory to fill.
+- `SET`s always write new keys, picked from a billion-key space, so none overwrites an existing value.
+- The `SET`s first filled memory to the limit. The measurement then ran with the server at the limit, with continuous evictions.
 - A separate connection sent a `PING` every 10 ms to show how long an unrelated small command waits.
 
 | Object size | Total Gbps (GET + SET) | GET p50 / p99 | SET p50 / p99 | PING p99 / max | Evictions per second |
 | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 290.8 (149.5 + 141.3) | 1.1 / 2.6 ms | 1.5 / 4.6 ms | 2.1 / 240 ms | 15,400 |
-| 8 MiB | 225.6 (157.2 + 68.4) | 13 / 20 ms | 30-32 / 49-50 ms | 9.6 / 226 ms | 840 |
-| 32 MiB | 217.6 (148.7 + 68.9) | 41-43 / 73 ms | 77-78 / 230-238 ms | 15 / 46 ms | 210 |
-| 64 MiB | 181.0 (116.0 + 65.0) | 71-74 / 106-114 ms | 115 / 323-325 ms | 17 / 234 ms | 100 |
-| 256 MiB | 107.6 (53.0 + 54.6) | 325-333 / 440-453 ms | 331 / 392-394 ms | 26 / 221 ms | 20 |
-| 500 MiB | 104.8 (49.5 + 55.2) | 625-654 ms / 1.3-1.4 s | 633-638 ms / 0.7-1.2 s | 34 / 93 ms | 10 |
+| 1 MiB | 305.3 (144.5 + 160.8) | 1.00-1.01 / 1.55-1.58 ms | 1.36-1.38 / 3.54-3.60 ms | 1.23 / 440 ms | 18,795 |
+| 8 MiB | 213.4 (147.9 + 65.5) | 13.8-13.9 / 22.3 ms | 32.0-32.1 / 52.2-52.4 ms | 10.4 / 228 ms | 955 |
+| 32 MiB | 201.9 (136.7 + 65.2) | 46.1 / 64.7 ms | 83.4-88.1 / 208-234 ms | 17.4 / 239 ms | 238 |
+| 64 MiB | 171.4 (110.2 + 61.2) | 77.1 / 105-107 ms | 134-137 / 189-289 ms | 19.5 / 226 ms | 112 |
+| 256 MiB | 94.2 (47.6 + 46.6) | 352-365 / 396-474 ms | 373 / 430-436 ms | 37.6 / 97 ms | 21 |
+| 500 MiB | 89.1 (44.1 + 45.0) | 751-772 / 973-990 ms | 751-755 ms / 830 ms-1.15 s | 48.5 / 253 ms | 11 |
 
 - **Network:** run alone, `GET`s reached the hosts' TCP ceiling of about 208 Gbps up to 32 MiB, so the network is not what limits stock Valkey here.
-- **Other clients:** a `PING` from another connection took 2.1-34 ms at p99 and up to 240 ms.
+- **Other clients:** while the server was evicting, a `PING` from another connection took 1.2-48 ms at p99 and up to 440 ms.
 
 ## What the module is
 
@@ -116,23 +116,23 @@ The default `EfaDirect` provider needs EFA hardware.
 
 ## How fast it runs
 
-The module kept 372-399 Gbps of combined `GET` and `SET` throughput at every object size from 1 MiB to 500 MiB, 1.3x to 3.5x stock Valkey, while a `PING` to the same server stayed under 0.36 ms at p99.
+The module kept 372-399 Gbps of combined `GET` and `SET` throughput at every object size from 1 MiB to 500 MiB, 1.2x to 4.2x stock Valkey, while a `PING` to the same server stayed under 0.36 ms at p99.
 These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with AWS Elastic Fabric Adapter (EFA), measured at the disk limit where every `SET` evicts the oldest objects.
 
-![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 291 at 1 MiB, 226 at 8 MiB, 218 at 32 MiB, 181 at 64 MiB, 108 at 256 MiB and 105 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
+![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 305 at 1 MiB, 213 at 8 MiB, 202 at 32 MiB, 171 at 64 MiB, 94 at 256 MiB and 89 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
 | Object size | Total Gbps, stock / module | GET p50, stock / module | GET p99, stock / module | SET p50, stock / module | SET p99, stock / module | PING p99, stock / module | Evictions per second, stock / module |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 290.8 / 372.2 | 1.1 ms / 1.27 ms | 2.6 ms / 2.10 ms | 1.5 ms / 1.53 ms | 4.6 ms / 2.75 ms | 2.1 ms / 0.23 ms | 15,400 / 16,700 |
-| 8 MiB | 225.6 / 399.3 | 13 ms / 10.6 ms | 20 ms / 15.2 ms | 30-32 ms / 10.8 ms | 49-50 ms / 16.2 ms | 9.6 ms / 0.23 ms | 840 / 2,670 |
-| 32 MiB | 217.6 / 388.7 | 41-43 ms / 31.5 ms | 73 ms / 37.5 ms | 77-78 ms / 34.3 ms | 230-238 ms / 41.2 ms | 15 ms / 0.36 ms | 210 / 680 |
-| 64 MiB | 181.0 / 377.9 | 71-74 ms / 43.8 ms | 106-114 ms / 54.5 ms | 115 ms / 45.6 ms | 323-325 ms / 56.1 ms | 17 ms / 0.35 ms | 100 / 340 |
-| 256 MiB | 107.6 / 372.3 | 325-333 ms / 88.6 ms | 440-453 ms / 101 ms | 331 ms / 95.4 ms | 392-394 ms / 105 ms | 26 ms / 0.33 ms | 20 / 82 |
-| 500 MiB | 104.8 / 371.9 | 625-654 ms / 178 ms | 1.3-1.4 s / 193 ms | 633-638 ms / 185 ms | 0.7-1.2 s / 195 ms | 34 ms / 0.32 ms | 10 / 43 |
+| 1 MiB | 305.3 / 372.2 | 1.00-1.01 ms / 1.27 ms | 1.55-1.58 ms / 2.10 ms | 1.36-1.38 ms / 1.53 ms | 3.54-3.60 ms / 2.75 ms | 1.23 ms / 0.23 ms | 18,795 / 16,700 |
+| 8 MiB | 213.4 / 399.3 | 13.8-13.9 ms / 10.6 ms | 22.3 ms / 15.2 ms | 32.0-32.1 ms / 10.8 ms | 52.2-52.4 ms / 16.2 ms | 10.4 ms / 0.23 ms | 955 / 2,670 |
+| 32 MiB | 201.9 / 388.7 | 46.1 ms / 31.5 ms | 64.7 ms / 37.5 ms | 83.4-88.1 ms / 34.3 ms | 208-234 ms / 41.2 ms | 17.4 ms / 0.36 ms | 238 / 680 |
+| 64 MiB | 171.4 / 377.9 | 77.1 ms / 43.8 ms | 105-107 ms / 54.5 ms | 134-137 ms / 45.6 ms | 189-289 ms / 56.1 ms | 19.5 ms / 0.35 ms | 112 / 340 |
+| 256 MiB | 94.2 / 372.3 | 352-365 ms / 88.6 ms | 396-474 ms / 101 ms | 373 ms / 95.4 ms | 430-436 ms / 105 ms | 37.6 ms / 0.33 ms | 21 / 82 |
+| 500 MiB | 89.1 / 371.9 | 751-772 ms / 178 ms | 973-990 ms / 193 ms | 751-755 ms / 185 ms | 830 ms-1.15 s / 195 ms | 48.5 ms / 0.32 ms | 11 / 43 |
 
-- The module moved 1.8x to 3.5x the throughput of stock Valkey from 8 MiB up, and 1.3x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
-- A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 2.1-34 ms with stock Valkey.
-- From 8 MiB up the module evicted 3 to 4 times faster than stock Valkey, because it accepted that many more `SET`s, and it rejected none at any size.
+- The module moved 1.9x to 4.2x the throughput of stock Valkey from 8 MiB up, and 1.2x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 305 Gbps at 1 MiB to 89 Gbps at 500 MiB.
+- A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 1.2-48 ms with stock Valkey.
+- From 8 MiB up the module evicted 2.8 to 3.9 times faster than stock Valkey, because it accepted that many more `SET`s, and it rejected none at any size.
 - On the same instance type, the module node held 108 TB on NVMe, about 150 times the 640 GiB that stock Valkey held in DRAM.
 - With the DRAM cache turned off, so that every `GET` reads from NVMe, `GET`s reached the same 215-216 Gbps as cache hits from DRAM, because the 16 local NVMe drives can read faster than the network can carry. The cache matters when storage is the limit, for example on network-attached block storage, where reads and writes share one bandwidth limit: every `GET` served from DRAM leaves that bandwidth to `SET`s.
 
@@ -171,5 +171,5 @@ valkey-server \
 
 The TCP commands work with any client.
 The RDMA commands need a client that implements the libfabric flow; Valkey GLIDE's Python sync client supports them from `valkey-glide-sync` 2.6.0.
-The Valkey Large Object module is open source, and release 0.1 is available [here](https://github.com/valkey-io/valkey-large-object/releases/tag/0.1).
+The Valkey Large Object module is open source, and release 0.1 is available [here](https://github.com/valkey-io/valkey-large-object/releases/tag/0.1). 
 A huge thank you to everyone who contributed to the project!

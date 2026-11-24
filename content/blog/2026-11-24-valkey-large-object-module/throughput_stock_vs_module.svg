@@ -9,33 +9,33 @@
 <line x1="80" y1="190.0" x2="870" y2="190.0" stroke="#e5e7eb"/><text x="72" y="194.0" text-anchor="end" font-size="12" fill="#374151">300</text>
 <line x1="80" y1="110.0" x2="870" y2="110.0" stroke="#e5e7eb"/><text x="72" y="114.0" text-anchor="end" font-size="12" fill="#374151">400</text>
 <text x="22" y="250.0" text-anchor="middle" font-size="12" fill="#374151" transform="rotate(-90 22 250.0)">Gbps (GET + SET combined)</text>
-<rect x="101.7" y="197.4" width="42.1" height="232.6" fill="#9aa5b1"/>
-<text x="122.8" y="192.4" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">291</text>
+<rect x="101.7" y="185.8" width="42.1" height="244.2" fill="#9aa5b1"/>
+<text x="122.8" y="180.8" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">305</text>
 <rect x="147.8" y="132.2" width="42.1" height="297.8" fill="#2d6cdf"/>
 <text x="168.9" y="127.2" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">372</text>
 <text x="145.8" y="450" text-anchor="middle" font-size="13" fill="#111827">1 MiB</text>
-<rect x="233.4" y="249.5" width="42.1" height="180.5" fill="#9aa5b1"/>
-<text x="254.4" y="244.5" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">226</text>
+<rect x="233.4" y="259.3" width="42.1" height="170.7" fill="#9aa5b1"/>
+<text x="254.4" y="254.3" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">213</text>
 <rect x="279.5" y="110.6" width="42.1" height="319.4" fill="#2d6cdf"/>
 <text x="300.6" y="105.6" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">399</text>
 <text x="277.5" y="450" text-anchor="middle" font-size="13" fill="#111827">8 MiB</text>
-<rect x="365.0" y="255.9" width="42.1" height="174.1" fill="#9aa5b1"/>
-<text x="386.1" y="250.9" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">218</text>
+<rect x="365.0" y="268.5" width="42.1" height="161.5" fill="#9aa5b1"/>
+<text x="386.1" y="263.5" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">202</text>
 <rect x="411.2" y="119.0" width="42.1" height="311.0" fill="#2d6cdf"/>
 <text x="432.2" y="114.0" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">389</text>
 <text x="409.2" y="450" text-anchor="middle" font-size="13" fill="#111827">32 MiB</text>
-<rect x="496.7" y="285.2" width="42.1" height="144.8" fill="#9aa5b1"/>
-<text x="517.8" y="280.2" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">181</text>
+<rect x="496.7" y="292.9" width="42.1" height="137.1" fill="#9aa5b1"/>
+<text x="517.8" y="287.9" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">171</text>
 <rect x="542.8" y="127.7" width="42.1" height="302.3" fill="#2d6cdf"/>
 <text x="563.9" y="122.7" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">378</text>
 <text x="540.8" y="450" text-anchor="middle" font-size="13" fill="#111827">64 MiB</text>
-<rect x="628.4" y="343.9" width="42.1" height="86.1" fill="#9aa5b1"/>
-<text x="649.4" y="338.9" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">108</text>
+<rect x="628.4" y="354.6" width="42.1" height="75.4" fill="#9aa5b1"/>
+<text x="649.4" y="349.6" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">94</text>
 <rect x="674.5" y="132.2" width="42.1" height="297.8" fill="#2d6cdf"/>
 <text x="695.6" y="127.2" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">372</text>
 <text x="672.5" y="450" text-anchor="middle" font-size="13" fill="#111827">256 MiB</text>
-<rect x="760.0" y="346.2" width="42.1" height="83.8" fill="#9aa5b1"/>
-<text x="781.1" y="341.2" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">105</text>
+<rect x="760.0" y="358.7" width="42.1" height="71.3" fill="#9aa5b1"/>
+<text x="781.1" y="353.7" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">89</text>
 <rect x="806.2" y="132.5" width="42.1" height="297.5" fill="#2d6cdf"/>
 <text x="827.2" y="127.5" text-anchor="middle" font-size="12" font-weight="700" fill="#111827">372</text>
 <text x="804.2" y="450" text-anchor="middle" font-size="13" fill="#111827">500 MiB</text>
