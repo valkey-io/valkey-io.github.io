@@ -91,7 +91,7 @@ Inside each segment, the module's own allocator hands out exact-sized, 4 KiB-ali
 The DRAM cache pool starts with one segment and adds more as it fills, up to `maxmemory`.
 In `Dram` mode it holds every object, and in `Tiered` mode it acts as a read cache, next to the fixed-size disk staging segment pool described below.
 
-**Disk.** In `Tiered` mode every object is a file on block storage, such as local NVMe or EBS, and DRAM is a read cache:
+**Disk.** In `Tiered` mode every object is a file on block storage, such as local NVMe or network-attached block storage like Amazon EBS, and DRAM is a read cache:
 
 - The module expects an XFS file system and Linux 5.1 or later. Files sit in `largeobj.disk-dir`, spread over 1,024 subdirectories by object ID so creates and deletes don't serialize on one directory lock.
 - Each segment pool has its own io_uring engine, which runs on its own thread. The engines read and write files with `O_DIRECT`, using registered buffers whenever a segment is io_uring registered. Writes and cache misses pass through the fixed-size disk staging segment pool, which totals `largeobj.disk-staging-size` of DRAM. Staging buffers and the DRAM cache live in separate segment pools, so short-lived staging buffers don't leave holes between long-lived cached objects.
@@ -113,8 +113,7 @@ The default `EfaDirect` provider needs EFA hardware.
 All numbers here are for the RDMA path over AWS Elastic Fabric Adapter (EFA), in `Tiered` mode.
 We have not measured the module over TCP.
 
-The throughput here is limited by the test instances' network card bandwidth and by their storage limits, the local NVMe rating or the EBS bandwidth.
-The instance type is an example: on machines with higher bandwidth limits, performance can be well beyond these numbers. [TODO: Consider adding example]
+These performance numbers are limited by the test instances' network bandwidth and storage limits, the local NVMe rating or the bandwidth of network-attached block storage, so machines with higher limits can go well beyond them.
 
 One i8ge.48xlarge server ran the module with a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS.
 Two c8gn.16xlarge clients drove it with [cachecannon](https://github.com/cachecannon/cachecannon) over EFA, with the same per-client `GET` and `SET` connections as the stock run above, `GET`s over a 64 GiB hot set and `SET`s of new keys at the same time.
@@ -136,7 +135,7 @@ The stock Valkey results below are taken from the [earlier section](#what-change
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 2.1-34 ms with stock Valkey.
 - At the limit every `SET` evicts an older object. From 8 MiB up the module evicted 3 to 4 times faster than stock Valkey, because it accepted that many more `SET`s, and it rejected none at any size.
 - On the same instance type, the module node held 108 TB on NVMe, about 150 times the 640 GiB that stock Valkey held in DRAM.
-- With the DRAM cache turned off, so that every `GET` reads from NVMe, `GET`s reached the same 215-216 Gbps as cache hits from DRAM. On this instance the 16 local NVMe drives deliver more read bandwidth than the network can carry, so the cache doesn't change throughput. It matters when storage is the limit, for example on EBS, where reads and writes share one bandwidth limit: every `GET` served from DRAM leaves that bandwidth to `SET`s.
+- With the DRAM cache turned off, so that every `GET` reads from NVMe, `GET`s reached the same 215-216 Gbps as cache hits from DRAM. On this instance the 16 local NVMe drives deliver more read bandwidth than the network can carry, so the cache doesn't change throughput. It matters when storage is the limit, for example on network-attached block storage, where reads and writes share one bandwidth limit: every `GET` served from DRAM leaves that bandwidth to `SET`s.
 
 ## Try it
 
