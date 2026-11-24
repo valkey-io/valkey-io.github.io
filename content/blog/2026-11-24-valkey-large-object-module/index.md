@@ -68,7 +68,7 @@ The workload:
 ## What the module is
 
 The [Valkey Large Object module](https://github.com/valkey-io/valkey-large-object) is a Valkey module written in Rust that adds a data type and commands optimized for large binary values.
-It needs Valkey 8.0 or later on Linux (x86_64 or aarch64).
+It needs Valkey 8.0 or later on Linux.
 
 Here is the path of one `GET` or `SET` through the module:
 
