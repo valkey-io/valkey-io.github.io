@@ -6,6 +6,7 @@ build-command-docs
 build-command-json
 build-json-command-json
 build-search-command-json
+build-large-object-command-json
 build-topics
 content/commands/*
 !content/commands/_index.md

@@ -59,7 +59,13 @@
 <hr />
 {% endif %}
 {%- set content_with_fixed_links %}{{< fix_links_docs content={page_contents} />}}{% endset -%}
-{{ content_with_fixed_links | markdown | safe }}
+{%- set content_html %}{{ content_with_fixed_links | markdown | safe }}{% endset -%}
+{{< heading_links content={content_html} />}}
+<div class="edit_box">
+    See an error?
+    <a href="https://github.com/valkey-io/valkey-doc/edit/main/topics/{{ page.slug }}.md">Update this Page on GitHub!</a>
+</div>
+{{< nav_pager nav={nav_data} slug={page.slug} extra={config.extra} />}}
 {% endblock main_content %}
 
 {% block related_content %}
@@ -68,9 +74,4 @@
 {% set nav_map_json %}{{< nav_command_map nav={nav_data} index={nav_index} />}}{% endset %}
 {% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
 {{< nav_menu nav={nav_data} extra={config.extra} current={page.slug} open={nav_location.section} command_map={nav_command_map} index={nav_index} />}}
-
-<div class="edit_box">
-    See an error?
-    <a href="https://github.com/valkey-io/valkey-doc/edit/main/topics/{{ page.slug }}.md">Update this Page on GitHub!</a>
-</div>
 {% endblock related_content %}

@@ -9,7 +9,8 @@
     load_data(path= config.extra.command_json_path ~ page.slug ~ ".json", required= false),
     load_data(path= config.extra.command_bloom_json_path ~ page.slug ~ ".json", required= false),
     load_data(path= config.extra.command_json_json_path ~ page.slug ~ ".json", required= false),
-    load_data(path= config.extra.command_search_json_path ~ page.slug ~ ".json", required= false)
+    load_data(path= config.extra.command_search_json_path ~ page.slug ~ ".json", required= false),
+    load_data(path= config.extra.command_large_object_json_path ~ page.slug ~ ".json", required= false)
 ] %}
 
 {% set command_data = [s for s in command_sources if s] | first %}
@@ -85,6 +86,17 @@
 <h1 class="docs-page-title">{{ command_title }} {% if deprecated %}<small> {{ deprecated }}</small>{% endif %}</h1>
 {% endif %}
 {% if command_data_obj %}
+    {% set notice_modules = load_data(path="../_data/modules.json", required=false) -%}
+    {% if notice_modules %}
+        {% for notice_key, notice_module in notice_modules %}
+            {% if notice_module.version_notice and notice_module.command_prefix and page.slug is starting_with(pat=notice_module.command_prefix) %}
+                {% set notice_url = get_url(path="/topics/" ~ notice_module.topic, trailing_slash=true) %}
+    <blockquote>
+        <p><strong>Note:</strong> {% for part in notice_module.version_notice | split(pat=notice_module.name) %}{% if not loop.first %}<a href="{{ notice_url }}">{{ notice_module.name }}</a>{% endif %}{{ part }}{% endfor %}</p>
+    </blockquote>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
     <dl>
         <dt>Usage:</dt>
         <dd>
@@ -117,6 +129,10 @@
             {% set module_reply = load_data(path="../_data/modules.json", required=false) -%}
             <dt>Module:</dt>
             <dd><a href={{module_reply.valkey_search.repo}}>{{module_reply.valkey_search.name}}</a></dd>
+        {% elif "blob." in page.slug %}
+            {% set module_reply = load_data(path="../_data/modules.json", required=false) -%}
+            <dt>Module:</dt>
+            <dd><a href={{module_reply.valkey_large_object.repo}}>{{module_reply.valkey_large_object.name}}</a></dd>
         {% endif %}
     </dl>
     <dl>
@@ -150,13 +166,14 @@
 
 {% if command_description %}
 {%- set command_description_with_fixed_links %}{{< fix_links_command content={command_description} />}}{% endset -%}
+{%- set command_description_html %}{{ command_description_with_fixed_links | markdown | safe }}{% endset -%}
 
-{{ command_description_with_fixed_links | markdown | safe }}
+{{< heading_links content={command_description_html} />}}
 {% else %}
 <code>ERROR. Command description not loaded</code><br />
 {% endif %}
 {% if command_data_obj.replaced_by %}
-<h3 id="deprecation-advice">Deprecation advice</h3>
+{{< heading_links content='<h3 id="deprecation-advice">Deprecation advice</h3>' />}}
 Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{{ command_data_obj.replaced_by | markdown | safe  }}</div>
 
 {% endif %}
@@ -189,7 +206,7 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 {% endif -%}
 
 {% if command_data_obj and command_data_obj.history %}
-<h3>History</h3>
+{{< heading_links content='<h3 id="history">History</h3>' />}}
 <table>
     <thead>
         <tr>
@@ -209,6 +226,11 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 </table>
 {% endif %}
 
+{# Every command page, module commands included, is built from a description in valkey-doc (see build/init-commands.sh). #}
+<div class="edit_box">
+    See an error?
+    <a href="https://github.com/valkey-io/valkey-doc/edit/main/commands/{{ page.slug }}.md">Update this Page on GitHub!</a>
+</div>
 {% endblock main_content %}
 
 {% block related_content %}

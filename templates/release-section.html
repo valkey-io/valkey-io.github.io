@@ -1,26 +1,14 @@
-{% extends "right-aside.html" %}
+{% extends "download-layout.html" %}
 
-{% block subhead_content%}
-<h1 class="page-title">Valkey Releases</h1>
-{% endblock subhead_content%}
 {% block main_content %}
+<h1 class="docs-page-title">Valkey Releases</h1>
 
-
-{% set_global release_lines = [] %}
-
-
-{% for release in section.pages | sort(attribute="date") | reverse %}
-    {% set split_ver = release.extra.tag | split(pat=".")%}
-    {% set major = split_ver | nth(n= 0) %}
-    {% set minor = split_ver | nth(n= 1) %}
-    {% set patch = split_ver | nth(n= 2) %}
-    {% set header =  major ~ "." ~ minor %}
-
-    {% set_global release_lines = [...release_lines, header] %}
-{% endfor %}
-
-{% set release_lines_unique = release_lines | unique %}
-{% for line in release_lines_unique %}
+{# Newest line first by version, not date: an older line's patch can ship after
+   the newest line's. #}
+{% set release_lines = [{"version": (r.extra.tag | split(pat=".") | first | int) * 1000 + (r.extra.tag | split(pat=".") | nth(n=1) | int), "line": (r.extra.tag | split(pat=".") | first) ~ "." ~ (r.extra.tag | split(pat=".") | nth(n=1))} for r in section.pages] %}
+{% set release_lines_unique = release_lines | unique | sort(attribute="version") | reverse %}
+{% for keyed_line in release_lines_unique %}
+    {% set line = keyed_line.line %}
     <h2>{{ line }}.x</h2>
     <ul>
     {% for release in section.pages | sort(attribute="date") | reverse %}
