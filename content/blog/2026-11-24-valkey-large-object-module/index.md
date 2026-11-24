@@ -116,7 +116,7 @@ RDMA needs a client that implements the libfabric flow and, for the default `Efa
 The `Emulated` provider runs libfabric over TCP sockets for developing RDMA clients, and it is not faster than the TCP commands.
 
 **Integrity.** The server stores a CRC32C checksum for every object.
-`BLOB.RDMA_SET` can send one and the server rejects a mismatch, and `BLOB.RDMA_GET` returns the stored checksum so the client can verify what it received.
+`BLOB.RDMA_SET` can send one and the server rejects a mismatch, and `BLOB.RDMA_GET` returns the stored checksum and the length so the client can verify what it received.
 
 ## How fast it runs
 
