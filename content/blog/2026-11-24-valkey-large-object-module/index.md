@@ -36,6 +36,11 @@ Larger chunks mean fewer, bigger objects per prompt, and a cache hit has to move
 The [Valkey Large Object module](https://github.com/valkey-io/valkey-large-object) is built for that.
 However, it is not limited to only KV caching: it optimally stores any large binary value.
 
+This post is the first in a three-part series on distributed KV caching with Valkey.
+It covers what changes in in-memory key-value datastores when values reach hundreds of megabytes, and how the Valkey Large Object module improves performance for such large objects.
+The second post compares Valkey deployments for KV caching, over the network and on the GPU servers themselves, and shows how each performs against object stores and shared file systems.
+The third goes deeper into model and inference architectures and how to configure Valkey for your inference setup.
+
 ## What changes when values reach hundreds of megabytes
 
 Valkey is built for small values, typically a few hundred bytes.
