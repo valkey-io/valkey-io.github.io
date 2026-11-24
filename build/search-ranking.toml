@@ -119,3 +119,8 @@ top = 1
 query = "migrate from redis"
 url = "/topics/migration/"
 top = 1
+
+[[search]]
+query = "migration"
+url = "/topics/migration/"
+top = 1

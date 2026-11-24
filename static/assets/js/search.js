@@ -9,7 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
     window.PagefindComponents.configureInstance('default', {
         // Favour exact word matches and longer pages over short pages with similar words.
         // Values based on git-scm.com's Pagefind setup.
-        ranking: { pageLength: 0.1, termFrequency: 0.1, termSaturation: 2, termSimilarity: 9 },
+        ranking: {
+            pageLength: 0.1, termFrequency: 0.1, termSaturation: 2, termSimilarity: 9,
+            // Boost pages whose keywords in _data/search.toml match the search. Pagefind boosts
+            // title matches by 5 by default.
+            metaWeights: { keywords: 10 },
+        },
     });
     const instance = window.PagefindComponents.getInstanceManager().getInstance('default');
     addBreadcrumbsToResults(instance);

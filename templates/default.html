@@ -39,7 +39,14 @@
             {%- endif %}
         {%- endif %}
     {%- endif %}
-{%- endif -%}
+{%- endif %}
+{#- Words that rank the page higher when a search matches them (metaWeights in search.js), from the
+    page's [[boost]] entries in _data/search.toml. #}
+{%- set search_keywords = [] %}
+{%- set search_tuning = load_data(path="_data/search.toml", format="toml", required=false) %}
+{%- for boost in search_tuning?.boost | default(value=[]) %}
+    {%- if boost.url == current_path | default(value="") %}{% set_global search_keywords = [...search_keywords, ...boost.keywords] %}{% endif %}
+{%- endfor -%}
 <!DOCTYPE html>
 <html lang="{{ page?.lang | default(value=config.default_language) }}">
 {% include "includes/head.html" %}
@@ -129,6 +136,7 @@
   <div class="body" data-pagefind-meta="title:{{ search_title }}">
       <span hidden data-pagefind-filter="exact_title:{{ search_title | lower }}"></span>
       {%- if breadcrumb %}<span hidden data-pagefind-filter="breadcrumb:{{ breadcrumb }}"></span>{% endif %}
+      {%- if search_keywords %}<span hidden data-pagefind-meta="keywords:{{ search_keywords | join(sep=", ") }}"></span>{% endif %}
       {% block content %}{% endblock %}
   </div>
   <div class="footer">
