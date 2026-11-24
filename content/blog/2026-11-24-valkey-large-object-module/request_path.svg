@@ -59,9 +59,11 @@
 <rect x="641.3" y="362" width="16.2" height="18" rx="2" fill="#a9d4a9"/>
 <rect x="659.6" y="362" width="16.2" height="18" rx="2" fill="#a9d4a9"/>
 <text x="510" y="402" text-anchor="start" font-size="10.5" fill="#4b5563">the two pools have their own segment counts</text>
-<rect x="605" y="445" width="200" height="40" rx="8" fill="#fff3d6" stroke="#c4902a" stroke-width="1.5"/>
-<text x="705" y="471" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">io_uring engine</text>
-<rect x="605" y="510" width="200" height="50" rx="8" fill="#fff3d6" stroke="#c4902a" stroke-width="1.5"/>
+<rect x="495" y="445" width="200" height="40" rx="8" fill="#fff3d6" stroke="#c4902a" stroke-width="1.5"/>
+<text x="595" y="471" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">io_uring engine</text>
+<rect x="715" y="445" width="200" height="40" rx="8" fill="#fff3d6" stroke="#c4902a" stroke-width="1.5"/>
+<text x="815" y="471" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">io_uring engine</text>
+<rect x="495" y="510" width="420" height="50" rx="8" fill="#fff3d6" stroke="#c4902a" stroke-width="1.5"/>
 <text x="705" y="532" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">Object files on XFS</text>
 <text x="705" y="549" text-anchor="middle" font-size="11.5" fill="#1f2937">block storage</text>
 <polyline points="190,215 235,215 235,97 280,97" fill="none" stroke="#333333" stroke-width="2"/>
@@ -78,12 +80,14 @@
 <polyline points="920,110 935,110 935,366 920,366" fill="none" stroke="#333333" stroke-width="2"/>
 <polygon points="920,110 932,104.5 932,115.5" fill="#333333"/>
 <polygon points="920,366 932,360.5 932,371.5" fill="#333333"/>
-<polyline points="705,412 705,445" fill="none" stroke="#333333" stroke-width="2"/>
-<polygon points="705,412 699.5,424 710.5,424" fill="#333333"/>
-<polygon points="705,445 699.5,433 710.5,433" fill="#333333"/>
-<polyline points="705,485 705,510" fill="none" stroke="#333333" stroke-width="2"/>
-<polygon points="705,485 699.5,497 710.5,497" fill="#333333"/>
-<polygon points="705,510 699.5,498 710.5,498" fill="#333333"/>
+<polyline points="815,412 815,445" fill="none" stroke="#333333" stroke-width="2"/>
+<polygon points="815,412 809.5,424 820.5,424" fill="#333333"/>
+<polygon points="815,445 809.5,433 820.5,433" fill="#333333"/>
+<polyline points="815,485 815,510" fill="none" stroke="#333333" stroke-width="2"/>
+<polygon points="815,485 809.5,497 820.5,497" fill="#333333"/>
+<polygon points="815,510 809.5,498 820.5,498" fill="#333333"/>
+<polyline points="595,510 595,485" fill="none" stroke="#333333" stroke-width="2"/>
+<polygon points="595,485 589.5,497 600.5,497" fill="#333333"/>
 <polyline points="176,308 380,308 380,246 490,246" fill="none" stroke="#d9480f" stroke-width="4"/>
 <polygon points="176,308 190,301.5 190,314.5" fill="#d9480f"/>
 <polygon points="490,246 476,239.5 476,252.5" fill="#d9480f"/>
@@ -92,4 +96,6 @@
 <polygon points="490,366 476,359.5 476,372.5" fill="#d9480f"/>
 <text x="200" y="298" text-anchor="start" font-size="12" font-weight="700" fill="#d9480f">RDMA: GET hit</text>
 <text x="200" y="356" text-anchor="start" font-size="12" font-weight="700" fill="#d9480f">RDMA: SET, GET miss</text>
+<path d="M495,465 H468 V373 A7,7 0 0 1 468,359 V280 H490" fill="none" stroke="#333333" stroke-width="2"/>
+<polygon points="490,280 478,274.5 478,285.5" fill="#333333"/>
 </svg>
