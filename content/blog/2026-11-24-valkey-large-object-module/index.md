@@ -77,7 +77,7 @@ The workload:
 The [Valkey Large Object module](https://github.com/valkey-io/valkey-large-object) is a Valkey module written in Rust that adds a data type and commands optimized for large binary values.
 It needs Valkey 8.0 or later on Linux (x86_64 or aarch64).
 
-Here is the path of one `GET` or `SET` through the module, with the two kinds of registered segments it uses:
+Here is the path of one `GET` or `SET` through the module:
 
 ![Request path through the module. A client sends a command to the Valkey main thread, which blocks only that client and hands the transfer to a streaming task. The streaming task moves the object as a window of chunks in parallel, for both SET and GET. Chunks move between two kinds of segment pools, DRAM cache segments (four shown) and disk staging segments (two shown), which have their own segment counts. Each segment has its own talc allocator and is registered with both EFA and io_uring. Bytes cross the network by RDMA directly between those segments and the client's EFA-registered memory. Each segment pool has its own io_uring engine to the object files on XFS: the DRAM cache engine reads objects into the cache, and the staging engine reads and writes them.](request_path.svg)
 
