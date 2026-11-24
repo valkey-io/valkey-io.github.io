@@ -126,13 +126,10 @@ We have not measured the module over TCP.
 The throughput here is limited by the test instances' network card bandwidth and by their storage limits, the local NVMe rating or the EBS bandwidth.
 The instance type is an example: on machines with higher bandwidth limits, performance can be well beyond these numbers. [TODO: Consider adding example]
 
-One i8ge.48xlarge server ran the module with a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS. Two c8gn.16xlarge clients drove it with cachecannon 
-over EFA. Each client machine used the same `GET` and `SET` connections as the stock Valkey run above (16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB and 4 at 256 and 
-500 MiB), so the total is twice that.
-Each size ran `GET`s over a 64 GiB hot set and `SET`s of new keys at the same time.
+One i8ge.48xlarge server ran the module with a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS.
+Two c8gn.16xlarge clients drove it with [cachecannon](https://github.com/cachecannon/cachecannon) over EFA, with the same per-client `GET` and `SET` connections as the stock run above, `GET`s over a 64 GiB hot set and `SET`s of new keys at the same time.
 The run first filled the disk to its limit and then ran for 2 hours at the limit, where every `SET` evicts the oldest objects to make room.
-The stock Valkey numbers are the ones from the table above, with the same instance types and the same connections per client, over TCP.
-Stock Valkey's `GET`s and `SET`s together ran for 5 minutes, and the module's for 2 hours at the disk limit.
+The stock Valkey results below are taken from the [earlier section](#what-changes-when-values-reach-hundreds-of-megabytes).
 
 Stock Valkey against the module, GET + SET together, with the same connections per client:
 
