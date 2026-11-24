@@ -99,12 +99,13 @@ Each segment has its own allocator that hands out exact-sized, 4 KiB-aligned slo
 Registering memory with the network card costs 300 to 500 microseconds per call, which would ruin throughput on the data path.
 So the module registers each segment once, and in `Tiered` mode with io_uring as well.
 A buffer registered both ways serves the network card and the disk without a copy in between.
-In `Dram` mode every object lives in these segments, up to the core `maxmemory` setting.
+The DRAM cache pool starts with one segment and adds more as it fills, up to the core `maxmemory` setting.
+In `Dram` mode every object lives in this pool, and in `Tiered` mode it is the read cache.
 
 **Disk.** In `Tiered` mode every object is a file on block storage, such as local NVMe or EBS, and DRAM is a read cache:
 
 - The module expects an XFS file system and Linux 5.1 or later. Files sit in `largeobj.disk-dir`, spread over 1,024 subdirectories by object ID so creates and deletes don't serialize on one directory lock.
-- An io_uring engine operates on those files, with `O_DIRECT`, registered buffers and a dedicated thread for each ring. Writes and cache misses pass through DRAM staging buffers (`largeobj.disk-staging-size`) that are registered with the network card, so an object reaches the network without a copy. Staging buffers and the DRAM cache live in separate segments, so short-lived buffers don't leave holes between long-lived cached objects.
+- An io_uring engine operates on those files, with `O_DIRECT`, registered buffers and a dedicated thread for each ring. Writes and cache misses pass through the fixed-size disk staging segment pool, which totals `largeobj.disk-staging-size` of DRAM registered with the network card, so an object reaches the network without a copy. Staging buffers and the DRAM cache live in separate segments, so short-lived buffers don't leave holes between long-lived cached objects.
 - An object is copied into the DRAM cache on its first read by default (`largeobj.promote-min-hits`). When the cache is full, a cached copy with a low least-frequently-used score is dropped, and the object stays on disk.
 - When the disk limit (`largeobj.disk-maxmemory`) or `maxmemory` is reached, a write evicts the least recently used large objects, as long as `maxmemory-policy` is an `allkeys-*` policy. With `noeviction` the write fails with `OOM`.
 
@@ -154,16 +155,10 @@ Stock Valkey against the module, GET + SET together, with the same connections p
 
 ## Try it
 
-```bash
-git clone https://github.com/valkey-io/valkey-large-object
-cd valkey-large-object
-cargo build --release      # target/release/libvalkey_large_object.so
-```
+The [getting started guide](https://valkey.io/topics/large-object-getting-started/) covers the requirements, building the module from source and your first commands.
+[Configuration and monitoring](https://valkey.io/topics/large-object-configuration/) lists every setting, and [use cases](https://valkey.io/topics/large-object-use-cases/) shows where the module fits.
 
-The build needs libfabric 2.0 or later with development files, `clang` and `libclang-dev`.
-Then start Valkey in `Tiered` mode.
-This is the command we used for the benchmark on an i8ge.48xlarge, with its 16 NVMe drives striped under XFS and mounted at `/mnt/bigobj-data`.
-Size the disk and staging settings for your own hardware.
+The benchmark above ran with this command, on an i8ge.48xlarge with its 16 NVMe drives striped under XFS:
 
 ```bash
 valkey-server \
@@ -178,12 +173,6 @@ valkey-server \
   --largeobj.fabric-provider EfaDirect
 ```
 
-`maxmemory` is not set here. The DRAM cache grows in 1 GiB segments as needed, up to `maxmemory` when it is set.
-
-The RDMA commands need a client that registers its memory with libfabric and follows the flow in the [RDMA overview](https://github.com/valkey-io/valkey-large-object/blob/main/docs/COMMANDS.md#rdma-overview).
-Valkey GLIDE's Python sync client supports them from `valkey-glide-sync` 2.6.0.
-The module also includes TCP variants of the commands for storing and retrieval.
-You can refer to the [command reference](https://github.com/valkey-io/valkey-large-object/blob/main/docs/COMMANDS.md) and [getting started guide](https://github.com/valkey-io/valkey-large-object/blob/main/docs/GETTING_STARTED.md).
-
-The module is open source and release 0.1 is available.
-File issues and pull requests at [valkey-io/valkey-large-object](https://github.com/valkey-io/valkey-large-object).
+The TCP commands work with any client.
+The RDMA commands need a client that implements the libfabric flow; Valkey GLIDE's Python sync client supports them from `valkey-glide-sync` 2.6.0.
+The module is open source, and release 0.1 is available at [valkey-io/valkey-large-object](https://github.com/valkey-io/valkey-large-object).
