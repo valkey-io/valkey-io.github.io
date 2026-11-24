@@ -4,6 +4,7 @@ description = "Join the Valkey community: contribute code, docs, and content, sp
 template = "community-home.html"
 page_template = "community.html"
 [extra]
+breadcrumb = "Community"
 hero = { title = "Built by the community. For the community.", subtitle = "Every contributor started somewhere: a bug report, a talk, a line of code. This community is built one key at a time. Yours starts here.", image = "/img/community/hero-community.jpg" }
 
 connect = { title = "Connect with us", description = "Ask questions, share ideas, and meet the Valkey community.", links = [

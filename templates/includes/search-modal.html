@@ -1,0 +1,44 @@
+{#- Contents of the site search modal, which static/assets/js/search.js copies into a <pagefind-modal>.
+
+    They're in a <template> so the Pagefind elements stay inactive until the modal has moved them
+    into its dialog; otherwise each one initializes twice. This is Pagefind's default modal, written
+    out so the results can use the result template below. It must stay outside .body, the part of
+    the page Pagefind indexes (root_selector in pagefind.yml).
+
+    The result template is Pagefind's built-in one (https://pagefind.app/docs/components/results/),
+    plus each result's breadcrumb, so the user can see where the page is in the site. It uses
+    Pagefind's {{ }} syntax, so it's in a raw block to keep Zola from rendering it. #}
+<template id="search-modal-contents">
+    <pagefind-modal-header><pagefind-input></pagefind-input></pagefind-modal-header>
+    <pagefind-modal-body>
+        <pagefind-summary></pagefind-summary>
+        <pagefind-results>
+            <script type="text/pagefind-template">
+            {%- raw %}
+                <li class="pf-result">
+                    <div class="pf-result-card">
+                        <div class="pf-result-content">
+                            {{#if meta.breadcrumb}}<p class="search-result-breadcrumb">{{ meta.breadcrumb }}</p>{{/if}}
+                            <p class="pf-result-title">
+                                <a class="pf-result-link" href="{{ meta.url | default(url) | safeUrl }}">{{ meta.title }}</a>
+                            </p>
+                            {{#if excerpt}}<p class="pf-result-excerpt">{{+ excerpt +}}</p>{{/if}}
+                        </div>
+                    </div>
+                    {{#if sub_results}}
+                    <ul class="pf-heading-chips">
+                        {{#each sub_results as sub}}
+                        <li class="pf-heading-chip">
+                            <a class="pf-heading-link" href="{{ sub.url | safeUrl }}">{{ sub.title }}</a>
+                            <p class="pf-heading-excerpt">{{+ sub.excerpt +}}</p>
+                        </li>
+                        {{/each}}
+                    </ul>
+                    {{/if}}
+                </li>
+            {% endraw -%}
+            </script>
+        </pagefind-results>
+    </pagefind-modal-body>
+    <pagefind-modal-footer><pagefind-keyboard-hints></pagefind-keyboard-hints></pagefind-modal-footer>
+</template>

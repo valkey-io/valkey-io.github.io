@@ -4,4 +4,7 @@
 render = false
 page_template = "release-line.html"
 sort_by = "title"
+
+[extra]
+breadcrumb = "Download"
 +++
