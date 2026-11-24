@@ -107,15 +107,16 @@ In `Dram` mode every object lives in these segments, up to the core `maxmemory` 
 - An object is copied into the DRAM cache on its first read by default (`largeobj.promote-min-hits`). When the cache is full, a cached copy with a low least-frequently-used score is dropped, and the object stays on disk.
 - When the disk limit (`largeobj.disk-maxmemory`) or `maxmemory` is reached, a write evicts the least recently used large objects, as long as `maxmemory-policy` is an `allkeys-*` policy. With `noeviction` the write fails with `OOM`.
 
-**Transport.** The RDMA commands use [libfabric](https://ofiwg.github.io/libfabric/). A client opens a session once per connection with `BLOB.RDMA_HELLO`, sending its 
-libfabric endpoint address, and the reply lists the server's addresses. After that, `BLOB.RDMA_GET key rkey addr len ...` names regions of client memory the client has 
-registered, and the server writes the object straight into them. `BLOB.RDMA_SET` is the reverse. The object bytes never travel on the Valkey connection, which carries 
-only the command, the key, the regions and a short reply. The server registers its memory for local access only, and it starts every transfer, so a client cannot read or 
-write server memory. The TCP commands, `BLOB.TCP_SET` and `BLOB.TCP_GET`, carry the bytes on the normal connection and work with any client.
-RDMA needs a client that implements the libfabric flow and, for the default `EfaDirect` provider, EFA hardware. The `Emulated` provider runs libfabric over TCP sockets for developing RDMA clients, and it is not faster than the TCP commands.
+**Transport.** The RDMA commands use [libfabric](https://ofiwg.github.io/libfabric/).
+A client opens a session once per connection with `BLOB.RDMA_HELLO`, sending its libfabric endpoint address.
+After that, `BLOB.RDMA_GET key rkey addr len ...` names regions of client memory the client has registered, and the server writes the object straight into them. `BLOB.RDMA_SET` is the reverse.
+The object bytes never travel on the Valkey connection, and the server starts every transfer, so a client cannot read or write server memory.
+The TCP commands, `BLOB.TCP_SET` and `BLOB.TCP_GET`, carry the bytes on the normal connection and work with any client.
+RDMA needs a client that implements the libfabric flow and, for the default `EfaDirect` provider, EFA hardware.
+The `Emulated` provider runs libfabric over TCP sockets for developing RDMA clients, and it is not faster than the TCP commands.
 
-**Integrity.** The server calculates a CRC32C checksum for every stored object. `BLOB.RDMA_SET` can send one, and the server rejects the write if the bytes don't match. 
-`BLOB.RDMA_GET` returns the stored checksum along with the length, so the client can check what it received.
+**Integrity.** The server stores a CRC32C checksum for every object.
+`BLOB.RDMA_SET` can send one and the server rejects a mismatch, and `BLOB.RDMA_GET` returns the stored checksum so the client can verify what it received.
 
 ## How fast it runs
 
