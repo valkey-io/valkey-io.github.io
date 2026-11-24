@@ -33,7 +33,7 @@ The size depends on the model and the chunk size:
 | Mistral-Medium-3.5-128B (FP8) | 176 KiB | 44 MiB | 352 MiB |
 
 Larger chunks mean fewer, bigger objects per prompt, and a cache hit has to move many of them quickly.
-The Valkey Large Object module is built for that.
+The [Valkey Large Object module](https://github.com/valkey-io/valkey-large-object) is built for that.
 However, it is not limited to only KV caching: it optimally stores any large binary value.
 
 ## What changes when values reach hundreds of megabytes
@@ -67,12 +67,12 @@ The workload:
 
 ## What the module is
 
-The [Valkey Large Object module](https://github.com/valkey-io/valkey-large-object) is a Valkey module written in Rust that adds a data type and commands optimized for large binary values.
+The Valkey Large Object module is a Valkey module written in Rust that adds a data type and commands optimized for large binary values.
 It needs Valkey 8.0 or later on Linux.
 
 Here is the path of one `GET` or `SET` through the module:
 
-![Request path through the module. A client sends a command to the Valkey main thread, which blocks only that client and hands the transfer to a streaming task. The streaming task moves the object as a window of chunks in parallel, for both SET and GET. Chunks move between two kinds of segment pools, DRAM cache segments (four shown) and disk staging segments (two shown), which have their own segment counts. Each segment has its own talc allocator and is registered with both EFA and io_uring. Bytes cross the network by RDMA directly between those segments and the client's EFA-registered memory. Each segment pool has its own io_uring engine to the object files on XFS: the DRAM cache engine reads objects into the cache, and the staging engine reads and writes them.](request_path.svg)
+![Request path through the module. A client sends a command to the Valkey main thread, which blocks only that client and hands the transfer to a streaming task. The streaming task moves the object as a window of chunks in parallel, for both SET and GET. Chunks move between two kinds of segment pools, DRAM cache segments (four shown) and disk staging segments (two shown). Each segment has its own talc allocator and is registered with both EFA and io_uring. Bytes cross the network by RDMA directly between those segments and the client's EFA-registered memory. Each segment pool has its own io_uring engine to the object files on XFS: the DRAM cache engine reads objects into the cache, and the staging engine reads and writes them.](request_path.svg)
 
 **Data type.** A Large Object data type holds a small descriptor, not the object's bytes: an object ID, the length and a CRC32C checksum.
 The bytes live in the module's segments or in a file, depending on the operating mode.
@@ -122,14 +122,14 @@ The stock Valkey results below are taken from the [earlier section](#what-change
 
 ![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 291 at 1 MiB, 226 at 8 MiB, 218 at 32 MiB, 181 at 64 MiB, 108 at 256 MiB and 105 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
-| Object size | Stock Valkey total (Gbps) | Module total (Gbps) | Module / stock | GET p99, stock / module | SET p99, stock / module | PING p99, stock / module | Evictions per second, stock / module |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 290.8 | 372.2 | 1.3x | 2.6 ms / 2.10 ms | 4.6 ms / 2.75 ms | 2.1 ms / 0.23 ms | 15,400 / 16,700 |
-| 8 MiB | 225.6 | 399.3 | 1.8x | 20 ms / 15.2 ms | 49-50 ms / 16.2 ms | 9.6 ms / 0.23 ms | 840 / 2,670 |
-| 32 MiB | 217.6 | 388.7 | 1.8x | 73 ms / 37.5 ms | 230-238 ms / 41.2 ms | 15 ms / 0.36 ms | 210 / 680 |
-| 64 MiB | 181.0 | 377.9 | 2.1x | 106-114 ms / 54.5 ms | 323-325 ms / 56.1 ms | 17 ms / 0.35 ms | 100 / 340 |
-| 256 MiB | 107.6 | 372.3 | 3.5x | 440-453 ms / 101 ms | 392-394 ms / 105 ms | 26 ms / 0.33 ms | 20 / 82 |
-| 500 MiB | 104.8 | 371.9 | 3.5x | 1.3-1.4 s / 193 ms | 0.7-1.2 s / 195 ms | 34 ms / 0.32 ms | 10 / 43 |
+| Object size | Total Gbps, stock / module | GET p99, stock / module | SET p99, stock / module | PING p99, stock / module | Evictions per second, stock / module |
+| --- | --- | --- | --- | --- | --- |
+| 1 MiB | 290.8 / 372.2 | 2.6 ms / 2.10 ms | 4.6 ms / 2.75 ms | 2.1 ms / 0.23 ms | 15,400 / 16,700 |
+| 8 MiB | 225.6 / 399.3 | 20 ms / 15.2 ms | 49-50 ms / 16.2 ms | 9.6 ms / 0.23 ms | 840 / 2,670 |
+| 32 MiB | 217.6 / 388.7 | 73 ms / 37.5 ms | 230-238 ms / 41.2 ms | 15 ms / 0.36 ms | 210 / 680 |
+| 64 MiB | 181.0 / 377.9 | 106-114 ms / 54.5 ms | 323-325 ms / 56.1 ms | 17 ms / 0.35 ms | 100 / 340 |
+| 256 MiB | 107.6 / 372.3 | 440-453 ms / 101 ms | 392-394 ms / 105 ms | 26 ms / 0.33 ms | 20 / 82 |
+| 500 MiB | 104.8 / 371.9 | 1.3-1.4 s / 193 ms | 0.7-1.2 s / 195 ms | 34 ms / 0.32 ms | 10 / 43 |
 
 - The module moved 1.8x to 3.5x the throughput of stock Valkey from 8 MiB up, and 1.3x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 291 Gbps at 1 MiB to 105 Gbps at 500 MiB.
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 2.1-34 ms with stock Valkey.

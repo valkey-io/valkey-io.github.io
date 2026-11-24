@@ -58,7 +58,6 @@
 <rect x="614.0" y="362" width="16.2" height="18" rx="2" fill="#a9d4a9"/>
 <rect x="641.3" y="362" width="16.2" height="18" rx="2" fill="#a9d4a9"/>
 <rect x="659.6" y="362" width="16.2" height="18" rx="2" fill="#a9d4a9"/>
-<text x="510" y="402" text-anchor="start" font-size="10.5" fill="#4b5563">the two pools have their own segment counts</text>
 <rect x="495" y="445" width="200" height="40" rx="8" fill="#fff3d6" stroke="#c4902a" stroke-width="1.5"/>
 <text x="595" y="471" text-anchor="middle" font-size="14" font-weight="700" fill="#111827">io_uring engine</text>
 <rect x="715" y="445" width="200" height="40" rx="8" fill="#fff3d6" stroke="#c4902a" stroke-width="1.5"/>
