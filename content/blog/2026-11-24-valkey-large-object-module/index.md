@@ -55,21 +55,21 @@ They used the same number of `GET` and `SET` connections per client as the modul
 
 The workload:
 
-- `GET`s read a 64 GiB hot set that was filled beforehand, so every `GET` finds its key.
+- `GET`s read a 64 GiB hot set that was filled beforehand, so almost every `GET` finds its key.
 - `SET`s always write new keys, picked from a billion-key space, so none overwrites an existing value. Once memory is full, every `SET` evicts an older key.
-- We ran `GET`s alone, `SET`s alone, and then both together, long enough for memory to fill.
+- `GET`s and `SET`s ran together, long enough for memory to fill.
 - A separate connection sent a `PING` every 10 ms to show how long an unrelated small command waits.
 
-| Object size | GET only (Gbps) | SET only (Gbps) | GET and SET together (Gbps) | GET p50 / p99 (together) | SET p50 / p99 (together) | PING p99 / max (together) | Evictions (together) |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 208.1 | 159.4 | 290.8 (149.5 + 141.3) | 1.1 / 2.6 ms | 1.5 / 4.6 ms | 2.1 / 240 ms | 4.63M |
-| 8 MiB | 207.9 | 119.0 | 225.6 (157.2 + 68.4) | 13 / 20 ms | 30-32 / 49-50 ms | 9.6 / 226 ms | 253K |
-| 32 MiB | 201.3 | 112.2 | 217.6 (148.7 + 68.9) | 41-43 / 73 ms | 77-78 / 230-238 ms | 15 / 46 ms | 64K |
-| 64 MiB | 134.0 | 104.9 | 181.0 (116.0 + 65.0) | 71-74 / 106-114 ms | 115 / 323-325 ms | 17 / 234 ms | 30K |
-| 256 MiB | 71.9 | 72.7 | 107.6 (53.0 + 54.6) | 325-333 / 440-453 ms | 331 / 392-394 ms | 26 / 221 ms | 6.0K |
-| 500 MiB | 74.7 | 76.1 | 104.8 (49.5 + 55.2) | 625-654 ms / 1.3-1.4 s | 633-638 ms / 0.7-1.2 s | 34 / 93 ms | 2.9K |
+| Object size | Total Gbps (GET + SET) | GET p50 / p99 | SET p50 / p99 | PING p99 / max | Evictions per second |
+| --- | --- | --- | --- | --- | --- |
+| 1 MiB | 290.8 (149.5 + 141.3) | 1.1 / 2.6 ms | 1.5 / 4.6 ms | 2.1 / 240 ms | 15,400 |
+| 8 MiB | 225.6 (157.2 + 68.4) | 13 / 20 ms | 30-32 / 49-50 ms | 9.6 / 226 ms | 840 |
+| 32 MiB | 217.6 (148.7 + 68.9) | 41-43 / 73 ms | 77-78 / 230-238 ms | 15 / 46 ms | 210 |
+| 64 MiB | 181.0 (116.0 + 65.0) | 71-74 / 106-114 ms | 115 / 323-325 ms | 17 / 234 ms | 100 |
+| 256 MiB | 107.6 (53.0 + 54.6) | 325-333 / 440-453 ms | 331 / 392-394 ms | 26 / 221 ms | 20 |
+| 500 MiB | 104.8 (49.5 + 55.2) | 625-654 ms / 1.3-1.4 s | 633-638 ms / 0.7-1.2 s | 34 / 93 ms | 10 |
 
-- **Reads and writes:** `GET`s alone reached 201-208 Gbps, the hosts' TCP ceiling, up to 32 MiB. With fewer connections from 64 MiB up, each connection waits longer for each value, so they reached 134, 72 and 75 Gbps. `SET`s alone reached 105-119 Gbps from 8 to 64 MiB and 73-76 Gbps at 256 and 500 MiB.
+- **Network:** run alone, `GET`s reached the hosts' TCP ceiling of about 208 Gbps up to 32 MiB, so the network is not what limits stock Valkey here.
 - **Other clients:** a `PING` from another connection took 2.1-34 ms at p99 and up to 240 ms, against 0.05 ms when idle.
 - **Capacity:** stock Valkey held 640 GiB in DRAM before evicting.
 
