@@ -91,13 +91,12 @@ The module moves the data on its own worker threads (8 by default, `largeobj.wor
 Objects are streamed in chunks (1 MiB by default, `largeobj.chunk-size`), up to 64 at a time (`largeobj.max-buffers-per-op`), and each chunk goes to its target as soon as the source has produced it, so network and disk transfers overlap.
 In `Tiered` mode the chunks pass through a bounded window of reused staging buffers, so a transfer does not allocate the whole object, however large it is.
 
-**Memory.** Object bytes live in segments: large blocks of memory (1 GiB each by default, `largeobj.segment-size`) that the module reserves once and carves up itself.
-Each segment has its own allocator that hands out exact-sized, 4 KiB-aligned slots, so objects from tens of kilobytes to hundreds of megabytes waste no memory on fixed size classes.
-Registering memory with the network card costs 300 to 500 microseconds per call, which would ruin throughput on the data path.
-So the module registers each segment once, and in `Tiered` mode with io_uring as well.
-A buffer registered both ways serves the network card and the disk without a copy in between.
-The DRAM cache pool starts with one segment and adds more as it fills, up to the core `maxmemory` setting.
-In `Dram` mode every object lives in this pool, and in `Tiered` mode it is the read cache.
+**Memory.** Data sent or received over EFA must sit in memory registered with the EFA network card, and registering is too slow to do on every transfer.
+So the module allocates memory from Valkey in large segments (1 GiB each by default, `largeobj.segment-size`), which count toward `used_memory` and `maxmemory`, and registers each segment when it is created.
+In `Tiered` mode the segments are registered with io_uring as well, for performance, so the kernel pins their pages once instead of on every disk read and write, and one buffer serves the network and the disk without a copy.
+Inside each segment, the module's own allocator hands out exact-sized, 4 KiB-aligned slots.
+The DRAM cache pool starts with one segment and adds more as it fills, up to `maxmemory`.
+In `Dram` mode it holds every object, and in `Tiered` mode it acts as a read cache, next to the fixed-size disk staging segment pool described below.
 
 **Disk.** In `Tiered` mode every object is a file on block storage, such as local NVMe or EBS, and DRAM is a read cache:
 
