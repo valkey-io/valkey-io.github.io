@@ -32,10 +32,9 @@ The size depends on the model and the chunk size:
 | Qwen3-235B-A22B (FP8) | 94 KiB | 23.5 MiB | 188 MiB |
 | Mistral-Medium-3.5-128B (FP8) | 176 KiB | 44 MiB | 352 MiB |
 
-Larger chunks mean fewer, bigger objects per prompt.
-A cache hit moves many of these objects, quickly.
+Larger chunks mean fewer, bigger objects per prompt, and a cache hit has to move many of them quickly.
 The Valkey Large Object module is built for that.
-It is not specific to KV cache: it stores any large binary value, and this is the use that drove its design.
+However, it is not limited to only KV caching: it optimally stores any large binary value.
 
 ## What changes when values reach hundreds of megabytes
 
