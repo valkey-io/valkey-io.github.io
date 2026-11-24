@@ -9,7 +9,7 @@ blog_type = ["Technical Deep Dive"]
 
 [extra]
 featured = false
-featured_image = "/assets/media/featured/random-03.webp"
+featured_image = "/assets/media/featured/valkey-large-object-module.png"
 +++
 
 ## Where this fits
