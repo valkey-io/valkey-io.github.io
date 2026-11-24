@@ -135,7 +135,7 @@ The stock Valkey results below are taken from the [earlier section](#what-change
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 2.1-34 ms with stock Valkey.
 - From 8 MiB up the module evicted 3 to 4 times faster than stock Valkey, because it accepted that many more `SET`s, and it rejected none at any size.
 - On the same instance type, the module node held 108 TB on NVMe, about 150 times the 640 GiB that stock Valkey held in DRAM.
-- With the DRAM cache turned off, so that every `GET` reads from NVMe, `GET`s reached the same 215-216 Gbps as cache hits from DRAM. On this instance the 16 local NVMe drives deliver more read bandwidth than the network can carry, so the cache doesn't change throughput. It matters when storage is the limit, for example on network-attached block storage, where reads and writes share one bandwidth limit: every `GET` served from DRAM leaves that bandwidth to `SET`s.
+- With the DRAM cache turned off, so that every `GET` reads from NVMe, `GET`s reached the same 215-216 Gbps as cache hits from DRAM, because the 16 local NVMe drives can read faster than the network can carry. The cache matters when storage is the limit, for example on network-attached block storage, where reads and writes share one bandwidth limit: every `GET` served from DRAM leaves that bandwidth to `SET`s.
 
 ## Try it
 
