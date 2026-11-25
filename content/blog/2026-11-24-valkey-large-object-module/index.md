@@ -2,7 +2,7 @@
 title = "Valkey Large Object Module: As Fast as Your Hardware"
 date = 2026-11-24 01:01:01
 description = "The Valkey Large Object module keeps values of tens to hundreds of megabytes off the main thread and streams them in chunks, so a node's throughput follows its network and storage bandwidth, not Valkey's CPU."
-authors = ["karthiksubbarao", "kevinmcgehee", "cnuthalapati", "saurabhkher"]
+authors = ["karthiksubbarao", "kevinmcgehee", "cnuthalapati", "smkher"]
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
