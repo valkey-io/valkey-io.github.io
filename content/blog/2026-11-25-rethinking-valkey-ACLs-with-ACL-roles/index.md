@@ -95,7 +95,7 @@ user oncall-sre       on #<HASH:oncall-sre>       resetkeys resetchannels resetd
 user support-readonly on #<HASH:support-readonly> resetkeys resetchannels resetdbs -@all role=conn-basics,support-ro,support-notes
 ```
 
-Now we’re able to give access based on the role. This makes it clear what access each user has.
+Now you’re able to give access based on the role. This makes it clear what access each user has.
 
 The `catalog-reader` doesn’t need write access to the catalog, and `support-readonly` doesn’t need access to checkout.
 
