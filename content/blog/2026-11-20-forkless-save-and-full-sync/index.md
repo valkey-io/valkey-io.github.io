@@ -82,6 +82,28 @@ Workloads with very large keys that receive frequent writes see the most impact,
 
 Command latency can also be higher while a forkless operation runs, compared to a fork-based one, since the work of writing out the dataset now happens inside the server process.
 
+## Fork vs. Forkless: Head-to-Head Results
+
+To show the difference in practice, we ran the same full sync with each method, on a workload chosen to show the copy-on-write cost clearly: writes spread across most of the dataset while the sync runs, so that nearly every memory page is touched.
+These tests ran on a development build of forkless save and full sync before the 9.2 release, so the exact numbers may differ from 9.2, while the patterns they show still apply.
+
+### Memory
+
+![Graph of total memory and copy-on-write memory during a full sync, comparing fork-based and forkless sync](forkless-memory-6gb.png)
+
+With `fork()`, memory almost doubled, nearly all of it copy-on-write.
+With forkless sync, memory stayed close to the size of the dataset for the whole operation.
+
+### Latency and Sync Time
+
+While the dataset was being sent, p99 write latency was about 50% higher with forkless sync, and the forkless sync took longer to complete.
+The fork-based sync, on the other hand, started with a pause while `fork()` ran, which forkless sync avoided.
+
+![Graph of p99 latency during a full sync, showing the fork pause at the start of the fork-based sync](fork-freeze-p99.png)
+
+### Writes to Large Keys
+
+As described in [What This Means for Clients](#what-this-means-for-clients), writes to large keys are the most likely to wait.
 The graph below shows a deliberately unfavorable case for forkless: a full sync of a dataset made entirely of large lists that were never split into smaller keys, with writes to those lists during the sync.
 In this test, writes that landed on a list while it was being written out waited up to about 75 ms, as the p100 spikes show.
 Even in this case, though, waits were rare: the large spikes don't reach p99, so fewer than 1% of writes saw a long wait.
@@ -124,25 +146,6 @@ What's worth watching instead is write latency, especially on large keys, since 
 
 To confirm that an operation ran forkless as configured, `rdb_current_bgsave_type` and `rdb_last_bgsave_type` in `INFO persistence` show the method used.
 If a fallback did happen, the server log records its reason, and [When Valkey Falls Back to fork()](#when-valkey-falls-back-to-fork) points to how to avoid it.
-
-## Fork vs. Forkless: Head-to-Head Results
-
-To show the difference in practice, we ran the same full sync with each method, on a workload chosen to show the copy-on-write cost clearly: writes spread across most of the dataset while the sync runs, so that nearly every memory page is touched.
-These tests ran on a development build of forkless save and full sync before the 9.2 release, so the exact numbers may differ from 9.2, while the patterns they show still apply.
-
-### Memory
-
-![Graph of total memory and copy-on-write memory during a full sync, comparing fork-based and forkless sync](forkless-memory-6gb.png)
-
-With `fork()`, memory almost doubled, nearly all of it copy-on-write.
-With forkless sync, memory stayed close to the size of the dataset for the whole operation.
-
-### Latency and Sync Time
-
-While the dataset was being sent, p99 write latency was about 50% higher with forkless sync, and the forkless sync took longer to complete.
-The fork-based sync, on the other hand, started with a pause while `fork()` ran, which forkless sync avoided.
-
-![Graph of p99 latency during a full sync, showing the fork pause at the start of the fork-based sync](fork-freeze-p99.png)
 
 ## Get Started
 
