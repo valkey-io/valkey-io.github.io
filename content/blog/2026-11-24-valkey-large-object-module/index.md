@@ -58,14 +58,14 @@ The workload:
 
 **Table 1: Performance of Valkey on large objects without the Large Object module**
 
-| Object size (MiB) | Total Gbps (GET + SET) | GET p50 / p99 | SET p50 / p99 | PING p99 / max | Evictions per second |
+| Object size (MiB) | Total Gbps (GET + SET) | GET p50 / p99 (ms) | SET p50 / p99 (ms) | PING p99 / max (ms) | Evictions per second |
 | --- | --- | --- | --- | --- | --- |
-| 1 | 305.3 (144.5 + 160.8) | 1.00 / 1.55 ms | 1.36 / 3.54 ms | 1.23 / 440 ms | 18,795 |
-| 8 | 213.4 (147.9 + 65.5) | 13.8 / 22.3 ms | 32.0 / 52.2 ms | 10.4 / 228 ms | 955 |
-| 32 | 201.9 (136.7 + 65.2) | 46.1 / 64.7 ms | 83.4 / 208 ms | 17.4 / 239 ms | 238 |
-| 64 | 171.4 (110.2 + 61.2) | 77.1 / 105 ms | 134 / 189 ms | 19.5 / 226 ms | 112 |
-| 256 | 94.2 (47.6 + 46.6) | 352 / 396 ms | 373 / 430 ms | 37.6 / 97 ms | 21 |
-| 500 | 89.1 (44.1 + 45.0) | 751 / 973 ms | 751 / 830 ms | 48.5 / 253 ms | 11 |
+| 1 | 305.3 (144.5 + 160.8) | 1.00 / 1.55 | 1.36 / 3.54 | 1.23 / 440 | 18,795 |
+| 8 | 213.4 (147.9 + 65.5) | 13.8 / 22.3 | 32.0 / 52.2 | 10.4 / 228 | 955 |
+| 32 | 201.9 (136.7 + 65.2) | 46.1 / 64.7 | 83.4 / 208 | 17.4 / 239 | 238 |
+| 64 | 171.4 (110.2 + 61.2) | 77.1 / 105 | 134 / 189 | 19.5 / 226 | 112 |
+| 256 | 94.2 (47.6 + 46.6) | 352 / 396 | 373 / 430 | 37.6 / 97 | 21 |
+| 500 | 89.1 (44.1 + 45.0) | 751 / 973 | 751 / 830 | 48.5 / 253 | 11 |
 
 - **Network:** run alone, `GET`s reached the hosts' TCP ceiling of about 208 Gbps up to 32 MiB, so the network is not what limits stock Valkey here.
 - **Other clients:** while the server was evicting, a `PING` from another connection took 1.2-48 ms at p99 and up to 440 ms.
@@ -120,9 +120,9 @@ These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with 
 
 ![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 305 at 1 MiB, 213 at 8 MiB, 202 at 32 MiB, 171 at 64 MiB, 94 at 256 MiB and 89 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
-**Table 2: Performance improvements on multi-MiB objects with the Large Object module (stock → module)**
+**Table 2: Performance improvements on large objects with the Large Object module (stock → module)**
 
-| Object size (MiB) | Throughput (Gbps) | GET p50 (ms) | GET p99 (ms) | SET p50 (ms) | SET p99 (ms) | PING p99 (ms) |
+| Object size (MiB) | Total Gbps (GET + SET) | GET p50 (ms) | GET p99 (ms) | SET p50 (ms) | SET p99 (ms) | PING p99 (ms) |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | 305 → 372 (1.2x) | 1.00 → 1.27 | 1.55 → 2.10 | 1.36 → 1.53 | 3.54 → 2.75 | 1.23 → 0.23 |
 | 8 | 213 → 399 (1.9x) | 13.8 → 10.6 | 22.3 → 15.2 | 32.0 → 10.8 | 52.2 → 16.2 | 10.4 → 0.23 |
@@ -143,14 +143,14 @@ At lower concurrency, with the same two clients each running 4 `GET` and 4 `SET`
 
 **Table 3: Lower latency on large objects with optimal clients**
 
-| Object size (MiB) | `GET` p50 / p99 | `SET` p50 / p99 |
+| Object size (MiB) | GET p50 / p99 (ms) | SET p50 / p99 (ms) |
 | --- | --- | --- |
-| 1 | 0.33 / 0.53 ms | 0.51 / 0.76 ms |
-| 8 | 2.6 / 3.9 ms | 3.0 / 4.6 ms |
-| 32 | 10.4 / 13.7 ms | 11.6 / 15.5 ms |
-| 64 | 10.3 / 13.8 ms | 13.0 / 17.7 ms |
-| 256 | 41.7 / 49 ms | 51 / 62 ms |
-| 500 | 59 / 73 ms | 68 / 82 ms |
+| 1 | 0.33 / 0.53 | 0.51 / 0.76 |
+| 8 | 2.6 / 3.9 | 3.0 / 4.6 |
+| 32 | 10.4 / 13.7 | 11.6 / 15.5 |
+| 64 | 10.3 / 13.8 | 13.0 / 17.7 |
+| 256 | 41.7 / 49 | 51 / 62 |
+| 500 | 59 / 73 | 68 / 82 |
 
 ## Try it
 
