@@ -1,0 +1,7 @@
+# Used by build/broken-links.sh.
+
+# Not "full", because lychee's #:~:text= fragment checking is new and was unreliable in testing.
+include_fragments = "anchor-only"
+
+# Zola writes /topics/foo/ as topics/foo/index.html.
+index_files = ["index.html"]
