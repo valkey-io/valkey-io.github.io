@@ -2,7 +2,7 @@
 title = "Valkey Large Object Module: As Fast as Your Hardware"
 date = 2026-11-24 01:01:01
 description = "The Valkey Large Object module keeps values of tens to hundreds of megabytes off the main thread and streams them in chunks, so a node's throughput follows its network and storage bandwidth, not Valkey's CPU."
-authors = ["karthiksubbarao"]
+authors = ["karthiksubbarao", "kevinmcgehee", "cnuthalapati", "saurabhkher"]
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
@@ -12,9 +12,9 @@ featured = false
 featured_image = "/assets/media/featured/valkey-large-object-module.png"
 +++
 
-## Where this fits
+## Applications with large objects
 
-A large language model reads the whole prompt before it answers.
+Large objects are produced in a wide range of applications, from video / audio files to more recently KV Attention states from Large Language Models (LLMs). An LLM reads the whole prompt before it answers.
 For every token, at every layer, it computes a key vector and a value vector that later tokens use to decide what to pay attention to.
 Those saved vectors are the KV cache.
 If a later request starts with the same text, such as a shared system prompt, a long document or the earlier turns of a conversation, the inference engine can load the saved KV cache instead of computing it again, which saves GPU time and shortens the time to the first token.
@@ -22,7 +22,6 @@ If a later request starts with the same text, such as a shared system prompt, a 
 GPU memory is too small to keep every cache, so inference stacks keep them in tiers: GPU memory, then the host's memory, then a shared store that every GPU server can read, managed by tools such as [LMCache](https://github.com/LMCache/LMCache).
 Valkey can be that shared store, and a Valkey cluster scales its capacity independently of the GPU servers, as [KV caching on Valkey](https://valkey.io/blog/kv-caching-on-valkey/) shows for a fleet of GPU servers.
 
-What the shared store has to hold is large.
 LMCache splits a prompt into chunks, 256 tokens by default, and stores each chunk as one object.
 The size depends on the model and the chunk size:
 
