@@ -121,7 +121,9 @@ These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with 
 
 ![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 305 at 1 MiB, 213 at 8 MiB, 202 at 32 MiB, 171 at 64 MiB, 94 at 256 MiB and 89 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
-**Table 2: Performance improvements on large objects with the Large Object module (stock → module)**
+**Table 2: Performance improvements on large objects with the Large Object module**
+
+Each cell shows stock Valkey → the module.
 
 | Object size (MiB) | Total Gbps (GET + SET) | GET p50 (ms) | GET p99 (ms) | SET p50 (ms) | SET p99 (ms) | PING p99 (ms) |
 | --- | --- | --- | --- | --- | --- | --- |
