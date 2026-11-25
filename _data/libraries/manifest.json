@@ -12,9 +12,11 @@
     "clients/phpredis.json",
     "clients/predis.json",
     "clients/valkey-swift.json",
+    "clients/sage.json",
     "clients/valkey-glide-csharp.json",
     "clients/valkey-glide-php.json",
-    "clients/valkey-glide-ruby.json"
+    "clients/valkey-glide-ruby.json",
+    "clients/kotlin-valkey.json"
   ],
   "integrations": [
     "integrations/valkey-admin.json",
@@ -39,6 +41,7 @@
     "integrations/valkey-mcp-server.json",
     "integrations/valkey-message-queue-starter.json",
     "integrations/vllm-semantic-router.json",
-    "integrations/falkordb.json"
+    "integrations/falkordb.json",
+    "integrations/dbine.json"
   ]
 }

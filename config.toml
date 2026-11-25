@@ -45,6 +45,25 @@ review_list = [
     "/topics/distlock/"
 ]
 
+# Links to pages outside the documentation. A link with `after` is shown
+# like a section title, after the nav.yml section with that id. A link with
+# `in` is the last entry inside that section, marked as leaving the docs.
+# Either goes at the end of the menu if there's no such section.
+[[extra.docs_menu_links]]
+title = "Clients"
+url = "/clients/"
+in = "client-development"
+
+[[extra.docs_menu_links]]
+title = "Integrations"
+url = "/integrations/"
+in = "client-development"
+
+[[extra.docs_menu_links]]
+title = "Valkey Admin"
+url = "https://valkey-admin.valkey.io/"
+in = "getting-started"
+
 # Labels shown next to menu entries from other sources, by source name. Only
 # modules get one; valkey-bundle isn't a module.
 [extra.nav_badges]

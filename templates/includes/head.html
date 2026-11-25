@@ -30,7 +30,40 @@
     <meta name="theme-color" content="#ffffff">
 
     <title>{{ name_prefix }}{% if page_name %} &middot; {{ page_name }}{% endif %}</title>
-    <meta name="title" property="og:title" content="{{ name_prefix }}{% if page_name %}: {{ page_name }}{% endif %}">
+    {%- if page_name %}{% set og_title = name_prefix ~ ": " ~ page_name %}{% else %}{% set og_title = name_prefix %}{% endif %}
+    <meta name="title" property="og:title" content="{{ og_title }}">
+    <meta name="twitter:title" content="{{ og_title }}" />
+    <meta property="og:site_name" content="Valkey" />
+    {%- if page %}{% set og_url = page.permalink %}{% elif section %}{% set og_url = section.permalink %}{% endif %}
+    {%- if og_url is defined %}
+    <meta property="og:url" content="{{ og_url }}" />
+    {%- endif %}
+    {%- if page and page.description %}{% set og_description = page.description %}
+    {%- elif section and section.description %}{% set og_description = section.description %}{% endif %}
+    {%- if og_description is defined %}
+    <meta property="og:description" content="{{ og_description }}" />
+    <meta name="twitter:description" content="{{ og_description }}" />
+    {%- endif %}
+    {%- if page and page.components[0] == "blog" %}
+    <meta property="og:type" content="article" />
+    <link rel="canonical" href="{{ page.permalink }}" />
+    <meta property="article:published_time" content="{{ page.date | date(format="%Y-%m-%dT%H:%M:%S%:z") }}" />
+    {%- if page.updated %}
+    <meta property="article:modified_time" content="{{ page.updated | date(format="%Y-%m-%dT%H:%M:%S%:z") }}" />
+    {%- endif %}
+    {%- if page.authors %}
+    <meta name="author" content="{% for author in page.authors %}{% set author_page = get_page(path="authors/" ~ author ~ ".md") %}{{ author_page.title }}{% if not loop.last %}, {% endif %}{% endfor %}" />
+    {%- endif %}
+    {%- set blog_type = page.taxonomies.blog_type | default(value=[]) | first | default(value="") %}
+    {%- if blog_type %}
+    <meta property="article:section" content="{{ blog_type }}" />
+    {%- endif %}
+    {%- if page.extra.og_image or page.extra.featured_image %}
+    <meta name="twitter:card" content="summary_large_image" />
+    {%- endif %}
+    {%- else %}
+    <meta property="og:type" content="website" />
+    {%- endif %}
 
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="alternate" type="application/atom+xml" title="Atom feed" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" />
