@@ -14,7 +14,7 @@ Valkey spends most of its life in steady state: answering reads and writes as fa
 But every so often it has to do something heavier and more unusual, such as take a full snapshot of the dataset or hand a complete copy to a new replica.
 Because these run alongside live traffic, doing them cheaply — without using too much extra memory, adding latency, or interrupting the clients the server is still serving — is an engineering challenge, as well as an operational one for server administrators, who need to weigh a range of considerations when deciding how these operations run.
 
-Starting in Valkey 9.2, Valkey introduces forkless save and full sync, giving administrators another approach — and more control over the tradeoffs — when deciding how these operations run.
+Starting in Valkey 9.2, Valkey introduces forkless save and full sync, giving administrators another approach — and more control over the tradeoffs.
 
 Historically, Valkey has performed both save and full sync using the operating system's `fork()` call, which lets the server write out a snapshot, or sync a replica, while continuing to serve clients.
 It's a simple and proven approach, but it comes with a possible price: depending on the workload, a save or sync can temporarily increase a server's memory use — and when writes are spread across much of the dataset during the operation, that increase can reach as much as 2x.
