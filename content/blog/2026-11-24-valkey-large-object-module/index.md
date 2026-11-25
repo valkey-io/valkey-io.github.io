@@ -58,12 +58,12 @@ The workload:
 
 | Object size | Total Gbps (GET + SET) | GET p50 / p99 | SET p50 / p99 | PING p99 / max | Evictions per second |
 | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 305.3 (144.5 + 160.8) | 1.01 / 1.58 ms | 1.38 / 3.60 ms | 1.23 / 440 ms | 18,795 |
-| 8 MiB | 213.4 (147.9 + 65.5) | 13.9 / 22.3 ms | 32.1 / 52.4 ms | 10.4 / 228 ms | 955 |
-| 32 MiB | 201.9 (136.7 + 65.2) | 46.1 / 64.7 ms | 88.1 / 234 ms | 17.4 / 239 ms | 238 |
-| 64 MiB | 171.4 (110.2 + 61.2) | 77.1 / 107 ms | 137 / 289 ms | 19.5 / 226 ms | 112 |
-| 256 MiB | 94.2 (47.6 + 46.6) | 365 / 474 ms | 373 / 436 ms | 37.6 / 97 ms | 21 |
-| 500 MiB | 89.1 (44.1 + 45.0) | 772 / 990 ms | 755 ms / 1.15 s | 48.5 / 253 ms | 11 |
+| 1 MiB | 305.3 (144.5 + 160.8) | 1.00 / 1.55 ms | 1.36 / 3.54 ms | 1.23 / 440 ms | 18,795 |
+| 8 MiB | 213.4 (147.9 + 65.5) | 13.8 / 22.3 ms | 32.0 / 52.2 ms | 10.4 / 228 ms | 955 |
+| 32 MiB | 201.9 (136.7 + 65.2) | 46.1 / 64.7 ms | 83.4 / 208 ms | 17.4 / 239 ms | 238 |
+| 64 MiB | 171.4 (110.2 + 61.2) | 77.1 / 105 ms | 134 / 189 ms | 19.5 / 226 ms | 112 |
+| 256 MiB | 94.2 (47.6 + 46.6) | 352 / 396 ms | 373 / 430 ms | 37.6 / 97 ms | 21 |
+| 500 MiB | 89.1 (44.1 + 45.0) | 751 / 973 ms | 751 / 830 ms | 48.5 / 253 ms | 11 |
 
 - **Network:** run alone, `GET`s reached the hosts' TCP ceiling of about 208 Gbps up to 32 MiB, so the network is not what limits stock Valkey here.
 - **Other clients:** while the server was evicting, a `PING` from another connection took 1.2-48 ms at p99 and up to 440 ms.
@@ -120,12 +120,12 @@ These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with 
 
 | Object size | Throughput (Gbps), stock → module | GET p50 (ms), stock → module | GET p99 (ms), stock → module | SET p50 (ms), stock → module | SET p99 (ms), stock → module | PING p99 (ms), stock → module |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 305 → 372 (1.2x) | 1.01 → 1.27 | 1.58 → 2.10 | 1.38 → 1.53 | 3.60 → 2.75 | 1.23 → 0.23 |
-| 8 MiB | 213 → 399 (1.9x) | 13.9 → 10.6 | 22.3 → 15.2 | 32.1 → 10.8 | 52.4 → 16.2 | 10.4 → 0.23 |
-| 32 MiB | 202 → 389 (1.9x) | 46.1 → 31.5 | 64.7 → 37.5 | 88.1 → 34.3 | 234 → 41.2 | 17.4 → 0.36 |
-| 64 MiB | 171 → 378 (2.2x) | 77.1 → 43.8 | 107 → 54.5 | 137 → 45.6 | 289 → 56.1 | 19.5 → 0.35 |
-| 256 MiB | 94 → 372 (4.0x) | 365 → 88.6 | 474 → 101 | 373 → 95.4 | 436 → 105 | 37.6 → 0.33 |
-| 500 MiB | 89 → 372 (4.2x) | 772 → 178 | 990 → 193 | 755 → 185 | 1,150 → 195 | 48.5 → 0.32 |
+| 1 MiB | 305 → 372 (1.2x) | 1.00 → 1.27 | 1.55 → 2.10 | 1.36 → 1.53 | 3.54 → 2.75 | 1.23 → 0.23 |
+| 8 MiB | 213 → 399 (1.9x) | 13.8 → 10.6 | 22.3 → 15.2 | 32.0 → 10.8 | 52.2 → 16.2 | 10.4 → 0.23 |
+| 32 MiB | 202 → 389 (1.9x) | 46.1 → 31.5 | 64.7 → 37.5 | 83.4 → 34.3 | 208 → 41.2 | 17.4 → 0.36 |
+| 64 MiB | 171 → 378 (2.2x) | 77.1 → 43.8 | 105 → 54.5 | 134 → 45.6 | 189 → 56.1 | 19.5 → 0.35 |
+| 256 MiB | 94 → 372 (4.0x) | 352 → 88.6 | 396 → 101 | 373 → 95.4 | 430 → 105 | 37.6 → 0.33 |
+| 500 MiB | 89 → 372 (4.2x) | 751 → 178 | 973 → 193 | 751 → 185 | 830 → 195 | 48.5 → 0.32 |
 
 - The module moved 1.9x to 4.2x the throughput of stock Valkey from 8 MiB up, and 1.2x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 305 Gbps at 1 MiB to 89 Gbps at 500 MiB.
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 1.2-48 ms with stock Valkey.
