@@ -41,7 +41,8 @@ It covers what changes in in-memory key-value datastores when values reach hundr
 ## What changes when values reach hundreds of megabytes
 
 Valkey is built for small values, typically a few hundred bytes.
-Out of the box a string value is capped at 512 MiB (`proto-max-bulk-len`), a command's own work, such as storing a value, runs on the main thread while other clients wait, and every byte goes through the TCP stack and the server's network buffers.
+Commands run on the main thread while other clients wait, and every byte goes through the TCP stack and the server's network buffers.
+With small values, the Valkey CPU is typically not the bottleneck as it's able to serve each request quickly.
 
 We measured stock Valkey 9.2.0 over TCP, with every value held in DRAM, on one i8ge.48xlarge (`maxmemory 640gb`, `allkeys-lru`, 8 I/O threads).
 
