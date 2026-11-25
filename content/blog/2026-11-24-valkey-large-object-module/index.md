@@ -183,11 +183,11 @@ valkey-server \
   --largeobj.fabric-provider EfaDirect
 ```
 
+The Valkey Large Object module is open source, and [Valkey Large Object 0.1](https://github.com/valkey-io/valkey-large-object/releases/tag/0.1) is available now.
 The TCP commands work with any client.
 The RDMA commands need a client that implements the libfabric flow; Valkey GLIDE's Python sync client supports them from `valkey-glide-sync` 2.6.0.
-The Valkey Large Object module is open source, and [Valkey Large Object 0.1](https://github.com/valkey-io/valkey-large-object/releases/tag/0.1) is available now.
 
 The second post in this series compares Valkey deployments for KV caching, over the network and on the GPU servers themselves, and shows how each performs against other object stores.
 The third goes deeper into model and inference architectures and how to configure Valkey for your inference setup.
 
-Thanks to everyone who helped build and test the module.
+The module was developed with contributions from [Karthik Subbarao](https://github.com/KarthikSubbarao), [Cameron Zack](https://github.com/zackcam), [Neeraj Ramachandran](https://github.com/neerajr0), [Anita Ruangrotsakun](https://github.com/anitarua), [Nadav Levanoni](https://github.com/nadav-levanoni), [Kenny Chamberlin](https://github.com/kvcache), [Kevin McGehee](https://github.com/kevinmcgehee) and [Muhammad Ibrahim](https://github.com/ibrahimnd2000). Thanks also to everyone who shaped the design, to those who added support for the module in Valkey GLIDE and to those who built the LMCache integration.
