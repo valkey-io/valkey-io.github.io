@@ -662,6 +662,14 @@ p {
     border-bottom: 1px solid #d5d9ec;
   }
 
+  // Larger than the section titles, and lined up with them.
+  .docs-menu-title {
+    margin: 0 0 1rem;
+    padding: 0 0.4rem;
+    font-size: 2.4rem;
+    text-transform: none;
+  }
+
   summary {
     display: flex;
     justify-content: space-between;
@@ -710,6 +718,24 @@ p {
 
   details > ul {
     padding-bottom: 1rem;
+  }
+
+  // Links to pages outside the documentation, which look like section titles.
+  // They have no border unless current, so they line up with the titles.
+  .docs-menu-link > a {
+    padding: 1rem 0.4rem;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+
+    &:not(.docs-menu-current) {
+      border-left: 0;
+    }
+  }
+
+  // A link inside a section that leaves the docs.
+  .docs-menu-external::after {
+    content: " \2197";
   }
 
   .docs-menu-current {
@@ -1708,49 +1734,6 @@ pre table {
 .index-entry {
   padding: 0.5em 1em;
   margin-bottom: 0.5em;
-}
-
-.block-menu ul li {
-  border: 1px solid $line;
-  border-radius: 3px;
-  a {
-    display: block;
-  }
-}
-
-.block-menu {
-  ul {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    list-style-type: none;
-    padding: 0;
-    gap: 1em;
-    li {
-      text-align: center;
-      padding: 1em;
-      flex: 1 1 0px;
-      a {
-        text-align: center;
-        padding-bottom: 1em;
-      }
-    }
-  }
-}
-
-.blocks-page {
-  .container {
-    padding-right: 0;
-  }
-}
-
-@media (max-width: 768px) {
-  .block-menu ul {
-    display: block;
-    li {
-      margin-bottom: 1em;
-    }
-  }
 }
 
 html.banner-hidden .banner {
