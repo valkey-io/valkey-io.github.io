@@ -10,6 +10,7 @@ blog_type = ["Technical Deep Dive"]
 [extra]
 featured = false
 featured_image = "/assets/media/featured/valkey-large-object-module.gif"
+og_image = "/assets/media/featured/valkey-large-object-module-preview.png"
 +++
 
 Large objects show up in a wide range of applications, from video and audio files to, more recently, the KV attention states of large language models (LLMs).
