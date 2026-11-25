@@ -1,0 +1,14 @@
+# Tuning for the site search.
+#
+# Each [[boost]] ranks a page higher when a search matches one of its keywords, ahead of pages that
+# only mention the words in their text. Pages titled exactly what was searched still come first.
+#
+#   url:      the page's path, as in its address, e.g. "/topics/migration/"
+#   keywords: words or phrases the page should rank higher for
+#
+# This works for any page, including docs topics and commands, whose content comes from other
+# repositories. If a page moves, update its url here.
+
+[[boost]]
+url = "/topics/migration/"
+keywords = ["migration"]
