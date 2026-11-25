@@ -133,7 +133,7 @@ These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with 
 
 - The module moved 1.9x to 4.2x the throughput of stock Valkey from 8 MiB up, and 1.2x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 305 Gbps at 1 MiB to 89 Gbps at 500 MiB.
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 1.2-48 ms with stock Valkey.
-- From 8 MiB up the module evicted 2.8 to 3.9 times faster than stock Valkey, because it accepted that many more `SET`s, and it rejected none at any size.
+- From 8 MiB up the module evicted 2.8 to 3.9 times faster than stock Valkey (2,670 against 955 per second at 8 MiB), because it accepted that many more `SET`s, and it rejected none at any size.
 - On the same instance type, the module node held 108 TB on NVMe, about 150 times the 640 GiB that stock Valkey held in DRAM.
 - With the DRAM cache turned off, so that every `GET` reads from NVMe, `GET`s reached the same 215-216 Gbps as cache hits from DRAM, because the 16 local NVMe drives can read faster than the network can carry. The cache matters when storage is the limit, for example on network-attached block storage, where reads and writes share one bandwidth limit: every `GET` served from DRAM leaves that bandwidth to `SET`s.
 
