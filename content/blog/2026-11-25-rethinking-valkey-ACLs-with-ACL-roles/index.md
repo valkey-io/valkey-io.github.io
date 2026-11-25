@@ -16,13 +16,13 @@ An ACL is a rule that grants or restricts access to specific commands, keys, cha
 ACL SETUSER read-only-user on #<SHA256_HASH_OF_PASSWORD> ~* +@read
 ```
 
-## ACLs prior to v9.2
+## ACLs prior to 9.2
 
 ACLs have been in Valkey since its creation. They serve several purposes all around _access_ (hence the name) and auditability.
 
 When your Valkey cluster is connecting to several applications and users, you end up with a complicated `aclfile` that you have to maintain.
 
-Each rule in this file controls access along several dimensions: which user, which keys, which commands, and which channels. In Valkey v9.1, per-database rules (using `db=`) added one more. Every rule below is pinned to db=0, so the sample below grows quickly once you add databases.
+Each rule in this file controls access along several dimensions: which user, which keys, which commands, and which channels. In Valkey 9.1, per-database rules (using `db=`) added one more. Every rule below is pinned to db=0, so the sample below grows quickly once you add databases.
 
 ```
 # Rules apply left to right. Each user starts from -@all and adds, so new command categories fail closed.
