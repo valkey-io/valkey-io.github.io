@@ -2,7 +2,7 @@
 template: participants.html
 title: Participate with Valkey
 extra:
-  breadcrumb: Participants
+  breadcrumb: Community
 ---
 
 # Valkey Participants
