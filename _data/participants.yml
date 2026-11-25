@@ -259,3 +259,14 @@
     [Simafri](https://www.simafri.com/en/) provides VPS and managed VPS hosting, operated by its own engineers for customers worldwide.
   offering: >
     [Simafri managed VPS](https://www.simafri.com/en/managed-vps/) runs Valkey on servers our engineers install, secure, update and monitor, with tuning recommendations.
+- name: FalkorDB
+  link: https://www.falkordb.com/Valkey
+  image:
+    path: /img/falkordb.svg
+    alt: FalkorDB logo
+  company: >
+    FalkorDB develops a low-latency graph database for enterprise applications, including knowledge graphs, GraphRAG, agent memory, and real-time analytics. It supports multi-tenancy, data isolation, and high availability.
+  offering: >
+    FalkorDB is an open source module that adds property graph storage and openCypher queries to Valkey. It uses sparse adjacency matrices and linear algebra for fast graph traversal. The module can be loaded on compatible Valkey deployments.
+
+    [Docker quick start](https://github.com/FalkorDB/FalkorDB#get-started) · [Valkey migration guide](https://github.com/FalkorDB/FalkorDB/blob/main/docs/valkey-migration.md)
