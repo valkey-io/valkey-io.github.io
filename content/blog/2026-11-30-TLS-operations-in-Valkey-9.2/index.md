@@ -16,8 +16,8 @@ On your first day, the clients start getting TLS handshake failures because the 
 The renewed certificate is already on disk, but Valkey is still serving the old one, and nobody was tracking the expiry date.
 Before Valkey 9.1, you had to fix this by hand by running the `CONFIG SET tls-cert-file` command to make the server load the files again, or restart it.
 
-With Valkey 9.1 and 9.2, four TLS improvements are brought in: automatic certificate reload, certificate expiry reporting, client authentication by certificate URI, and a second server certificate.
-This post shows how you can use each one of these options and the ability to add a second server certificate.
+With Valkey 9.1 and 9.2, four TLS improvements are brought in: automatic certificate reload, certificate expiry reporting, client authentication by certificate URI, and the ability to add a second server certificate.
+This post shows how you can use each one of these options.
 If you haven't set up TLS yet, start by reading the [TLS documentation](https://valkey.io/topics/tls/).
 The following examples used ran on Valkey 9.2.0-rc2 built with OpenSSL 3.5.4.
 The certificates are test files generated with `openssl`: a certificate authority (`ca.crt`), an RSA server certificate that expires in one day (`server.crt`), a renewed version of it that is valid for 90 days (`server-renewed.crt`), a client certificate (`client.crt`), and an ML-DSA-65 server certificate (`server-mldsa.crt`).
