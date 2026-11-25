@@ -37,7 +37,7 @@ A small change with a clear goal: spend less time hunting for the problem, and m
 
 **Watch the Valkey Admin 1.2 demo:** see your whole cluster's utilization at a glance (under a minute).
 
-{{< youtube id="-812isos-0k" />}}
+{{< youtube_vertical id="-812isos-0k" />}}
 
 ### A better everyday experience
 
@@ -79,7 +79,7 @@ One detail: longer windows still need enough metrics retention configured. Each 
 
 **Watch the Valkey Admin 1.3 demo:** look back 30 days at CPU and memory (under a minute).
 
-{{< youtube id="6tbHtWjC5A0" />}}
+{{< youtube_vertical id="6tbHtWjC5A0" />}}
 
 ### Stronger foundations
 

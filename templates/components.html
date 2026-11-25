@@ -3,3 +3,10 @@
     <iframe src="https://www.youtube-nocookie.com/embed/{{id}}{% if playlist %}?list={{playlist}}{% endif %}{% if autoplay %}{% if playlist %}&autoplay=1{% else %}?autoplay=1{% endif %}{% endif %}" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 </div>
 {% endcomponent youtube %}
+
+{# Vertical (9:16) YouTube video, e.g. a YouTube Short. Sized by .youtube-vertical in sass/_valkey.scss #}
+{% component youtube_vertical(id) %}
+<div class="youtube-vertical">
+    <iframe src="https://www.youtube-nocookie.com/embed/{{id}}" title="YouTube video player" loading="lazy" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+</div>
+{% endcomponent youtube_vertical %}
