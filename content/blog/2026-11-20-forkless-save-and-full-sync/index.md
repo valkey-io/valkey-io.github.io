@@ -84,7 +84,7 @@ Command latency can also be higher while a forkless operation runs, compared to 
 
 The graph below shows a deliberately unfavorable case for forkless: a full sync of a dataset made entirely of large lists that were never split into smaller keys, with writes to those lists during the sync.
 In this test, writes that landed on a list while it was being written out waited up to about 75 ms, as the p100 spikes show.
-Even in this case, though, waits were rare: the spikes don't reach p99, so fewer than 1% of writes waited.
+Even in this case, though, waits were rare: the large spikes don't reach p99, so fewer than 1% of writes saw a long wait.
 
 ![Graph of p99 and p100 write latency during a full sync of large lists, comparing fork-based and forkless sync](forkless-large-keys-latency.png)
 
