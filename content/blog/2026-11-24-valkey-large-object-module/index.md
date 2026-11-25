@@ -165,7 +165,7 @@ To read and write your first large object, start with the [getting started guide
 It walks you through building the module and running your first commands.
 The [configuration guide](https://valkey.io/topics/large-object-configuration/) covers storage and monitoring settings, and the [use cases](https://valkey.io/topics/large-object-use-cases/) show where else the module fits.
 
-The benchmark above ran with this command, on an i8ge.48xlarge with its 16 NVMe drives striped under XFS:
+The benchmark above ran with this command, on an i8ge.48xlarge with its 16 NVMe drives striped under XFS, and with `maxmemory` unset so the DRAM cache grew as needed:
 
 ```bash
 valkey-server \
