@@ -61,7 +61,7 @@ The workload:
 
 | Object size (MiB) | Total Gbps (GET + SET) | GET p50 / p99 (ms) | SET p50 / p99 (ms) | PING p99 / max (ms) | Evictions per second |
 | --- | --- | --- | --- | --- | --- |
-| 1 | 305.3 (144.5 + 160.8) | 1.00 / 1.55 | 1.36 / 3.54 | 1.23 / 440 | 18,795 |
+| 1 | 305.3 (144.5 + 160.8) | 1.0 / 1.6 | 1.4 / 3.5 | 1.2 / 440 | 18,795 |
 | 8 | 213.4 (147.9 + 65.5) | 13.8 / 22.3 | 32.0 / 52.2 | 10.4 / 228 | 955 |
 | 32 | 201.9 (136.7 + 65.2) | 46.1 / 64.7 | 83.4 / 208 | 17.4 / 239 | 238 |
 | 64 | 171.4 (110.2 + 61.2) | 77.1 / 105 | 134 / 189 | 19.5 / 226 | 112 |
@@ -116,7 +116,7 @@ The default `EfaDirect` provider needs EFA hardware.
 
 ## How fast it runs
 
-The module kept 372-399 Gbps of combined `GET` and `SET` throughput at every object size from 1 MiB to 500 MiB, 1.2x to 4.2x stock Valkey, while a `PING` to the same server stayed under 0.36 ms at p99.
+The module kept 372-399 Gbps of combined `GET` and `SET` throughput at every object size from 1 MiB to 500 MiB, 1.2x to 4.2x stock Valkey, while a `PING` to the same server stayed under 0.4 ms at p99.
 These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with AWS Elastic Fabric Adapter (EFA), measured at the disk limit where every `SET` evicts the oldest objects.
 
 ![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 305 at 1 MiB, 213 at 8 MiB, 202 at 32 MiB, 171 at 64 MiB, 94 at 256 MiB and 89 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
@@ -127,15 +127,15 @@ Each cell shows stock Valkey → the module.
 
 | Object size (MiB) | Total Gbps (GET + SET) | GET p50 (ms) | GET p99 (ms) | SET p50 (ms) | SET p99 (ms) | PING p99 (ms) |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | 305 → 372 (1.2x) | 1.00 → 1.27 | 1.55 → 2.10 | 1.36 → 1.53 | 3.54 → 2.75 | 1.23 → 0.23 |
-| 8 | 213 → 399 (1.9x) | 13.8 → 10.6 | 22.3 → 15.2 | 32.0 → 10.8 | 52.2 → 16.2 | 10.4 → 0.23 |
-| 32 | 202 → 389 (1.9x) | 46.1 → 31.5 | 64.7 → 37.5 | 83.4 → 34.3 | 208 → 41.2 | 17.4 → 0.36 |
-| 64 | 171 → 378 (2.2x) | 77.1 → 43.8 | 105 → 54.5 | 134 → 45.6 | 189 → 56.1 | 19.5 → 0.35 |
-| 256 | 94 → 372 (4.0x) | 352 → 88.6 | 396 → 101 | 373 → 95.4 | 430 → 105 | 37.6 → 0.33 |
-| 500 | 89 → 372 (4.2x) | 751 → 178 | 973 → 193 | 751 → 185 | 830 → 195 | 48.5 → 0.32 |
+| 1 | 305 → 372 (1.2x) | 1.0 → 1.3 | 1.6 → 2.1 | 1.4 → 1.5 | 3.5 → 2.8 | 1.2 → 0.2 |
+| 8 | 213 → 399 (1.9x) | 13.8 → 10.6 | 22.3 → 15.2 | 32.0 → 10.8 | 52.2 → 16.2 | 10.4 → 0.2 |
+| 32 | 202 → 389 (1.9x) | 46.1 → 31.5 | 64.7 → 37.5 | 83.4 → 34.3 | 208 → 41.2 | 17.4 → 0.4 |
+| 64 | 171 → 378 (2.2x) | 77.1 → 43.8 | 105 → 54.5 | 134 → 45.6 | 189 → 56.1 | 19.5 → 0.4 |
+| 256 | 94 → 372 (4.0x) | 352 → 88.6 | 396 → 101 | 373 → 95.4 | 430 → 105 | 37.6 → 0.3 |
+| 500 | 89 → 372 (4.2x) | 751 → 178 | 973 → 193 | 751 → 185 | 830 → 195 | 48.5 → 0.3 |
 
 - The module moved 1.9x to 4.2x the throughput of stock Valkey from 8 MiB up, and 1.2x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 305 Gbps at 1 MiB to 89 Gbps at 500 MiB.
-- A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 1.2-48 ms with stock Valkey.
+- A `PING` from a separate client waited at most 0.4 ms at p99 with the module, against 1.2-48 ms with stock Valkey.
 - From 8 MiB up the module evicted 2.8 to 3.9 times faster than stock Valkey (2,670 against 955 per second at 8 MiB), because it accepted that many more `SET`s, and it rejected none at any size.
 - On the same instance type, the module node held 108 TB on NVMe, about 150 times the 640 GiB that stock Valkey held in DRAM.
 - With the DRAM cache turned off, so that every `GET` reads from NVMe, `GET`s reached the same 215-216 Gbps as cache hits from DRAM, because the 16 local NVMe drives can read faster than the network can carry. The cache matters when storage is the limit, for example on network-attached block storage, where reads and writes share one bandwidth limit: every `GET` served from DRAM leaves that bandwidth to `SET`s.
@@ -152,7 +152,7 @@ At lower concurrency, with the same two clients each running 4 `GET` and 4 `SET`
 
 | Object size (MiB) | GET p50 / p99 (ms) | SET p50 / p99 (ms) |
 | --- | --- | --- |
-| 1 | 0.33 / 0.53 | 0.51 / 0.76 |
+| 1 | 0.3 / 0.5 | 0.5 / 0.8 |
 | 8 | 2.6 / 3.9 | 3.0 / 4.6 |
 | 32 | 10.4 / 13.7 | 11.6 / 15.5 |
 | 64 | 10.3 / 13.8 | 13.0 / 17.7 |
