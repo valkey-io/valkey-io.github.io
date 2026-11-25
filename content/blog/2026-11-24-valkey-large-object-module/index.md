@@ -2,7 +2,7 @@
 title = "Introducing the Valkey Large Object Module: As Fast as Your Hardware"
 date = 2026-11-24 01:01:01
 description = "The Valkey Large Object module keeps values of tens to hundreds of megabytes off the main thread and streams them in chunks, so a node's throughput follows its network and storage bandwidth, not Valkey's CPU."
-authors = ["karthiksubbarao", "kevinmcgehee", "cnuthalapati", "smkher"]
+authors = ["karthiksubbarao", "kevinmcgehee", "smkher", "cnuthalapati"]
 
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
@@ -56,14 +56,16 @@ The workload:
 - The `SET`s first filled memory to the limit. The measurement then ran with the server at the limit, with continuous evictions.
 - A separate connection sent a `PING` every 10 ms to show how long an unrelated small command waits.
 
-| Object size | Total Gbps (GET + SET) | GET p50 / p99 | SET p50 / p99 | PING p99 / max | Evictions per second |
+**Table 1: Performance of Valkey on large objects without the Large Object module**
+
+| Object size (MiB) | Total Gbps (GET + SET) | GET p50 / p99 | SET p50 / p99 | PING p99 / max | Evictions per second |
 | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 305.3 (144.5 + 160.8) | 1.00 / 1.55 ms | 1.36 / 3.54 ms | 1.23 / 440 ms | 18,795 |
-| 8 MiB | 213.4 (147.9 + 65.5) | 13.8 / 22.3 ms | 32.0 / 52.2 ms | 10.4 / 228 ms | 955 |
-| 32 MiB | 201.9 (136.7 + 65.2) | 46.1 / 64.7 ms | 83.4 / 208 ms | 17.4 / 239 ms | 238 |
-| 64 MiB | 171.4 (110.2 + 61.2) | 77.1 / 105 ms | 134 / 189 ms | 19.5 / 226 ms | 112 |
-| 256 MiB | 94.2 (47.6 + 46.6) | 352 / 396 ms | 373 / 430 ms | 37.6 / 97 ms | 21 |
-| 500 MiB | 89.1 (44.1 + 45.0) | 751 / 973 ms | 751 / 830 ms | 48.5 / 253 ms | 11 |
+| 1 | 305.3 (144.5 + 160.8) | 1.00 / 1.55 ms | 1.36 / 3.54 ms | 1.23 / 440 ms | 18,795 |
+| 8 | 213.4 (147.9 + 65.5) | 13.8 / 22.3 ms | 32.0 / 52.2 ms | 10.4 / 228 ms | 955 |
+| 32 | 201.9 (136.7 + 65.2) | 46.1 / 64.7 ms | 83.4 / 208 ms | 17.4 / 239 ms | 238 |
+| 64 | 171.4 (110.2 + 61.2) | 77.1 / 105 ms | 134 / 189 ms | 19.5 / 226 ms | 112 |
+| 256 | 94.2 (47.6 + 46.6) | 352 / 396 ms | 373 / 430 ms | 37.6 / 97 ms | 21 |
+| 500 | 89.1 (44.1 + 45.0) | 751 / 973 ms | 751 / 830 ms | 48.5 / 253 ms | 11 |
 
 - **Network:** run alone, `GET`s reached the hosts' TCP ceiling of about 208 Gbps up to 32 MiB, so the network is not what limits stock Valkey here.
 - **Other clients:** while the server was evicting, a `PING` from another connection took 1.2-48 ms at p99 and up to 440 ms.
@@ -118,14 +120,16 @@ These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with 
 
 ![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 305 at 1 MiB, 213 at 8 MiB, 202 at 32 MiB, 171 at 64 MiB, 94 at 256 MiB and 89 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
-| Object size | Throughput (Gbps), stock → module | GET p50 (ms), stock → module | GET p99 (ms), stock → module | SET p50 (ms), stock → module | SET p99 (ms), stock → module | PING p99 (ms), stock → module | Evictions per second, stock → module |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 305 → 372 (1.2x) | 1.00 → 1.27 | 1.55 → 2.10 | 1.36 → 1.53 | 3.54 → 2.75 | 1.23 → 0.23 | 18,795 → 16,700 |
-| 8 MiB | 213 → 399 (1.9x) | 13.8 → 10.6 | 22.3 → 15.2 | 32.0 → 10.8 | 52.2 → 16.2 | 10.4 → 0.23 | 955 → 2,670 |
-| 32 MiB | 202 → 389 (1.9x) | 46.1 → 31.5 | 64.7 → 37.5 | 83.4 → 34.3 | 208 → 41.2 | 17.4 → 0.36 | 238 → 680 |
-| 64 MiB | 171 → 378 (2.2x) | 77.1 → 43.8 | 105 → 54.5 | 134 → 45.6 | 189 → 56.1 | 19.5 → 0.35 | 112 → 340 |
-| 256 MiB | 94 → 372 (4.0x) | 352 → 88.6 | 396 → 101 | 373 → 95.4 | 430 → 105 | 37.6 → 0.33 | 21 → 82 |
-| 500 MiB | 89 → 372 (4.2x) | 751 → 178 | 973 → 193 | 751 → 185 | 830 → 195 | 48.5 → 0.32 | 11 → 43 |
+**Table 2: Performance improvements on multi-MiB objects with the Large Object module (stock → module)**
+
+| Object size (MiB) | Throughput (Gbps) | GET p50 (ms) | GET p99 (ms) | SET p50 (ms) | SET p99 (ms) | PING p99 (ms) |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | 305 → 372 (1.2x) | 1.00 → 1.27 | 1.55 → 2.10 | 1.36 → 1.53 | 3.54 → 2.75 | 1.23 → 0.23 |
+| 8 | 213 → 399 (1.9x) | 13.8 → 10.6 | 22.3 → 15.2 | 32.0 → 10.8 | 52.2 → 16.2 | 10.4 → 0.23 |
+| 32 | 202 → 389 (1.9x) | 46.1 → 31.5 | 64.7 → 37.5 | 83.4 → 34.3 | 208 → 41.2 | 17.4 → 0.36 |
+| 64 | 171 → 378 (2.2x) | 77.1 → 43.8 | 105 → 54.5 | 134 → 45.6 | 189 → 56.1 | 19.5 → 0.35 |
+| 256 | 94 → 372 (4.0x) | 352 → 88.6 | 396 → 101 | 373 → 95.4 | 430 → 105 | 37.6 → 0.33 |
+| 500 | 89 → 372 (4.2x) | 751 → 178 | 973 → 193 | 751 → 185 | 830 → 195 | 48.5 → 0.32 |
 
 - The module moved 1.9x to 4.2x the throughput of stock Valkey from 8 MiB up, and 1.2x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 305 Gbps at 1 MiB to 89 Gbps at 500 MiB.
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 1.2-48 ms with stock Valkey.
@@ -137,14 +141,16 @@ How we measured: the server had a 108 TB disk limit on 16 instance-store NVMe dr
 
 At lower concurrency, with the same two clients each running 4 `GET` and 4 `SET` connections at 1 to 32 MiB, 2 and 2 at 64 and 256 MiB, and 1 and 1 at 500 MiB, the module's latency drops further:
 
-| Object size | `GET` p50 / p99 | `SET` p50 / p99 |
+**Table 3: Lower latency on large objects with optimal clients**
+
+| Object size (MiB) | `GET` p50 / p99 | `SET` p50 / p99 |
 | --- | --- | --- |
-| 1 MiB | 0.33 / 0.53 ms | 0.51 / 0.76 ms |
-| 8 MiB | 2.6 / 3.9 ms | 3.0 / 4.6 ms |
-| 32 MiB | 10.4 / 13.7 ms | 11.6 / 15.5 ms |
-| 64 MiB | 10.3 / 13.8 ms | 13.0 / 17.7 ms |
-| 256 MiB | 41.7 / 49 ms | 51 / 62 ms |
-| 500 MiB | 59 / 73 ms | 68 / 82 ms |
+| 1 | 0.33 / 0.53 ms | 0.51 / 0.76 ms |
+| 8 | 2.6 / 3.9 ms | 3.0 / 4.6 ms |
+| 32 | 10.4 / 13.7 ms | 11.6 / 15.5 ms |
+| 64 | 10.3 / 13.8 ms | 13.0 / 17.7 ms |
+| 256 | 41.7 / 49 ms | 51 / 62 ms |
+| 500 | 59 / 73 ms | 68 / 82 ms |
 
 ## Try it
 
