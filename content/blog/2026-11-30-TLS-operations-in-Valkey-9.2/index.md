@@ -3,7 +3,6 @@ title = "Managing TLS certificates in Valkey 9.1 and 9.2"
 date = 2026-11-30
 description = "A renewed certificate on disk doesn't help if the server never loads it. Valkey 9.1 and 9.2 can reload certificates automatically, report their expiry, authenticate clients by SAN URI, and serve a second certificate."
 authors = ["dragosandriciuc","pkhartsk"]
-draft = true
 [taxonomies]
 blog_type = ["How-to"]
 
@@ -13,27 +12,29 @@ featured_image = "/assets/media/featured/random-02.webp"
 +++
 
 Imagine you're hired as a new operator and your first task is to run a Valkey deployment that already uses TLS.
-On your first day, the clients start failing their TLS handshakes because the server certificate expired overnight.
+On your first day, the clients start getting TLS handshake failures because the server certificate expired overnight.
 The renewed certificate is already on disk, but Valkey is still serving the old one, and nobody was tracking the expiry date.
 Before Valkey 9.1, you had to fix this by hand by running the `CONFIG SET tls-cert-file` command to make the server load the files again, or restart it.
 
 With Valkey 9.1 and 9.2, four TLS improvements are brought in: automatic certificate reload, certificate expiry reporting, client authentication by certificate URI, and a second server certificate.
-This post shows how you can use each one of these options.
+This post shows how you can use each one of these options and the ability to add a second server certificate.
 If you haven't set up TLS yet, start by reading the [TLS documentation](https://valkey.io/topics/tls/).
-The examples used ran on Valkey 9.2.0-rc2 built with OpenSSL 3.5.4.
-The certificates are test files created with `openssl`: a certificate authority (CA), an RSA server certificate that expires in one day and its 90-day renewal, a client certificate, and an ML-DSA-65 server certificate.
+The following examples used ran on Valkey 9.2.0-rc2 built with OpenSSL 3.5.4.
+The certificates are test files generated with `openssl`: a certificate authority (`ca.crt`), an RSA server certificate that expires in one day (`server.crt`), a renewed version of it that is valid for 90 days (`server-renewed.crt`), a client certificate (`client.crt`), and an ML-DSA-65 server certificate (`server-mldsa.crt`).
+The renewed certificate reuses `server.key`, and the other certificates have their own `ca.key`, `client.key` and `server-mldsa.key`.
 
 ## Automatic certificate reloading
 
-You check and see that Valkey keeps using the certificate it loaded at startup and waits for you to explicitly reload the TLS materials.
-You can trigger a reload by running the `CONFIG SET tls-cert-file` command with the configured path again, or by restarting the server, but this becomes tedious.
+You check and see that Valkey keeps using the certificate it loaded at startup.
+It's expecting you to explicitly reload the TLS materials.
+You can trigger a reload by running the `CONFIG SET tls-cert-file` command with the configured path, or by restarting the server, but this can be tedious and is prone to human error.
 
-Valkey 9.1 now allows you to reload certificates [automatically](https://github.com/valkey-io/valkey/pull/3020), implemented by [Yang Zhao](https://github.com/yang-z-o).
+Valkey 9.1 can now reload certificates [automatically](https://github.com/valkey-io/valkey/pull/3020), implemented by [Yang Zhao](https://github.com/yang-z-o).
 This feature uses the newly added `tls-auto-reload-interval` option to check the provided certificate and key files on a schedule and reloads them when it notices a change.
 The feature is turned off by default (`0`), so make sure to set it to the number of seconds you need between checks.
-For example, the sample `valkey.conf` that ships with Valkey uses `86400` seconds or one day.
+For instance, the example `valkey.conf` that ships with Valkey uses `86400` seconds or one day.
 
-To watch it work, start a server that checks every 5 seconds:
+To see it in action, start a server that checks every 5 seconds:
 
 1. Create a `valkey.conf` file:
 
@@ -70,7 +71,7 @@ To watch it work, start a server that checks every 5 seconds:
     ```
 
     Now, within the next interval, the server log reports `TLS materials changed, reloading in background`, then `TLS materials reloaded successfully`.
-    If you use `INFO tls` it now reports the serial of the renewed certificate, which differs in the last digit:
+    If you use `INFO tls` it now reports the serial of the renewed certificate, which differs in the last character:
 
     ```text
     tls_server_cert_serial:04D6326AC9A0E228994D8AEA737EAA61A68B064D
@@ -78,14 +79,14 @@ To watch it work, start a server that checks every 5 seconds:
 
 Valkey checks the certificate files using their SHA-256 fingerprints, so a certificate file triggers a reload only when its contents change.
 Key files on the other hand are checked using their index node (inode) and modification time.
-When Valkey detects a change, it loads the new files on a background thread, and the main thread switches to them only after they load successfully.
+When Valkey detects a change, it loads the new files on a background thread, and the main thread switches to them only after they're loaded successfully.
 
-A change is picked up at the next check, so it can take up to `tls-auto-reload-interval` seconds to take effect.
-If you replace both the certificate and the key, make sure you deploy them as a matching pair.
-If Valkey checks the files between the two updates, then the reload fails with a key mismatch error, Valkey keeps the current certificate, and the next check retries.
+Changes are only registered during the next check, so it can take up to `tls-auto-reload-interval` seconds to take effect.
+If you replace both the certificate and the key, make sure you deploy them at the same time.
+If Valkey checks the files after you replace one of them but before you replace the other, the reload fails with a key mismatch error, and Valkey keeps the current certificate until a later check finds a matching pair.
 
-However, the automatic reload feature only helps if a valid certificate reaches the disk.
-Valkey 9.1 loads a certificate that has already expired, and clients then fail certificate verification, so you still need to check how long that certificate has left.
+However, the automatic reload feature helps only if a valid certificate actually is on the machine.
+If the new certificate has already expired, Valkey 9.1 still loads it, and clients then fail certificate verification, so you need to check the validity of your certificates.
 Valkey 9.2 now rejects a new certificate that has already expired, logs it as `Background TLS reload failed`, and keeps serving the current one.
 
 ## Checking certificate expiry
@@ -114,8 +115,8 @@ tls_ca_cert_expires_in_seconds:31535991
 Where:
 
 - `tls_server_cert` is the certificate Valkey presents to the clients, and `tls_ca_cert` is the CA it uses to verify them.
-- `tls_client_cert` is the certificate Valkey presents on its own outgoing connections, set with `tls-client-cert-file`, **not** the certificate of a connected client.
-- `tls_server_alt_cert` is the second server certificate, new in Valkey 9.2 and covered later.
+- `tls_client_cert` is the certificate Valkey uses for its own outgoing connections, set with `tls-client-cert-file`, **not** the certificate of a connected client.
+- `tls_server_alt_cert` is the second server certificate, introduced in Valkey 9.2 and covered later.
 
 A value of `0` means that either the certificate isn't configured yet or that it has already expired.
 The matching `_serial` field tells them apart: `none` means nothing is configured.
@@ -125,11 +126,11 @@ You can also apply the same monitoring to `tls_ca_cert_expires_in_seconds` to tr
 
 ## Authenticating clients by certificate
 
-With the server certificate reloading and monitored, the next task is to manage the passwords your applications log in with.
-However, instead of managing the passwords for each individual application, Valkey allows you to authenticate clients against identities in their certificates.
+With the server certificate reloading and monitored, the next task is to manage passwords that your applications log in with.
+However, instead of making you manage passwords for each individual application, Valkey allows you to authenticate clients against identities in their certificates.
 
 In Valkey 9.0 you can [map](https://github.com/valkey-io/valkey/pull/1920) the certificate's Common Name (CN) to an ACL user, implemented by [Omkar Mestry](https://github.com/omanges).
-Valkey 9.1 builds on this and [adds](https://github.com/valkey-io/valkey/pull/3078) `URI`, which uses the URI entries in the certificate's Subject Alternative Name (SAN) instead, for deployments where the CN is empty or deprecated, also implemented by [Yang Zhao](https://github.com/yang-z-o).
+Valkey 9.1 builds on this and [adds](https://github.com/valkey-io/valkey/pull/3078) `URI`, which uses the URI entries in the certificate's Subject Alternative Name (SAN) instead, for deployments where the CN is empty or deprecated, implemented by [Yang Zhao](https://github.com/yang-z-o).
 For example, this client certificate carries two URIs:
 
 ```bash
@@ -148,7 +149,7 @@ X509v3 Subject Alternative Name:
     user urn:valkey:user:first on ~orders:* +@read +@write +acl|whoami
     ```
 
-Now the new user has no password, as `valkey.conf` recommends, so the certificate is the only way to authenticate as it.
+Now the new user has no password, as `valkey.conf` recommends, so the certificate is the only way to authenticate.
 To apply the same change to a running server, use the `CONFIG SET tls-auth-clients-user URI` and `ACL SETUSER` commands, then use the `CONFIG REWRITE` command to save both to `valkey.conf`.
 If you are using an external ACL file, use the `ACL SAVE` command.
 
@@ -170,7 +171,7 @@ Valkey first validates the client certificate against its trusted CA, and then u
 However, if no URI in the certificate matches an enabled user, then the handshake still succeeds and the connection becomes the `default` user.
 Valkey then counts these in `acl_access_denied_tls_cert` under `INFO stats` and logs `TLS: No matching user found in certificate SAN URI fields` at the `verbose` level.
 You can disable the `default` user by using the `ACL SETUSER default off` command, to make sure that an unmatched certificate gets no access.
-The same client then gets a `NOAUTH Authentication required.` error.
+The same client then gets a `NOAUTH Authentication required` error.
 And this also applies to clients that don't present certificates.
 
 You must create a user with administrative access before you do this, because connections that don't authenticate, including the `valkey-cli` commands in this post, get the same error.
@@ -178,11 +179,12 @@ You must create a user with administrative access before you do this, because co
 ## Serving a second certificate
 
 If some of your clients can't use your main certificate, Valkey 9.2 now allows you to load a [second](https://github.com/valkey-io/valkey/pull/3717) server certificate, implemented by [Petr Khartskhaev](https://github.com/pkhartsk).
-The example in the linked PR is a migration to post-quantum cryptography (PQC): you serve a post-quantum certificate to clients that support it, and an RSA certificate to clients that don't support PQC.
+The example in the linked PR is a migration to post-quantum cryptography (PQC): you serve a post-quantum certificate to clients that support it, and an RSA certificate to clients that don't.
 
 To do this, you must:
 
-1. Set the post-quantum certificate as the main certificate and the RSA certificate as the secondary certificate (alternative) in `valkey.conf`:
+1. Put one certificate in `tls-cert-file` and the other in `tls-alt-cert-file`, in either order.
+    This example uses the ML-DSA-65 certificate as the main one and the RSA certificate as the alternate:
 
     ```text
     tls-cert-file server-mldsa.crt
@@ -191,17 +193,13 @@ To do this, you must:
     tls-alt-key-file server.key
     ```
 
-    Restart Valkey to load these settings before continuing.
-    Editing `valkey.conf` alone does not change the certificates used by an already-running server; automatic reload only watches paths that are already configured.
-
 Where:
 
 - `server.crt` and `server.key` are the renewed RSA certificate and its key from the first section.
 - `server-mldsa.crt` uses the ML-DSA-65 signature algorithm, and this example runs Valkey built against OpenSSL 3.5.4.
 - `tls-alt-cert-file` and `tls-alt-key-file` must be set together.
 
-However, the order in the configuration doesn't decide which certificate is used.
-The handshake does: it picks it from the signature algorithms both sides support, and `tls-prefer-server-ciphers` (default `no`) decides whose preference order wins.
+The handshake picks the certificate from the signature algorithms both sides support, and `tls-prefer-server-ciphers` (default `no`) decides whose preference order wins.
 
 2. A client built with OpenSSL 3.5.4 gets the ML-DSA certificate:
 
@@ -221,7 +219,7 @@ subject=O = Valkey TLS lab, CN = server-renewed
 Peer signature type: RSA-PSS
 ```
 
-And `INFO tls` reports the second certificate's serial and expiry next to the main certificate:
+`INFO tls` reports the second certificate's serial and expiry next to the main certificate:
 
 ```text
 tls_server_cert_serial:04D6326AC9A0E228994D8AEA737EAA61A68B064F
@@ -230,14 +228,14 @@ tls_server_alt_cert_serial:04D6326AC9A0E228994D8AEA737EAA61A68B064D
 tls_server_alt_cert_expires_in_seconds:7774309
 ```
 
-And automatic reload watches the alternative files too, so you can renew each certificate on its own schedule.
+And automatic reload watches the alternate files too, so you can renew each certificate on its own schedule.
 You can also add `tls_server_alt_cert_expires_in_seconds` to the same monitoring as the main certificate.
 
 ## Try it on your own certificates
 
-You can try it by starting with one server: set `tls-auto-reload-interval`, and add `tls_server_cert_expires_in_seconds` from `INFO tls` to your monitoring.
+Start with one server: set `tls-auto-reload-interval`, and add `tls_server_cert_expires_in_seconds` from `INFO tls` to your monitoring.
+To try the alternate certificate as well, [download Valkey 9.2](https://valkey.io/download/9.2/).
 The [TLS documentation](https://valkey.io/topics/tls/) covers the rest of the TLS setup.
 
 If something behaves differently from what this post describes, open an issue in [valkey-io/valkey](https://github.com/valkey-io/valkey/issues) with your Valkey and OpenSSL versions.
 If you want to talk through your own certificate setup, ask in [Slack](https://valkey.io/slack) or start a thread in [GitHub Discussions](https://github.com/orgs/valkey-io/discussions).
-You can also check out our [Valkey community events](https://valkey.io/events/).
