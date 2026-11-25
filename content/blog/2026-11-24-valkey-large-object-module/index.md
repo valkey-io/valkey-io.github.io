@@ -58,12 +58,12 @@ The workload:
 
 | Object size | Total Gbps (GET + SET) | GET p50 / p99 | SET p50 / p99 | PING p99 / max | Evictions per second |
 | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 305.3 (144.5 + 160.8) | 1.00-1.01 / 1.55-1.58 ms | 1.36-1.38 / 3.54-3.60 ms | 1.23 / 440 ms | 18,795 |
-| 8 MiB | 213.4 (147.9 + 65.5) | 13.8-13.9 / 22.3 ms | 32.0-32.1 / 52.2-52.4 ms | 10.4 / 228 ms | 955 |
-| 32 MiB | 201.9 (136.7 + 65.2) | 46.1 / 64.7 ms | 83.4-88.1 / 208-234 ms | 17.4 / 239 ms | 238 |
-| 64 MiB | 171.4 (110.2 + 61.2) | 77.1 / 105-107 ms | 134-137 / 189-289 ms | 19.5 / 226 ms | 112 |
-| 256 MiB | 94.2 (47.6 + 46.6) | 352-365 / 396-474 ms | 373 / 430-436 ms | 37.6 / 97 ms | 21 |
-| 500 MiB | 89.1 (44.1 + 45.0) | 751-772 / 973-990 ms | 751-755 ms / 830 ms-1.15 s | 48.5 / 253 ms | 11 |
+| 1 MiB | 305.3 (144.5 + 160.8) | 1.01 / 1.58 ms | 1.38 / 3.60 ms | 1.23 / 440 ms | 18,795 |
+| 8 MiB | 213.4 (147.9 + 65.5) | 13.9 / 22.3 ms | 32.1 / 52.4 ms | 10.4 / 228 ms | 955 |
+| 32 MiB | 201.9 (136.7 + 65.2) | 46.1 / 64.7 ms | 88.1 / 234 ms | 17.4 / 239 ms | 238 |
+| 64 MiB | 171.4 (110.2 + 61.2) | 77.1 / 107 ms | 137 / 289 ms | 19.5 / 226 ms | 112 |
+| 256 MiB | 94.2 (47.6 + 46.6) | 365 / 474 ms | 373 / 436 ms | 37.6 / 97 ms | 21 |
+| 500 MiB | 89.1 (44.1 + 45.0) | 772 / 990 ms | 755 ms / 1.15 s | 48.5 / 253 ms | 11 |
 
 - **Network:** run alone, `GET`s reached the hosts' TCP ceiling of about 208 Gbps up to 32 MiB, so the network is not what limits stock Valkey here.
 - **Other clients:** while the server was evicting, a `PING` from another connection took 1.2-48 ms at p99 and up to 440 ms.
