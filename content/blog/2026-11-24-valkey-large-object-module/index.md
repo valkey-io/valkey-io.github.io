@@ -148,7 +148,7 @@ The run filled the disk first, then ran at the limit.
 The stock results come from the [earlier section](#what-changes-when-values-reach-hundreds-of-megabytes).
 It is important to note that the test instances' network and storage bandwidth cap these numbers, so machines with higher limits can go much further.
 
-At lower concurrency, with the same two clients each running 4 `GET` and 4 `SET` connections at 1 to 32 MiB, 2 and 2 at 64 and 256 MiB, and 1 and 1 at 500 MiB, the module's latency drops further:
+Table 3 is a separate run at lower concurrency. Each of the two clients ran 4 `GET` and 4 `SET` connections at 1 to 32 MiB, 2 and 2 at 64 and 256 MiB, and 1 and 1 at 500 MiB. With fewer requests in flight, the module's latency is lower than in Table 2.
 
 **Table 3: Lower latency with the Large Object module and optimal clients**
 
