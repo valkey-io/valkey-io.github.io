@@ -76,11 +76,9 @@ The workload:
 The Valkey Large Object module is a Valkey module written in Rust that adds a data type and commands optimized for large binary values.
 It needs Valkey 8.0 or later on Linux.
 
-Here is the path of one `GET` or `SET` through the module:
+**Figure 1: How the module handles a GET or SET**
 
 ![Request path through the module. A client sends a command to the Valkey main thread, which blocks only that client and hands the transfer to a streaming task. The streaming task moves the object as a window of chunks in parallel, for both SET and GET. Chunks move between two kinds of segment pools, DRAM cache segments (four shown) and disk staging segments (two shown). Each segment has its own talc allocator and is registered with both EFA and io_uring. Bytes cross the network by RDMA directly between those segments and the client's EFA-registered memory. Each segment pool has its own io_uring engine to the object files on XFS: the DRAM cache engine reads objects into the cache, and the staging engine reads and writes them.](request_path.svg)
-
-**Figure 1: How the module handles a GET or SET**
 
 **Data type.** A Large Object data type holds a small descriptor, not the object's bytes: an object ID, the length and a CRC32C checksum.
 The bytes live in the module's segments or in a file, depending on the operating mode.
@@ -121,9 +119,9 @@ The default `EfaDirect` provider needs EFA hardware.
 The module kept 372-399 Gbps of combined `GET` and `SET` throughput at every object size from 1 MiB to 500 MiB, 1.2x to 4.2x stock Valkey, while a `PING` to the same server stayed under 0.4 ms at p99.
 These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with AWS Elastic Fabric Adapter (EFA), measured at the disk limit where every `SET` evicts the oldest objects.
 
-![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 305 at 1 MiB, 213 at 8 MiB, 202 at 32 MiB, 171 at 64 MiB, 94 at 256 MiB and 89 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
-
 **Figure 2: Combined GET and SET throughput, stock Valkey and the module**
+
+![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 305 at 1 MiB, 213 at 8 MiB, 202 at 32 MiB, 171 at 64 MiB, 94 at 256 MiB and 89 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
 **Table 2: Performance improvements on large objects with the Large Object module**
 
