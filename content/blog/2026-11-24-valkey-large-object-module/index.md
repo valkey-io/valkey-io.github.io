@@ -118,14 +118,14 @@ These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with 
 
 ![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 305 at 1 MiB, 213 at 8 MiB, 202 at 32 MiB, 171 at 64 MiB, 94 at 256 MiB and 89 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
-| Object size | Throughput (Gbps), stock → module | GET p50 (ms), stock → module | GET p99 (ms), stock → module | SET p50 (ms), stock → module | SET p99 (ms), stock → module | PING p99 (ms), stock → module |
-| --- | --- | --- | --- | --- | --- | --- |
-| 1 MiB | 305 → 372 (1.2x) | 1.00 → 1.27 | 1.55 → 2.10 | 1.36 → 1.53 | 3.54 → 2.75 | 1.23 → 0.23 |
-| 8 MiB | 213 → 399 (1.9x) | 13.8 → 10.6 | 22.3 → 15.2 | 32.0 → 10.8 | 52.2 → 16.2 | 10.4 → 0.23 |
-| 32 MiB | 202 → 389 (1.9x) | 46.1 → 31.5 | 64.7 → 37.5 | 83.4 → 34.3 | 208 → 41.2 | 17.4 → 0.36 |
-| 64 MiB | 171 → 378 (2.2x) | 77.1 → 43.8 | 105 → 54.5 | 134 → 45.6 | 189 → 56.1 | 19.5 → 0.35 |
-| 256 MiB | 94 → 372 (4.0x) | 352 → 88.6 | 396 → 101 | 373 → 95.4 | 430 → 105 | 37.6 → 0.33 |
-| 500 MiB | 89 → 372 (4.2x) | 751 → 178 | 973 → 193 | 751 → 185 | 830 → 195 | 48.5 → 0.32 |
+| Object size | Throughput (Gbps), stock → module | GET p50 (ms), stock → module | GET p99 (ms), stock → module | SET p50 (ms), stock → module | SET p99 (ms), stock → module | PING p99 (ms), stock → module | Evictions per second, stock → module |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 MiB | 305 → 372 (1.2x) | 1.00 → 1.27 | 1.55 → 2.10 | 1.36 → 1.53 | 3.54 → 2.75 | 1.23 → 0.23 | 18,795 → 16,700 |
+| 8 MiB | 213 → 399 (1.9x) | 13.8 → 10.6 | 22.3 → 15.2 | 32.0 → 10.8 | 52.2 → 16.2 | 10.4 → 0.23 | 955 → 2,670 |
+| 32 MiB | 202 → 389 (1.9x) | 46.1 → 31.5 | 64.7 → 37.5 | 83.4 → 34.3 | 208 → 41.2 | 17.4 → 0.36 | 238 → 680 |
+| 64 MiB | 171 → 378 (2.2x) | 77.1 → 43.8 | 105 → 54.5 | 134 → 45.6 | 189 → 56.1 | 19.5 → 0.35 | 112 → 340 |
+| 256 MiB | 94 → 372 (4.0x) | 352 → 88.6 | 396 → 101 | 373 → 95.4 | 430 → 105 | 37.6 → 0.33 | 21 → 82 |
+| 500 MiB | 89 → 372 (4.2x) | 751 → 178 | 973 → 193 | 751 → 185 | 830 → 195 | 48.5 → 0.32 | 11 → 43 |
 
 - The module moved 1.9x to 4.2x the throughput of stock Valkey from 8 MiB up, and 1.2x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 305 Gbps at 1 MiB to 89 Gbps at 500 MiB.
 - A `PING` from a separate client waited at most 0.36 ms at p99 with the module, against 1.2-48 ms with stock Valkey.
