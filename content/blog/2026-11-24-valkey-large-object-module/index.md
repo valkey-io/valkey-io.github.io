@@ -1,5 +1,5 @@
 +++
-title = "Valkey Large Object Module: As Fast as Your Hardware"
+title = "Introducing the Valkey Large Object Module: As Fast as Your Hardware"
 date = 2026-11-24 01:01:01
 description = "The Valkey Large Object module keeps values of tens to hundreds of megabytes off the main thread and streams them in chunks, so a node's throughput follows its network and storage bandwidth, not Valkey's CPU."
 authors = ["karthiksubbarao", "kevinmcgehee", "cnuthalapati", "smkher"]
@@ -12,9 +12,8 @@ featured = false
 featured_image = "/assets/media/featured/valkey-large-object-module.png"
 +++
 
-## Applications with large objects
-
-Large objects are produced in a wide range of applications, from video / audio files to more recently KV Attention states from Large Language Models (LLMs). An LLM reads the whole prompt before it answers.
+Large objects show up in a wide range of applications, from video and audio files to, more recently, the KV attention states of large language models (LLMs).
+An LLM reads the whole prompt before it answers.
 For every token, at every layer, it computes a key vector and a value vector that later tokens use to decide what to pay attention to.
 Those saved vectors are the KV cache.
 If a later request starts with the same text, such as a shared system prompt, a long document or the earlier turns of a conversation, the inference engine can load the saved KV cache instead of computing it again, which saves GPU time and shortens the time to the first token.
@@ -36,10 +35,8 @@ The [Valkey Large Object module](https://github.com/valkey-io/valkey-large-objec
 In [our benchmark](#how-fast-it-runs), one node sustained 372 to 399 Gbps of reads and writes at every object size. This allows all the models in the table above to set up distributed KV caching workloads that retrieve KV objects with a median latency under 1 ms for 1 MiB objects and about 10 ms for 32 and 64 MiB objects.
 However, the module is not limited to only KV caching: it optimally stores any large binary value.
 
-This post is the first in a three-part series on distributed KV caching with Valkey.
+This is the first of three posts on distributed KV caching with Valkey.
 It covers what changes in in-memory key-value datastores when values reach hundreds of megabytes, and how the Valkey Large Object module improves performance for such large objects.
-The second post compares Valkey deployments for KV caching, over the network and on the GPU servers themselves, and shows how each performs against object stores and shared file systems.
-The third goes deeper into model and inference architectures and how to configure Valkey for your inference setup.
 
 ## What changes when values reach hundreds of megabytes
 
@@ -150,8 +147,9 @@ At lower concurrency, with the same two clients each running 4 `GET` and 4 `SET`
 
 ## Try it
 
-The [getting started guide](https://valkey.io/topics/large-object-getting-started/) covers the requirements, building the module from source and your first commands.
-[Configuration and monitoring](https://valkey.io/topics/large-object-configuration/) lists every setting, and [use cases](https://valkey.io/topics/large-object-use-cases/) shows where the module fits.
+To read and write your first large object, start with the [getting started guide](https://valkey.io/topics/large-object-getting-started/).
+It walks you through building the module and running your first commands.
+The [configuration guide](https://valkey.io/topics/large-object-configuration/) covers storage and monitoring settings, and the [use cases](https://valkey.io/topics/large-object-use-cases/) show where else the module fits.
 
 The benchmark above ran with this command, on an i8ge.48xlarge with its 16 NVMe drives striped under XFS:
 
@@ -170,5 +168,8 @@ valkey-server \
 
 The TCP commands work with any client.
 The RDMA commands need a client that implements the libfabric flow; Valkey GLIDE's Python sync client supports them from `valkey-glide-sync` 2.6.0.
-The Valkey Large Object module is open source, and release 0.1 is available [here](https://github.com/valkey-io/valkey-large-object/releases/tag/0.1). 
-A huge thank you to everyone who contributed to the project!
+The Valkey Large Object module is open source, and [Valkey Large Object 0.1](https://github.com/valkey-io/valkey-large-object/releases/tag/0.1) is available now.
+Thanks to everyone who helped build and test the module.
+
+The second post in this series compares Valkey deployments for KV caching, over the network and on the GPU servers themselves, and shows how each performs against object stores and shared file systems.
+The third goes deeper into model and inference architectures and how to configure Valkey for your inference setup.
