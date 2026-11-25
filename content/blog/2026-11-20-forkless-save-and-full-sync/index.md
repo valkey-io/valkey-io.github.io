@@ -48,7 +48,7 @@ Heavy writes to a few keys copy only a few pages, while writes spread across muc
 Since this depends on the workload during the operation, it is hard to predict, and operators often reserve memory for the worst case.
 
 `fork()` also pauses the server briefly while the kernel copies the process's page tables, a pause that grows with the size of the dataset.
-In our experience operating Valkey, pauses of up to a second have occurred with larger, but still typical, dataset sizes.
+In the 6GB test below, this pause was about 65 ms, and in our experience, pauses of up to a second have been observed on larger dataset sizes.
 
 ## The Core Idea: Saving in Place
 
