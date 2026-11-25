@@ -187,7 +187,7 @@ The TCP commands work with any client.
 The RDMA commands need a client that implements the libfabric flow; Valkey GLIDE's Python sync client supports them from `valkey-glide-sync` 2.6.0.
 The Valkey Large Object module is open source, and [Valkey Large Object 0.1](https://github.com/valkey-io/valkey-large-object/releases/tag/0.1) is available now.
 
-The second post in this series compares Valkey deployments for KV caching, over the network and on the GPU servers themselves, and shows how each performs against object stores and shared file systems.
+The second post in this series compares Valkey deployments for KV caching, over the network and on the GPU servers themselves, and shows how each performs against other object stores.
 The third goes deeper into model and inference architectures and how to configure Valkey for your inference setup.
 
 Thanks to everyone who helped build and test the module.
