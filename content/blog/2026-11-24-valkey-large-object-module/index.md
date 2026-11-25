@@ -57,7 +57,7 @@ The workload:
 - The `SET`s first filled memory to the limit. The measurement then ran with the server at the limit and evicting continuously.
 - A separate connection sent a `PING` every 10 ms to show how long an unrelated small command waits.
 
-**Table 1: Performance of Valkey on large objects without the Large Object module**
+**Table 1: Performance of Valkey without the Large Object module**
 
 | Object size (MiB) | Total Gbps (GET + SET) | GET p50 / p99 (ms) | SET p50 / p99 (ms) | PING p99 / max (ms) | Evictions per second |
 | --- | --- | --- | --- | --- | --- |
@@ -123,7 +123,7 @@ These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with 
 
 ![Grouped bar chart of GET and SET combined throughput in Gbps by object size. Stock Valkey: 305 at 1 MiB, 213 at 8 MiB, 202 at 32 MiB, 171 at 64 MiB, 94 at 256 MiB and 89 at 500 MiB. The module: 372, 399, 389, 378, 372 and 372.](throughput_stock_vs_module.svg)
 
-**Table 2: Performance improvements on large objects with the Large Object module**
+**Table 2: Performance improvements with the Large Object module**
 
 Each cell shows stock Valkey → the module.
 
@@ -150,7 +150,7 @@ It is important to note that the test instances' network and storage bandwidth c
 
 At lower concurrency, with the same two clients each running 4 `GET` and 4 `SET` connections at 1 to 32 MiB, 2 and 2 at 64 and 256 MiB, and 1 and 1 at 500 MiB, the module's latency drops further:
 
-**Table 3: Lower latency on large objects with optimal clients**
+**Table 3: Lower latency with the Large Object module and optimal clients**
 
 | Object size (MiB) | GET p50 / p99 (ms) | SET p50 / p99 (ms) |
 | --- | --- | --- |
