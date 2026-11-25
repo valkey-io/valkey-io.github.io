@@ -29,6 +29,7 @@ runs:
         "$build/compare-problems.sh" "$before" "$AFTER" python3 "$build/check-search-index.py"
 
     - name: Check search ranking
+      if: ${{ !cancelled() }}
       shell: bash
       env:
         BEFORE: ${{ inputs.before }}
