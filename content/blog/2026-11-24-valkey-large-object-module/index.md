@@ -32,8 +32,9 @@ The size depends on the model and the chunk size:
 
 Larger chunks mean fewer, bigger objects per prompt, and a cache hit has to move many of them quickly.
 The [Valkey Large Object module](https://github.com/valkey-io/valkey-large-object) is built for that.
-In [our benchmark](#how-fast-it-runs), one node sustained 372 to 399 Gbps of reads and writes at every object size. This allows all the models in the table above to set up distributed KV caching workloads that retrieve KV objects with a median latency under 1 ms for 1 MiB objects and about 10 ms for 32 and 64 MiB objects.
-However, the module is not limited to only KV caching: it optimally stores any large binary value.
+In [our benchmark](#how-fast-it-runs), one node sustained 372-399 Gbps of reads and writes at every object size.
+This allows all the models in the table above to set up distributed KV caching workloads that retrieve KV objects with a median latency under 1 ms for 1 MiB objects and about 10 ms for 32 and 64 MiB objects.
+However, the module is not limited to KV caching: it optimally stores any large binary value.
 
 This is the first of three posts on distributed KV caching with Valkey.
 It covers what changes in in-memory key-value datastores when values reach hundreds of megabytes, and how the Valkey Large Object module improves performance for such large objects.
@@ -53,7 +54,7 @@ The workload:
 
 - `GET`s read a 64 GiB hot set that was filled beforehand, so almost every `GET` finds its key.
 - `SET`s always write new keys, picked from a billion-key space, so none overwrites an existing value.
-- The `SET`s first filled memory to the limit. The measurement then ran with the server at the limit, with continuous evictions.
+- The `SET`s first filled memory to the limit. The measurement then ran with the server at the limit and evicting continuously.
 - A separate connection sent a `PING` every 10 ms to show how long an unrelated small command waits.
 
 **Table 1: Performance of Valkey on large objects without the Large Object module**
@@ -137,7 +138,11 @@ These are results from one i8ge.48xlarge server in `Tiered` mode over RDMA with 
 - On the same instance type, the module node held 108 TB on NVMe, about 150 times the 640 GiB that stock Valkey held in DRAM.
 - With the DRAM cache turned off, so that every `GET` reads from NVMe, `GET`s reached the same 215-216 Gbps as cache hits from DRAM, because the 16 local NVMe drives can read faster than the network can carry. The cache matters when storage is the limit, for example on network-attached block storage, where reads and writes share one bandwidth limit: every `GET` served from DRAM leaves that bandwidth to `SET`s.
 
-How we measured: the server had a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS. Two c8gn.16xlarge clients drove it with [cachecannon](https://github.com/cachecannon/cachecannon) over EFA, using the same per-client `GET` and `SET` connections as the stock run, with `GET`s over a 64 GiB hot set and `SET`s of new keys at the same time. The run filled the disk to its limit first and then ran at the limit. The stock results come from the [earlier section](#what-changes-when-values-reach-hundreds-of-megabytes). These numbers are capped by the test instances' network and storage bandwidth, so machines with higher limits can go further.
+How we measured: the server had a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS.
+Two c8gn.16xlarge clients drove it over EFA with [cachecannon](https://github.com/cachecannon/cachecannon), using the stock run's `GET` and `SET` connections: `GET`s over a 64 GiB hot set and `SET`s of new keys at the same time.
+The run filled the disk first, then ran at the limit.
+The stock results come from the [earlier section](#what-changes-when-values-reach-hundreds-of-megabytes).
+It is important to note that the test instances' network and storage bandwidth cap these numbers, so machines with higher limits can go much further.
 
 At lower concurrency, with the same two clients each running 4 `GET` and 4 `SET` connections at 1 to 32 MiB, 2 and 2 at 64 and 256 MiB, and 1 and 1 at 500 MiB, the module's latency drops further:
 
