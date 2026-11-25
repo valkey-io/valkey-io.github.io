@@ -66,11 +66,13 @@ function putExactTitleMatchesFirst(instance) {
             const term = typedTerm?.replace(/-/g, ' ');
             if (!term) return search(typedTerm, options);
             const exactTitle = term.trim().toLowerCase().replace(/\s+/g, ' ');
+            // Titles keep their hyphens, such as CLIENT NO-EVICT, so match the title as typed too.
+            const typedTitle = typedTerm.trim().toLowerCase().replace(/\s+/g, ' ');
             // With no term, a search returns every page the filter matches.
             const searchTitles = function(titles) {
                 return search(null, { ...options, filters: { ...options.filters, exact_title: titles } });
             };
-            const [result, typedMatches] = await Promise.all([search(term, options), searchTitles(exactTitle)]);
+            const [result, typedMatches] = await Promise.all([search(term, options), searchTitles({ any: [typedTitle, exactTitle] })]);
             const exactMatches = typedMatches.results.length
                 ? typedMatches
                 : await searchTitles({ any: [exactTitle + 's', exactTitle + 'es'] });

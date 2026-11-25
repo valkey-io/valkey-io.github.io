@@ -124,3 +124,8 @@ top = 1
 query = "migration"
 url = "/topics/migration/"
 top = 1
+
+[[search]]
+query = "client no-evict"
+url = "/commands/client-no-evict/"
+top = 1
