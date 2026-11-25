@@ -109,3 +109,4 @@ Learn more about ACL Roles in the [ACL topic] and the [ACL Roles Command Page] o
 
 [ACL topic]: https://valkey.io/topics/acl/#roles
 [ACL Roles Command Page]: https://valkey.io/commands/acl-roles/
+[Valkey 9.2 Announcement]: https://valkey.io/blog/valkey-9.2-release/
