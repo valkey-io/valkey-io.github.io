@@ -16,23 +16,29 @@
 {% else %}
     {% set page_contents = docs_file_contents %}
 {% endif %}
+{% set nav_json %}{{< nav_merged extra={config.extra} />}}{% endset %}
+{% set nav_data = load_data(literal=nav_json, format="json") %}
+{% set nav_location_json %}{{< nav_topic_location nav={nav_data} slug={page.slug} />}}{% endset %}
+{% set nav_location = load_data(literal=nav_location_json, format="json") %}
 {%- endblock head -%}
-
-{% block subhead_content %}
-{% if has_frontmatter and frontmatter_title %}
-    <div class="styled-title">
-        <h1 class="page-title">Documentation: {{ frontmatter_title }}</h1>
-    </div>
-{% endif  %}
-{% endblock subhead_content %}
 
 {% block breadcrumbs %}
 {# Breadcrumbs section #}
-<nav class="breadcrumbs">
+<nav class="breadcrumbs" aria-label="Breadcrumb">
     <ul class="breadcrumb-list">
         <li class="breadcrumb-item">
             <a href="/topics/" class="breadcrumb-link">Topics</a>
         </li>
+        {% if nav_location.section and nav_location.landing != page.slug %}
+        <li class="breadcrumb-item">
+            <img src="/img/caret-right.svg" alt="" width="8" height="10"/>
+            {% if nav_location.landing %}
+            <a href="/topics/{{ nav_location.landing }}/" class="breadcrumb-link">{{ nav_location.title }}</a>
+            {% else %}
+            {{ nav_location.title }}
+            {% endif %}
+        </li>
+        {% endif %}
         <li class="breadcrumb-item breadcrumb-current" aria-current="page">
             <img src="/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
             {% if frontmatter_title %}{{ frontmatter_title }}{% else %}{{ page.slug | upper }}{% endif %}
@@ -42,36 +48,30 @@
 {% endblock breadcrumbs %}
 
 {% block main_content %}
+{# Some topics open with their own heading; the rest get the frontmatter title. #}
+{% set trimmed_contents = page_contents | trim %}
+{% if frontmatter_title and trimmed_contents is not starting_with(pat="# ") %}
+<h1 class="docs-page-title">{{ frontmatter_title }}</h1>
+{% endif %}
 {% if page.path in config.extra.review_list %}
 <p><strong>This page is under review.</strong> The page is likely incorrect, contains invalid links, and/or needs technical review. 
     In the future it may change substantially or be removed entirely.</p>
 <hr />
 {% endif %}
 {%- set content_with_fixed_links %}{{< fix_links_docs content={page_contents} />}}{% endset -%}
-{% if page.path in config.extra.publish_hold %}
-    <p><code>{{ page.path }}</code> may be available after revisions.</p>
-{% else %}
-    {{ content_with_fixed_links | markdown | safe }}
-{% endif %}
-{% endblock main_content %}
-
-{% block related_content %}
-<h2 id="topic-list-title">Alphabetical Index</h2>
-<ul id="topic-list"></ul>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var 
-        topicListEl = document.getElementById('topic-list'),
-        f = fetch("/topics-list/");
-
-    f.then((r) => r.text()).then((v) => { topicListEl.innerHTML = v; })
-    f.catch((error) => { topicListEl.innerHTML = "Could not load topic list."; });
-});
-</script>
-
+{%- set content_html %}{{ content_with_fixed_links | markdown | safe }}{% endset -%}
+{{< heading_links content={content_html} />}}
 <div class="edit_box">
     See an error?
     <a href="https://github.com/valkey-io/valkey-doc/edit/main/topics/{{ page.slug }}.md">Update this Page on GitHub!</a>
 </div>
+{{< nav_pager nav={nav_data} slug={page.slug} extra={config.extra} />}}
+{% endblock main_content %}
+
+{% block related_content %}
+{% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
+{% set nav_index = load_data(literal=nav_index_json, format="json") %}
+{% set nav_map_json %}{{< nav_command_map nav={nav_data} index={nav_index} />}}{% endset %}
+{% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
+{{< nav_menu nav={nav_data} extra={config.extra} current={page.slug} open={nav_location.section} command_map={nav_command_map} index={nav_index} />}}
 {% endblock related_content %}

@@ -2,7 +2,7 @@
   "name": "redisson",
   "language": "Java",
   "license": "Apache-2.0",
-  "description": "A Java client that exposes Valkey as familiar JDK structures — Map, Lock, Queue, ExecutorService — plus client-side caching.",
+  "description": "A Java client that extends Valkey with distributed locks, caches, executor services and Live Objects. Client-side caching and Spring, Hibernate, Quarkus and JCache integrations.",
   "repository": "https://github.com/redisson/redisson",
   "documentation": "https://redisson.pro/docs/getting-started/",
   "installCommand": "implementation 'org.redisson:redisson:4.+'",
@@ -12,7 +12,7 @@
     "pubsub": true,
     "scan": true,
     "latency": false,
-    "az": false,
+    "az": true,
     "csc": true,
     "capa": true,
     "pool": true

@@ -79,7 +79,7 @@ Commit your changes to your local copy of `valkey-io/valkey-doc`.
 ### Building the command reference
 
 The command reference (i.e. `/commands/set/`, `/commands/get/`, `/commands/lolwut/`) sources information from `valkey-io/valkey`, `valkey-io/valkey-bloom`, and `valkey-io/valkey-doc`.
-`valkey-io/valkey`, `valkey-io/valkey-bloom`, `valkey-io/valkey-json` and `valkey-io/valkey-search` provides the command metadata (items like computational complexity, version history, arguments, etc)
+`valkey-io/valkey`, `valkey-io/valkey-bloom`, `valkey-io/valkey-json`, `valkey-io/valkey-search` and `valkey-io/valkey-large-object` provides the command metadata (items like computational complexity, version history, arguments, etc)
 whilst `valkey-io/valkey-doc` provides the command description and the command reply.
 
 ```mermaid
@@ -91,22 +91,38 @@ flowchart TD
     H --> J[Files: /resp2_replies.json,<br/>/resp3_replies.json] --> Z[Command Reply]
 ```
 
-Let's say that this repo and your local copy of `valkey-io/valkey-doc`, `valkey-io/valkey-bloom`, `valkey-io/valkey-json`, `valkey-io/valkey-search`
-and `valkey-io/valkey` reside in the same directories.
+Let's say that this repo and your local copy of `valkey-io/valkey-doc`, `valkey-io/valkey-bloom`, `valkey-io/valkey-json`, `valkey-io/valkey-search`,
+`valkey-io/valkey-large-object` and `valkey-io/valkey` reside in the same directories.
 
 First, stop the `zola serve` process if you're running it.
 From the root directory of this repo run:
 
 ```shell
-# You should only need to run this once or when you add a new command.
+# You should only need to run this once or when you add a new command,
+# or when a command's group or container changes.
 ./build/init-commands.sh ../valkey-doc/commands ../valkey/src/commands \
-    ../valkey-bloom/src/commands ../valkey-json/src/commands ../valkey-search/src/commands
+    ../valkey-bloom/src/commands ../valkey-json/src/commands ../valkey-search/src/commands \
+    ../valkey-large-object/src/commands
 ```
+
+The script uses [jq](https://jqlang.org/), if installed, to store each command's group and container for the documentation menu.
+Without jq, the site still builds correctly, but more slowly.
 
 Then, restart Zola.
 Point your browser at `http://127.0.0.1:1111/commands/` and you should see the fully populated list of topics.
 All files created in this process are ignored by git.
 Commit your changes to your local copy of `valkey-io/valkey-doc` for description changes and `valkey-io/valkey` for command JSON changes (if you have any).
+
+### Checking links
+
+Pull requests and deploys check the built site for links to missing pages or `#anchors`, and for valkey-doc links that weren't converted to site URLs.
+To run the checks locally (needs [lychee](https://lychee.cli.rs/) and jq), set up the topics and commands as above, then:
+
+```shell
+zola build
+build/broken-links.sh public
+build/unconverted-doc-links.sh public
+```
 
 ## License
 

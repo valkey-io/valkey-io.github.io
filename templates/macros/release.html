@@ -63,3 +63,26 @@
 {% endfor  %}
 {% endif %}
 {% endcomponent release_info %}
+
+{#
+    The menu on the download pages: the download page, each release line,
+    newest first, and all releases. The lines are the pages in
+    content/download/versions/, so a new line shows up once it has a page.
+    Styled like the docs menu.
+      path: the current page's path.
+      line: the release line of the current page, e.g. "9.1", or "".
+#}
+{% component download_menu(path, line="") %}
+{%- set versions = get_section(path="download/versions/_index.md") %}
+{%- set lines = [{"version": (p.extra.version | split(pat=".") | first | int) * 1000 + (p.extra.version | split(pat=".") | nth(n=1) | int), "page": p} for p in versions.pages] %}
+<nav class="docs-menu" aria-labelledby="download-menu-title">
+    <h2 id="download-menu-title">Download</h2>
+    <ul>
+        <li><a href="/download/"{% if path == "/download/" %} class="docs-menu-current" aria-current="page"{% endif %}>Overview</a></li>
+        {%- for l in lines | sort(attribute="version") | reverse %}
+        <li><a href="{{ l.page.path }}"{% if l.page.extra.version == line %} class="docs-menu-current" aria-current="{{ "page" if path == l.page.path else "true" }}"{% endif %}>Valkey {{ l.page.extra.version }}</a></li>
+        {%- endfor %}
+        <li><a href="/download/releases/"{% if path == "/download/releases/" %} class="docs-menu-current" aria-current="page"{% endif %}>All releases</a></li>
+    </ul>
+</nav>
+{% endcomponent download_menu %}

@@ -60,8 +60,8 @@
           "minItems": 1,
           "uniqueItems": true,
           "items": {
-            "description": "Integration tags must be one of `CLI & GUI`, `Deploy & operate`, `Frameworks & ORMs`, `Queues & background jobs`, `RAG & retrieval`, `Agent memory`, `Agent frameworks` or `Inference & serving`.",
-            "enum": ["CLI & GUI", "Deploy & operate", "Frameworks & ORMs", "Queues & background jobs", "RAG & retrieval", "Agent memory", "Agent frameworks", "Inference & serving"]
+            "description": "Integration tags must be one of `CLI & GUI`, `Deploy & operate`, `Frameworks & ORMs`, `Queues & background jobs`, `RAG & retrieval`, `Agent memory`, `Agent frameworks`, `Inference & serving` or `Graph databases`.",
+            "enum": ["CLI & GUI", "Deploy & operate", "Frameworks & ORMs", "Queues & background jobs", "RAG & retrieval", "Agent memory", "Agent frameworks", "Inference & serving", "Graph databases"]
           }
         },
         "features": {
@@ -126,8 +126,8 @@
     },
     "language": {
       "$comment": "The language set is fixed on purpose: adding a language is a deliberate change to this schema.",
-      "description": "The primary programming language, required for client entries and optional for integrations. It must be one of `C`, `C#`, `Go`, `Java`, `Kotlin`, `Node.js`, `PHP`, `Python`, `Ruby`, `Shell`, `Swift` or `TypeScript`.",
-      "enum": ["C", "C#", "Go", "Java", "Kotlin", "Node.js", "PHP", "Python", "Ruby", "Shell", "Swift", "TypeScript"]
+      "description": "The primary programming language, required for client entries and optional for integrations. It must be one of `C`, `C#`, `Go`, `Java`, `Kotlin`, `Node.js`, `PHP`, `Python`, `Ruby`, `Scala`, `Shell`, `Swift` or `TypeScript`.",
+      "enum": ["C", "C#", "Go", "Java", "Kotlin", "Node.js", "PHP", "Python", "Ruby", "Scala", "Shell", "Swift", "TypeScript"]
     },
     "installCommand": {
       "description": "The primary install command, such as `pip install valkey-glide`, on one line with no spaces at either end.",
