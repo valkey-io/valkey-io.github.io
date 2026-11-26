@@ -60,12 +60,10 @@ Throughput fell from 305 Gbps at 1 MiB to 89 Gbps at 500 MiB, and a `PING` from 
 | 256 | 94.2 (47.6 + 46.6) | 352 / 396 | 373 / 430 | 37.6 / 97 | 21 |
 | 500 | 89.1 (44.1 + 45.0) | 751 / 973 | 751 / 830 | 48.5 / 253 | 11 |
 
-The workload: two c8gn.16xlarge clients drove it with [cachecannon](https://github.com/cachecannon/cachecannon) and a 10-second request timeout, using the same number of `GET` and `SET` connections per client as the module runs below: 16 each at 1 and 8 MiB, 12 at 32 MiB, 8 at 64 MiB, and 4 at 256 and 500 MiB.
-
-- `GET`s read a 64 GiB hot set that was filled beforehand, so almost every `GET` finds its key.
-- `SET`s always write new keys, picked from a billion-key space, so none overwrites an existing value.
-- The `SET`s first filled memory to the limit. The measurement then ran with the server at the limit and evicting continuously.
-- A separate connection sent a `PING` every 10 ms to show how long an unrelated small command waits.
+The workload: Two c8gn.16xlarge clients drove it with [cachecannon](https://github.com/cachecannon/cachecannon) and a 10-second request timeout, using an equal number of `GET` and `SET` connections per client: 16 each at 1 and 8 MiB, 12 each at 32 MiB, 8 each at 64 MiB, and 4 each at 256 and 500 MiB.
+`GET`s read a 64 GiB hot set that was filled beforehand, so almost every `GET` finds its key, and `SET`s always write new keys, so none overwrites an existing value.
+The `SET`s first filled memory to the limit, and the measurement then ran with the server at the limit and evicting continuously.
+A separate connection sent a `PING` every 10 ms to show how long an unrelated small command waits.
 
 ## What the module is
 
@@ -139,8 +137,8 @@ The results:
 - On the same instance type, the module node held 108 TB on NVMe, about 150 times the 640 GiB that stock Valkey held in DRAM.
 - With the DRAM cache turned off, so that every `GET` reads from NVMe, `GET`s reached the same 215-216 Gbps as cache hits from DRAM, because the 16 local NVMe drives can read faster than the network can carry. The cache matters when storage is the limit, for example on network-attached block storage, where reads and writes share one bandwidth limit: every `GET` served from DRAM leaves that bandwidth to `SET`s.
 
-The workload: the server had a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS.
-Two c8gn.16xlarge clients drove it over EFA with [cachecannon](https://github.com/cachecannon/cachecannon), using the stock run's `GET` and `SET` connections: `GET`s over a 64 GiB hot set and `SET`s of new keys at the same time.
+The workload: The server had a 108 TB disk limit on 16 instance-store NVMe drives striped under XFS.
+Two c8gn.16xlarge clients drove it over EFA with [cachecannon](https://github.com/cachecannon/cachecannon), using the same workload as the stock run: the same number of `GET` and `SET` connections per client, `GET`s over a 64 GiB hot set, and `SET`s of new keys at the same time.
 The run filled the disk first, then ran at the limit.
 The stock results come from the [earlier section](#what-changes-when-values-reach-hundreds-of-megabytes).
 It is important to note that the test instances' network and storage bandwidth cap these numbers, so machines with higher limits can go much further.
