@@ -1,5 +1,13 @@
 {% extends "left-aside.html" %}
 
+{% block breadcrumbs %}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ul class="breadcrumb-list">
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">Topics</li>
+    </ul>
+</nav>
+{% endblock breadcrumbs %}
+
 {% block main_content %}
 
 {% set list = [] %}

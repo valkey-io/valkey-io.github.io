@@ -1,0 +1,20 @@
+{
+  "name": "Sage",
+  "language": "Scala",
+  "license": "Apache-2.0",
+  "description": "A Scala 3 client with its own RESP3 implementation and modules for ZIO, Cats Effect, Kyo, Ox, Pekko and direct-style code. Supports cluster, transactions, sharded pub/sub and client-side caching.",
+  "repository": "https://github.com/ghostdogpr/sage",
+  "documentation": "https://ghostdogpr.github.io/sage/getting-started#your-first-connection",
+  "installCommand": "libraryDependencies += \"com.github.ghostdogpr\" %% \"sage-client-direct\" % \"0.5.0\"",
+  "features": {
+    "replica": true,
+    "backoff": true,
+    "pubsub": true,
+    "scan": false,
+    "latency": false,
+    "az": false,
+    "csc": true,
+    "capa": false,
+    "pool": true
+  }
+}

@@ -250,6 +250,15 @@
     path: /img/libredb-studio.svg
     alt: LibreDB Studio Logo
 
+- name: Simafri
+  link: https://www.simafri.com/en/
+  image:
+    path: /img/simafri.svg
+    alt: Simafri logo
+  company: >
+    [Simafri](https://www.simafri.com/en/) provides VPS and managed VPS hosting, operated by its own engineers for customers worldwide.
+  offering: >
+    [Simafri managed VPS](https://www.simafri.com/en/managed-vps/) runs Valkey on servers our engineers install, secure, update and monitor, with tuning recommendations.
 - name: FalkorDB
   link: https://www.falkordb.com/Valkey
   image:
