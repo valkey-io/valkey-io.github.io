@@ -1,9 +1,12 @@
-// Community landing page (templates/community-home.html): participant logo
-// strip, photo hero, connect bar, and photo carousel. The "Ways to
-// contribute" tiles reuse the shared .community-card styles from
-// _valkey.scss. The palette is in _colors.scss and the card surface in
-// _cards.scss, whose pages reuse the canvas, section head, kicker and logo
-// strip below.
+// Community landing page (templates/community-home.html)
+// The "Ways to contribute" tiles reuse the shared .community-card styles
+// from _valkey.scss. Everything here is specific to the landing page:
+// participant logo strip, photo hero, connect bar, and photo carousel.
+
+$community-purple-900: #2d2471;
+$community-purple-800: #35247e;
+$community-blue-500: #5b6fff;
+$community-ink: #072150;
 
 // Shared pieces --------------------------------------------------------------
 
@@ -16,11 +19,10 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
   text-decoration: none;
-}
 
-// Only labels that are links, such as "Valkey participants", change colour.
-a.community-home-kicker:hover {
-  color: $community-purple-800;
+  &:hover {
+    color: $community-purple-800;
+  }
 }
 
 .community-home-btn {
@@ -253,15 +255,14 @@ a.community-home-kicker:hover {
   }
 }
 
-// Connect with us and photo carousel sit on a light blue canvas so the white
-// Connect card and its shadow read against the page. The other card pages
-// use the same canvas, so a change here changes them too.
+// Connect with us and photo carousel sit on a faint blue canvas so the white
+// Connect card and its shadow read against the page.
 .community-home-canvas {
   // 0.1px top/bottom keeps child margins inside the tinted area; the side
   // gutter is the single, page-wide rule so everything lines up with the
   // header/footer content column (--max-width).
   padding: 0.1px 2rem;
-  background: $community-canvas;
+  background: #f8faff;
 }
 
 // Connect with us -----------------------------------------------------------
@@ -273,7 +274,9 @@ a.community-home-kicker:hover {
   max-width: var(--max-width);
   margin: 3.4rem auto;
   padding: 2.7rem 3.4rem;
-  @include card;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(60, 60, 130, 0.08);
 
   @include respond-min(900px) {
     flex-direction: row;

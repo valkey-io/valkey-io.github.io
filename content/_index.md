@@ -6,38 +6,42 @@ repos_heading= "Featured repositories"
 github_org= "https://github.com/valkey-io"
 github_org_text= "All repos in the Valkey GitHub organization"
 
-# Number of blog posts shown in the "Latest blog posts" panel.
+# Number of blog posts shown in the "Latest Blog Posts" panel.
 latest_blog_posts= 4
 
 headline= "Valkey: an open source, in-memory data store"
 long_description= ""
 
 [extra.hero]
-headings = ["Fast. Reliable.", "Open source, forever."]
+headings = ["FAST. RELIABLE.", "OPEN SOURCE, FOREVER."]
 subtitle = "Valkey is an open source (BSD) high-performance key/value datastore that supports a variety of workloads such as caching, message queues, and can act as a primary database. The project is backed by the Linux Foundation, ensuring it will remain open source forever."
-button_text = "Get started"
+button_text = "GET STARTED"
 button_url = "/topics/quickstart"
-secondary_button_text = "Install Valkey"
+secondary_button_text = "INSTALL VALKEY"
 secondary_button_url = "/topics/installation"
 
 [[extra.documentation_cards]]
 title = "Usage guide"
 description = "Detailed documentation on the various datatypes supported by Valkey and best practices."
+button_text = "Documentation by topic"
 button_url = "/topics/"
 
 [[extra.documentation_cards]]
 title = "Valkey API"
 description = "View the full list of Valkey commands including first party modules."
+button_text = "Command Reference"
 button_url = "/commands"
 
 [[extra.documentation_cards]]
 title = "Clients"
 description = "Recommended Valkey client libraries for Python, Java, Go, Node.js, PHP, C#, Ruby, and more."
+button_text = "Learn More"
 button_url = "/clients/"
 
 [[extra.documentation_cards]]
 title = "Performance"
 description = "Deep dive into Valkey performance numbers across versions."
+button_text = "Explore"
 button_url = "/performance/"
 
 [[extra.download_ctas]]
@@ -54,6 +58,6 @@ title= "Read the docs"
 
 ## Learn more
 
-Valkey can run as either a standalone daemon or in a cluster, with options for replication and high availability. Valkey natively supports a rich collection of datatypes, including strings, numbers, hashes, lists, sets, sorted sets, bitmaps, hyperloglogs and more.
+Valkey can run as either a **standalone** daemon or in a **cluster**, with options for **replication** and **high availability**. Valkey natively supports a rich collection of datatypes, including **strings**, **numbers**, **hashes**, **lists**, **sets**, **sorted sets**, **bitmaps**, **hyperloglogs** and more.
 You can operate on data structures in-place with an expressive collection of commands.
-Valkey also supports native extensibility with built-in scripting support for Lua and supports module plugins to create new commands, data types, and more.
+Valkey also supports native extensibility with built-in scripting support for **Lua** and supports **module** plugins to create new commands, data types, and more.

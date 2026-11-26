@@ -1,12 +1,11 @@
 /**
- * Interactions for /community/ and the homepage
+ * Community page interactions
  *
  * 1. Participant logo marquee pause/play toggle (WCAG 2.2.2: auto-moving
- *    content lasting more than 5s needs a control to pause it). Both pages.
- * 2. "Community in action" photo carousel, /community/ only: pages through
- *    photos three at a time on desktop, two on tablet, one on mobile.
- *    Prev/next buttons and a "current / total" status are the only controls;
- *    there is no auto-scroll.
+ *    content lasting more than 5s needs a control to pause it).
+ * 2. "Community in action" photo carousel: pages through photos three at a
+ *    time on desktop, two on tablet, one on mobile. Prev/next buttons and a
+ *    "current / total" status are the only controls; there is no auto-scroll.
  */
 
 (function () {
