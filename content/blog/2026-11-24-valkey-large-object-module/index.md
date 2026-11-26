@@ -93,12 +93,11 @@ Inside each segment, the module's own allocator hands out exact-sized, 4 KiB-ali
 The DRAM cache pool starts with one segment and adds more as it fills, up to `maxmemory`.
 In `Dram` mode it holds every object, and in `Tiered` mode it acts as a read cache, next to the fixed-size disk staging segment pool described below.
 
-**Disk.** In `Tiered` mode every object is a file on block storage, such as local NVMe or network-attached block storage like Amazon EBS, and DRAM is a read cache:
-
-- The module expects an XFS file system and Linux 5.1 or later. Files sit in `largeobj.disk-dir`, spread over 1,024 subdirectories by object ID so creates and deletes don't serialize on one directory lock.
-- Each segment pool has its own io_uring engine, which runs on its own thread. The engines read and write files with `O_DIRECT`, using registered buffers whenever a segment is io_uring registered. Writes and cache misses pass through the fixed-size disk staging segment pool, which totals `largeobj.disk-staging-size` of DRAM. Staging buffers and the DRAM cache live in separate segment pools, so short-lived staging buffers don't leave holes between long-lived cached objects.
-- An object is copied into the DRAM cache on its first read by default (`largeobj.promote-min-hits`). When the cache is full, a cached copy with a low least-frequently-used score is dropped, and the object stays on disk.
-- When the disk limit (`largeobj.disk-maxmemory`) or `maxmemory` is reached, a write evicts the least recently used large objects that `maxmemory-policy` allows, as core Valkey does.
+**Disk.** In `Tiered` mode every object is a file on block storage, such as local NVMe or network-attached block storage like Amazon EBS, and DRAM is a read cache.
+The module reads and writes the files with direct I/O through io_uring, so object bytes skip the operating system's page cache.
+Writes and cache misses pass through the fixed-size disk staging segment pool, which totals `largeobj.disk-staging-size` of DRAM.
+An object is copied into the DRAM cache on its first read by default, and when the cache is full, less frequently used copies are dropped while the objects stay on disk.
+When the disk limit or `maxmemory` is reached, a write evicts the least recently used large objects that `maxmemory-policy` allows, as core Valkey does.
 
 **Transport.** The RDMA commands use [libfabric](https://ofiwg.github.io/libfabric/).
 A client sends `BLOB.RDMA_HELLO` once per connection with its libfabric endpoint address, and the reply lists the server's addresses.
@@ -132,6 +131,8 @@ Each cell shows stock Valkey → the module.
 | 256 | 94 → 372 (4.0x) | 352 → 88.6 | 396 → 101 | 373 → 95.4 | 430 → 105 | 37.6 → 0.3 |
 | 500 | 89 → 372 (4.2x) | 751 → 178 | 973 → 193 | 751 → 185 | 830 → 195 | 48.5 → 0.3 |
 
+The results:
+
 - The module moved 1.9x to 4.2x the throughput of stock Valkey from 8 MiB up, and 1.2x at 1 MiB. Its total stayed between 372 and 399 Gbps at every size, while stock Valkey's fell from 305 Gbps at 1 MiB to 89 Gbps at 500 MiB.
 - A `PING` from a separate client waited at most 0.4 ms at p99 with the module, against 1.2-48 ms with stock Valkey.
 - From 8 MiB up the module evicted 2.8 to 3.9 times faster than stock Valkey (2,670 against 955 per second at 8 MiB), because it accepted that many more `SET`s, and it rejected none at any size.
@@ -162,6 +163,7 @@ Table 3 is a separate run at lower concurrency. Each of the two clients ran 4 `G
 To read and write your first large object, start with the [getting started guide](https://valkey.io/topics/large-object-getting-started/).
 It walks you through building the module and running your first commands.
 The [configuration guide](https://valkey.io/topics/large-object-configuration/) covers storage and monitoring settings, and the [use cases](https://valkey.io/topics/large-object-use-cases/) show where else the module fits.
+`Tiered` mode expects an XFS file system and Linux 5.1 or later.
 
 The benchmark above ran with this command, on an i8ge.48xlarge with its 16 NVMe drives striped under XFS, and with `maxmemory` unset so the DRAM cache grew as needed:
 
