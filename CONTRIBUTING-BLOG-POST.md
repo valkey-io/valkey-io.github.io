@@ -156,9 +156,11 @@ authors= [ "maury", "jacobim" ]
 # Leave it out unless you are scheduling; see "Scheduling a post" below.
 draft = true
 [extra]
-    # 'featured' controls whether the blog post appears in the featured section on the main blog page
-    featured = true
-    # 'featured_image' sets the main image for the blog header
+    # 'featured' is for maintainers: `featured = true` makes a post the big
+    # lead card at the top of /blog/ (the newest featured post leads), so
+    # leave it out.
+    # 'featured_image' sets the main image for the blog header. When the post
+    # is the /blog/ lead, the image is cropped to 16:9 there.
     # Choose from one of the available images:
     # "/assets/media/featured/random-01.webp"
     # "/assets/media/featured/random-02.webp"
