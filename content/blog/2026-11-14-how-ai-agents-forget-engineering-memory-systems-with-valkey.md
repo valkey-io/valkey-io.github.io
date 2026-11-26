@@ -1,6 +1,6 @@
 +++
 title = "How AI Agents Forget: Engineering Memory Systems with Valkey"
-date = 2026-11-14
+date = 2026-12-16
 description = "An AI agent can remember an instruction in one turn and contradict it in the next. Building reliable memory requires retrieval, policy, provenance, and deliberate forgetting, not simply more conversation history."
 authors = ["sanika6969"]
 
