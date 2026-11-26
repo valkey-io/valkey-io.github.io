@@ -678,6 +678,14 @@ p {
     border-bottom: 1px solid #d5d9ec;
   }
 
+  // Larger than the section titles, and lined up with them.
+  .docs-menu-title {
+    margin: 0 0 1rem;
+    padding: 0 0.4rem;
+    font-size: 2.4rem;
+    text-transform: none;
+  }
+
   summary {
     display: flex;
     justify-content: space-between;
@@ -726,6 +734,24 @@ p {
 
   details > ul {
     padding-bottom: 1rem;
+  }
+
+  // Links to pages outside the documentation, which look like section titles.
+  // They have no border unless current, so they line up with the titles.
+  .docs-menu-link > a {
+    padding: 1rem 0.4rem;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+
+    &:not(.docs-menu-current) {
+      border-left: 0;
+    }
+  }
+
+  // A link inside a section that leaves the docs.
+  .docs-menu-external::after {
+    content: " \2197";
   }
 
   .docs-menu-current {
@@ -1158,20 +1184,6 @@ aside {
   }
 }
 
-.blog-type-filters {
-  margin-bottom: 1.5rem;
-
-  select {
-    padding: 0.4rem 1rem;
-    border-radius: 8px;
-    border: 1px solid $grey-lt-300;
-    background: $white;
-    color: $text;
-    font-size: 1.3rem;
-    cursor: pointer;
-  }
-}
-
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1192,106 +1204,8 @@ aside {
   color: $white;
   background-color: $grey-dk-200;
 
-  &[data-type="Technical Deep Dive"] { background-color: #6983ff; }
-  &[data-type="Community Highlight"] { background-color: $green-200; }
-  &[data-type="How-to"] { background-color: $purple-200; }
-  &[data-type="Announcements"] { background-color: $yellow-100; }
-  &[data-type="Events"] { background-color: $red-100; }
-}
-
-.blog-inner {
-  
-  .blog-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-
-    li {
-      background: #fff;
-      padding: 20px;
-      margin-bottom: 20px;
-
-      h2 a {
-        color: #30176e;
-        margin: 0;
-      }
-
-      a.link-readmore {
-        color: #747bff ;
-      }
-
-      .meta {
-        margin-top: 2px;
-      }
-    }
-  }
-}
-
-.blog-featured {
-  h2 {
-    color: #30176e;
-    margin-bottom: 1rem;
-    font-size: 120%;
-  }
-
-  &-card {
-    display: flex;
-    background: #fff;
-    border-radius: 10px;
-    margin-bottom: 2rem;
-
-    img {
-      max-width: 50%;
-      height: auto;
-      object-fit: cover;
-      border-top-left-radius: 10px;      
-      border-bottom-left-radius: 10px;      
-    }
-
-    .info {
-      flex: 1 1 50%;
-      width: 50%;
-      padding: 1.25rem;
-
-      h4 {
-        margin: 0 0 1.25rem;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-
-        a {
-          color: #000;
-        }
-      }
-    
-      p {
-        margin: 0 0 1.25rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      .read-more {
-
-      }
-    }
-    .read-more {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      line-height: 1.2;
-      font-weight: 600;
-      font-size: 14px;
-      padding: 12px 24px;
-      border: 1px solid #e2e8f0;
-      border-radius: 50px;
-      color: #2d3748;
-      align-self: flex-end;
-      margin-left: auto;
-      transition: all 0.2s;
-    }
-
+  @each $type, $color in $blog-type-colors {
+    &[data-type="#{$type}"] { background-color: $color; }
   }
 }
 
@@ -1340,15 +1254,6 @@ aside {
 }
 
 .blog-single {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  background-color: #e2e8f0;
-  display: flex;
-  max-width: var(--max-width);
-  margin-left: auto;
-  margin-right: auto;
-
   h2 {
     font-size: 1.5rem;
     margin: 0 0 0.25rem 0;
@@ -1357,21 +1262,7 @@ aside {
     text-transform: uppercase;
   }
 
-  main {
-    flex: 1;
-    padding: 2rem;
-    width: 100%;
-
-    @include respond-min(1024px) {
-      width: 67%;
-    }
-  }
-
   .main-inner {
-    width: 100%;
-    background-color: #fff;
-    padding: 1rem 2rem 2rem;
-
     .feature-img {
       object-fit: cover;
       width: 100%;
@@ -1415,22 +1306,6 @@ aside {
       display: block;
       margin-bottom: 2rem;
     }
-  }
-
-  aside {
-    background-color: #f1f0fa;
-    padding: 2rem;
-    width: 100%;
-    
-    @include respond-min(768px) {
-      max-width: 33%;
-    }
-  }
-}
-
-.blog-authors {
-  h2 {
-    color: #553c9a;
   }
 }
 
@@ -1724,49 +1599,6 @@ pre table {
 .index-entry {
   padding: 0.5em 1em;
   margin-bottom: 0.5em;
-}
-
-.block-menu ul li {
-  border: 1px solid $line;
-  border-radius: 3px;
-  a {
-    display: block;
-  }
-}
-
-.block-menu {
-  ul {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    list-style-type: none;
-    padding: 0;
-    gap: 1em;
-    li {
-      text-align: center;
-      padding: 1em;
-      flex: 1 1 0px;
-      a {
-        text-align: center;
-        padding-bottom: 1em;
-      }
-    }
-  }
-}
-
-.blocks-page {
-  .container {
-    padding-right: 0;
-  }
-}
-
-@media (max-width: 768px) {
-  .block-menu ul {
-    display: block;
-    li {
-      margin-bottom: 1em;
-    }
-  }
 }
 
 html.banner-hidden .banner {

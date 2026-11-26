@@ -101,8 +101,31 @@ a.community-home-kicker:hover {
   position: relative;
   overflow: hidden;
   white-space: nowrap;
-  mask-image: linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
+
+  // Edge fades are white overlays rather than a mask-image. Safari stops
+  // painting the animated track when it sits under a masked parent, so the
+  // logos disappear over time (#700). Keep the colour in sync with the
+  // .community-logo-band background.
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 5%;
+    pointer-events: none;
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(to left, #fff, rgba(255, 255, 255, 0));
+  }
 }
 
 .community-logo-track {
@@ -110,7 +133,6 @@ a.community-home-kicker:hover {
   align-items: center;
   width: max-content;
   animation: community-logo-marquee 55s linear infinite;
-  will-change: transform;
 }
 
 // Paused via the visible toggle button (see community.js). The logos
@@ -156,8 +178,11 @@ a.community-home-kicker:hover {
 @media (prefers-reduced-motion: reduce) {
   .community-logo-row {
     overflow-x: auto;
-    mask-image: none;
-    -webkit-mask-image: none;
+
+    &::before,
+    &::after {
+      display: none;
+    }
   }
 
   .community-logo-track {
@@ -375,7 +400,8 @@ a.community-home-kicker:hover {
 // Section band colour and heading rhythm match the mockup; the shared
 // .community-section used by event subpages keeps its own colour.
 .community-section-home {
-  background: #edf2ff;
+  // Same canvas as the photos above, so there is no seam between sections.
+  background: #f8faff;
   padding-bottom: 6rem; // band continues below the last row of tiles, as in the mockup
 
   .community-header {
