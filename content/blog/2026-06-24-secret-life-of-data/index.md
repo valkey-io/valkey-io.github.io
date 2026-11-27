@@ -124,4 +124,4 @@ All this comes back to understanding that these configurations aren't a silver b
 
 ## Tell your story
 
-Did you save RAM or maximize your throughput by tweaking a configuration in Valkey? [Share the knowledge by opening an issue to propose a blog post](https://github.com/valkey-io/valkey-io.github.io/issues/new?template=blog_post_template.md) or submitting a presentation abstract for the upcoming [ValkeyConf](https://events.linuxfoundation.org/valkeyconf/).
+Did you save RAM or maximize your throughput by tweaking a configuration in Valkey? [Share the knowledge by opening an issue to propose a blog post](https://github.com/valkey-io/valkey-io.github.io/issues/new?template=blog_post_template.yml) or submitting a presentation abstract for the upcoming [ValkeyConf](https://events.linuxfoundation.org/valkeyconf/).

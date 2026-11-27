@@ -11,15 +11,17 @@ The general workflow is to write your post locally in a branch, confirm that it 
 
 The README has instructions on how to get up-and-running with Zola, the software used to build and test the website.
 
-## Step 1: Ideation
+## Step 1: Proposal
 
-The first step is to share your idea with the website maintainers through a GitHub issue.
-In the issue articulate what topic you want to write about and a general overview.
-The maintainers will evaluate your idea to understand if it fits into the site and doesn’t overlap with existing or in-process content.
-The maintainers will provide feedback as needed.
+Before you write anything, open a [blog post proposal](https://github.com/valkey-io/valkey-io.github.io/issues/new?template=blog_post_template.yml).
+The proposal asks for the topic, blog type, audience, key takeaways, and a short abstract.
+The maintainers check that the post fits the site, is aimed at the right reader, and doesn't overlap with existing or in-progress content, and give feedback on the issue.
+A wrong audience or scope takes minutes to fix in a proposal and a full rewrite to fix in a finished post.
+We try to review proposals within 1 business day.
+If you don't get a response, feel free to ping `@valkey-io/content-creators` on the issue.
 
-Strictly speaking, you can forego this step and contribute a blog post directly as a pull request.
-However, if you don’t get the feedback from the maintainers you run the risk of doing work that doesn’t translate efficiently (or at all) into a blog post.
+Start writing once a maintainer assigns a blog reviewer to the issue and adds the `blog-approved` label.
+Blog post pull requests without an approved proposal are closed with a link to the proposal form.
 
 ## Step 2: Writing the post
 
@@ -224,7 +226,7 @@ Keep in mind that you sign off your *commits* but GitHub checks for the sign off
 The best practice is to run `git log` and ensure that every commit you’re about to contribute has `Signed-off-by:`  in the commit message, after confirming then run `git push origin ...`  .
 
 After your contribution is on your fork in GitHub, you can make a pull request to the website repo.
-Make sure to communicate your change fully in the body of the pull request.
+Make sure to communicate your change fully in the body of the pull request, and link the approved proposal issue.
 
 ## Step 6: From contribution to publishing
 
