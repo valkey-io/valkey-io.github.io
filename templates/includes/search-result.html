@@ -1,0 +1,31 @@
+{#- The template for each search result, used by the search modal. Goes inside a
+    <pagefind-results>.
+
+    It's Pagefind's built-in result template (https://pagefind.app/docs/components/results/), plus
+    each result's breadcrumb, so the user can see where the page is in the site. It uses Pagefind's
+    {{ }} syntax, so it's in a raw block to keep Zola from rendering it. #}
+<script type="text/pagefind-template">
+{%- raw %}
+    <li class="pf-result">
+        <div class="pf-result-card">
+            <div class="pf-result-content">
+                {{#if meta.breadcrumb}}<p class="search-result-breadcrumb">{{ meta.breadcrumb }}</p>{{/if}}
+                <p class="pf-result-title">
+                    <a class="pf-result-link" href="{{ meta.url | default(url) | safeUrl }}">{{ meta.title }}</a>
+                </p>
+                {{#if excerpt}}<p class="pf-result-excerpt">{{+ excerpt +}}</p>{{/if}}
+            </div>
+        </div>
+        {{#if sub_results}}
+        <ul class="pf-heading-chips">
+            {{#each sub_results as sub}}
+            <li class="pf-heading-chip">
+                <a class="pf-heading-link" href="{{ sub.url | safeUrl }}">{{ sub.title }}</a>
+                <p class="pf-heading-excerpt">{{+ sub.excerpt +}}</p>
+            </li>
+            {{/each}}
+        </ul>
+        {{/if}}
+    </li>
+{% endraw -%}
+</script>
