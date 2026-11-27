@@ -4,21 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Without a search index, such as under zola serve, there is no search button.
     if (!window.PagefindComponents || !slot || !modalContents) return;
 
-    // Configure before creating the elements: the first element to connect creates the
-    // instance with default settings, and configuration after that is ignored.
-    window.PagefindComponents.configureInstance('default', {
-        // Favour exact word matches and longer pages over short pages with similar words.
-        // Values based on git-scm.com's Pagefind setup.
-        ranking: {
-            pageLength: 0.1, termFrequency: 0.1, termSaturation: 2, termSimilarity: 9,
-            // Boost pages whose keywords in _data/search.toml match the search. Pagefind boosts
-            // title matches by 5 by default.
-            metaWeights: { keywords: 10 },
-        },
-    });
-    const instance = window.PagefindComponents.getInstanceManager().getInstance('default');
-    addBreadcrumbsToResults(instance);
-    putExactTitleMatchesFirst(instance);
+    setUpInstance('default');
 
     // Not compact, so the button has a visible "Search" label, not only an icon. Pagefind's default
     // label is its lowercase "search" keyboard hint.
@@ -29,7 +15,50 @@ document.addEventListener('DOMContentLoaded', function() {
     // The modal goes on <body>, inside the nav it would be hidden while the mobile menu is closed.
     // The <template> it's built from is never shown, so it can be anywhere.
     document.body.append(createModal(modalContents));
+
+    const page = document.getElementById('search-page');
+    const pageContents = document.getElementById('search-page-contents');
+    if (page && pageContents) createSearchPage(page, pageContents);
 });
+
+// Sets up a Pagefind instance for the site: the modal uses 'default' and the search page 'page'.
+// Configure before creating the instance's elements: the first element to connect creates the
+// instance with default settings, and configuration after that is ignored.
+function setUpInstance(name) {
+    window.PagefindComponents.configureInstance(name, {
+        // Favour exact word matches and longer pages over short pages with similar words.
+        // Values based on git-scm.com's Pagefind setup.
+        ranking: {
+            pageLength: 0.1, termFrequency: 0.1, termSaturation: 2, termSimilarity: 9,
+            // Boost pages whose keywords in _data/search.toml match the search. Pagefind boosts
+            // title matches by 5 by default.
+            metaWeights: { keywords: 10 },
+        },
+    });
+    const instance = window.PagefindComponents.getInstanceManager().getInstance(name);
+    addBreadcrumbsToResults(instance);
+    putExactTitleMatchesFirst(instance);
+    return instance;
+}
+
+// The search page, templates/search.html. /search/?q=<query> searches for <query>, and q follows
+// what's typed, so the address can be shared. Pagefind's search event comes after <pagefind-input>
+// stops for its debounce, so the address changes once typing pauses, not on every key.
+// replaceState keeps Back going to the previous page, rather than through each search.
+function createSearchPage(container, contents) {
+    const instance = setUpInstance('page');
+    container.append(contents.content.cloneNode(true));
+
+    instance.on('search', function(term) {
+        const url = new URL(window.location.href);
+        if (term) url.searchParams.set('q', term);
+        else url.searchParams.delete('q');
+        if (url.href !== window.location.href) window.history.replaceState(window.history.state, '', url);
+    });
+
+    const query = new URLSearchParams(window.location.search).get('q');
+    if (query) instance.triggerSearch(query);
+}
 
 // Each page's breadcrumb is a filter rather than metadata, since Pagefind searches metadata and
 // breadcrumbs shouldn't change the results. The result template only sees metadata, so this copies
