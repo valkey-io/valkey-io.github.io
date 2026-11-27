@@ -270,3 +270,12 @@
     FalkorDB is an open source module that adds property graph storage and openCypher queries to Valkey. It uses sparse adjacency matrices and linear algebra for fast graph traversal. The module can be loaded on compatible Valkey deployments.
 
     [Docker quick start](https://github.com/FalkorDB/FalkorDB#get-started) · [Valkey migration guide](https://github.com/FalkorDB/FalkorDB/blob/main/docs/valkey-migration.md)
+- name: xCloud
+  link: https://xcloud.host/valkey-hosting/
+  image:
+    path: /img/xcloud.svg
+    alt: xCloud Logo
+  company: >
+    [xCloud](https://xcloud.host/) is a server control panel for deploying and managing websites and open-source apps on your own server or an xCloud Cloud VPS.
+  offering: >
+    [One-click Valkey hosting on xCloud](https://xcloud.host/valkey-hosting/) deploys Valkey as a container with a generated password, AOF persistence and a ready connection string, and takes care of provisioning, monitoring, restores and server OS security updates, with Valkey upgrades applied when you choose.
