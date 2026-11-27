@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="720" viewBox="0 0 1440 720" role="img" aria-labelledby="t d">
+<title id="t">Memory retrieval pipeline</title>
+<desc id="d">Identity and scope resolution, eligibility filtering, semantic and structured retrieval, ranking by four dimensions, top-k budget and context injection.</desc>
+<defs>
+    <marker id="a-ink" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#506175" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-teal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#127F7C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-purple" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#7355AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-pink" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#B95074" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    </defs>
+<rect x="0" y="0" width="1440" height="720" rx="0" fill="#F8FAFC"/>
+<rect x="44" y="35" width="162" height="35" rx="18" fill="#E9F7F5"/>
+<text x="125.0" y="59" font-family="Inter, Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#127F7C" text-anchor="middle" letter-spacing="0">RETRIEVAL</text>
+<text x="44" y="119" font-family="Inter, Arial, Helvetica, sans-serif" font-size="39" font-weight="750" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Find evidence for the next decision</text>
+<text x="44" y="153" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">The agent does not replay the transcript; it selects a small, scoped context.</text>
+<rect x="38" y="205" width="240" height="238" rx="17" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="38" y="205" width="240" height="9" rx="7" fill="#3273B2"/>
+<rect x="56" y="231" width="174" height="35" rx="18" fill="#EBF3FD"/>
+<text x="143.0" y="255" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#3273B2" text-anchor="middle" letter-spacing="0">01 · SCOPE</text>
+<text x="58" y="321" font-family="Inter, Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Resolve identity</text>
+<text x="58" y="364" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Tenant · user · task</text>
+<text x="58" y="395" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Active incident</text>
+<rect x="319" y="205" width="240" height="238" rx="17" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="319" y="205" width="240" height="9" rx="7" fill="#127F7C"/>
+<rect x="337" y="231" width="174" height="35" rx="18" fill="#E9F7F5"/>
+<text x="424.0" y="255" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#127F7C" text-anchor="middle" letter-spacing="0">02 · FILTER</text>
+<text x="339" y="321" font-family="Inter, Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Check eligibility</text>
+<text x="339" y="364" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Isolation · validity</text>
+<text x="339" y="395" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">TTL · supersession</text>
+<rect x="600" y="205" width="240" height="238" rx="17" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="600" y="205" width="240" height="9" rx="7" fill="#7355AF"/>
+<rect x="618" y="231" width="174" height="35" rx="18" fill="#F2EDFA"/>
+<text x="705.0" y="255" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#7355AF" text-anchor="middle" letter-spacing="0">03 · SEARCH</text>
+<text x="620" y="321" font-family="Inter, Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Find candidates</text>
+<text x="620" y="364" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Valkey Search</text>
+<text x="620" y="395" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Semantic + structured</text>
+<rect x="881" y="205" width="240" height="238" rx="17" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="881" y="205" width="240" height="9" rx="7" fill="#9A6A15"/>
+<rect x="899" y="231" width="174" height="35" rx="18" fill="#FFF4DD"/>
+<text x="986.0" y="255" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#9A6A15" text-anchor="middle" letter-spacing="0">04 · RANK</text>
+<text x="901" y="321" font-family="Inter, Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Score memories</text>
+<text x="901" y="364" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Relevance + freshness</text>
+<text x="901" y="395" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Importance + scope</text>
+<rect x="1162" y="205" width="240" height="238" rx="17" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="1162" y="205" width="240" height="9" rx="7" fill="#B95074"/>
+<rect x="1180" y="231" width="174" height="35" rx="18" fill="#FAEBF1"/>
+<text x="1267.0" y="255" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#B95074" text-anchor="middle" letter-spacing="0">05 · INJECT</text>
+<text x="1182" y="321" font-family="Inter, Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Top-k context</text>
+<text x="1182" y="364" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Within token budget</text>
+<text x="1182" y="395" font-family="Inter, Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">Only selected evidence</text>
+<path d="M278 323 H315" fill="none" stroke="#506175" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-ink)"/>
+<path d="M559 323 H596" fill="none" stroke="#506175" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-ink)"/>
+<path d="M840 323 H877" fill="none" stroke="#506175" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-ink)"/>
+<path d="M1121 323 H1158" fill="none" stroke="#506175" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-ink)"/>
+<rect x="38" y="493" width="1364" height="102" rx="17" fill="#F2EDFA"/>
+<text x="66" y="530" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="750" fill="#7355AF" text-anchor="start" letter-spacing="0">CONCEPTUAL RANKING POLICY</text>
+<text x="66" y="566" font-family="Inter, Arial, Helvetica, sans-serif" font-size="28" font-weight="650" fill="#1D2C3D" text-anchor="start" letter-spacing="0">score(memory) = α · similarity + β · recency + γ · importance + δ · scope</text>
+<rect x="38" y="614" width="1364" height="66" rx="12" fill="#E9F7F5"/>
+<text x="720" y="656" font-family="Inter, Arial, Helvetica, sans-serif" font-size="22" font-weight="650" fill="#127F7C" text-anchor="middle" letter-spacing="0">Scope is also a hard access boundary: similarity never overrides tenant or user isolation.</text>
+</svg>

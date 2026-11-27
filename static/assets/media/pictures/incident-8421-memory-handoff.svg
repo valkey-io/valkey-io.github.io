@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1450" height="890" viewBox="0 0 1450 890" role="img" aria-labelledby="t d">
+<title id="t">Incident 8421 memory handoff</title>
+<desc id="d">At 14:02 checkout p99 exceeds two seconds. At 14:05 rollback v218 fails. At 14:09 the team says not to restart the database primary. At 14:14 they suspect a connection storm after deployment. At 14:23 an SRE joins and the agent retrieves only the relevant incident-scoped facts.</desc>
+<defs>
+    <marker id="a-ink" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#506175" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-teal" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#127F7C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-purple" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#7355AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="a-pink" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M1,1 L10,6 L1,11" fill="none" stroke="#B95074" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    </defs>
+<rect x="0" y="0" width="1450" height="890" rx="0" fill="#F8FAFC"/>
+<rect x="44" y="35" width="162" height="35" rx="18" fill="#E9F7F5"/>
+<text x="125.0" y="59" font-family="Inter, Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#127F7C" text-anchor="middle" letter-spacing="0">INCIDENT #8421</text>
+<text x="44" y="119" font-family="Inter, Arial, Helvetica, sans-serif" font-size="39" font-weight="750" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Carry the incident state across the handoff</text>
+<text x="44" y="153" font-family="Inter, Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#506175" text-anchor="start" letter-spacing="0">The next engineer needs the live constraints and evidence, not a 40-turn replay.</text>
+<rect x="42" y="193" width="620" height="560" rx="18" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<text x="74" y="241" font-family="Inter, Arial, Helvetica, sans-serif" font-size="22" font-weight="750" fill="#506175" text-anchor="start" letter-spacing="0">INCIDENT TIMELINE</text>
+<path d="M113 299 V693" fill="none" stroke="#DCE3EC" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="113" cy="313" r="10" fill="#B95074"/>
+<text x="146" y="304" font-family="Inter, Arial, Helvetica, sans-serif" font-size="20" font-weight="650" fill="#506175" text-anchor="start" letter-spacing="0">14:02</text>
+<text x="246" y="304" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="750" fill="#B95074" text-anchor="start" letter-spacing="0">ALERT</text>
+<text x="146" y="337" font-family="Inter, Arial, Helvetica, sans-serif" font-size="22" font-weight="600" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Checkout p99 &gt; 2s</text>
+<circle cx="113" cy="401" r="10" fill="#127F7C"/>
+<text x="146" y="392" font-family="Inter, Arial, Helvetica, sans-serif" font-size="20" font-weight="650" fill="#506175" text-anchor="start" letter-spacing="0">14:05</text>
+<text x="246" y="392" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="750" fill="#127F7C" text-anchor="start" letter-spacing="0">TOOL</text>
+<text x="146" y="425" font-family="Inter, Arial, Helvetica, sans-serif" font-size="22" font-weight="600" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Rollback v218 → failed</text>
+<circle cx="113" cy="489" r="10" fill="#9A6A15"/>
+<text x="146" y="480" font-family="Inter, Arial, Helvetica, sans-serif" font-size="20" font-weight="650" fill="#506175" text-anchor="start" letter-spacing="0">14:09</text>
+<text x="246" y="480" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="750" fill="#9A6A15" text-anchor="start" letter-spacing="0">DECISION</text>
+<text x="146" y="513" font-family="Inter, Arial, Helvetica, sans-serif" font-size="22" font-weight="600" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Do not restart DB primary</text>
+<circle cx="113" cy="577" r="10" fill="#7355AF"/>
+<text x="146" y="568" font-family="Inter, Arial, Helvetica, sans-serif" font-size="20" font-weight="650" fill="#506175" text-anchor="start" letter-spacing="0">14:14</text>
+<text x="246" y="568" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="750" fill="#7355AF" text-anchor="start" letter-spacing="0">HYPOTHESIS</text>
+<text x="146" y="601" font-family="Inter, Arial, Helvetica, sans-serif" font-size="22" font-weight="600" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Connection storm after deploy</text>
+<circle cx="113" cy="665" r="10" fill="#257A51"/>
+<text x="146" y="656" font-family="Inter, Arial, Helvetica, sans-serif" font-size="20" font-weight="650" fill="#506175" text-anchor="start" letter-spacing="0">14:23</text>
+<text x="246" y="656" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="750" fill="#257A51" text-anchor="start" letter-spacing="0">HANDOFF</text>
+<text x="146" y="689" font-family="Inter, Arial, Helvetica, sans-serif" font-size="22" font-weight="600" fill="#1D2C3D" text-anchor="start" letter-spacing="0">SRE joins the room</text>
+<rect x="704" y="193" width="703" height="560" rx="18" fill="#FFFFFF" stroke="#DCE3EC" stroke-width="1.5"/>
+<rect x="734" y="222" width="157" height="35" rx="18" fill="#EBF3FD"/>
+<text x="812.5" y="246" font-family="Inter, Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#3273B2" text-anchor="middle" letter-spacing="0">NEXT TURN</text>
+<text x="734" y="307" font-family="Inter, Arial, Helvetica, sans-serif" font-size="34" font-weight="750" fill="#1D2C3D" text-anchor="start" letter-spacing="0">“What should we try next?”</text>
+<text x="734" y="360" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#506175" text-anchor="start" letter-spacing="0">RETRIEVED · INCIDENT-SCOPED MEMORIES</text>
+<rect x="734" y="382" width="635" height="82" rx="12" fill="#FAEBF1"/>
+<text x="755" y="411" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="750" fill="#B95074" text-anchor="start" letter-spacing="0">FAILED ACTION</text>
+<text x="755" y="441" font-family="Inter, Arial, Helvetica, sans-serif" font-size="23" font-weight="650" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Rollback v218 failed</text>
+<rect x="734" y="480" width="635" height="82" rx="12" fill="#FFF4DD"/>
+<text x="755" y="509" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="750" fill="#9A6A15" text-anchor="start" letter-spacing="0">LIVE CONSTRAINT</text>
+<text x="755" y="539" font-family="Inter, Arial, Helvetica, sans-serif" font-size="23" font-weight="650" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Do not restart DB primary</text>
+<rect x="734" y="578" width="635" height="82" rx="12" fill="#F2EDFA"/>
+<text x="755" y="607" font-family="Inter, Arial, Helvetica, sans-serif" font-size="18" font-weight="750" fill="#7355AF" text-anchor="start" letter-spacing="0">CURRENT HYPOTHESIS</text>
+<text x="755" y="637" font-family="Inter, Arial, Helvetica, sans-serif" font-size="23" font-weight="650" fill="#1D2C3D" text-anchor="start" letter-spacing="0">Connection storm after deploy</text>
+<path d="M664 525 H697" fill="none" stroke="#127F7C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#a-teal)"/>
+<rect x="42" y="784" width="1365" height="66" rx="13" fill="#E9F7F5"/>
+<text x="724" y="824" font-family="Inter, Arial, Helvetica, sans-serif" font-size="24" font-weight="680" fill="#127F7C" text-anchor="middle" letter-spacing="0">The agent retrieves three relevant memories — not the full conversation transcript.</text>
+</svg>
