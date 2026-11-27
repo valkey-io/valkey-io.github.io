@@ -270,3 +270,26 @@
     FalkorDB is an open source module that adds property graph storage and openCypher queries to Valkey. It uses sparse adjacency matrices and linear algebra for fast graph traversal. The module can be loaded on compatible Valkey deployments.
 
     [Docker quick start](https://github.com/FalkorDB/FalkorDB#get-started) · [Valkey migration guide](https://github.com/FalkorDB/FalkorDB/blob/main/docs/valkey-migration.md)
+
+- name: Stackhero
+  link: https://www.stackhero.io/en-US/services/Valkey/benefits
+  image:
+    path: /img/stackhero.svg
+    alt: Stackhero Logo
+  company: |
+    Stackhero is a cloud platform for managed open source services, available since 2018.
+
+    Every service runs on its own dedicated and private virtual machine, in Europe or in the USA.
+    Stackhero runs its own infrastructure, is ISO 27001 certified, and provides a GDPR Data Processing Agreement on every plan.
+
+    Its catalog includes about 30 services, such as [managed PostgreSQL](https://www.stackhero.io/en-US/services/PostgreSQL/benefits), [managed MySQL](https://www.stackhero.io/en-US/services/MySQL/benefits), [Redis hosting](https://www.stackhero.io/en-US/services/Redis/benefits), [managed RabbitMQ](https://www.stackhero.io/en-US/services/RabbitMQ/benefits), [managed Elasticsearch](https://www.stackhero.io/en-US/services/Elasticsearch/benefits), [managed OpenSearch](https://www.stackhero.io/en-US/services/OpenSearch/benefits), [GitLab hosting](https://www.stackhero.io/en-US/services/GitLab/benefits), [managed Graylog](https://www.stackhero.io/en-US/services/Graylog/benefits), [MQTT cloud broker](https://www.stackhero.io/en-US/services/Mosquitto/benefits) and [Node.js hosting](https://www.stackhero.io/en-US/services/Node-js/benefits).
+  offering: |
+    [Managed Valkey as a service](https://www.stackhero.io/en-US/services/Valkey/benefits) on a dedicated and private virtual machine, ready in 2 minutes and compatible with existing Redis® OSS clients.
+
+    Usage is not metered: reads, writes, commands, message size and bandwidth are unlimited.
+
+    Performance is predictable: the instance is never shared with another customer, and runs on NVMe disks, ECC RAM and server-grade CPUs.
+    TLS encryption, daily backups and a web UI are included, along with the Search, JSON and Bloom filter modules.
+
+    Pricing is transparent: one fixed monthly price per plan, known in advance, from 19 EUR/USD.
+    See the [Valkey pricing](https://www.stackhero.io/en-US/services/Valkey/pricing).
