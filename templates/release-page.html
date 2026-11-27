@@ -1,6 +1,8 @@
 {% extends "download-layout.html" %}
 
+{%- block head -%}{% set release_title = "Valkey " ~ page.title %}{%- endblock head -%}
+
 {% block main_content %}
-<h1 class="docs-page-title">Download Valkey {{page.title}}</h1>
+<h1 class="docs-page-title">Download {{ release_title }}</h1>
 {{< release_info date={page.date} release={page.extra} />}}
 {% endblock main_content %}

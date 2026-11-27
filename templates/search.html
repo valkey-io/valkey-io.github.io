@@ -1,0 +1,27 @@
+{% extends "default.html" %}
+
+{#- The search page. /search/?q=<query> shows the results for <query>, so a search can be linked to.
+    static/assets/js/search.js copies the contents below into #search-page and keeps q in the
+    address up to date. They're in a <template> so search.js can configure their Pagefind instance
+    before they start, as for the modal.
+
+    The page isn't indexed itself: data-search-unindexed tells build/check-search-index.py not to
+    expect it. #}
+{% block content %}
+<div data-pagefind-ignore="all" data-search-unindexed>
+<h1 class="page-title">Search</h1>
+<div class="width-limiter">
+    <main class="container">
+        <div id="search-page"></div>
+        <template id="search-page-contents">
+            <pagefind-input instance="page" autofocus></pagefind-input>
+            <pagefind-summary instance="page"></pagefind-summary>
+            <pagefind-results instance="page">
+                {% include "includes/search-result.html" %}
+            </pagefind-results>
+        </template>
+        <noscript>Search needs JavaScript.</noscript>
+    </main>
+</div>
+</div>
+{% endblock content %}

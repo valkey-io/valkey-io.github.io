@@ -40,6 +40,17 @@
     {% set nav_location_json %}{{< nav_command_location nav={nav_data} name={command_title} container={command_container} group={command_data_obj.group} />}}{% endset %}
     {% set nav_location = load_data(literal=nav_location_json, format="json") %}
 {% endif %}
+
+{#- The breadcrumbs below without the command itself, for search results. #}
+{% if nav_location and nav_location.section %}
+    {% set search_breadcrumb = "Topics › " ~ nav_location.title %}
+    {% if nav_location.topic and nav_location.topic != nav_location.landing %}
+        {% set nav_topic %}{{< nav_topic_title slug={nav_location.topic} extra={config.extra} />}}{% endset %}
+        {% set search_breadcrumb = search_breadcrumb ~ " › " ~ (nav_topic | trim) %}
+    {% endif %}
+{% else %}
+    {% set search_breadcrumb = "Commands" %}
+{% endif %}
 {%- endblock -%}
 
 {% block breadcrumbs %}

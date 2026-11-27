@@ -1,0 +1,16 @@
+{#- Contents of the site search modal, which static/assets/js/search.js copies into a <pagefind-modal>.
+
+    They're in a <template> so the Pagefind elements stay inactive until the modal has moved them
+    into its dialog; otherwise each one initializes twice. This is Pagefind's default modal, written
+    out so the results can use the site's result template. It must stay outside .body, the part of
+    the page Pagefind indexes (root_selector in pagefind.yml). #}
+<template id="search-modal-contents">
+    <pagefind-modal-header><pagefind-input></pagefind-input></pagefind-modal-header>
+    <pagefind-modal-body>
+        <pagefind-summary></pagefind-summary>
+        <pagefind-results>
+            {% include "includes/search-result.html" %}
+        </pagefind-results>
+    </pagefind-modal-body>
+    <pagefind-modal-footer><pagefind-keyboard-hints></pagefind-keyboard-hints></pagefind-modal-footer>
+</template>

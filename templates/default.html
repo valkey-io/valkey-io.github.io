@@ -1,4 +1,53 @@
-{%- block head -%}{%- endblock -%}<!DOCTYPE html>
+{%- block head -%}{%- endblock -%}
+{#- The page's name, for the page title and og:title. Templates set the variables below in their head
+    block, which must stay above this. #}
+{%- set name_prefix = "Valkey" %}
+{%- if command_title is defined and command_title %}{% set page_name = command_title %}{% set name_prefix = "Valkey Command" %}
+{%- elif frontmatter_title is defined and frontmatter_title %}{% set page_name = frontmatter_title %}{% set name_prefix = "Valkey Documentation" %}
+{%- elif release_title is defined and release_title %}{% set page_name = release_title %}
+{%- elif page is defined and page.title %}{% set page_name = page.title %}
+{%- elif section is defined and section.title %}{% set page_name = section.title %}
+{%- else %}{% set page_name = "" %}{% endif -%}
+{#- Where the page sits in the site, shown with its search results. Topic and command pages set
+    search_breadcrumb from the documentation menu in their head block, the same as their own
+    breadcrumbs. Other pages use `breadcrumb` in the [extra] front matter of the page, or else of
+    its nearest section that sets one. Failing that, they use the title of their nearest section
+    other than the site's root, for sections whose _index.md is rewritten by tools that drop extra
+    keys, such as the release automation's rewrite of content/try-valkey/_index.md. #}
+{%- set breadcrumb = "" %}
+{%- if search_breadcrumb is defined and search_breadcrumb %}{% set breadcrumb = search_breadcrumb %}
+{%- else %}
+    {%- if page is defined %}{% set current = page %}{% elif section is defined %}{% set current = section %}{% else %}{% set current = {} %}{% endif %}
+    {%- if current %}
+        {%- set breadcrumb = current.extra?.breadcrumb | default(value="") %}
+        {%- for ancestor_path in current.ancestors | reverse %}
+            {%- if not breadcrumb %}
+                {%- set ancestor = get_section(path=ancestor_path, metadata_only=true) %}
+                {%- set_global breadcrumb = ancestor.extra?.breadcrumb | default(value="") %}
+            {%- endif %}
+        {%- endfor %}
+        {%- if not breadcrumb %}
+            {%- if page is not defined and current.relative_path != "_index.md" %}
+                {%- set breadcrumb = current.title | default(value="") %}
+            {%- else %}
+                {%- for ancestor_path in current.ancestors | reverse %}
+                    {%- if not breadcrumb and ancestor_path != "_index.md" %}
+                        {%- set ancestor = get_section(path=ancestor_path, metadata_only=true) %}
+                        {%- set_global breadcrumb = ancestor.title | default(value="") %}
+                    {%- endif %}
+                {%- endfor %}
+            {%- endif %}
+        {%- endif %}
+    {%- endif %}
+{%- endif %}
+{#- Words that rank the page higher when a search matches them (metaWeights in search.js), from the
+    page's [[boost]] entries in _data/search.toml. #}
+{%- set search_keywords = [] %}
+{%- set search_tuning = load_data(path="_data/search.toml", format="toml", required=false) %}
+{%- for boost in search_tuning?.boost | default(value=[]) %}
+    {%- if boost.url == current_path | default(value="") %}{% set_global search_keywords = [...search_keywords, ...boost.keywords] %}{% endif %}
+{%- endfor -%}
+<!DOCTYPE html>
 <html lang="{{ page?.lang | default(value=config.default_language) }}">
 {% include "includes/head.html" %}
 <script>
@@ -71,6 +120,8 @@
           </div>
         </div>
         <a role="menuitem" href="/try-valkey/">Try Valkey</a>
+        <div id="site-search"></div>
+        {% include "includes/search-modal.html" %}
         <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
           <img src="/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
           GitHub
@@ -80,7 +131,12 @@
       </nav>
     </div>
   </div>
-  <div class="body">
+  {#- Search results use the page's name, since a page's first heading isn't always its title. #}
+  {%- if page_name %}{% set search_title = page_name %}{% else %}{% set search_title = name_prefix %}{% endif %}
+  <div class="body" data-pagefind-meta="title:{{ search_title }}">
+      <span hidden data-pagefind-filter="exact_title:{{ search_title | lower }}"></span>
+      {%- if breadcrumb %}<span hidden data-pagefind-filter="breadcrumb:{{ breadcrumb }}"></span>{% endif %}
+      {%- if search_keywords %}<span hidden data-pagefind-meta="keywords:{{ search_keywords | join(sep=", ") }}"></span>{% endif %}
       {% block content %}{% endblock %}
   </div>
   <div class="footer">

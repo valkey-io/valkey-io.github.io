@@ -1,6 +1,9 @@
 +++
 template = "download.html"
 title = "Download"
+
+[extra]
+breadcrumb = "Download"
 +++
 
 For installation instructions, supported package managers, and how to configure Valkey, see the
