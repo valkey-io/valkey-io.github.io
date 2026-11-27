@@ -28,14 +28,16 @@ FRAGMENT_PREFIX = b"pagefind_dcd"
 
 
 def expected_pages(public):
-    """Return {URL: <title> text}, skipping redirect stubs, the 404 page and HTML
-    fragments that aren't full pages."""
+    """Return {URL: <title> text}, skipping redirect stubs, the 404 page, pages
+    marked data-search-unindexed (such as the search page) and HTML fragments that
+    aren't full pages."""
     pages = {}
     for path in public.rglob("*.html"):
         source = path.read_text(encoding="utf-8", errors="replace")
         is_redirect = '<meta http-equiv="refresh"' in source
         is_fragment = "<html" not in source
-        if is_redirect or is_fragment or path.name == "404.html":
+        is_unindexed = "data-search-unindexed" in source
+        if is_redirect or is_fragment or is_unindexed or path.name == "404.html":
             continue
         url = "/" + path.relative_to(public).as_posix()
         title = re.search(r"<title>(.*?)</title>", source, re.DOTALL)

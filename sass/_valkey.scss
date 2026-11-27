@@ -2990,8 +2990,8 @@ blockquote {
   .calendar-nav .calendar-nav-title { font-size: 1.8rem; min-width: auto; }
 }
 
-// Where a search result sits in the site
-pagefind-modal .search-result-breadcrumb {
+// Where a search result sits in the site, in the search modal and on the search page
+pagefind-results .search-result-breadcrumb {
   margin: 0 0 4px;
   color: var(--pf-text-secondary);
   font-size: 13px;
