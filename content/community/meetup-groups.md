@@ -49,6 +49,8 @@ Meetings can vary, but most will include a combination of presentations, demos, 
 
 For the most up-to-date listing of Meetup Groups, please visit the Valkey Meetup Groups page (will be updated with the LF tool). If you don't see your city listed and are interested in leading a new one, open a [**New Meetup Group Request**](https://github.com/valkey-io/valkey-io.github.io/issues/new?template=new-meetup-group.md) issue to begin the conversation.
 
+Current local organizer: Vancouver, BC, Canada — Vadym Khoptynets (AWS).
+
 **Request Lifecycle:**
 1. Open a New Meetup Group Request issue on GitHub
 2. Join [Valkey Slack](https://valkey.io/slack/) and share your issue in the [#meetup-groups](https://valkey-oss-developer.slack.com/archives/C0AL7GL1YSZ) channel
