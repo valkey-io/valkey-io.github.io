@@ -5,4 +5,4 @@ extra:
     github: karthiksubbarao
 ---
 
-Karthik Subbarao is a Software Engineer at AWS who is passionate about distributed systems, databases, Rust, and, in general, innovating through software development / technology.
+Karthik Subbarao is a Senior Software Engineer at AWS contributing to Valkey, from core features to modules such as Bloom filters, Search and the Large Object module. He is passionate about performant distributed systems, databases, and Rust.
