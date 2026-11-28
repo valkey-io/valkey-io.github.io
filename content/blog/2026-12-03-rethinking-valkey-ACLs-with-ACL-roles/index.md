@@ -1,7 +1,7 @@
 +++
 title = "Rethinking Valkey ACLs with ACL Roles"
 description = "Valkey 9.2 allows you to group and manage permisisons in ACL Roles"
-date = 2026-11-25
+date = 2026-12-03
 authors = ["kjaymiller"]
 +++
 
